@@ -27,6 +27,8 @@ Both modes are configured via the startup configuration file.
        +-----------------------------+
 ```
 
+
+
 ### 1. **Change Detection**
 - Each table has an internal `__updated_at` timestamp or revision ID.
 - Sync engine scans for new/changed rows since the last sync.
