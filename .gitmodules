@@ -1,3 +1,6 @@
-[submodule "3rdParty/Crow"]
-	path = 3rdParty/Crow
-	url = https://github.com/CrowCpp/Crow.git
+[submodule "3rdParty/SQLiteCpp"]
+	path = 3rdParty/SQLiteCpp
+	url = git@github.com:allankoechke/SQLiteCpp.git
+[submodule "3rdParty/httplib-cpp"]
+	path = 3rdParty/httplib-cpp
+	url = git@github.com:allankoechke/httplib-cpp.git

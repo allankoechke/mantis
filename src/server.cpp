@@ -1,25 +1,32 @@
 #include <iostream>
+#include <httplib.h>
+#include <string>
 
-// TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
-// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+
+/*
+private members
+    - port
+    - ip
+Router & Middleware
+Database
+
+*/
+
 int main() {
-    // TIP Press <shortcut actionId="RenameElement"/> when your caret is at the
-    // <b>lang</b> variable name to see how CLion can help you rename it.
-    auto lang = "C++";
-    std::cout << "Hello and welcome to " << lang << "!\n";
+    httplib::Server svr;
 
-    for (int i = 1; i <= 5; i++) {
-        // TIP Press <shortcut actionId="Debug"/> to start debugging your code.
-        // We have set one <icon src="AllIcons.Debugger.Db_set_breakpoint"/>
-        // breakpoint for you, but you can always add more by pressing
-        // <shortcut actionId="ToggleLineBreakpoint"/>.
-        std::cout << "i = " << i << std::endl;
+    svr.Get("/hi", [](const httplib::Request &, httplib::Response &res) {
+        res.set_content("Hello World!", "text/plain");
+    });
+
+    auto ret = svr.set_mount_point("/", "./www");
+    if (!ret) {
+        std::cout << "Specified base does not exist yet!" << std::endl;
     }
+    
+    std::cout << "Starting listening on 0.0.0.0:8080" << std::endl;
+    std::cout << svr.listen("0.0.0.0", 8080);
+
 
     return 0;
 }
-
-// TIP See CLion help at <a
-// href="https://www.jetbrains.com/help/clion/">jetbrains.com/help/clion/</a>.
-//  Also, you can try interactive lessons for CLion by selecting
-//  'Help | Learn IDE Features' from the main menu.

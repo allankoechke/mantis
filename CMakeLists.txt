@@ -3,4 +3,45 @@ project(mantis)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(mantis main.cpp)
+add_executable(mantis src/server.cpp)
+
+include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
+
+option(mantis_ENABLE_TESTS "enable testing" OFF)
+
+include(CTest)
+enable_testing()
+
+CPMAddPackage(Catch2
+  VERSION 3.7.0
+  GITHUB_REPOSITORY catchorg/Catch2
+  OPTIONS
+  "CATCH_INSTALL_DOCS Off"
+  "CATCH_INSTALL_EXTRAS Off"
+  "CATCH_ENABLE_REPRODUCIBLE_BUILD Off"
+)
+
+# Add SQLiteCpp
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "")
+set(SQLITECPP_USE_STATIC_RUNTIME ON CACHE BOOL "Link to static SQlite")
+add_subdirectory(3rdParty/SQLiteCpp)
+
+
+# Add httplib
+set(HTTPLIB_COMPILE OFF CACHE BOOL "")
+add_subdirectory(3rdParty/httplib-cpp)
+
+target_link_libraries(mantis
+    PRIVATE
+    SQLiteCpp
+    httplib::httplib
+)
+
+# Include directories
+target_include_directories(mantis 
+    PRIVATE 
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/SQLiteCpp/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/SQLiteCpp/sqlite3      # Make
+)
