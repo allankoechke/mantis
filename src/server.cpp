@@ -12,6 +12,44 @@ Database
 
 */
 
+class MantisApp
+{
+public:
+    MantisApp() : svr(std::make_shared<httplib::Server>())
+    {
+
+    }
+    ~MantisApp() = default;
+
+    bool Start(const std::string& host = "127.0.0.1", const int& port = 8080)
+    {
+        if (port < 0 || port > 65535)
+        {
+            std::cerr << "Invalid port number: " << port << std::endl;
+            return false;
+        }
+
+        m_port = port;
+        m_host = host;
+
+        std::cout << "Starting listening on " << m_host << ":" << m_port << std::endl;
+        return svr->listen(m_host.c_str(), m_port);
+    }
+
+    // Access the server object
+    std::shared_ptr<httplib::Server> Server()
+    {
+        return svr;
+    }
+
+private:
+    std::shared_ptr<httplib::Server> svr;
+
+    // Server port & host
+    int m_port;
+    std::string m_host;
+};
+
 int main() {
     httplib::Server svr;
 

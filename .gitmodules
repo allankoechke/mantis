@@ -4,3 +4,6 @@
 [submodule "3rdParty/httplib-cpp"]
 	path = 3rdParty/httplib-cpp
 	url = git@github.com:allankoechke/httplib-cpp.git
+[submodule "3rdParty/AnyOption"]
+	path = 3rdParty/AnyOption
+	url = https://github.com/hackorama/AnyOption.git
