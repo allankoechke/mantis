@@ -45,6 +45,10 @@ public:
 private:
     std::shared_ptr<httplib::Server> svr;
 
+    // data dir
+    // public dir
+    //
+
     // Server port & host
     int m_port;
     std::string m_host;
