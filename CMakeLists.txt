@@ -3,10 +3,13 @@ project(mantis-ctl)
 
 set(CMAKE_CXX_STANDARD 20)
 
-add_executable(mantis-ctl src/main.cpp)
+add_executable(mantis-ctl
+        src/main.cpp
+        include/mantis/mantis.h src/mantis.cpp
+        include/mantis/core/database.h src/database.cpp
+)
 
 include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
-
 option(mantis-ctl_ENABLE_TESTS "enable testing" OFF)
 
 include(CTest)
