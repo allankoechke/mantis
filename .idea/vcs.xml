@@ -6,6 +6,7 @@
     <mapping directory="$PROJECT_DIR$/3rdParty/SQLiteCpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/SQLiteCpp/googletest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/build/_deps/catch2-src" vcs="Git" />
   </component>
 </project>

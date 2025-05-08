@@ -5,7 +5,9 @@
 #include <mantis/core/database.h>
 #include <mantis/mantis.h>
 
-Database::Database() {}
+Database::Database(std::shared_ptr<MantisApp> app)
+    : m_app(app)
+{}
 
 bool Database::EnsureDatabaseSchemaLoaded() const
 {

@@ -7,6 +7,7 @@ add_executable(mantis-ctl
         src/main.cpp
         include/mantis/mantis.h src/mantis.cpp
         include/mantis/core/database.h src/database.cpp
+        include/mantis/core/models.h
 )
 
 include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
@@ -47,11 +48,15 @@ target_include_directories(anyoption_static PUBLIC
         $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption>
 )
 
+set(JSON_Install OFF CACHE INTERNAL "")
+add_subdirectory(3rdParty/json)
+
 target_link_libraries(mantis-ctl
     PRIVATE
         SQLiteCpp
         httplib::httplib
         anyoption_static
+        nlohmann_json::nlohmann_json
 )
 
 # Include directories
@@ -62,4 +67,5 @@ target_include_directories(mantis-ctl
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/SQLiteCpp/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/SQLiteCpp/sqlite3      # Make
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/json/include
 )
