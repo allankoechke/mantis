@@ -8,6 +8,7 @@ add_executable(mantis-ctl
         include/mantis/mantis.h src/mantis.cpp
         include/mantis/core/database.h src/database.cpp
         include/mantis/core/models.h
+        src/models.cpp
 )
 
 include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
