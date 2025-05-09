@@ -14,22 +14,22 @@ namespace Mantis
     // base table types provide `index`, `created`, `updated`
     // auth table type provide `base` type + `email`, `password`, `name`
     // view table type provide readonly `sql`
-    typedef enum TableType
+    typedef enum TableTypeDecl
     {
-        BaseTable = 1,
-        AuthTable,
-        ViewTable
+        Base = 1,
+        Auth,
+        View
     } TableType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(TableType, {
-        {TableType::BaseTable, "base"},
-        {TableType::AuthTable, "auth"},
-        {TableType::ViewTable, "view"}
+        {TableType::Base, "base"},
+        {TableType::Auth, "auth"},
+        {TableType::View, "view"}
     })
 
     // Text, Number, Bool, etc.
     // Enum to represent different data types for fields
-    enum class FieldType {
+    typedef enum class FieldTypeDecl {
         Url,
         Text,
         Integer,
@@ -39,7 +39,7 @@ namespace Mantis
         Email,
         Password,
         JSON
-    };
+    } FieldType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(FieldType, {
         { FieldType::Url,       "url" },
@@ -54,7 +54,7 @@ namespace Mantis
     })
 
     // Access Rule Struct
-    typedef struct Rule
+    typedef struct RuleDecl
     {
         std::string expression;
         bool enabled;

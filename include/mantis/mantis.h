@@ -25,61 +25,69 @@ Database
 
 namespace fs = std::filesystem;
 
-class MantisApp
+namespace Mantis
 {
-public:
-    MantisApp();
-    ~MantisApp() = default;
+    class MantisApp: std::enable_shared_from_this<MantisApp>
+    {
+    public:
+        MantisApp();
+        ~MantisApp() = default;
 
-    int ProcessCMD(int argc, char *argv[]);
+        int ProcessCMD(int argc, char *argv[]);
 
-    int Start();
-    int Start(const std::string& host , const int& port);
-    int Stop() const;
+        int Start();
+        int Start(const std::string& host , const int& port);
+        int Stop() const;
 
-    // GETTERS
-    // --------------------- //
+        // GETTERS
+        // --------------------- //
 
-    // Access the server object
-    [[nodiscard]] std::shared_ptr<httplib::Server> Server() const;
+        // Access the server object
+        [[nodiscard]] std::shared_ptr<httplib::Server> Server() const;
 
-    // Access the AnyOption CMD Arg Parser
-    [[nodiscard]] std::shared_ptr<AnyOption> CmdParser() const;
+        // Access the AnyOption CMD Arg Parser
+        [[nodiscard]] std::shared_ptr<AnyOption> CmdParser() const;
 
-    // Access the AnyOption CMD Arg Parser
-    [[nodiscard]] std::shared_ptr<Database> Db() const;
+        // Access the AnyOption CMD Arg Parser
+        [[nodiscard]] std::shared_ptr<Database> Db() const;
 
-    // Setters
-    // Call this before starting the Server, else, will be ignored
-    void SetPort(const int& port);
-    void SetHost(const std::string& host);
-    void SetPublicDir(const std::string& dir);
-    void SetDataDir(const std::string& dir);
+        // Setters
+        // Call this before starting the Server, else, will be ignored
+        void SetPort(const int& port);
+        void SetHost(const std::string& host);
 
-    // Utility Path Functions
-    static fs::path ResolvePath(const std::string& input_path);
-    static bool CreateDirs(const fs::path& path);
+        void SetPublicDir(const std::string& dir);
+        std::string PublicDir() const;
 
-private:
-    // Ensure the directory structure used/required is created,
-    // if it fails, lets terminate the app
-    [[nodiscard]] bool EnsureDirsAreCreated() const;
+        void SetDataDir(const std::string& dir);
+        std::string DataDir() const;
 
-private:
-    std::shared_ptr<httplib::Server> m_svr;
-    std::shared_ptr<AnyOption> m_opts;
-    std::shared_ptr<Database> m_db;
+        // Utility Path Functions
+        static fs::path ResolvePath(const std::string& input_path);
+        static bool CreateDirs(const fs::path& path);
+        static std::string DirFromPath(const std::string& path);
 
-    // Server port & host
-    int m_port;
-    std::string m_host;
+    private:
+        // Ensure the directory structure used/required is created,
+        // if it fails, lets terminate the app
+        [[nodiscard]] bool EnsureDirsAreCreated() const;
 
-    // Directories
-    std::string m_publicDir;
-    std::string m_dataDir;
+    private:
+        std::shared_ptr<httplib::Server> m_svr;
+        std::shared_ptr<AnyOption> m_opts;
+        std::shared_ptr<Database> m_db;
 
-    // Database specifics
-    const std::string db_name = "data.db";
-};
+        // Server port & host
+        int m_port;
+        std::string m_host;
+
+        // Directories
+        std::string m_publicDir;
+        std::string m_dataDir;
+
+        // Database specifics
+        const std::string db_name = "data.db";
+    };
+}
 
 #endif //MANTIS_H

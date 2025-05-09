@@ -5,29 +5,41 @@
 #include <mantis/mantis.h>
 #include <filesystem>
 
-MantisApp::MantisApp()
+
+Mantis::MantisApp::MantisApp()
     :   m_svr(std::make_shared<httplib::Server>()),
         m_opts(std::make_shared<AnyOption>()),
         m_port(7070),
-        m_host("127.0.0.1"),
-        m_publicDir("./public"),
-        m_dataDir("./data")
-{}
+        m_host("127.0.0.1")
+{
+    // Set initial public directory
+    auto dir = DirFromPath("./public");
+    SetPublicDir(dir);
 
-int MantisApp::ProcessCMD(int argc, char *argv[])
+    // Set initial data directory
+    dir = DirFromPath("./data");
+    SetDataDir(dir);
+
+    // Pass an instance of this ptr into the created Database instance
+    m_db = std::make_shared<Mantis::Database>( *this );
+}
+
+int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
 {
     m_opts->setVerbose(); /* print warnings about unknown options */
 
     // SET THE USAGE/HELP
-    m_opts->addUsage("usage: ");
-    m_opts->addUsage("mantis [Optional Flags] --serve ");
+    m_opts->addUsage("Usage: ");
+    m_opts->addUsage("  mantis [Optional Flags] --serve ");
+    m_opts->addUsage("  mantis -p 7070 --publicDir ./www --serve ");
     m_opts->addUsage("");
-    m_opts->addUsage(" -h  --help  		        Prints this help ");
-    m_opts->addUsage(" -p  --port <port>       Server Port (default: 7070)");
-    m_opts->addUsage(" -h  --host <host>       Server Host (default: 0.0.0.0) ");
-    m_opts->addUsage(" --publicDir   <dir>     Static files directory (default: ./public) ");
-    m_opts->addUsage(" --dataDir     <dir>     Data directory (default: ./data) ");
-    m_opts->addUsage(" --serve                 Start & Run the HTTP Server ");
+    m_opts->addUsage("");
+    m_opts->addUsage("  -h  --help  		        Prints this help ");
+    m_opts->addUsage("  -p  --port <port>       Server Port (default: 7070)");
+    m_opts->addUsage("  -h  --host <host>       Server Host (default: 0.0.0.0) ");
+    m_opts->addUsage("  --publicDir   <dir>     Static files directory (default: ./public) ");
+    m_opts->addUsage("  --dataDir     <dir>     Data directory (default: ./data) ");
+    m_opts->addUsage("  --serve                 Start & Run the HTTP Server ");
     m_opts->addUsage("");
 
     m_opts->setFlag("help", 'h');
@@ -55,39 +67,52 @@ int MantisApp::ProcessCMD(int argc, char *argv[])
     if (m_opts->getValue('h') != nullptr || m_opts->getValue("host") != nullptr)
     {
         const auto host = m_opts->getValue("host");
-        std::cout << "Setting Server Host to [" << host << "]" << std::endl;
         m_host = host;
+        std::cout << "Setting Server Host to [" << host << "]" << std::endl;
     }
 
     if (m_opts->getValue('p') != nullptr || m_opts->getValue("port") != nullptr)
     {
         const auto port = std::atoi(m_opts->getValue("port"));
-        std::cout << "Setting Server Port to [" << port << "]" << std::endl;
         m_port = port;
+        std::cout << "Setting Server Port to [" << port << "]" << std::endl;
     }
 
     if (m_opts->getValue("publicDir") != nullptr)
     {
-        std::cout << "PublicDir: " << m_opts->getValue("publicDir") << std::endl;
+        const auto pth = m_opts->getValue("publicDir");
+        const auto dir = DirFromPath(pth);
+        SetPublicDir(dir);
+        std::cout << "PublicDir: " << m_publicDir << std::endl;
     }
 
     if (m_opts->getValue("dataDir") != nullptr)
     {
-        std::cout << "DataDir: " << m_opts->getValue("dataDir") << std::endl;
+        const auto pth = m_opts->getValue("dataDir");
+        const auto dir = DirFromPath(pth);
+        SetDataDir(dir);
+        std::cout << "DataDir: " << m_dataDir << std::endl;
     }
 
     if (m_opts->getFlag("serve"))
     {
         std::cout << "Start the HTTP Server " << std::endl;
-        return Start();
+        if (m_db->OpenDatabase())
+            return Start();
+
+        std::cout << "Database was not opened" << std::endl;
+        return 1;
     }
+
+    // Initiate Db if it does not exist, yet!
+    m_db->OpenDatabase();
 
     std::cout << std::endl;
 
     return 0;
 }
 
-int MantisApp::Start()
+int Mantis::MantisApp::Start()
 {
     if (!EnsureDirsAreCreated())
         return -1;
@@ -99,7 +124,7 @@ int MantisApp::Start()
     return m_svr->listen(m_host, m_port);
 }
 
-int MantisApp::Start(const std::string& host, const int& port)
+int Mantis::MantisApp::Start(const std::string& host, const int& port)
 {
     if (port < 0 || port > 65535)
     {
@@ -113,7 +138,7 @@ int MantisApp::Start(const std::string& host, const int& port)
     return Start();
 }
 
-int MantisApp::Stop() const
+int Mantis::MantisApp::Stop() const
 {
     if (m_svr->is_running())
         m_svr->stop();
@@ -121,17 +146,17 @@ int MantisApp::Stop() const
     return 0;
 }
 
-std::shared_ptr<httplib::Server> MantisApp::Server() const
+std::shared_ptr<httplib::Server> Mantis::MantisApp::Server() const
 {
     return m_svr;
 }
 
-std::shared_ptr<AnyOption> MantisApp::CmdParser() const
+std::shared_ptr<AnyOption> Mantis::MantisApp::CmdParser() const
 {
     return m_opts;
 }
 
-void MantisApp::SetPort(const int& port)
+void Mantis::MantisApp::SetPort(const int& port)
 {
     if (port < 0 || port > 65535)
         return;
@@ -139,7 +164,7 @@ void MantisApp::SetPort(const int& port)
     m_port = port;
 }
 
-void MantisApp::SetHost(const std::string& host)
+void Mantis::MantisApp::SetHost(const std::string& host)
 {
     if (host.empty())
         return;
@@ -147,14 +172,19 @@ void MantisApp::SetHost(const std::string& host)
     m_host = host;
 }
 
-void MantisApp::SetPublicDir(const std::string& dir)
+void Mantis::MantisApp::SetPublicDir(const std::string& dir)
 {
     if (dir.empty())
         return;
     m_publicDir = dir;
 }
 
-void MantisApp::SetDataDir(const std::string& dir)
+std::string Mantis::MantisApp::PublicDir() const
+{
+    return m_publicDir;
+}
+
+void Mantis::MantisApp::SetDataDir(const std::string& dir)
 {
     if (dir.empty())
         return;
@@ -162,7 +192,12 @@ void MantisApp::SetDataDir(const std::string& dir)
     m_dataDir = dir;
 }
 
-fs::path MantisApp::ResolvePath(const std::string& input_path)
+std::string Mantis::MantisApp::DataDir() const
+{
+    return m_dataDir;
+}
+
+fs::path Mantis::MantisApp::ResolvePath(const std::string& input_path)
 {
     fs::path path(input_path);
 
@@ -174,7 +209,7 @@ fs::path MantisApp::ResolvePath(const std::string& input_path)
     return path;
 }
 
-bool MantisApp::CreateDirs(const fs::path& path)
+bool Mantis::MantisApp::CreateDirs(const fs::path& path)
 {
     try {
         if (!fs::exists(path)) {
@@ -192,7 +227,15 @@ bool MantisApp::CreateDirs(const fs::path& path)
     return false;
 }
 
-inline bool MantisApp::EnsureDirsAreCreated() const
+std::string Mantis::MantisApp::DirFromPath(const std::string& path)
+{
+    if (const auto dir = ResolvePath(path); CreateDirs(dir))
+        return dir.string();
+
+    return std::string("");
+}
+
+inline bool Mantis::MantisApp::EnsureDirsAreCreated() const
 {
     // Data Directory
     if (!CreateDirs(ResolvePath(m_dataDir)))

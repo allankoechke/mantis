@@ -33,11 +33,11 @@ std::string Mantis::Field::to_sql() const
 {
     std::string sql_type;
     switch (type) {
-    case FieldType::Url:        sql_type = "TEXT";      break;
-    case FieldType::Text:       sql_type = "TEXT";      break;
+    case FieldType::Url:
+    case FieldType::Text:
     case FieldType::Email:      sql_type = "TEXT";      break;
-    case FieldType::Integer:     sql_type = "INTEGER";   break;
-    case FieldType::Float:     sql_type = "REAL";   break;
+    case FieldType::Integer:    sql_type = "INTEGER";   break;
+    case FieldType::Float:      sql_type = "REAL";      break;
     case FieldType::Boolean:    sql_type = "BOOLEAN";   break;
     case FieldType::DateTime:   sql_type = "DATETIME";  break;
     case FieldType::Password:   sql_type = "TEXT";      break;
@@ -90,7 +90,7 @@ std::string Mantis::Table::to_sql() const
 
 Mantis::BaseTable::BaseTable()
 {
-    type = TableType::BaseTable;
+    type = TableType::Base;
     fields = {
         Field("id", FieldType::Text, true, true, true),
         Field("created", FieldType::DateTime, true, false, true),
@@ -100,7 +100,7 @@ Mantis::BaseTable::BaseTable()
 
 Mantis::AuthTable::AuthTable()
 {
-    type = TableType::AuthTable;
+    type = TableType::Auth;
     fields = {
         Field("id", FieldType::Text, true, true, true),
         Field("created", FieldType::DateTime, true, false, true),
@@ -113,5 +113,5 @@ Mantis::AuthTable::AuthTable()
 
 Mantis::ViewTable::ViewTable()
 {
-    type = TableType::ViewTable;
+    type = TableType::View;
 }

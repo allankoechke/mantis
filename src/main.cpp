@@ -6,6 +6,6 @@
 
 int main(const int argc, char* argv[])
 {
-    MantisApp app;
+    Mantis::MantisApp app;
     return app.ProcessCMD(argc, argv);
 }
