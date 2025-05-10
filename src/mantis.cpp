@@ -100,16 +100,32 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
         if (m_db->OpenDatabase())
             return Start();
 
-        std::cout << "Database was not opened" << std::endl;
+        std::cerr << "Database was not opened" << std::endl;
+        Quit(-1, "Database opening failed!");
         return 1;
     }
 
     // Initiate Db if it does not exist, yet!
-    m_db->OpenDatabase();
+    if (!m_db->OpenDatabase())
+        Quit(-1, "Database opening failed!");
 
     std::cout << std::endl;
 
     return 0;
+}
+
+int Mantis::MantisApp::Quit(const int& exitCode, const std::string& reason)
+{
+    // Do some cleanup if need be ...
+    // m_db->CloseIfOpened();
+    // m_svr->CloseIfOpened();
+
+    if (exitCode != 0)
+        std::cerr << "Exiting, [" << exitCode << "] :  "<< reason << std::endl;
+    else
+        std::cout << "Application exiting" << std::endl;
+
+    std::exit(exitCode);
 }
 
 int Mantis::MantisApp::Start()

@@ -35,6 +35,21 @@ namespace Mantis
 
         int ProcessCMD(int argc, char *argv[]);
 
+        /* @brief Quit the application
+         *
+         * Exits the running application with an `exitCode` and `reason` given
+         * for the exit. Useful for terminating application if an exception
+         * or an error occurred that would render the running system malformed.
+         *
+         * @params
+         * `intCode` - Exit code for the application. For a normal exit, use `0`,
+         * `reason` - Textual explanation as to why the system exitted.
+         *
+         * @return ignored.
+         */
+
+        static int Quit(const int& exitCode = 0, const std::string& reason = "Something went wrong!");
+
         int Start();
         int Start(const std::string& host , const int& port);
         int Stop() const;

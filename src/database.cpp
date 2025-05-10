@@ -23,7 +23,9 @@ bool Mantis::Database::OpenDatabase()
 
 bool Mantis::Database::EnsureDatabaseSchemaLoaded() const
 {
-    std::cout << CreateSystemTables() << std::endl;
+    if (!CreateSystemTables())
+        m_app->Quit(-1, "Failed to create database schema");
+
     std::cout << GenerateSystemDatabaseSchema() << std::endl;
     return true;
 }
@@ -46,8 +48,17 @@ bool Mantis::Database::CreateSystemTables() const
         // __admin table
         stringstream ss;
         ss << "CREATE TABLE IF NOT EXISTS __admin";
-        ss << " (id INTEGER PRIMARY KEY AUTOINCREMENT, email TEXT, password TEXT,";
+        ss << " (id TEXT PRIMARY KEY, email TEXT, password TEXT,";
         ss << " created TEXT, updated TEXT)";
+
+        m_db->exec(ss.str());
+
+        ss.clear();
+        ss << "CREATE TABLE IF NOT EXISTS __tables (";
+        ss << "id TEXT PRIMARY KEY,";
+        ss << "name TEXT NOT NULL,";
+        ss << "type TEXT NOT NULL CHECK(type IN ('base', 'auth', 'view')),";
+        ss << "schema TEXT );";
 
         m_db->exec(ss.str());
 
