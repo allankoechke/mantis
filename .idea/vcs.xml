@@ -7,7 +7,7 @@
     <mapping directory="$PROJECT_DIR$/3rdParty/SQLiteCpp/googletest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/build/_deps/catch2-src" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/cmake-build-debug/_deps/catch2-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
   </component>
 </project>

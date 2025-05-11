@@ -14,7 +14,7 @@ namespace Mantis
     // base table types provide `index`, `created`, `updated`
     // auth table type provide `base` type + `email`, `password`, `name`
     // view table type provide readonly `sql`
-    typedef enum TableTypeDecl
+    typedef enum class TableType
     {
         Base = 1,
         Auth,
@@ -29,7 +29,7 @@ namespace Mantis
 
     // Text, Number, Bool, etc.
     // Enum to represent different data types for fields
-    typedef enum class FieldTypeDecl {
+    typedef enum class FieldType {
         Url,
         Text,
         Integer,
@@ -79,7 +79,7 @@ namespace Mantis
         Field() = default;
 
         // Convenience constructor
-        Field(std::string n, const FieldType t, const bool req = false, const bool pk = false, const bool sys = false);
+        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false);
 
         [[nodiscard]] json to_json() const;
         [[nodiscard]] std::string to_sql() const;
@@ -91,6 +91,7 @@ namespace Mantis
         std::string name;
         TableType type;
         std::string schema;
+        bool system;
 
         std::vector<Field> fields;
 
@@ -100,9 +101,8 @@ namespace Mantis
         Rule updateRule;
         Rule deleteRule;
 
-        virtual json to_json() const;
-
-        virtual std::string to_sql() const;
+        [[nodiscard]] virtual json to_json() const;
+        [[nodiscard]] virtual std::string to_sql() const;
     };
 
     // Specific model for Base table (user-defined)
@@ -113,12 +113,17 @@ namespace Mantis
     };
 
     // Specific model for Auth table
-    struct AuthTable : Table {
+    struct AuthTable : Table
+    {
         std::string usernameField = "email";
         std::string passwordField = "password";
         bool enableSync = true;
 
+        // Member Functions
         AuthTable();
+
+        bool AuthWithUsernameAndPassword() { return true; }
+        bool UpdatePassword() { return true; }
     };
 
     // Specific model for View table
@@ -127,6 +132,38 @@ namespace Mantis
         bool enableSync = false;
 
         ViewTable();
+    };
+
+    struct SystemTable : BaseTable {
+        bool enableSync = true;
+
+        void BaseTable()
+        {
+            system = true;
+            type = TableType::Base;
+            fields = {
+                Field("id", FieldType::Text, true, true, true),
+                Field("created", FieldType::DateTime, true, false, true),
+                Field("updated", FieldType::DateTime, true, false, true)
+            };
+        }
+    };
+
+    struct AdminTable : AuthTable {
+        bool enableSync = true;
+
+        void BaseTable()
+        {
+            system = true;
+            type = TableType::Auth;
+            fields = {
+                Field("id", FieldType::Text, true, true, true),
+                Field("email", FieldType::Email, true, false, true),
+                Field("password", FieldType::Password, true, false, true),
+                Field("created", FieldType::DateTime, true, false, true),
+                Field("updated", FieldType::DateTime, true, false, true)
+            };
+        }
     };
 }
 

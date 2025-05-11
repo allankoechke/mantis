@@ -60,6 +60,7 @@ json Mantis::Table::to_json() const
     j["name"] = name;
     j["type"] = type;
     j["schema"] = schema;
+    j["system"] = system;
     j["fields"] = json::array();
 
     for (const auto& f : fields) j["fields"].push_back(f.to_json());

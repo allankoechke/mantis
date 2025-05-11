@@ -64,7 +64,7 @@ namespace Mantis
         [[nodiscard]] std::shared_ptr<AnyOption> CmdParser() const;
 
         // Access the AnyOption CMD Arg Parser
-        [[nodiscard]] std::shared_ptr<Database> Db() const;
+        [[nodiscard]] std::shared_ptr<DatabaseMgr> DbMgr() const;
 
         // Setters
         // Call this before starting the Server, else, will be ignored
@@ -87,10 +87,10 @@ namespace Mantis
         // if it fails, lets terminate the app
         [[nodiscard]] bool EnsureDirsAreCreated() const;
 
-    private:
+        // Private Members
         std::shared_ptr<httplib::Server> m_svr;
         std::shared_ptr<AnyOption> m_opts;
-        std::shared_ptr<Database> m_db;
+        std::shared_ptr<DatabaseMgr> m_dbMgr;
 
         // Server port & host
         int m_port;
@@ -99,9 +99,6 @@ namespace Mantis
         // Directories
         std::string m_publicDir;
         std::string m_dataDir;
-
-        // Database specifics
-        const std::string db_name = "data.db";
     };
 }
 

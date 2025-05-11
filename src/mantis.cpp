@@ -4,13 +4,13 @@
 
 #include <mantis/mantis.h>
 #include <filesystem>
-
+#include <mantis/utils.h>
 
 Mantis::MantisApp::MantisApp()
-    :   m_svr(std::make_shared<httplib::Server>()),
-        m_opts(std::make_shared<AnyOption>()),
-        m_port(7070),
-        m_host("127.0.0.1")
+    : m_svr(std::make_shared<httplib::Server>()),
+      m_opts(std::make_shared<AnyOption>()),
+      m_port(7070),
+      m_host("127.0.0.1")
 {
     // Set initial public directory
     auto dir = DirFromPath("./public");
@@ -21,10 +21,10 @@ Mantis::MantisApp::MantisApp()
     SetDataDir(dir);
 
     // Pass an instance of this ptr into the created Database instance
-    m_db = std::make_shared<Mantis::Database>( *this );
+    m_dbMgr = std::make_shared<Mantis::DatabaseMgr>(*this);
 }
 
-int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
+int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
 {
     m_opts->setVerbose(); /* print warnings about unknown options */
 
@@ -32,11 +32,13 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
     m_opts->addUsage("Usage: ");
     m_opts->addUsage("  mantis [Optional Flags] --serve ");
     m_opts->addUsage("  mantis -p 7070 --publicDir ./www --serve ");
+    m_opts->addUsage("  mantis -p 7070 --db SQLITE --serve ");
     m_opts->addUsage("");
     m_opts->addUsage("");
-    m_opts->addUsage("  -h  --help  		        Prints this help ");
-    m_opts->addUsage("  -p  --port <port>       Server Port (default: 7070)");
-    m_opts->addUsage("  -h  --host <host>       Server Host (default: 0.0.0.0) ");
+    m_opts->addUsage("  -h  --help  		    Prints this help ");
+    m_opts->addUsage("  -p  --port  <port>      Server Port (default: 7070)");
+    m_opts->addUsage("  -h  --host  <host>      Server Host (default: 0.0.0.0) ");
+    m_opts->addUsage("  -d  --db    <db>        Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE) ");
     m_opts->addUsage("  --publicDir   <dir>     Static files directory (default: ./public) ");
     m_opts->addUsage("  --dataDir     <dir>     Data directory (default: ./data) ");
     m_opts->addUsage("  --serve                 Start & Run the HTTP Server ");
@@ -45,6 +47,7 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
     m_opts->setFlag("help", 'h');
     m_opts->setOption("host", 'i');
     m_opts->setOption("port", 'p');
+    m_opts->setOption("db", 'd');
     m_opts->setOption("publicDir");
     m_opts->setOption("dataDir");
     m_opts->setCommandFlag("serve");
@@ -94,10 +97,38 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
         std::cout << "DataDir: " << m_dataDir << std::endl;
     }
 
+    if (m_opts->getValue('d') != nullptr || m_opts->getValue("db") != nullptr)
+    {
+        std::string db = m_opts->getValue("db");
+        ToLowerCase(db);
+
+        if (db == "sqlite")
+        {
+            m_dbMgr->SetDatabaseType(SQLITE);
+        }
+
+        if (db == "mysql")
+        {
+            m_dbMgr->SetDatabaseType(MYSQL);
+        }
+
+        if (db == "psql")
+        {
+            m_dbMgr->SetDatabaseType(PSQL);
+        }
+
+        else
+        {
+            Quit(-1, "Backend Database '" + db + "' is unknown!");
+        }
+
+        std::cout << "Setting Backend Database to [" << db << "]" << std::endl;
+    }
+
     if (m_opts->getFlag("serve"))
     {
         std::cout << "Start the HTTP Server " << std::endl;
-        if (m_db->OpenDatabase())
+        if (m_dbMgr->DbInit())
             return Start();
 
         std::cerr << "Database was not opened" << std::endl;
@@ -106,7 +137,7 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char *argv[])
     }
 
     // Initiate Db if it does not exist, yet!
-    if (!m_db->OpenDatabase())
+    if (!m_dbMgr->DbInit())
         Quit(-1, "Database opening failed!");
 
     std::cout << std::endl;
@@ -121,7 +152,7 @@ int Mantis::MantisApp::Quit(const int& exitCode, const std::string& reason)
     // m_svr->CloseIfOpened();
 
     if (exitCode != 0)
-        std::cerr << "Exiting, [" << exitCode << "] :  "<< reason << std::endl;
+        std::cerr << "Exiting, [" << exitCode << "] :  " << reason << std::endl;
     else
         std::cout << "Application exiting" << std::endl;
 
@@ -133,7 +164,7 @@ int Mantis::MantisApp::Start()
     if (!EnsureDirsAreCreated())
         return -1;
 
-    if (!m_db->EnsureDatabaseSchemaLoaded())
+    if (!m_dbMgr->EnsureDatabaseSchemaLoaded())
         return -1;
 
     std::cout << "Starting listening on " << m_host << ":" << m_port << std::endl;
@@ -217,7 +248,8 @@ fs::path Mantis::MantisApp::ResolvePath(const std::string& input_path)
 {
     fs::path path(input_path);
 
-    if (!path.is_absolute()) {
+    if (!path.is_absolute())
+    {
         // Resolve relative to app binary
         path = fs::absolute(path);
     }
@@ -227,16 +259,22 @@ fs::path Mantis::MantisApp::ResolvePath(const std::string& input_path)
 
 bool Mantis::MantisApp::CreateDirs(const fs::path& path)
 {
-    try {
-        if (!fs::exists(path)) {
+    try
+    {
+        if (!fs::exists(path))
+        {
             fs::create_directories(path); // creates all missing parent directories too
             std::cout << "Created directory: " << path << '\n';
-        } else {
+        }
+        else
+        {
             std::cout << "Directory already exists: " << path << '\n';
         }
 
         return true;
-    } catch (const fs::filesystem_error& e) {
+    }
+    catch (const fs::filesystem_error& e)
+    {
         std::cerr << "Filesystem error: " << e.what() << '\n';
     }
 
