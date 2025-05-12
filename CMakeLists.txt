@@ -3,6 +3,11 @@ project(mantis-ctl)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Set output directories to match SOCI's
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
+set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+
 add_executable(mantis-ctl
         src/main.cpp
         include/mantis/mantis.h src/mantis.cpp
@@ -13,9 +18,12 @@ add_executable(mantis-ctl
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.cpp
+        src/logger.cpp
+        include/mantis/core/logger.h
 )
 
-include(${CMAKE_SOURCE_DIR}/cmake/sqlite3.cmake)
+# include(${CMAKE_SOURCE_DIR}/cmake/sqlite3.cmake)
+
 #
 # src/models.cpp
 
@@ -36,12 +44,13 @@ include(${CMAKE_SOURCE_DIR}/cmake/sqlite3.cmake)
 
 # For configuration help for SOCI,
 # check https://github.com/allankoechke/soci/blob/master/docs/installation.md
-set(SOCI_SHARED OFF CACHE BOOL "Build static soci" )
-set(SOCI_TESTS OFF CACHE BOOL "Disable building soci tests" )
-set(WITH_BOOST OFF CACHE BOOL "Find boost files for soci" )
-set(WITH_BOOST OFF CACHE BOOL "Dont find boost files for soci" )
-set(SOCI_SQLITE3 ON CACHE BOOL "Enable SQLite3 Backend for soci" )
-set(SOCI_SQLITE3_BUILTIN ON CACHE BOOL "Use builtin SQLite library" )
+set(SOCI_SHARED OFF CACHE BOOL "OFF" FORCE )
+set(SOCI_TESTS OFF CACHE BOOL "OFF" FORCE )
+set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
+set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
+set(SOCI_SQLITE3 ON CACHE BOOL "OFF" FORCE )
+set(SOCI_SQLITE3_BUILTIN ON CACHE BOOL "OFF" FORCE )
+set(SOCI_MYSQL OFF CACHE BOOL "" )
 message(STATUS ${SOCI_SQLITE3_BUILTIN})
 add_subdirectory(3rdParty/soci)
 
@@ -52,12 +61,20 @@ add_subdirectory(3rdParty/json)
 set(HTTPLIB_COMPILE OFF CACHE BOOL "")
 add_subdirectory(3rdParty/httplib-cpp)
 
+# Add spdlog
+set(SPDLOG_BUILD_SHARED OFF)
+add_subdirectory(3rdParty/spdlog)
+
+# Link to libs
 target_link_libraries(mantis-ctl
     PRIVATE
         httplib::httplib
         nlohmann_json::nlohmann_json
-        SOCI::soci
-        sqlite3
+        soci_core
+        soci_sqlite3
+        soci_empty
+        soci_odbc
+        spdlog::spdlog
 )
 
 # Include directories
@@ -69,6 +86,7 @@ target_include_directories(mantis-ctl
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/soci/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/json/single_include
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
 )
 
 #if(CMAKE_BUILD_TYPE STREQUAL "Debug")

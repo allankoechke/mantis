@@ -1,9 +1,11 @@
 #ifndef _ANYOPTION_H
 #define _ANYOPTION_H
 
+#ifndef _CRT_SECURE_NO_WARNINGS
 #define _CRT_SECURE_NO_WARNINGS /* Microsoft C/C++ Compiler: Disable C4996     \
                                    warnings for security-enhanced CRT          \
                                    functions */
+#endif
 
 #include <cstring>
 #include <fstream>

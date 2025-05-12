@@ -5,7 +5,7 @@ get_filename_component(SQLITE3_ROOT "${CMAKE_CURRENT_LIST_FILE}" PATH)
 set(SQLITE3_DIR "${SQLITE3_ROOT}/../3rdParty/soci/3rdParty/sqlite3")
 
 # Define the sqlite3 static library
-add_library(sqlite3 STATIC
+add_library(sqlite3
         "${SQLITE3_DIR}/sqlite3.c"
 )
 

@@ -9,9 +9,11 @@
 #include <mantis/utils.h>
 #include <soci/sqlite3/soci-sqlite3.h>
 
+#include "../3rdParty/soci/src/backends/sqlite3/common.h"
+
 Mantis::DatabaseMgr::DatabaseMgr(const MantisApp& app)
     : m_app(make_shared<MantisApp>(app)),
-    m_poolSize(1),
+    m_poolSize(2),
     m_databaseType(SQLITE) {}
 
 bool Mantis::DatabaseMgr::DbInit()
@@ -43,36 +45,50 @@ bool Mantis::DatabaseMgr::DbInit(const DatabaseType& dbType, const std::string& 
         // Create connection pool instance
         m_dbPool = std::make_unique<soci::connection_pool>(m_poolSize);
 
-        std::string conn_str = connectionString;
-
-        // For SQLite
-        // Create connection to a local database file in our chosen
-        // directory within the `dataDir`.
-
-        // For other DB types
-        // Connect to the database URL, no checks here,
-        // make your damn checks to ensure the URL is VALID!
-        // TODO maybe add checks?
-        if (dbType == SQLITE)
-        {
-            conn_str = "sqlite3://db=" + Mantis::JoinPaths(m_app->DataDir(), "/vault.db").string() +
-                " timeout=30 synchronous=FULL shared_cache=true";
-        }
-
         // Populate the pools with db connections
         for (std::size_t i = 0; i < m_poolSize; ++i)
         {
-            soci::session& sql = m_dbPool->at(i);
-            sql.open(conn_str);
+            switch(dbType)
+            {
+            case SQLITE:
+                {
+                    // For SQLite, lets explicitly define location and name of the database
+                    // we intend to use within the `dataDir`
+                    auto conn_str = "db=" + JoinPaths(m_app->DataDir(), "vault.db").string();
+                    soci::session& sql = m_dbPool->at(i);
+                    sql.open(soci::sqlite3, conn_str);
+                    break;
+                }
+
+                // For other DB types
+                // Connect to the database URL, no checks here,
+                // make your damn checks to ensure the URL is VALID!
+                // TODO maybe add checks?
+
+            default:
+                Logger::Warn("Database Connection for '{}' Not Implemented Yet!", connectionString);
+            }
         }
 
         return true;
     }
 
+    catch (const soci::soci_error& e)
+    {
+        Logger::Critical("Database Connection SOCI::Error: {}", e.what());
+    }
+
+    catch (const std::exception& e)
+    {
+        Logger::Critical("Database Connection std::exception: {}", e.what());
+    }
+
     catch (...)
     {
-        return false;
+        Logger::Critical("Database Connection Failed: Unknown Error");
     }
+
+    return false;
 }
 
 std::shared_ptr<soci::session> Mantis::DatabaseMgr::DbSession() const
@@ -116,7 +132,7 @@ bool Mantis::DatabaseMgr::CreateSystemTables() const
 
         AdminTable admin;
         admin.name = "_admin_";
-        std::cout << "ADMIN SQL: " << admin.to_sql() << std::endl;
+        Logger::Debug("Generated Admin Table SQL: '{}'", admin.to_sql());
         *db << admin.to_sql();
 
 
@@ -147,7 +163,7 @@ bool Mantis::DatabaseMgr::CreateSystemTables() const
     }
     catch (std::exception& e)
     {
-        std::cout << "exception: " << e.what() << std::endl;
+        Logger::Critical("Create System Tables Failed: {}", e.what());
     }
 
     return false;

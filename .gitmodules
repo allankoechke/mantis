@@ -7,3 +7,6 @@
 [submodule "3rdParty/soci"]
 	path = 3rdParty/soci
 	url = git@github.com:allankoechke/soci.git
+[submodule "3rdParty/spdlog"]
+	path = 3rdParty/spdlog
+	url = https://github.com/gabime/spdlog.git

@@ -3,11 +3,10 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/AnyOption" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/SQLiteCpp" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/SQLiteCpp/googletest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/spdlog" vcs="Git" />
   </component>
 </project>

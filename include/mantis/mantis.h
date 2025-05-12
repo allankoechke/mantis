@@ -5,11 +5,12 @@
 #ifndef MANTIS_H
 #define MANTIS_H
 
-#include <httplib.h>
 #include <string>
-#include <anyoption.h>
 #include <filesystem>
+#include <httplib.h>
+#include <anyoption.h>
 
+#include "mantis/core/logger.h"
 #include "mantis/core/database.h"
 #include "mantis/api/server.hpp"
 
@@ -31,7 +32,7 @@ namespace Mantis
     {
     public:
         MantisApp();
-        ~MantisApp() = default;
+        ~MantisApp();
 
         int ProcessCMD(int argc, char *argv[]);
 
@@ -63,7 +64,7 @@ namespace Mantis
         // Access the AnyOption CMD Arg Parser
         [[nodiscard]] std::shared_ptr<AnyOption> CmdParser() const;
 
-        // Access the AnyOption CMD Arg Parser
+        // Access the Database Manager
         [[nodiscard]] std::shared_ptr<DatabaseMgr> DbMgr() const;
 
         // Setters
@@ -91,6 +92,7 @@ namespace Mantis
         std::shared_ptr<httplib::Server> m_svr;
         std::shared_ptr<AnyOption> m_opts;
         std::shared_ptr<DatabaseMgr> m_dbMgr;
+        std::shared_ptr<Mantis::Logger> m_logger;
 
         // Server port & host
         int m_port;

@@ -12,6 +12,9 @@ Mantis::MantisApp::MantisApp()
       m_port(7070),
       m_host("127.0.0.1")
 {
+    // Enable Multi Sinks
+    Logger::Config();
+
     // Set initial public directory
     auto dir = DirFromPath("./public");
     SetPublicDir(dir);
@@ -22,6 +25,11 @@ Mantis::MantisApp::MantisApp()
 
     // Pass an instance of this ptr into the created Database instance
     m_dbMgr = std::make_shared<Mantis::DatabaseMgr>(*this);
+}
+
+Mantis::MantisApp::~MantisApp()
+{
+    Logger::Shutdown();
 }
 
 int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
@@ -42,6 +50,7 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
     m_opts->addUsage("  --publicDir   <dir>     Static files directory (default: ./public) ");
     m_opts->addUsage("  --dataDir     <dir>     Data directory (default: ./data) ");
     m_opts->addUsage("  --serve                 Start & Run the HTTP Server ");
+    m_opts->addUsage("  --dev                   Print developer logs & SQL Statements ");
     m_opts->addUsage("");
 
     m_opts->setFlag("help", 'h');
@@ -51,9 +60,17 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
     m_opts->setOption("publicDir");
     m_opts->setOption("dataDir");
     m_opts->setCommandFlag("serve");
+    m_opts->setCommandFlag("dev");
 
     /* go through the command line and get the options  */
     m_opts->processCommandArgs(argc, argv);
+
+    if (m_opts->getFlag("dev"))
+    {
+        // Print developer messages ...
+        // Set it to debug for now
+        Logger::SetLogLevel(LogLevel::DEBUG);
+    }
 
     if (!m_opts->hasOptions())
     {
@@ -71,14 +88,14 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
     {
         const auto host = m_opts->getValue("host");
         m_host = host;
-        std::cout << "Setting Server Host to [" << host << "]" << std::endl;
+        Logger::Debug("Setting Server Host to [{}]", host);
     }
 
     if (m_opts->getValue('p') != nullptr || m_opts->getValue("port") != nullptr)
     {
         const auto port = std::atoi(m_opts->getValue("port"));
         m_port = port;
-        std::cout << "Setting Server Port to [" << port << "]" << std::endl;
+        Logger::Debug("Setting Server Port to [{}]", port);
     }
 
     if (m_opts->getValue("publicDir") != nullptr)
@@ -86,7 +103,6 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
         const auto pth = m_opts->getValue("publicDir");
         const auto dir = DirFromPath(pth);
         SetPublicDir(dir);
-        std::cout << "PublicDir: " << m_publicDir << std::endl;
     }
 
     if (m_opts->getValue("dataDir") != nullptr)
@@ -94,7 +110,6 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
         const auto pth = m_opts->getValue("dataDir");
         const auto dir = DirFromPath(pth);
         SetDataDir(dir);
-        std::cout << "DataDir: " << m_dataDir << std::endl;
     }
 
     if (m_opts->getValue('d') != nullptr || m_opts->getValue("db") != nullptr)
@@ -122,16 +137,15 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
             Quit(-1, "Backend Database '" + db + "' is unknown!");
         }
 
-        std::cout << "Setting Backend Database to [" << db << "]" << std::endl;
+        Logger::Debug("Setting Backend Database to [{}]", db);
     }
 
     if (m_opts->getFlag("serve"))
     {
-        std::cout << "Start the HTTP Server " << std::endl;
         if (m_dbMgr->DbInit())
             return Start();
 
-        std::cerr << "Database was not opened" << std::endl;
+        Logger::Critical("Database was not opened");
         Quit(-1, "Database opening failed!");
         return 1;
     }
@@ -141,7 +155,6 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
         Quit(-1, "Database opening failed!");
 
     std::cout << std::endl;
-
     return 0;
 }
 
@@ -152,9 +165,9 @@ int Mantis::MantisApp::Quit(const int& exitCode, const std::string& reason)
     // m_svr->CloseIfOpened();
 
     if (exitCode != 0)
-        std::cerr << "Exiting, [" << exitCode << "] :  " << reason << std::endl;
+        Logger::Critical("Exiting Application with Code = {}", exitCode);
     else
-        std::cout << "Application exiting" << std::endl;
+        Logger::Info("Application exiting normally!");
 
     std::exit(exitCode);
 }
@@ -167,7 +180,7 @@ int Mantis::MantisApp::Start()
     if (!m_dbMgr->EnsureDatabaseSchemaLoaded())
         return -1;
 
-    std::cout << "Starting listening on " << m_host << ":" << m_port << std::endl;
+    Logger::Info("Starting listening on {}:{}", m_host, m_port);
     return m_svr->listen(m_host, m_port);
 }
 
@@ -175,7 +188,7 @@ int Mantis::MantisApp::Start(const std::string& host, const int& port)
 {
     if (port < 0 || port > 65535)
     {
-        std::cerr << "Invalid port number: " << port << std::endl;
+        Logger::Critical("Invalid port number [{}]!", port);
         return false;
     }
 
@@ -201,6 +214,11 @@ std::shared_ptr<httplib::Server> Mantis::MantisApp::Server() const
 std::shared_ptr<AnyOption> Mantis::MantisApp::CmdParser() const
 {
     return m_opts;
+}
+
+std::shared_ptr<Mantis::DatabaseMgr> Mantis::MantisApp::DbMgr() const
+{
+    return m_dbMgr;
 }
 
 void Mantis::MantisApp::SetPort(const int& port)
@@ -264,18 +282,19 @@ bool Mantis::MantisApp::CreateDirs(const fs::path& path)
         if (!fs::exists(path))
         {
             fs::create_directories(path); // creates all missing parent directories too
-            std::cout << "Created directory: " << path << '\n';
+            // std::cout << "Created directory: " << path << '\n';
         }
         else
         {
-            std::cout << "Directory already exists: " << path << '\n';
+            // std::cout << "Directory already exists: " << path << '\n';
         }
 
         return true;
     }
     catch (const fs::filesystem_error& e)
     {
-        std::cerr << "Filesystem error: " << e.what() << '\n';
+        Logger::Critical("Filesystem error while creating directory '{}', reason: {}",
+            path.string(), e.what());
     }
 
     return false;

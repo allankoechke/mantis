@@ -4,6 +4,8 @@
 #include <memory>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
+#include <mantis/core/logger.h>
+
 using json = nlohmann::json;
 
 namespace Mantis
