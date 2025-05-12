@@ -12,7 +12,7 @@
 
 #include "mantis/core/logger.h"
 #include "mantis/core/database.h"
-#include "mantis/api/server.hpp"
+#include "mantis/api/servermgr.h"
 
 /*
 private members

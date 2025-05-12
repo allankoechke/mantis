@@ -132,29 +132,15 @@ bool Mantis::DatabaseMgr::CreateSystemTables() const
 
         AdminTable admin;
         admin.name = "_admin_";
-        Logger::Debug("Generated Admin Table SQL: '{}'", admin.to_sql());
         *db << admin.to_sql();
+        Logger::Debug("Generated Admin Table SQL: '{}'", admin.to_sql());
 
-
-        return true;
-
-        // '__admin' table
-        stringstream ss;
-        ss << "CREATE TABLE IF NOT EXISTS __admin";
-        ss << " (id TEXT PRIMARY KEY, email TEXT, password TEXT,";
-        ss << " created TEXT, updated TEXT); ";
-
-        *db << ss.str();
-
-        // '__tables' table
-        ss.clear();
-        ss << "CREATE TABLE IF NOT EXISTS __tables (";
-        ss << " id TEXT PRIMARY KEY,";
-        ss << " name TEXT NOT NULL,";
-        ss << " type TEXT NOT NULL CHECK(type IN ('base', 'auth', 'view')),";
-        ss << " schema TEXT NOT NULL );";
-
-        *db << ss.str();
+        SystemTable tables;
+        tables.name = "_tables_";
+        tables.fields.push_back(Field("schema", FieldType::Text, true, false, true));
+        tables.fields.push_back(Field("has_api", FieldType::Boolean, true, false, true));
+        *db << tables.to_sql();
+        Logger::Debug("Generated Sys Tables SQL: '{}'", tables.to_sql());
 
         // Commit transaction
         tr.commit();

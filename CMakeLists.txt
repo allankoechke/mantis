@@ -13,37 +13,19 @@ add_executable(mantis-ctl
         include/mantis/mantis.h src/mantis.cpp
         include/mantis/core/database.h src/database.cpp
         include/mantis/core/models.h src/models.cpp
-        include/mantis/utils.h
+        include/mantis/utils.h include/mantis/core/logger.h
+        include/mantis/api/api-utils.hpp src/logger.cpp
+        include/mantis/api/servermgr.h src/servermgr.cpp
+        include/mantis/api/httpserver.h. src/httpserver.cpp
 
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.cpp
-        src/logger.cpp
-        include/mantis/core/logger.h
 )
-
-# include(${CMAKE_SOURCE_DIR}/cmake/sqlite3.cmake)
-
-#
-# src/models.cpp
-
-#include(${CMAKE_SOURCE_DIR}/cmake/CPM.cmake)
-#option(mantis-ctl_ENABLE_TESTS "enable testing" OFF)
-
-#include(CTest)
-#enable_testing()
-
-#CPMAddPackage(Catch2
-#  VERSION 3.7.0
-#  GITHUB_REPOSITORY catchorg/Catch2
-#  OPTIONS
-#  "CATCH_INSTALL_DOCS Off"
-#  "CATCH_INSTALL_EXTRAS Off"
-#  "CATCH_ENABLE_REPRODUCIBLE_BUILD Off"
-#)
 
 # For configuration help for SOCI,
 # check https://github.com/allankoechke/soci/blob/master/docs/installation.md
+# For now, disable all backends except SQLite
 set(SOCI_SHARED OFF CACHE BOOL "OFF" FORCE )
 set(SOCI_TESTS OFF CACHE BOOL "OFF" FORCE )
 set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
@@ -51,6 +33,12 @@ set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
 set(SOCI_SQLITE3 ON CACHE BOOL "OFF" FORCE )
 set(SOCI_SQLITE3_BUILTIN ON CACHE BOOL "OFF" FORCE )
 set(SOCI_MYSQL OFF CACHE BOOL "" )
+set(SOCI_POSTGRESQL OFF CACHE BOOL "" )
+set(SOCI_ORACLE OFF CACHE BOOL "" )
+set(SOCI_ODBC OFF CACHE BOOL "" )
+set(SOCI_DB2 OFF CACHE BOOL "" )
+set(SOCI_FIREBIRD OFF CACHE BOOL "" )
+set(SOCI_EMPTY OFF CACHE BOOL "" )
 message(STATUS ${SOCI_SQLITE3_BUILTIN})
 add_subdirectory(3rdParty/soci)
 
