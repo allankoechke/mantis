@@ -5,11 +5,10 @@
 #ifndef MANTIS_LOGGER_H
 #define MANTIS_LOGGER_H
 
-#include <cstdarg>
+#include <nlohmann/json.hpp>
 #include <spdlog/spdlog.h>
-#include <spdlog/cfg/env.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/sinks/basic_file_sink.h>
+using json = nlohmann::json;
 
 namespace Mantis
 {

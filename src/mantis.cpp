@@ -178,7 +178,9 @@ int Mantis::MantisApp::Start()
     if (!m_dbMgr->EnsureDatabaseSchemaLoaded())
         return -1;
 
-    Logger::Info("Starting listening on {}:{}", m_svrMgr->Host(), m_svrMgr->Port());
+    if (!m_svrMgr->GenerateCrudApis())
+        return -1;
+
     return m_svrMgr->StartListening();
 }
 

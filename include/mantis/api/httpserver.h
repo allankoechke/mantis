@@ -11,6 +11,11 @@
 #include <functional>
 #include <string>
 #include <vector>
+#include <nlohmann/json.hpp>
+
+#include "mantis/core/logger.h"
+
+using json = nlohmann::json;
 
 namespace Mantis
 {
@@ -19,6 +24,8 @@ namespace Mantis
         std::unordered_map<std::string, std::any> data;
 
     public:
+        void Dump();
+
         template <typename T>
         void Set(const std::string& key, T value)
         {
@@ -38,6 +45,17 @@ namespace Mantis
     using Response = httplib::Response;
     using Middleware = std::function<bool(const Request&, Response&, Context&)>;
     using RouteHandlerFunc = std::function<void(const Request&, Response&, Context&)>;
+    using Method = std::string;
+    using Path = std::string;
+    using RouteKey = std::pair<Method, Path>;
+
+    struct RouteKeyHash
+    {
+        size_t operator()(const RouteKey& k) const
+        {
+            return std::hash<std::string>()(k.first + "#" + k.second);
+        }
+    };
 
     struct RouteHandler
     {
@@ -47,19 +65,22 @@ namespace Mantis
 
     class RouteRegistry
     {
-        std::unordered_map<std::string, RouteHandler> routes;
+        std::unordered_map<RouteKey, RouteHandler, RouteKeyHash> routes;
 
     public:
-        void Register(const std::string& path,
+        void Register(const std::string& method,
+                      const std::string& path,
                       RouteHandlerFunc handler,
                       const std::vector<Middleware>& middlewares);
 
-        const RouteHandler* Find(const std::string& path) const;
+        const RouteHandler* Find(const std::string& method, const std::string& path) const;
     };
 
     class HttpServer
     {
     public:
+        HttpServer();
+
         void Get(const std::string& path,
                  RouteHandlerFunc handler,
                  std::initializer_list<Middleware> middlewares = {});
@@ -76,7 +97,8 @@ namespace Mantis
                     RouteHandlerFunc handler,
                     std::initializer_list<Middleware> middlewares = {});
 
-        void Listen(const std::string& host, const int& port);
+        bool Listen(const std::string& host, const int& port);
+        void Stop();
 
         static Context& Ctx();
 
@@ -84,15 +106,11 @@ namespace Mantis
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
         using MethodBinder = std::function<void(const std::string&, httplib::Server::Handler)>;
 
-        void Add(Method method,
-                 const std::string& path,
-                 RouteHandlerFunc handler,
-                 std::initializer_list<Middleware> middlewares);
-
         void AddRoute(MethodBinder bind_method,
-                   const std::string& path,
-                   RouteHandlerFunc handler,
-                   std::initializer_list<Middleware> middlewares);
+                      const std::string& method,
+                      const std::string& path,
+                      RouteHandlerFunc handler,
+                      std::initializer_list<Middleware> middlewares);
 
 
         httplib::Server server;

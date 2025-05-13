@@ -10,13 +10,15 @@ set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_executable(mantis-ctl
         src/main.cpp
-        include/mantis/mantis.h src/mantis.cpp
-        include/mantis/core/database.h src/database.cpp
-        include/mantis/core/models.h src/models.cpp
-        include/mantis/utils.h include/mantis/core/logger.h
-        include/mantis/api/api-utils.hpp src/logger.cpp
-        include/mantis/api/servermgr.h src/servermgr.cpp
-        include/mantis/api/httpserver.h. src/httpserver.cpp
+        src/mantis.cpp include/mantis/mantis.h
+        src/database.cpp include/mantis/core/database.h
+        src/models.cpp include/mantis/core/models.h
+        include/mantis/utils.h include/mantis/api/api-utils.hpp
+        src/logger.cpp include/mantis/core/logger.h
+        src/servermgr.cpp include/mantis/api/servermgr.h
+        src/httpserver.cpp include/mantis/api/httpserver.h
+        src/adminmgr.cpp include/mantis/api/adminmgr.h
+        src/tablemgr.cpp include/mantis/api/tablemgr.h
 
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
@@ -39,7 +41,6 @@ set(SOCI_ODBC OFF CACHE BOOL "" )
 set(SOCI_DB2 OFF CACHE BOOL "" )
 set(SOCI_FIREBIRD OFF CACHE BOOL "" )
 set(SOCI_EMPTY OFF CACHE BOOL "" )
-message(STATUS ${SOCI_SQLITE3_BUILTIN})
 add_subdirectory(3rdParty/soci)
 
 set(JSON_Install OFF CACHE INTERNAL "")
@@ -60,8 +61,8 @@ target_link_libraries(mantis-ctl
         nlohmann_json::nlohmann_json
         soci_core
         soci_sqlite3
-        soci_empty
-        soci_odbc
+#        soci_empty
+#        soci_odbc
         spdlog::spdlog
 )
 

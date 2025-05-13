@@ -56,8 +56,8 @@ namespace Mantis
     // Access Rule Struct
     typedef struct RuleDecl
     {
-        std::string expression;
-        bool enabled;
+        std::string expression = "";
+        bool enabled = false;
 
         json to_json() const;
     } Rule;

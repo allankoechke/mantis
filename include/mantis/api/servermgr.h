@@ -17,8 +17,8 @@ namespace Mantis
 
         bool GenerateCrudApis();
 
-        bool StartListening();
-        bool StopListening();
+        bool StartListening() const;
+        bool StopListening() const;
 
         std::string Host() const;
         void SetHost(const std::string& host);
@@ -27,6 +27,12 @@ namespace Mantis
         void SetPort(const int& port);
 
     private:
+        bool GenerateTableCrudApis();
+        bool GenerateAdminCrudApis();
+        bool AttachUserRoutes();
+
+        // ---
+        // Member Variables Section
         std::shared_ptr<MantisApp> m_app;
         std::shared_ptr<HttpServer> m_httpServer;
 
