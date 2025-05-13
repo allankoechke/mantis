@@ -7,22 +7,11 @@
 
 #include <string>
 #include <filesystem>
-#include <httplib.h>
 #include <anyoption.h>
 
 #include "mantis/core/logger.h"
 #include "mantis/core/database.h"
 #include "mantis/api/servermgr.h"
-
-/*
-private members
-    - port
-    - ip
-Router & Middleware
-Database
-
-*/
-
 
 namespace fs = std::filesystem;
 
@@ -55,22 +44,19 @@ namespace Mantis
         int Start(const std::string& host , const int& port);
         int Stop() const;
 
-        // GETTERS
-        // --------------------- //
-
         // Access the server object
-        [[nodiscard]] std::shared_ptr<httplib::Server> Server() const;
+        [[nodiscard]] std::shared_ptr<ServerMgr> GetSvrMgr() const;
 
         // Access the AnyOption CMD Arg Parser
-        [[nodiscard]] std::shared_ptr<AnyOption> CmdParser() const;
+        [[nodiscard]] std::shared_ptr<AnyOption> GetCmdParser() const;
 
         // Access the Database Manager
-        [[nodiscard]] std::shared_ptr<DatabaseMgr> DbMgr() const;
+        [[nodiscard]] std::shared_ptr<DatabaseMgr> GetDbMgr() const;
 
         // Setters
         // Call this before starting the Server, else, will be ignored
-        void SetPort(const int& port);
-        void SetHost(const std::string& host);
+        void SetPort(const int& port) const;
+        void SetHost(const std::string& host) const;
 
         void SetPublicDir(const std::string& dir);
         std::string PublicDir() const;
@@ -89,18 +75,13 @@ namespace Mantis
         [[nodiscard]] bool EnsureDirsAreCreated() const;
 
         // Private Members
-        std::shared_ptr<httplib::Server> m_svr;
-        std::shared_ptr<AnyOption> m_opts;
-        std::shared_ptr<DatabaseMgr> m_dbMgr;
-        std::shared_ptr<Mantis::Logger> m_logger;
-
-        // Server port & host
-        int m_port;
-        std::string m_host;
+        std::shared_ptr<AnyOption>      m_opts;
+        std::shared_ptr<DatabaseMgr>    m_dbMgr;
+        std::shared_ptr<ServerMgr>      m_svrMgr;
 
         // Directories
-        std::string m_publicDir;
-        std::string m_dataDir;
+        std::string     m_publicDir;
+        std::string     m_dataDir;
     };
 }
 

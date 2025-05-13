@@ -3,23 +3,38 @@
 
 #include <string>
 #include <memory>
+#include "httpserver.h"
 
-namespace Mantis {
+namespace Mantis
+{
+    class MantisApp;
 
-class MantisApp;
+    class ServerMgr
+    {
+    public:
+        explicit ServerMgr(const MantisApp& app);
+        ~ServerMgr() = default;
 
-class ServerMgr {
-  public:
-    explicit ServerMgr(const MantisApp& app);
-    ~ServerMgr() = default;
+        bool GenerateCrudApis();
 
-    bool GenerateCrudApis();
+        bool StartListening();
+        bool StopListening();
 
-private:
-      std::shared_ptr<MantisApp> m_app;
+        std::string Host() const;
+        void SetHost(const std::string& host);
 
-    /// Rules & Schema Cache
-};
+        int Port() const;
+        void SetPort(const int& port);
+
+    private:
+        std::shared_ptr<MantisApp> m_app;
+        std::shared_ptr<HttpServer> m_httpServer;
+
+        int m_port = 7070;
+        std::string m_host = "127.0.0.1";
+
+        /// Rules & Schema Cache
+    };
 }
 
 #endif // MANTIS_SERVER_H

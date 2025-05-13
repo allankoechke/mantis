@@ -7,10 +7,7 @@
 #include <mantis/utils.h>
 
 Mantis::MantisApp::MantisApp()
-    : m_svr(std::make_shared<httplib::Server>()),
-      m_opts(std::make_shared<AnyOption>()),
-      m_port(7070),
-      m_host("127.0.0.1")
+    : m_opts(std::make_shared<AnyOption>())
 {
     // Enable Multi Sinks
     Logger::Config();
@@ -24,7 +21,8 @@ Mantis::MantisApp::MantisApp()
     SetDataDir(dir);
 
     // Pass an instance of this ptr into the created Database instance
-    m_dbMgr = std::make_shared<Mantis::DatabaseMgr>(*this);
+    m_dbMgr = std::make_shared<DatabaseMgr>(*this);
+    m_svrMgr = std::make_shared<ServerMgr>(*this);
 }
 
 Mantis::MantisApp::~MantisApp()
@@ -87,14 +85,14 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
     if (m_opts->getValue('h') != nullptr || m_opts->getValue("host") != nullptr)
     {
         const auto host = m_opts->getValue("host");
-        m_host = host;
+        SetHost(host);
         Logger::Debug("Setting Server Host to [{}]", host);
     }
 
     if (m_opts->getValue('p') != nullptr || m_opts->getValue("port") != nullptr)
     {
         const auto port = std::atoi(m_opts->getValue("port"));
-        m_port = port;
+        SetPort(port);
         Logger::Debug("Setting Server Port to [{}]", port);
     }
 
@@ -180,8 +178,8 @@ int Mantis::MantisApp::Start()
     if (!m_dbMgr->EnsureDatabaseSchemaLoaded())
         return -1;
 
-    Logger::Info("Starting listening on {}:{}", m_host, m_port);
-    return m_svr->listen(m_host, m_port);
+    Logger::Info("Starting listening on {}:{}", m_svrMgr->Host(), m_svrMgr->Port());
+    return m_svrMgr->StartListening();
 }
 
 int Mantis::MantisApp::Start(const std::string& host, const int& port)
@@ -192,49 +190,46 @@ int Mantis::MantisApp::Start(const std::string& host, const int& port)
         return false;
     }
 
-    m_port = port;
-    m_host = host;
+    SetPort(port);
+    SetHost(host);
 
     return Start();
 }
 
 int Mantis::MantisApp::Stop() const
 {
-    if (m_svr->is_running())
-        m_svr->stop();
-
-    return 0;
+    return m_svrMgr->StopListening();
 }
 
-std::shared_ptr<httplib::Server> Mantis::MantisApp::Server() const
+std::shared_ptr<Mantis::ServerMgr> Mantis::MantisApp::GetSvrMgr() const
 {
-    return m_svr;
+    return m_svrMgr;
 }
 
-std::shared_ptr<AnyOption> Mantis::MantisApp::CmdParser() const
+std::shared_ptr<AnyOption> Mantis::MantisApp::GetCmdParser() const
 {
     return m_opts;
 }
 
-std::shared_ptr<Mantis::DatabaseMgr> Mantis::MantisApp::DbMgr() const
+std::shared_ptr<Mantis::DatabaseMgr> Mantis::MantisApp::GetDbMgr() const
 {
     return m_dbMgr;
 }
 
-void Mantis::MantisApp::SetPort(const int& port)
+void Mantis::MantisApp::SetPort(const int& port) const
 {
     if (port < 0 || port > 65535)
         return;
 
-    m_port = port;
+    m_svrMgr->SetPort(port);
 }
 
-void Mantis::MantisApp::SetHost(const std::string& host)
+void Mantis::MantisApp::SetHost(const std::string& host) const
 {
     if (host.empty())
         return;
 
-    m_host = host;
+    m_svrMgr->SetHost(host);
 }
 
 void Mantis::MantisApp::SetPublicDir(const std::string& dir)

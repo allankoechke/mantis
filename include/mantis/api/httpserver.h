@@ -34,8 +34,10 @@ namespace Mantis
         }
     };
 
-    using Middleware = std::function<bool(const httplib::Request&, httplib::Response&, Context&)>;
-    using RouteHandlerFunc = std::function<void(const httplib::Request&, httplib::Response&, Context&)>;
+    using Request = httplib::Request;
+    using Response = httplib::Response;
+    using Middleware = std::function<bool(const Request&, Response&, Context&)>;
+    using RouteHandlerFunc = std::function<void(const Request&, Response&, Context&)>;
 
     struct RouteHandler
     {
@@ -79,12 +81,18 @@ namespace Mantis
         static Context& Ctx();
 
     private:
-        using Method = void (httplib::Server::*)(const std::string&, httplib::Server::Handler);
+        using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
+        using MethodBinder = std::function<void(const std::string&, httplib::Server::Handler)>;
 
         void Add(Method method,
                  const std::string& path,
                  RouteHandlerFunc handler,
                  std::initializer_list<Middleware> middlewares);
+
+        void AddRoute(MethodBinder bind_method,
+                   const std::string& path,
+                   RouteHandlerFunc handler,
+                   std::initializer_list<Middleware> middlewares);
 
 
         httplib::Server server;
