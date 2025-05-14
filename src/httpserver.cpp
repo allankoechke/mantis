@@ -47,6 +47,11 @@ void Mantis::Context::Dump()
     }
 }
 
+size_t Mantis::RouteKeyHash::operator()(const RouteKey& k) const
+{
+    return std::hash<std::string>()(k.first + "#" + k.second);
+}
+
 void Mantis::RouteRegistry::Register(const std::string& method,
                                      const std::string& path,
                                      RouteHandlerFunc handler,
@@ -63,26 +68,39 @@ const Mantis::RouteHandler* Mantis::RouteRegistry::Find(const std::string& metho
 
 Mantis::HttpServer::HttpServer()
 {
+    // Lets fix timing initialization, set the start time to current time
+    server.set_pre_routing_handler([](const httplib::Request& req, httplib::Response& res)
+    {
+        auto& mutable_req = const_cast<httplib::Request&>(req);
+        mutable_req.start_time_ = std::chrono::steady_clock::now(); // Set the start time
+        return httplib::Server::HandlerResponse::Unhandled;
+    });
+
     // Set Global Logger
     server.set_logger([](const Request& req, const Response& res)
     {
-        const auto start = req.start_time_;
-        const auto end = std::chrono::steady_clock::now();
-        const auto duration = std::chrono::duration_cast<std::chrono::milliseconds>(end - start);
-
-        // std::cout << "ELAPSED: " << duration << "\t" << duration.count() << std::endl;
-
         // Calculate execution time (if start_time was set)
-        auto end_time = std::chrono::steady_clock::now();
-        auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
+        const auto end_time = std::chrono::steady_clock::now();
+        const auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             end_time - req.start_time_).count();
 
-        // Log the request details
-        // std::cout << req.method << " " << req.path << " - Status: " << res.status
-        //     << " - Time: " << duration_ms << "ms" << std::endl;
-
-        Logger::Info("{} {} {}  - Status: {}  - Time: {}ms", req.version, req.method, req.path, res.status,
+        Logger::Info("{} {:<7} {}  - Status: {}  - Time: {}ms", req.version, req.method, req.path, res.status,
                      duration_ms);
+    });
+
+    // Set Error Handler
+    server.set_error_handler([]([[maybe_unused]] const Request& req, Response& res)
+    {
+        if (res.status == 404)
+        {
+            json response;
+            response["status"] = 404;
+            response["message"] = "Not Found";
+            response["data"] = json{};
+
+            res.status = 404;
+            res.set_content(response.dump(), "application/json");
+        }
     });
 }
 
@@ -148,7 +166,6 @@ void Mantis::HttpServer::AddRoute(
     RouteHandlerFunc handler,
     std::initializer_list<Middleware> middlewares)
 {
-    std::cout << method << " \t'" << path << "'" << std::endl;
     registry.Register(method, path, handler, {middlewares});
     bind_method(path, [this, method, path](const httplib::Request& req, httplib::Response& res)
     {

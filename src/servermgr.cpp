@@ -1,13 +1,15 @@
 #include <mantis/api/servermgr.h>
 #include <mantis/mantis.h>
 
+#include "mantis/api/tablemgr.h"
+
 Mantis::ServerMgr::ServerMgr(const MantisApp& app)
     : m_app(make_shared<MantisApp>(app)),
       m_httpServer(std::make_shared<HttpServer>())
 {
 }
 
-bool Mantis::ServerMgr::GenerateCrudApis()
+bool Mantis::ServerMgr::GenerateCrudApis() const
 {
     if (!GenerateTableCrudApis())
         return false;
@@ -69,22 +71,44 @@ void Mantis::ServerMgr::SetPort(const int& port)
     m_port = port;
 }
 
-bool Mantis::ServerMgr::GenerateTableCrudApis()
+std::shared_ptr<Mantis::HttpServer> Mantis::ServerMgr::GetHttpServer() const
+{
+    return m_httpServer;
+}
+
+bool Mantis::ServerMgr::GenerateTableCrudApis() const
 {
     Logger::Debug("Mantis::ServerMgr::GenerateTableCrudApis");
+
+    // Query Database For Data
+    std::vector<std::string> tables = {"students", "teachers", "classes", "permissions"};
+    for (const auto& table : tables)
+    {
+        Logger::Debug("Table '{}'", table);
+        // For each, create table object
+
+        if (TableMgr tbMgr{ *this, table, table, "base"}; !tbMgr.SetupRoutes())
+            return false;
+    }
 
     return true;
 }
 
-bool Mantis::ServerMgr::GenerateAdminCrudApis()
+bool Mantis::ServerMgr::GenerateAdminCrudApis() const
 {
     Logger::Debug("Mantis::ServerMgr::GenerateAdminCrudApis");
 
     try
     {
-        m_httpServer->Get("/m-admin", [=](const Request& req, Response& res, Context ctx)
+        TableMgr tbMgr{ *this, "__admin", "admin", "auth"};
+        tbMgr.SetRouteDisplayName("admin");
+        if ( !tbMgr.SetupRoutes())
+            return false;
+
+        // Setup Admin Dashboard
+        m_httpServer->Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
-            std::cout << req.path << " [START] SUBMIT HANDLER!" << std::endl;
+            Logger::Debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
             ctx.Dump();
 
             // Response Object
@@ -134,118 +158,22 @@ bool Mantis::ServerMgr::GenerateAdminCrudApis()
                 return true;
             }
         });
-
-        auto must_auth_as_admin = [&](const Request& req, Response& res, Context& ctx)
-        {
-            Logger::Debug("AdminMiddleware");
-
-
-            json u;
-            u["id"] = "123456789";
-            u["name"] = "John Doe";
-            ctx.Set<json>("user", u);
-            ctx.Set("record", "_users_");
-            ctx.Dump();
-
-            Logger::Debug("After Admin Middleware");
-            std::cout << std::endl;
-            return true;
-        };
-
-        // Admin /api/endpoints
-        m_httpServer->Get("/api/admin",
-                          [&](const Request& req, Response& res, Context& ctx)
-                          {
-                              Logger::Debug("GET /api/admin Exec: {}", req.path);
-                              ctx.Dump();
-
-                              json response;
-                              response["status"] = 200;
-                              response["message"] = "Admin crud apis";
-                              response["data"] = *(ctx.Get<json>("user"));
-
-                              res.status = 200;
-                              res.set_content(response.dump(), "application/json");
-                              return;
-                          }, {must_auth_as_admin});
-
-        m_httpServer->Get("/api/admin/:id",
-                          [=](const Request& req, Response& res, Context ctx)
-                          {
-                              Logger::Debug("GET /api/admin/:id Exec: {}", req.path);
-
-                              std::cout << std::endl;
-                              for (auto& [k, v] : req.path_params)
-                              {
-                                  std::cout << "KV: " << k << "\t" << v << std::endl;
-                              }
-
-                              std::cout << "Path Params: " << req.path_params.at("id");
-                              Logger::Debug("Exec: {}", req.path);
-                              ctx.Dump();
-
-                              json response;
-                              response["status"] = 200;
-                              response["message"] = "Admin crud apis";
-                              response["data"] = json{};
-
-                              res.status = 200;
-                              res.set_content(response.dump(), "application/json");
-                          }, {must_auth_as_admin});
-
-        m_httpServer->Post("/api/admin",
-                           [=](const Request& req, Response& res, Context ctx)
-                           {
-                               Logger::Debug("POST /api/admin Exec: {}", req.path);
-                               ctx.Dump();
-
-                               json response;
-                               response["status"] = 200;
-                               response["message"] = "Admin crud apis";
-                               response["data"] = json{};
-
-                               res.status = 200;
-                               res.set_content(response.dump(), "application/json");
-                           }, {must_auth_as_admin});
-
-        m_httpServer->Patch("/api/admin/:id",
-                            [=](const Request& req, Response& res, Context ctx)
-                            {
-                                Logger::Debug("PATCH /api/admin/:id Exec: {}", req.path);
-                                ctx.Dump();
-
-                                json response;
-                                response["status"] = 200;
-                                response["message"] = "Admin crud apis";
-                                response["data"] = json{};
-
-                                res.status = 200;
-                                res.set_content(response.dump(), "application/json");
-                            }, {must_auth_as_admin});
-
-        m_httpServer->Delete("/api/admin/:id",
-                             [=](const Request& req, Response& res, Context ctx)
-                             {
-                                 Logger::Debug("DEL /api/admin/:id Exec: {}", req.path);
-                                 ctx.Dump();
-
-                                 res.status = 204;
-                                 res.set_content(json{}.dump(), "application/json");
-                             }, {must_auth_as_admin});
     }
 
     catch (const std::exception& e)
     {
-        Logger::Critical("Error creating admin routes", e.what());
+        Logger::Critical("Error creating admin routes: ", e.what());
         return false;
     }
 
     return true;
 }
 
-bool Mantis::ServerMgr::AttachUserRoutes()
+bool Mantis::ServerMgr::AttachUserRoutes() const
 {
-    Logger::Debug("Mantis::ServerMgr::AttachUserRoutes");
+    // Logger::Debug("Mantis::ServerMgr::AttachUserRoutes");
+    // Just to
+    [[maybe_unused]] auto ctx = m_httpServer->Ctx();
 
     return true;
 }

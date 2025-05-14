@@ -28,7 +28,7 @@ add_executable(mantis-ctl
 # For configuration help for SOCI,
 # check https://github.com/allankoechke/soci/blob/master/docs/installation.md
 # For now, disable all backends except SQLite
-set(SOCI_SHARED OFF CACHE BOOL "OFF" FORCE )
+# set(SOCI_SHARED OFF CACHE BOOL "OFF" FORCE )
 set(SOCI_TESTS OFF CACHE BOOL "OFF" FORCE )
 set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
 set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )

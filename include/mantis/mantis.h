@@ -40,8 +40,8 @@ namespace Mantis
 
         static int Quit(const int& exitCode = 0, const std::string& reason = "Something went wrong!");
 
-        int Start();
-        int Start(const std::string& host , const int& port);
+        int Start() const;
+        int Start(const std::string& host , const int& port) const;
         int Stop() const;
 
         // Access the server object

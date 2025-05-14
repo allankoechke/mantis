@@ -9,13 +9,13 @@ namespace Mantis
 {
     class MantisApp;
 
-    class ServerMgr
+    class ServerMgr: std::enable_shared_from_this<ServerMgr>
     {
     public:
         explicit ServerMgr(const MantisApp& app);
         ~ServerMgr() = default;
 
-        bool GenerateCrudApis();
+        bool GenerateCrudApis() const;
 
         bool StartListening() const;
         bool StopListening() const;
@@ -26,10 +26,12 @@ namespace Mantis
         int Port() const;
         void SetPort(const int& port);
 
+        std::shared_ptr<HttpServer> GetHttpServer() const;
+
     private:
-        bool GenerateTableCrudApis();
-        bool GenerateAdminCrudApis();
-        bool AttachUserRoutes();
+        bool GenerateTableCrudApis() const;
+        bool GenerateAdminCrudApis() const;
+        bool AttachUserRoutes() const;
 
         // ---
         // Member Variables Section

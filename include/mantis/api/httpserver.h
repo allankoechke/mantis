@@ -51,10 +51,7 @@ namespace Mantis
 
     struct RouteKeyHash
     {
-        size_t operator()(const RouteKey& k) const
-        {
-            return std::hash<std::string>()(k.first + "#" + k.second);
-        }
+        size_t operator()(const RouteKey& k) const;
     };
 
     struct RouteHandler
@@ -111,7 +108,6 @@ namespace Mantis
                       const std::string& path,
                       RouteHandlerFunc handler,
                       std::initializer_list<Middleware> middlewares);
-
 
         httplib::Server server;
         RouteRegistry registry;

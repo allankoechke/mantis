@@ -23,6 +23,7 @@ Mantis::MantisApp::MantisApp()
     // Pass an instance of this ptr into the created Database instance
     m_dbMgr = std::make_shared<DatabaseMgr>(*this);
     m_svrMgr = std::make_shared<ServerMgr>(*this);
+
 }
 
 Mantis::MantisApp::~MantisApp()
@@ -156,7 +157,7 @@ int Mantis::MantisApp::ProcessCMD(const int argc, char* argv[])
     return 0;
 }
 
-int Mantis::MantisApp::Quit(const int& exitCode, const std::string& reason)
+int Mantis::MantisApp::Quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
 {
     // Do some cleanup if need be ...
     // m_db->CloseIfOpened();
@@ -170,7 +171,7 @@ int Mantis::MantisApp::Quit(const int& exitCode, const std::string& reason)
     std::exit(exitCode);
 }
 
-int Mantis::MantisApp::Start()
+int Mantis::MantisApp::Start() const
 {
     if (!EnsureDirsAreCreated())
         return -1;
@@ -184,7 +185,7 @@ int Mantis::MantisApp::Start()
     return m_svrMgr->StartListening();
 }
 
-int Mantis::MantisApp::Start(const std::string& host, const int& port)
+int Mantis::MantisApp::Start(const std::string& host, const int& port) const
 {
     if (port < 0 || port > 65535)
     {
@@ -302,7 +303,7 @@ std::string Mantis::MantisApp::DirFromPath(const std::string& path)
     if (const auto dir = ResolvePath(path); CreateDirs(dir))
         return dir.string();
 
-    return std::string("");
+    return "";
 }
 
 inline bool Mantis::MantisApp::EnsureDirsAreCreated() const
