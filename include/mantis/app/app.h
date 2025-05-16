@@ -1,0 +1,82 @@
+//
+// Created by allan on 16/05/2025.
+//
+
+#ifndef APP_H
+#define APP_H
+
+#include <string>
+#include <filesystem>
+#include <anyoption.h>
+
+#include "../core/database.h"
+#include "../core/logging.h"
+#include "../core/http.h"
+
+namespace fs = std::filesystem;
+
+namespace mantis
+{
+    // DatabaseType enum for supported Databases
+    // Check `soci` docs, this is cut down for development
+    // TODO add other database types later
+    typedef enum DbType
+    {
+        SQLITE = 0x01,
+        PSQL,
+        MYSQL
+    } DbType;
+
+    class MantisApp {
+    public:
+        explicit MantisApp(int argc = 0, char** argv = nullptr);
+        ~MantisApp();
+
+        int run() const;
+        void close() const;
+        static int quit(const int& exitCode = 0, const std::string& reason = "Something went wrong!");
+
+        int port() const;;
+        void setPort(const int& port);
+
+        int poolSize() const;;
+        void setPoolSize(const int& pool_size);
+
+        std::string host() const;
+        void setHost(const std::string& host);
+
+        std::string publicDir() const;
+        void setPublicDir(const std::string& dir);
+
+        std::string dataDir() const;
+        void setDataDir(const std::string& dir);
+
+        DbType dbType() const;
+        void setDbType(const DbType& dbType);
+
+        [[nodiscard]] DatabaseUnit& db() const;
+        [[nodiscard]] LoggingUnit& log() const;
+        [[nodiscard]] HttpUnit& http() const;
+        [[nodiscard]] AnyOption& cmd() const;
+
+    private:
+        void parseArgs(int argc, char** argv);
+        void initialize();
+        [[nodiscard]] bool ensureDirsAreCreated() const;
+
+        std::string     m_publicDir;
+        std::string     m_dataDir;
+        DbType          m_dbType = SQLITE;
+
+        int m_port = 7070;
+        std::string m_host = "127.0.0.1";
+        int m_poolSize = 2;
+
+        std::unique_ptr<DatabaseUnit> m_database;
+        std::unique_ptr<LoggingUnit> m_logger;
+        std::unique_ptr<HttpUnit> m_http;
+        std::unique_ptr<AnyOption> m_opts;
+    };
+}
+
+#endif //APP_H

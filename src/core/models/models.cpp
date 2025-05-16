@@ -5,16 +5,16 @@
 #include <mantis/mantis.h>
 #include <mantis/core/models.h>
 
-json Mantis::Rule::to_json() const
+json mantis::Rule::to_json() const
 {
     return json{{"expression", expression}, {"enabled", enabled}};
 }
 
-Mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys)
+mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys)
     : name(std::move(n)), type(t), required(req), primaryKey(pk), system(sys)
 {}
 
-json Mantis::Field::to_json() const
+json mantis::Field::to_json() const
 {
     return {
         { "name", name },
@@ -29,7 +29,7 @@ json Mantis::Field::to_json() const
     };
 }
 
-std::string Mantis::Field::to_sql() const
+std::string mantis::Field::to_sql() const
 {
     std::string sql_type;
     switch (type) {
@@ -53,7 +53,7 @@ std::string Mantis::Field::to_sql() const
     return sql;
 }
 
-json Mantis::Table::to_json() const
+json mantis::Table::to_json() const
 {
     json j;
     j["id"] = id;
@@ -76,7 +76,7 @@ json Mantis::Table::to_json() const
     return j;
 }
 
-std::string Mantis::Table::to_sql() const
+std::string mantis::Table::to_sql() const
 {
     std::string sql = "CREATE TABLE IF NOT EXISTS " + name + " (";
 
@@ -89,7 +89,7 @@ std::string Mantis::Table::to_sql() const
     return sql;
 }
 
-Mantis::BaseTable::BaseTable()
+mantis::BaseTable::BaseTable()
 {
     type = TableType::Base;
     fields = {
@@ -99,7 +99,7 @@ Mantis::BaseTable::BaseTable()
     };
 }
 
-Mantis::AuthTable::AuthTable()
+mantis::AuthTable::AuthTable()
 {
     type = TableType::Auth;
     fields = {
@@ -112,7 +112,7 @@ Mantis::AuthTable::AuthTable()
     };
 }
 
-Mantis::ViewTable::ViewTable()
+mantis::ViewTable::ViewTable()
 {
     type = TableType::View;
 }

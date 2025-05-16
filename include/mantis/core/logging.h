@@ -5,12 +5,12 @@
 #ifndef MANTIS_LOGGER_H
 #define MANTIS_LOGGER_H
 
-#include <nlohmann/json.hpp>
-#include <spdlog/spdlog.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include <../../3rdParty/json/single_include/nlohmann/json.hpp>
+#include <../../3rdParty/spdlog/include/spdlog/spdlog.h>
+#include <../../3rdParty/spdlog/include/spdlog/sinks/basic_file_sink.h>
 using json = nlohmann::json;
 
-namespace Mantis
+namespace mantis
 {
     typedef enum class LogLevel : uint8_t
     {
@@ -21,44 +21,43 @@ namespace Mantis
         CRITICAL
     } LogLevel;
 
-
-    class Logger
+    class LoggingUnit
     {
     public:
-        ~Logger() = default;
+        LoggingUnit() = default;
+        ~LoggingUnit() = default;
 
-        static void Config();
-        static void Shutdown();
+        static void init();
+        static void close();
 
-        static void SetLogLevel(const LogLevel& level = LogLevel::INFO);
+        static void setLogLevel(const LogLevel& level = LogLevel::INFO);
 
         template <typename... Args>
-        static void Info(fmt::format_string<Args...> msg, Args&&... args)
+        static void info(fmt::format_string<Args...> msg, Args&&... args)
         {
             spdlog::info(msg, std::forward<Args>(args)...);
         }
 
         template <typename... Args>
-        static void Debug(fmt::format_string<Args...> msg, Args&&... args)
+        static void debug(fmt::format_string<Args...> msg, Args&&... args)
         {
             spdlog::debug(msg, std::forward<Args>(args)...);
         }
 
         template <typename... Args>
-        static void Warn(fmt::format_string<Args...> msg, Args&&... args)
+        static void warn(fmt::format_string<Args...> msg, Args&&... args)
         {
             spdlog::warn(msg, std::forward<Args>(args)...);
         }
 
         template <typename... Args>
-        static void Critical(fmt::format_string<Args...> msg, Args&&... args)
+        static void critical(fmt::format_string<Args...> msg, Args&&... args)
         {
             spdlog::critical(msg, std::forward<Args>(args)...);
         }
-
-    private:
-        Logger() = delete;
     };
+
+    using Log = LoggingUnit;
 }
 
 #endif //MANTIS_LOGGER_H

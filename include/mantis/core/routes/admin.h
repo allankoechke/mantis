@@ -5,15 +5,15 @@
 #ifndef ADMINMGR_H
 #define ADMINMGR_H
 
-#include <mantis/mantis.h>
-#include "httpserver.h"
+#include "../http.h"
+#include "../../app/app.h"
 
-namespace Mantis
+namespace mantis
 {
-    class AdminMgr {
+    class AdminCrudUser {
     public:
-        AdminMgr(const MantisApp& app) : m_app(make_shared<MantisApp>(app)) {}
-        ~AdminMgr() = default;
+        AdminCrudUser(MantisApp* app) : m_app(app) {}
+        ~AdminCrudUser() = default;
 
         void FetchAdminRecord(const Request& req, Response& res, Context& ctx);
 
@@ -28,7 +28,7 @@ namespace Mantis
         bool AuthWithPassword(const std::string& email, std::string& password);
 
     private:
-        shared_ptr<MantisApp> m_app;
+        std::unique_ptr<MantisApp> m_app;
     };
 }
 

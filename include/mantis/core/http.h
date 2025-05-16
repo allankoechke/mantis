@@ -5,35 +5,35 @@
 #ifndef HTTPSERVER_H
 #define HTTPSERVER_H
 
-#include <httplib.h>
+#include <../../3rdParty/httplib-cpp/httplib.h>
 #include <unordered_map>
 #include <any>
 #include <functional>
 #include <string>
 #include <vector>
-#include <nlohmann/json.hpp>
+#include <../../3rdParty/json/single_include/nlohmann/json.hpp>
 
-#include "mantis/core/logger.h"
+#include "logging.h"
 
 using json = nlohmann::json;
 
-namespace Mantis
+namespace mantis
 {
     class Context
     {
         std::unordered_map<std::string, std::any> data;
 
     public:
-        void Dump();
+        void dump();
 
         template <typename T>
-        void Set(const std::string& key, T value)
+        void set(const std::string& key, T value)
         {
             data[key] = std::move(value);
         }
 
         template <typename T>
-        T* Get(const std::string& key)
+        T* get(const std::string& key)
         {
             auto it = data.find(key);
             if (it != data.end()) return std::any_cast<T>(&it->second);
@@ -65,45 +65,45 @@ namespace Mantis
         std::unordered_map<RouteKey, RouteHandler, RouteKeyHash> routes;
 
     public:
-        void Register(const std::string& method,
+        void add(const std::string& method,
                       const std::string& path,
                       RouteHandlerFunc handler,
                       const std::vector<Middleware>& middlewares);
 
-        const RouteHandler* Find(const std::string& method, const std::string& path) const;
+        const RouteHandler* find(const std::string& method, const std::string& path) const;
     };
 
-    class HttpServer
+    class HttpUnit
     {
     public:
-        HttpServer();
+        HttpUnit();
 
-        void Get(const std::string& path,
+        void get(const std::string& path,
                  RouteHandlerFunc handler,
                  std::initializer_list<Middleware> middlewares = {});
 
-        void Post(const std::string& path,
+        void post(const std::string& path,
                   RouteHandlerFunc handler,
                   std::initializer_list<Middleware> middlewares = {});
 
-        void Patch(const std::string& path,
+        void patch(const std::string& path,
                    RouteHandlerFunc handler,
                    std::initializer_list<Middleware> middlewares = {});
 
-        void Delete(const std::string& path,
+        void delete_(const std::string& path,
                     RouteHandlerFunc handler,
                     std::initializer_list<Middleware> middlewares = {});
 
-        bool Listen(const std::string& host, const int& port);
-        void Stop();
+        bool listen(const std::string& host, const int& port);
+        void close();
 
-        static Context& Ctx();
+        static Context& context();
 
     private:
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
         using MethodBinder = std::function<void(const std::string&, httplib::Server::Handler)>;
 
-        void AddRoute(MethodBinder bind_method,
+        void route(MethodBinder bind_method,
                       const std::string& method,
                       const std::string& path,
                       RouteHandlerFunc handler,

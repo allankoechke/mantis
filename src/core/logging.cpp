@@ -2,16 +2,15 @@
 // Created by allan on 12/05/2025.
 //
 
-#include <mantis/core/logger.h>
+#include "logging.h"
+#include <spdlog/sinks/stdout_color_sinks-inl.h>
 
-#include "spdlog/sinks/stdout_color_sinks-inl.h"
-
-void Mantis::Logger::Shutdown()
+void mantis::LoggingUnit::close()
 {
     spdlog::shutdown();
 }
 
-void Mantis::Logger::SetLogLevel(const LogLevel& level)
+void mantis::LoggingUnit::setLogLevel(const LogLevel& level)
 {
     switch (level)
     {
@@ -23,7 +22,7 @@ void Mantis::Logger::SetLogLevel(const LogLevel& level)
     }
 }
 
-void Mantis::Logger::Config()
+void mantis::LoggingUnit::init()
 {
     // auto color_sink = std::make_shared<spdlog::sinks::ansicolor_stdout_sink_mt>();
     //

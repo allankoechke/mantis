@@ -1,69 +1,67 @@
-#ifndef MANTIS_DATABASE_H
-#define MANTIS_DATABASE_H
+//
+// Created by allan on 16/05/2025.
+//
 
+#ifndef DATABASE_H
+#define DATABASE_H
+
+#include <optional>
+#include <vector>
 #include <memory>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
-#include <mantis/core/logger.h>
 
 using json = nlohmann::json;
 
-namespace Mantis
+
+namespace mantis
 {
-    // Forward declare the App class
     class MantisApp;
 
-    // DatabaseType enum for supported Databases
-    // Check `soci` docs, this is cut down for development
-    // TODO add other database types later
-    typedef enum DatabaseType
-    {
-        SQLITE = 0,
-        PSQL,
-        MYSQL
-    } DatabaseType;
-
-    // Database
-    class DatabaseMgr
-    {
+    class DatabaseUnit {
     public:
-        explicit DatabaseMgr(const MantisApp& app);
-        ~DatabaseMgr() = default;
+        explicit DatabaseUnit(MantisApp* app);
+        bool connect(const std::string& backend, const std::string& conn_str);
+        void migrate();
 
-        // Convenient func to call for initializing SQLite DB
-        [[nodiscard]] bool DbInit();
-
-        // If DB type is already set, invoke this with the connection string
-        [[nodiscard]] bool DbInit(const std::string& connectionString);
-
-        // Full connection link, pass in database type and connection string if applicable
-        [[nodiscard]] bool DbInit(const DatabaseType& dbType, const std::string& connectionString);
-
-        // Get a handle to a database session from a pool
-        [[nodiscard]] std::shared_ptr<soci::session> DbSession() const;
-
-        // Setter func for connection pool size
-        void SetPoolSize(const int& poolSize=1);
-
-        // Setter func for database type
-        void SetDatabaseType(const DatabaseType& dbType);
-
-        bool EnsureDatabaseSchemaLoaded() const;
-        bool CreateSystemTables() const;
-
+        soci::session& session();
 
     private:
-        std::string GenerateSystemDatabaseSchema() const;
+        MantisApp* m_app;
+        std::unique_ptr<soci::session> m_sql;
+        // std::shared_ptr<UserCrud> user_crud_;
 
-        // Private Member Variable
-        std::shared_ptr<MantisApp> m_app;
-        std::shared_ptr<soci::session> m_db;
-
-        // Database Type Selected
-        int m_poolSize;
-        DatabaseType m_databaseType;
-        std::unique_ptr<soci::connection_pool> m_dbPool;
-
+        soci::session m_db;
+        soci::connection_pool m_dbPool;
     };
 }
-#endif // MANTIS_DATABASE_H
+
+// class UserCrud : public CrudInterface<User> {
+// public:
+//     explicit UserCrud(soci::session& sql);
+//     bool create(const User& entity) override;
+//     std::optional<User> read(int id) override;
+//     bool update(int id, const User& entity) override;
+//     bool remove(int id) override;
+//     std::vector<User> list() override;
+//
+// private:
+//     soci::session& sql_;
+// };
+//
+// std::shared_ptr<UserCrud> users();
+//
+// template <typename T>
+// class CrudInterface {
+// public:
+//     virtual ~CrudInterface() = default;
+//     virtual bool create(const T& entity) = 0;
+//     virtual std::optional<T> read(int id) = 0;
+//     virtual bool update(int id, const T& entity) = 0;
+//     virtual bool remove(int id) = 0;
+//     virtual std::vector<T> list() = 0;
+// };
+
+
+
+#endif //DATABASE_H

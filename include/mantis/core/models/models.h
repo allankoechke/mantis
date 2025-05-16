@@ -8,7 +8,7 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-namespace Mantis
+namespace mantis
 {
     // Enum of the table type created,
     // base table types provide `index`, `created`, `updated`
@@ -71,7 +71,8 @@ namespace Mantis
         bool primaryKey = false;
         bool system = false;
 
-        std::optional<std::string> defaultValue;     // as string, parse based on type
+        std::optional<std::string> defaultValue;        // as string, parse based on type
+        std::optional<std::string> regexPattern;
         std::optional<int> minValue;
         std::optional<int> maxValue;
         std::optional<std::string> autoGeneratePattern; // regex for auto-gen strings

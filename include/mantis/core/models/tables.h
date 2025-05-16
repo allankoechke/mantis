@@ -5,20 +5,20 @@
 #ifndef TABLEMGR_H
 #define TABLEMGR_H
 
-#include "httpserver.h"
+#include "../http.h"
 #include <memory>
 
 #include "mantis/mantis.h"
-#include "mantis/core/models.h"
+#include "./models.h"
 
-namespace Mantis
+namespace mantis
 {
-    class ServerMgr;
+    class Router;
 
     class TableMgr
     {
     public:
-        explicit TableMgr(const ServerMgr& svrMgr,
+        explicit TableMgr(const Router& svrMgr,
                           const std::string& tableName = "",
                           const std::string& tableId = "",
                           const std::string& tableType = "base",
@@ -65,7 +65,7 @@ namespace Mantis
         Rule deleteRule();
 
     private:
-        std::shared_ptr<ServerMgr> m_svrMgr;
+        std::shared_ptr<Router> m_svrMgr;
         std::string m_tableName;
         std::string m_tableId;
         std::string m_tableType;

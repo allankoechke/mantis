@@ -9,16 +9,19 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_executable(mantis-ctl
-        src/main.cpp
-        src/mantis.cpp include/mantis/mantis.h
-        src/database.cpp include/mantis/core/database.h
-        src/models.cpp include/mantis/core/models.h
+        src/main.cpp include/mantis/mantis.h
+        src/mantis/core/database.cpp include/mantis/core/database.h
+        src/core/models/models.cpp include/mantis/core/models/models.h
         include/mantis/utils.h include/mantis/api/api-utils.hpp
-        src/logger.cpp include/mantis/core/logger.h
-        src/servermgr.cpp include/mantis/api/servermgr.h
-        src/httpserver.cpp include/mantis/api/httpserver.h
-        src/adminmgr.cpp include/mantis/api/adminmgr.h
-        src/tablemgr.cpp include/mantis/api/tablemgr.h
+        src/core/logger.cpp src/core/logger.h
+        src/core/servermgr.cpp src/core/servermgr.h
+        src/core/httpserver.cpp src/core/httpserver.h
+        src/core/routes/adminmgr.cpp src/core/routes/adminmgr.h
+        src/core/models/tablemgr.cpp src/core/models/tablemgr.h
+
+        src/app/app.cpp include/mantis/app/app.h
+        src/core/database.cpp include/mantis/core/database.h
+        src/core/crud.cpp include/mantis/core/crud.h
 
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
