@@ -2,8 +2,7 @@
 // Created by allan on 16/05/2025.
 //
 
-#include "app.h"
-#include "../core/utils.h"
+#include "../../include/mantis/mantis.h"
 
 mantis::MantisApp::MantisApp(int argc, char** argv) {
     // Enable Multi Sinks

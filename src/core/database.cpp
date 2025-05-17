@@ -2,13 +2,13 @@
 // Created by allan on 16/05/2025.
 //
 
-#include "database.h"
-#include "logging.h"
-#include "../app/app.h"
-#include "soci/sqlite3/soci-sqlite3.h"
+#include "../../include/mantis/core/database.h"
+#include "../../include/mantis/core/logging.h"
+#include "../../include/mantis/app/app.h"
+#include <soci/sqlite3/soci-sqlite3.h>
 
 mantis::DatabaseUnit::DatabaseUnit(MantisApp* app)
-: m_app(app) {}
+: m_app(app), m_dbPool(m_app->poolSize()) {}
 
 bool mantis::DatabaseUnit::connect(const std::string& backend, const std::string& conn_str) {
     m_sql = std::make_unique<soci::session>(backend, conn_str);

@@ -2,14 +2,13 @@
 // Created by allan on 13/05/2025.
 //
 
-#ifndef TABLEMGR_H
-#define TABLEMGR_H
+#ifndef TABLES_H
+#define TABLES_H
 
-#include "../http.h"
 #include <memory>
 
-#include "mantis/mantis.h"
-#include "./models.h"
+#include "../http.h"
+#include "models.h"
 
 namespace mantis
 {
@@ -80,4 +79,4 @@ namespace mantis
     };
 }
 
-#endif //TABLEMGR_H
+#endif //TABLES_H

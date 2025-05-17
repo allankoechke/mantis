@@ -2,7 +2,7 @@
 // Created by allan on 12/05/2025.
 //
 
-#include "logging.h"
+#include "../../include/mantis/core/logging.h"
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 
 void mantis::LoggingUnit::close()

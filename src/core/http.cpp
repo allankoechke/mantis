@@ -1,8 +1,8 @@
 //
 // Created by allan on 13/05/2025.
 //
-#include "http.h"
-#include "logging.h"
+#include "../../include/mantis/core/http.h"
+#include "../../include/mantis/core/logging.h"
 
 #include <chrono>
 

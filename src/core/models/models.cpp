@@ -2,8 +2,7 @@
 // Created by allan on 09/05/2025.
 //
 
-#include <mantis/mantis.h>
-#include <mantis/core/models.h>
+#include "../../../include/mantis/mantis.h"
 
 json mantis::Rule::to_json() const
 {

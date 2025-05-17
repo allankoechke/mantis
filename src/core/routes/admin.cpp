@@ -2,7 +2,7 @@
 // Created by allan on 13/05/2025.
 //
 
-#include "admin.h"
+#include "../../../include/mantis/core/routes/admin.h"
 
 void mantis::AdminCrudUser::FetchAdminRecord(const Request& req, Response& res, Context& ctx)
 {

@@ -1,7 +1,6 @@
-#include "router.h"
-#include "../app/app.h"
-
-#include "../../include/mantis/api/tablemgr.h"
+#include "../../include/mantis/core/router.h"
+#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/models/tables.h"
 
 mantis::Router::Router(const MantisApp& app)
     : m_app(app)

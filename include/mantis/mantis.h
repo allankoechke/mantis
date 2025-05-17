@@ -20,5 +20,9 @@
 
 #include "core/routes/admin.h"
 
-#include
+// For convenience to using json,
+// lets include it here
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
+
 #endif //MANTIS_H

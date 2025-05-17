@@ -15,7 +15,7 @@ mantis::TableMgr::TableMgr(
     Rule addRule,
     Rule updateRule,
     Rule deleteRule)
-    : m_svrMgr(make_shared<Router>(svrMgr)), m_tableName(tableName),
+    : m_svrMgr(std::make_shared<Router>(svrMgr)), m_tableName(tableName),
       m_tableId(tableId), m_tableType(tableType), m_listRule(listRule),
       m_getRule(getRule), m_addRule(addRule),
       m_updateRule(updateRule), m_deleteRule(deleteRule)

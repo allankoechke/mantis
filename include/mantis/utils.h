@@ -7,9 +7,14 @@
 
 #include <string>
 #include <algorithm>
+#include <filesystem>
+
+#include "core/logging.h"
 
 namespace mantis
 {
+    namespace fs = std::filesystem;
+
     inline void toLowerCase(std::string& str)
     {
         std::transform(str.begin(), str.end(), str.begin(),

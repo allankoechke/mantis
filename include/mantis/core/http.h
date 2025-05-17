@@ -78,19 +78,19 @@ namespace mantis
     public:
         HttpUnit();
 
-        void get(const std::string& path,
+        void Get(const std::string& path,
                  RouteHandlerFunc handler,
                  std::initializer_list<Middleware> middlewares = {});
 
-        void post(const std::string& path,
+        void Post(const std::string& path,
                   RouteHandlerFunc handler,
                   std::initializer_list<Middleware> middlewares = {});
 
-        void patch(const std::string& path,
+        void Patch(const std::string& path,
                    RouteHandlerFunc handler,
                    std::initializer_list<Middleware> middlewares = {});
 
-        void delete_(const std::string& path,
+        void Delete(const std::string& path,
                     RouteHandlerFunc handler,
                     std::initializer_list<Middleware> middlewares = {});
 

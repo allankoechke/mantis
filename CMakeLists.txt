@@ -9,19 +9,28 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 add_executable(mantis-ctl
-        src/main.cpp include/mantis/mantis.h
-        src/mantis/core/database.cpp include/mantis/core/database.h
-        src/core/models/models.cpp include/mantis/core/models/models.h
-        include/mantis/utils.h include/mantis/api/api-utils.hpp
-        src/core/logger.cpp src/core/logger.h
-        src/core/servermgr.cpp src/core/servermgr.h
-        src/core/httpserver.cpp src/core/httpserver.h
-        src/core/routes/adminmgr.cpp src/core/routes/adminmgr.h
-        src/core/models/tablemgr.cpp src/core/models/tablemgr.h
+        src/main.cpp
+        include/mantis/mantis.h
+        src/app/app.cpp
+        include/mantis/app/app.h
+        src/core/database.cpp
+        include/mantis/core/database.h
+        src/core/crud.cpp
+        include/mantis/core/crud.h
+        src/core/models/models.cpp
+        include/mantis/core/models/models.h
+        include/mantis/utils.h
+        src/core/logging.cpp
+        include/mantis/core/logging.h
+        src/core/router.cpp
+        include/mantis/core/router.h
+        src/core/http.cpp
+        include/mantis/core/http.h
+        src/core/routes/admin.cpp
+        include/mantis/core/routes/admin.h
+        src/core/models/tables.cpp
+        include/mantis/core/models/tables.h
 
-        src/app/app.cpp include/mantis/app/app.h
-        src/core/database.cpp include/mantis/core/database.h
-        src/core/crud.cpp include/mantis/core/crud.h
 
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
@@ -71,8 +80,7 @@ target_link_libraries(mantis-ctl
 
 # Include directories
 target_include_directories(mantis-ctl
-    PRIVATE 
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+    PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/soci/3rdParty
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/soci/include
