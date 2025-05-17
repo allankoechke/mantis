@@ -105,7 +105,7 @@ mantis::HttpUnit::HttpUnit()
     });
 }
 
-void mantis::HttpUnit::get(const std::string& path, RouteHandlerFunc handler,
+void mantis::HttpUnit::Get(const std::string& path, RouteHandlerFunc handler,
                              std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
@@ -114,7 +114,7 @@ void mantis::HttpUnit::get(const std::string& path, RouteHandlerFunc handler,
     }, "GET", path, handler, middlewares);
 }
 
-void mantis::HttpUnit::post(const std::string& path, RouteHandlerFunc handler,
+void mantis::HttpUnit::Post(const std::string& path, RouteHandlerFunc handler,
                               std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
@@ -123,7 +123,7 @@ void mantis::HttpUnit::post(const std::string& path, RouteHandlerFunc handler,
     }, "POST", path, handler, middlewares);
 }
 
-void mantis::HttpUnit::patch(const std::string& path, RouteHandlerFunc handler,
+void mantis::HttpUnit::Patch(const std::string& path, RouteHandlerFunc handler,
                                std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
@@ -132,7 +132,7 @@ void mantis::HttpUnit::patch(const std::string& path, RouteHandlerFunc handler,
     }, "PATCH", path, handler, middlewares);
 }
 
-void mantis::HttpUnit::delete_(const std::string& path, RouteHandlerFunc handler,
+void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
                                 std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)

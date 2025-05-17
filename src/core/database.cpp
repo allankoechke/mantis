@@ -5,40 +5,40 @@
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/logging.h"
 #include "../../include/mantis/app/app.h"
+#include "../../include/mantis/utils.h"
+#include "../../include/mantis/core/models/models.h"
+
 #include <soci/sqlite3/soci-sqlite3.h>
 
 mantis::DatabaseUnit::DatabaseUnit(MantisApp* app)
-: m_app(app), m_dbPool(m_app->poolSize()) {}
+    : m_app(app), m_connPool(nullptr) {}
 
-bool mantis::DatabaseUnit::connect(const std::string& backend, const std::string& conn_str) {
-    m_sql = std::make_unique<soci::session>(backend, conn_str);
-    //user_crud_ = std::make_shared<mantis::UserCrud>(*m_sql);
-
+bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn_str) {
     // If pool size is invalid, just return
     if (m_app->poolSize() <= 0)
         throw "Session pool size must be greater than 0";
 
     // All databases apart from SQLite should pass in a connection string
-    if (m_app->dbType() != SQLITE && conn_str.empty())
+    if (m_app->dbType() != DbType::SQLITE && conn_str.empty())
         throw "Connection string for database is required!";
 
     try
     {
         // Create connection pool instance
-        m_dbPool = soci::connection_pool{m_app->poolSize()};
+        m_connPool = std::make_unique<soci::connection_pool>(m_app->poolSize());
 
         // Populate the pools with db connections
         for (std::size_t i = 0; i < m_app->poolSize(); ++i)
         {
             switch(m_app->dbType())
             {
-            case SQLITE:
+            case DbType::SQLITE:
                 {
                     // For SQLite, lets explicitly define location and name of the database
                     // we intend to use within the `dataDir`
-                    auto conn_str = "db=" + joinPaths(m_app->dataDir(), "vault.db").string();
-                    soci::session& sql = m_dbPool->at(i);
-                    sql.open(soci::sqlite3, conn_str);
+                    auto sqlite_str = "db=" + joinPaths(m_app->dataDir(), "mantis.db").string();
+                    soci::session& sql = m_connPool->at(i);
+                    sql.open(soci::sqlite3, sqlite_str);
                     break;
                 }
 
@@ -72,10 +72,10 @@ bool mantis::DatabaseUnit::connect(const std::string& backend, const std::string
 }
 
 void mantis::DatabaseUnit::migrate() {
-    *m_sql << "CREATE TABLE IF NOT EXISTS users ("
-             "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-             "name TEXT NOT NULL,"
-             "email TEXT NOT NULL UNIQUE);";
+    // *m_sql << "CREATE TABLE IF NOT EXISTS users ("
+    //          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+    //          "name TEXT NOT NULL,"
+    //          "email TEXT NOT NULL UNIQUE);";
 
     // Create system tables as follows:
     // __tables for managing user tables & schema
@@ -85,12 +85,12 @@ void mantis::DatabaseUnit::migrate() {
 
     try
     {
-        const auto db = DbSession();
-        soci::transaction tr(*db);
+        auto sql = session();
+        soci::transaction tr{*sql};
 
         AdminTable admin;
         admin.name = "__admin";
-        *db << admin.to_sql();
+        *sql << admin.to_sql();
         Log::debug("Generated Admin Table SQL:  {}", admin.to_sql());
         Log::debug("Generated Admin Table JSON: {}", admin.to_json().dump());
 
@@ -98,39 +98,44 @@ void mantis::DatabaseUnit::migrate() {
         tables.name = "__tables";
         tables.fields.push_back(Field("schema", FieldType::Text, true, false, true));
         tables.fields.push_back(Field("has_api", FieldType::Boolean, true, false, true));
-        *db << tables.to_sql();
+        *sql << tables.to_sql();
 
         Log::debug("Generated Sys Tables SQL:  {}", tables.to_sql());
         Log::debug("Generated Sys Tables JSON: {}", tables.to_json().dump());
 
         // Commit transaction
         tr.commit();
-
-        return true;
     }
     catch (std::exception& e)
     {
         Log::critical("Create System Tables Failed: {}", e.what());
     }
 
-    return false;
-
-
     // Create Base Table
-    mantis::BaseTable sysTableSchema;
-    sysTableSchema.name = "__tables";
-    sysTableSchema.enableSync = true;
-    sysTableSchema.id = "";
-    sysTableSchema.type = TableType::Base;
-
-    sysTableSchema.to_sql();
+    // mantis::BaseTable sysTableSchema;
+    // sysTableSchema.name = "__tables";
+    // sysTableSchema.enableSync = true;
+    // sysTableSchema.id = "";
+    // sysTableSchema.type = TableType::Base;
+    //
+    // sysTableSchema.to_sql();
 }
 
-soci::session& mantis::DatabaseUnit::session() {
-    // return *m_sql;
-    // Create a shared session pointer and return it.
-    auto sql = std::make_shared<soci::session>(*m_dbPool);
-    return *sql;
+std::shared_ptr<soci::session> mantis::DatabaseUnit::session() const {
+    return std::make_shared<soci::session>(*m_connPool);
+}
+
+soci::connection_pool& mantis::DatabaseUnit::connectionPool() const
+{
+    return *m_connPool;
+}
+
+bool mantis::DatabaseUnit::isConnected() const
+{
+    if (m_connPool == nullptr) return false;
+
+    const auto sql = session();
+    return sql->is_connected();
 }
 
 // std::shared_ptr<mantis::DatabaseUnit::UserCrud> mantis::DatabaseUnit::users() {

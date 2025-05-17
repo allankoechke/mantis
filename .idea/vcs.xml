@@ -2,7 +2,7 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/AnyOption" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/AnyOption" vcs="" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />

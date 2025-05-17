@@ -11,6 +11,8 @@
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
 
+#include "../app/app.h"
+
 using json = nlohmann::json;
 
 
@@ -21,18 +23,25 @@ namespace mantis
     class DatabaseUnit {
     public:
         explicit DatabaseUnit(MantisApp* app);
-        bool connect(const std::string& backend, const std::string& conn_str);
+
+        // Initialize the connection pool & connect to specific database
+        bool connect(const DbType backend, const std::string& conn_str);
+
+        // Run database migrations
         void migrate();
 
-        soci::session& session();
+        // Get access to a session from the pool
+        [[nodiscard]] std::shared_ptr<soci::session> session() const;
+
+        // Access to the underlying pool if needed
+        [[nodiscard]] soci::connection_pool& connectionPool() const;
+
+        // Check if the database is connected
+        bool isConnected() const;
 
     private:
         MantisApp* m_app;
-        std::unique_ptr<soci::session> m_sql;
-        // std::shared_ptr<UserCrud> user_crud_;
-
-        soci::session m_db;
-        soci::connection_pool m_dbPool;
+        std::unique_ptr<soci::connection_pool> m_connPool;
     };
 }
 

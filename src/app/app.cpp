@@ -4,7 +4,9 @@
 
 #include "../../include/mantis/mantis.h"
 
-mantis::MantisApp::MantisApp(int argc, char** argv) {
+mantis::MantisApp::MantisApp(int argc, char** argv)
+    :m_dbType(DbType::SQLITE)
+{
     // Enable Multi Sinks
    Log::init();
 
@@ -16,8 +18,8 @@ mantis::MantisApp::MantisApp(int argc, char** argv) {
     dir = dirFromPath("./data");
     setDataDir(dir);
 
-    parseArgs(argc, argv);
     initialize();
+    parseArgs(argc, argv);
 }
 
 mantis::MantisApp::~MantisApp()
@@ -39,6 +41,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
     m_opts->addUsage("  -p  --port  <port>      Server Port (default: 7070)");
     m_opts->addUsage("  -h  --host  <host>      Server Host (default: 0.0.0.0) ");
     m_opts->addUsage("  -d  --db    <db>        Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE) ");
+    m_opts->addUsage("  -c  --conn  <str>       Database connection string (default: "") ");
     m_opts->addUsage("  --publicDir   <dir>     Static files directory (default: ./public) ");
     m_opts->addUsage("  --dataDir     <dir>     Data directory (default: ./data) ");
     m_opts->addUsage("  --serve                 Start & Run the HTTP Server ");
@@ -49,6 +52,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
     m_opts->setOption("host", 'i');
     m_opts->setOption("port", 'p');
     m_opts->setOption("db", 'd');
+    m_opts->setOption("conn", 'c');
     m_opts->setOption("publicDir");
     m_opts->setOption("dataDir");
     m_opts->setCommandFlag("serve");
@@ -61,13 +65,15 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
     {
         // Print developer messages ...
         // Set it to debug for now
-        Log::setLogLevel(LogLevel::DEBUG);
+        Log::setLogLevel(LogLevel::TRACE);
     }
 
     if (!m_opts->hasOptions())
     {
         /* print usage if no options */
+        std::cout << std::endl;
         m_opts->printUsage();
+        std::cout << std::endl;
     }
 
     // GET THE VALUES
@@ -109,17 +115,17 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
 
         if (db == "sqlite")
         {
-            setDbType(SQLITE);
+            setDbType(DbType::SQLITE);
         }
 
         if (db == "mysql")
         {
-            setDbType(MYSQL);
+            setDbType(DbType::MYSQL);
         }
 
         if (db == "psql")
         {
-            setDbType(PSQL);
+            setDbType(DbType::PSQL);
         }
 
         else
@@ -130,15 +136,26 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
         Log::debug("Setting Backend Database to [{}]", db);
     }
 
-    // TODO ...
-    if (m_opts->getFlag("serve"))
+    if (m_opts->getValue('c') != nullptr || m_opts->getValue("conn") != nullptr)
+    {
+        m_connString = m_opts->getValue("conn");
+    }
+
+    // Initialize database connection & Migration
+    m_database->connect(m_dbType, m_connString);
+    m_database->migrate();
+
+    if (!m_database->isConnected())
     {
         Log::critical("Database was not opened");
         quit(-1, "Database opening failed!");
     }
 
-    std::cout << std::endl;
-    // return 0;
+    // TODO ...
+    if (m_opts->getFlag("serve"))
+    {
+        m_toStartServer = true;
+    }
 }
 
 void mantis::MantisApp::initialize() {
@@ -150,9 +167,6 @@ void mantis::MantisApp::initialize() {
     // Directories ...
     if (!ensureDirsAreCreated())
         quit(-1, "Failed to create database directories!");
-
-    // m_database->connect(db_backend_, db_conn_str_);
-    // m_database->migrate();
 }
 
 int mantis::MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)

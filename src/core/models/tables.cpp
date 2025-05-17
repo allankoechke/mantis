@@ -5,8 +5,8 @@
 #include "../../../include/mantis/core/models/tables.h"
 
 
-mantis::TableMgr::TableMgr(
-    const Router& svrMgr,
+mantis::TableUnit::TableUnit(
+    MantisApp* app,
     const std::string& tableName,
     const std::string& tableId,
     const std::string& tableType,
@@ -15,15 +15,14 @@ mantis::TableMgr::TableMgr(
     Rule addRule,
     Rule updateRule,
     Rule deleteRule)
-    : m_svrMgr(std::make_shared<Router>(svrMgr)), m_tableName(tableName),
+    : m_app(app), m_tableName(tableName),
       m_tableId(tableId), m_tableType(tableType), m_listRule(listRule),
       m_getRule(getRule), m_addRule(addRule),
       m_updateRule(updateRule), m_deleteRule(deleteRule)
 {
-    m_svrMgr;
 }
 
-void mantis::TableMgr::SetRouteDisplayName(const std::string& routeName)
+void mantis::TableUnit::setRouteDisplayName(const std::string& routeName)
 {
     if (routeName.empty())
         return;
@@ -31,7 +30,7 @@ void mantis::TableMgr::SetRouteDisplayName(const std::string& routeName)
     m_routeName = routeName;
 }
 
-bool mantis::TableMgr::SetupRoutes()
+bool mantis::TableUnit::setupRoutes()
 {
     const auto path = m_routeName.empty() ? m_tableName : m_routeName;
     const auto basePath = "/api/tables/" + path;
@@ -39,41 +38,41 @@ bool mantis::TableMgr::SetupRoutes()
     try
     {
         // Fetch All Records
-        Logger::Debug("Adding GET Request for table '{}'", m_tableName);
-        m_svrMgr->GetHttpServer()->get(
+        Log::debug("Adding GET Request for table '{}'", m_tableName);
+        m_app->http().Get(
             basePath,
             [this](const Request& req, Response& res, Context& ctx)-> void
             {
-                FetchRecords(req, res, ctx);
+                fetchRecords(req, res, ctx);
             },
             {
                 [this](const Request& req, Response& res, Context& ctx)-> bool
                 {
-                    return HasAuthHeader(req, res, ctx);
+                    return getAuthToken(req, res, ctx);
                 },
                 [this](const Request& req, Response& res, Context& ctx)-> bool
                 {
-                    return HasAccessPermission(req, res, ctx);
+                    return hasAccess(req, res, ctx);
                 }
             }
         );
 
         // Fetch Single Record
-        Logger::Debug("Adding GET/1 Request for table '{}'", m_tableName);
-        m_svrMgr->GetHttpServer()->get(
+        Log::debug("Adding GET/1 Request for table '{}'", m_tableName);
+        m_app->http().Get(
             basePath + "/:id",
             [this](const Request& req, Response& res, Context& ctx)-> void
             {
-                FetchRecord(req, res, ctx);
+                fetchRecord(req, res, ctx);
             },
             {
                 [this](const Request& req, Response& res, Context& ctx)-> bool
                 {
-                    return HasAuthHeader(req, res, ctx);
+                    return getAuthToken(req, res, ctx);
                 },
                 [this](const Request& req, Response& res, Context& ctx)-> bool
                 {
-                    return HasAccessPermission(req, res, ctx);
+                    return hasAccess(req, res, ctx);
                 }
             }
         );
@@ -82,60 +81,60 @@ bool mantis::TableMgr::SetupRoutes()
         if (m_tableType != "view")
         {
             // Add Record
-            Logger::Debug("Adding POST Request for table '{}'", m_tableName);
-            m_svrMgr->GetHttpServer()->post(
+            Log::debug("Adding POST Request for table '{}'", m_tableName);
+            m_app->http().Post(
                 basePath, [this](const Request& req, Response& res, Context& ctx)-> void
                 {
-                    CreateRecord(req, res, ctx);
+                    createRecord(req, res, ctx);
                 },
                 {
                     [this](const Request& req, Response& res, Context& ctx)-> bool
                     {
-                        return HasAuthHeader(req, res, ctx);
+                        return getAuthToken(req, res, ctx);
                     },
                     [this](const Request& req, Response& res, Context& ctx)-> bool
                     {
-                        return HasAccessPermission(req, res, ctx);
+                        return hasAccess(req, res, ctx);
                     }
                 }
             );
 
             // Update Record
-            Logger::Debug("Adding PATCH Request for table '{}'", m_tableName);
-            m_svrMgr->GetHttpServer()->patch(
+            Log::debug("Adding PATCH Request for table '{}'", m_tableName);
+            m_app->http().Patch(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
-                    UpdateRecord(req, res, ctx);
+                    updateRecord(req, res, ctx);
                 },
                 {
                     [this](const Request& req, Response& res, Context& ctx)-> bool
                     {
-                        return HasAuthHeader(req, res, ctx);
+                        return getAuthToken(req, res, ctx);
                     },
                     [this](const Request& req, Response& res, Context& ctx)-> bool
                     {
-                        return HasAccessPermission(req, res, ctx);
+                        return hasAccess(req, res, ctx);
                     }
                 }
             );
 
             // Delete Record
-            Logger::Debug("Adding DELETE Request for table '{}'", m_tableName);
-            m_svrMgr->GetHttpServer()->delete_(
+            Log::debug("Adding DELETE Request for table '{}'", m_tableName);
+            m_app->http().Delete(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
-                    DeleteRecord(req, res, ctx);
+                    deleteRecord(req, res, ctx);
                 },
                 {
                     [this](const Request& req, Response& res, Context& ctx)-> bool
                     {
-                        return HasAuthHeader(req, res, ctx);
+                        return getAuthToken(req, res, ctx);
                     },
                     [this](const Request& req, Response& res, Context& ctx)-> bool
                     {
-                        return HasAccessPermission(req, res, ctx);
+                        return hasAccess(req, res, ctx);
                     }
                 }
             );
@@ -146,23 +145,23 @@ bool mantis::TableMgr::SetupRoutes()
 
     catch (const std::exception& e)
     {
-        Logger::Critical("Failed to create routes for table '{}' of '{}' type: {}",
+        Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
                          m_tableName, m_tableType, e.what());
         return false;
     }
 
     catch (...)
     {
-        Logger::Critical("Failed to create routes for table '{}' of '{}' type: {}",
+        Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
                          m_tableName, m_tableType, "Unknown Error!");
         return false;
     }
 }
 
 
-void mantis::TableMgr::FetchRecord(const Request& req, Response& res, Context& ctx)
+void mantis::TableUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::FetchRecord for {}", req.path);
+    Log::debug("TableMgr::FetchRecord for {}", req.path);
     ctx.dump();
 
     json response;
@@ -174,9 +173,9 @@ void mantis::TableMgr::FetchRecord(const Request& req, Response& res, Context& c
     res.set_content(response.dump(), "application/json");
 }
 
-void mantis::TableMgr::FetchRecords(const Request& req, Response& res, Context& ctx)
+void mantis::TableUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::FetchRecords for {}", req.path);
+    Log::debug("TableMgr::FetchRecords for {}", req.path);
     ctx.dump();
 
     json response;
@@ -190,9 +189,9 @@ void mantis::TableMgr::FetchRecords(const Request& req, Response& res, Context& 
     res.set_content(response.dump(), "application/json");
 }
 
-void mantis::TableMgr::CreateRecord(const Request& req, Response& res, Context& ctx)
+void mantis::TableUnit::createRecord(const Request& req, Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::CreateRecord for {}", req.path);
+    Log::debug("TableMgr::CreateRecord for {}", req.path);
     ctx.dump();
 
     json response;
@@ -204,9 +203,9 @@ void mantis::TableMgr::CreateRecord(const Request& req, Response& res, Context& 
     res.set_content(response.dump(), "application/json");
 }
 
-void mantis::TableMgr::UpdateRecord(const Request& req, Response& res, Context& ctx)
+void mantis::TableUnit::updateRecord(const Request& req, Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::UpdateRecord for {}", req.path);
+    Log::debug("TableMgr::UpdateRecord for {}", req.path);
     ctx.dump();
 
     json response;
@@ -218,9 +217,9 @@ void mantis::TableMgr::UpdateRecord(const Request& req, Response& res, Context& 
     res.set_content(response.dump(), "application/json");
 }
 
-void mantis::TableMgr::DeleteRecord(const Request& req, Response& res, Context& ctx)
+void mantis::TableUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::DeleteRecord for {}", req.path);
+    Log::debug("TableMgr::DeleteRecord for {}", req.path);
     ctx.dump();
 
     json response;
@@ -232,14 +231,14 @@ void mantis::TableMgr::DeleteRecord(const Request& req, Response& res, Context& 
     res.set_content(response.dump(), "application/json");
 }
 
-bool mantis::TableMgr::AuthWithPassword(const std::string& email, std::string& password)
+bool mantis::TableUnit::authWithPassword(const std::string& email, std::string& password)
 {
     return true;
 }
 
-bool mantis::TableMgr::HasAuthHeader(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
+bool mantis::TableUnit::getAuthToken(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::HasAuthHeader for {}", req.path);
+    Log::debug("TableMgr::HasAuthHeader for {}", req.path);
 
     // If we have an auth header, extract it into the ctx, else
     // add a guest user type. The auth if present, should have
@@ -265,44 +264,49 @@ bool mantis::TableMgr::HasAuthHeader(const Request& req, [[maybe_unused]] Respon
     return true;
 }
 
-bool mantis::TableMgr::HasAccessPermission(const Request& req, Response& res, Context& ctx)
+bool mantis::TableUnit::hasAccess(const Request& req, Response& res, Context& ctx)
 {
-    Logger::Debug("TableMgr::HasAccessPermission for {}", req.path);
+    Log::debug("TableMgr::HasAccessPermission for {}", req.path);
     ctx.dump();
     return true;
 }
 
-std::string mantis::TableMgr::tableName()
+std::string mantis::TableUnit::tableName()
 {
     return m_tableName;
 }
 
-std::string mantis::TableMgr::tableId()
+std::string mantis::TableUnit::tableId()
 {
     return m_tableId;
 }
 
-mantis::Rule mantis::TableMgr::listRule()
+std::string mantis::TableUnit::tableType()
+{
+    return m_tableType;
+}
+
+mantis::Rule mantis::TableUnit::listRule()
 {
     return m_listRule;
 }
 
-mantis::Rule mantis::TableMgr::getRule()
+mantis::Rule mantis::TableUnit::getRule()
 {
     return m_getRule;
 }
 
-mantis::Rule mantis::TableMgr::addRule()
+mantis::Rule mantis::TableUnit::addRule()
 {
     return m_addRule;
 }
 
-mantis::Rule mantis::TableMgr::updateRule()
+mantis::Rule mantis::TableUnit::updateRule()
 {
     return m_updateRule;
 }
 
-mantis::Rule mantis::TableMgr::deleteRule()
+mantis::Rule mantis::TableUnit::deleteRule()
 {
     return m_deleteRule;
 }

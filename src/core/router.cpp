@@ -1,8 +1,9 @@
 #include "../../include/mantis/core/router.h"
-#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/models/tables.h"
+#include "../../include/mantis/app/app.h"
 
-mantis::Router::Router(const MantisApp& app)
+mantis::Router::Router(MantisApp* app)
     : m_app(app)
 {
 }
@@ -29,7 +30,7 @@ bool mantis::Router::startListening() const
 {
     try
     {
-        m_app->http().listen(m_host, m_port);
+        return m_app->http().listen(m_app->host(), m_app->port());
     }
     catch (const std::exception& e)
     {
@@ -43,30 +44,9 @@ bool mantis::Router::startListening() const
     return false;
 }
 
-bool mantis::Router::stopListening() const
+void mantis::Router::stopListening() const
 {
     m_app->http().close();
-    return true;
-}
-
-std::string mantis::Router::host() const
-{
-    return m_host;
-}
-
-void mantis::Router::setHost(const std::string& host)
-{
-    m_host = host;
-}
-
-int mantis::Router::port() const
-{
-    return m_port;
-}
-
-void mantis::Router::setPort(const int& port)
-{
-    m_port = port;
 }
 
 bool mantis::Router::generateTableCrudApis() const
@@ -74,7 +54,7 @@ bool mantis::Router::generateTableCrudApis() const
     Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
 
     auto sql = m_app->db().session();
-    // soci::transaction tr(*sql);
+    soci::transaction tr(*sql);
 
     // id created updated schema has_api
     soci::row r;
@@ -127,7 +107,7 @@ bool mantis::Router::generateTableCrudApis() const
         Log::debug("Table '{}'", table);
         // For each, create table object
 
-        if (TableMgr tbMgr{ *this, table, table, "base"}; !tbMgr.SetupRoutes())
+        if (TableUnit tbMgr{ m_app, table, table, "base"}; !tbMgr.setupRoutes())
             return false;
     }
 
@@ -140,13 +120,13 @@ bool mantis::Router::generateAdminCrudApis() const
 
     try
     {
-        TableMgr tbMgr{ *this, "__admin", "admin", "auth"};
-        tbMgr.SetRouteDisplayName("admin");
-        if ( !tbMgr.SetupRoutes())
+        TableUnit tbMgr{ m_app, "__admin", "admin", "auth"};
+        tbMgr.setRouteDisplayName("admin");
+        if ( !tbMgr.setupRoutes())
             return false;
 
         // Setup Admin Dashboard
-        m_app->http().get("/admin", [=](const Request& req, Response& res, Context ctx)
+        m_app->http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
             Log::debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
             ctx.dump();

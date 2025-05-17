@@ -9,23 +9,21 @@
 #include <filesystem>
 #include <anyoption.h>
 
-#include "../core/database.h"
-#include "../core/logging.h"
-#include "../core/http.h"
-
 namespace fs = std::filesystem;
 
 namespace mantis
 {
-    // DatabaseType enum for supported Databases
-    // Check `soci` docs, this is cut down for development
-    // TODO add other database types later
-    typedef enum DbType
+    class DatabaseUnit;
+    class HttpUnit;
+    class LoggingUnit;
+
+    enum class DbType
     {
         SQLITE = 0x01,
         PSQL,
         MYSQL
-    } DbType;
+    };
+
 
     class MantisApp {
     public:
@@ -66,11 +64,13 @@ namespace mantis
 
         std::string     m_publicDir;
         std::string     m_dataDir;
-        DbType          m_dbType = SQLITE;
+        DbType          m_dbType;
+        std::string     m_connString = "";
 
         int m_port = 7070;
         std::string m_host = "127.0.0.1";
         int m_poolSize = 2;
+        bool m_toStartServer = false;
 
         std::unique_ptr<DatabaseUnit> m_database;
         std::unique_ptr<LoggingUnit> m_logger;

@@ -7,17 +7,19 @@
 
 #include <memory>
 
-#include "../http.h"
 #include "models.h"
+#include "../http.h"
+#include "../../app/app.h"
 
 namespace mantis
 {
-    class Router;
-
-    class TableMgr
+    /**
+     *
+     */
+    class TableUnit
     {
     public:
-        explicit TableMgr(const Router& svrMgr,
+        explicit TableUnit(MantisApp* app,
                           const std::string& tableName = "",
                           const std::string& tableId = "",
                           const std::string& tableType = "base",
@@ -27,34 +29,31 @@ namespace mantis
                           Rule updateRule = Rule{"", false},
                           Rule deleteRule = Rule{"", false});
 
-        ~TableMgr() = default;
+        ~TableUnit() = default;
 
-        void SetRouteDisplayName(const std::string& routeName);
-        bool SetupRoutes();
+        void setRouteDisplayName(const std::string& routeName);
+        bool setupRoutes();
 
-        void FetchRecord(const Request& req, Response& res, Context& ctx);
+        void fetchRecord(const Request& req, Response& res, Context& ctx);
 
-        void FetchRecords(const Request& req, Response& res, Context& ctx);
+        void fetchRecords(const Request& req, Response& res, Context& ctx);
 
-        void CreateRecord(const Request& req, Response& res, Context& ctx);
+        void createRecord(const Request& req, Response& res, Context& ctx);
 
-        void UpdateRecord(const Request& req, Response& res, Context& ctx);
+        void updateRecord(const Request& req, Response& res, Context& ctx);
 
-        void DeleteRecord(const Request& req, Response& res, Context& ctx);
+        void deleteRecord(const Request& req, Response& res, Context& ctx);
 
-        bool AuthWithPassword(const std::string& email, std::string& password);
+        bool authWithPassword(const std::string& email, std::string& password);
 
         // Middleware
-        static bool HasAuthHeader(const Request& req, Response& res, Context& ctx);
-        static bool HasAccessPermission(const Request& req, Response& res, Context& ctx);
+        static bool getAuthToken(const Request& req, Response& res, Context& ctx);
+        static bool hasAccess(const Request& req, Response& res, Context& ctx);
 
         // Getters
         std::string tableName();
         std::string tableId();
-        std::string tableType()
-        {
-            return m_tableType;
-        }
+        std::string tableType();
 
         // Store the rules cached
         Rule listRule();
@@ -64,7 +63,7 @@ namespace mantis
         Rule deleteRule();
 
     private:
-        std::shared_ptr<Router> m_svrMgr;
+        std::unique_ptr<MantisApp> m_app;
         std::string m_tableName;
         std::string m_tableId;
         std::string m_tableType;

@@ -3,7 +3,10 @@
 
 #include <string>
 #include <memory>
-#include "http.h"
+#include <soci/soci.h>
+#include <nlohmann/json.hpp>
+
+using json = nlohmann::json;
 
 namespace mantis
 {
@@ -12,29 +15,20 @@ namespace mantis
     class Router
     {
     public:
-        explicit Router(const MantisApp& app);
+        explicit Router(MantisApp* app);
         ~Router() = default;
 
         bool generateCrudApis() const;
 
         bool startListening() const;
-        bool stopListening() const;
-
-        std::string host() const;
-        void setHost(const std::string& host);
-
-        int port() const;
-        void setPort(const int& port);
+        void stopListening() const;
 
     private:
         bool generateTableCrudApis() const;
         bool generateAdminCrudApis() const;
         bool attachUserRoutes() const;
 
-        // Member Variables Section
         MantisApp* m_app;
-
-        /// Rules & Schema Cache
     };
 }
 

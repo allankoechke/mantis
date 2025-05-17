@@ -66,7 +66,7 @@ namespace mantis
 
     }
 
-    std::string dirFromPath(const std::string& path)
+    inline std::string dirFromPath(const std::string& path)
     {
         if (const auto dir = resolvePath(path); createDirs(dir))
             return dir.string();
