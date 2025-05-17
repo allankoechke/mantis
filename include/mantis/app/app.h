@@ -16,6 +16,7 @@ namespace mantis
     class DatabaseUnit;
     class HttpUnit;
     class LoggingUnit;
+    class Router;
 
     enum class DbType
     {
@@ -56,6 +57,7 @@ namespace mantis
         [[nodiscard]] LoggingUnit& log() const;
         [[nodiscard]] HttpUnit& http() const;
         [[nodiscard]] AnyOption& cmd() const;
+        [[nodiscard]] Router& router() const;
 
     private:
         void parseArgs(int argc, char** argv);
@@ -76,6 +78,7 @@ namespace mantis
         std::unique_ptr<LoggingUnit> m_logger;
         std::unique_ptr<HttpUnit> m_http;
         std::unique_ptr<AnyOption> m_opts;
+        std::unique_ptr<Router> m_router;
     };
 }
 

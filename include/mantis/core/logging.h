@@ -33,6 +33,12 @@ namespace mantis
         static void setLogLevel(const LogLevel& level = LogLevel::INFO);
 
         template <typename... Args>
+        static void trace(fmt::format_string<Args...> msg, Args&&... args)
+        {
+            spdlog::trace(msg, std::forward<Args>(args)...);
+        }
+
+        template <typename... Args>
         static void info(fmt::format_string<Args...> msg, Args&&... args)
         {
             spdlog::info(msg, std::forward<Args>(args)...);

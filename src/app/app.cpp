@@ -159,14 +159,15 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
 }
 
 void mantis::MantisApp::initialize() {
+    if (!ensureDirsAreCreated())
+        quit(-1, "Failed to create database directories!");
+
+    // Create instance objects
     m_logger = std::make_unique<LoggingUnit>();
     m_database = std::make_unique<DatabaseUnit>(this);
     m_http = std::make_unique<HttpUnit>();
     m_opts = std::make_unique<AnyOption>();
-
-    // Directories ...
-    if (!ensureDirsAreCreated())
-        quit(-1, "Failed to create database directories!");
+    m_router = std::make_unique<Router>(this);
 }
 
 int mantis::MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -189,8 +190,12 @@ void mantis::MantisApp::close() const
 }
 
 int mantis::MantisApp::run() const {
+    if (!m_router->initialize())
+        quit(-1, "Failed to initialize router!");
+
     if (!m_http->listen(m_host, m_port))
         return -1;
+
     return 0;
 }
 

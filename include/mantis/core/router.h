@@ -11,6 +11,7 @@ using json = nlohmann::json;
 namespace mantis
 {
     class MantisApp;
+    class TableUnit;
 
     class Router
     {
@@ -18,17 +19,18 @@ namespace mantis
         explicit Router(MantisApp* app);
         ~Router() = default;
 
-        bool generateCrudApis() const;
+        bool initialize();
 
-        bool startListening() const;
-        void stopListening() const;
+        bool listen() const;
+        void close() const;
 
     private:
-        bool generateTableCrudApis() const;
-        bool generateAdminCrudApis() const;
+        bool generateTableCrudApis();
+        bool generateAdminCrudApis();
         bool attachUserRoutes() const;
 
         MantisApp* m_app;
+        std::vector<std::shared_ptr<TableUnit>> m_routes = {};
     };
 }
 

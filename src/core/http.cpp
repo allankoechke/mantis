@@ -143,8 +143,8 @@ void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
 
 bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 {
-    Log::info("API Endpoints: http://{}:{}/api/", host, port);
-    Log::info("Admin Dashboard: http://{}:{}/m-admin", host, port);
+    Log::info("API Endpoints: http://{}:{}/api/v1/<table>", host, port);
+    Log::info("Admin Dashboard: http://{}:{}/admin", host, port);
     return server.listen(host, port);
 }
 

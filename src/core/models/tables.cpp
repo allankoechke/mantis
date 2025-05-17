@@ -32,8 +32,10 @@ void mantis::TableUnit::setRouteDisplayName(const std::string& routeName)
 
 bool mantis::TableUnit::setupRoutes()
 {
+    if (m_tableName.empty() && m_routeName.empty()) return false;
+
     const auto path = m_routeName.empty() ? m_tableName : m_routeName;
-    const auto basePath = "/api/tables/" + path;
+    const auto basePath = "/api/v1/" + path;
 
     try
     {

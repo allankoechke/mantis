@@ -4,17 +4,17 @@
 #include "../../include/mantis/app/app.h"
 
 mantis::Router::Router(MantisApp* app)
-    : m_app(app)
-{
-}
+    : m_app(app) {}
 
-bool mantis::Router::generateCrudApis() const
+bool mantis::Router::initialize()
 {
     if (!generateTableCrudApis())
         return false;
 
-    if (!attachUserRoutes())
-        return false;
+
+
+    // if (!attachUserRoutes())
+    //     return false;
 
     // Add Admin Route as the last, should override
     // any existing route
@@ -26,7 +26,7 @@ bool mantis::Router::generateCrudApis() const
     return true;
 }
 
-bool mantis::Router::startListening() const
+bool mantis::Router::listen() const
 {
     try
     {
@@ -44,12 +44,12 @@ bool mantis::Router::startListening() const
     return false;
 }
 
-void mantis::Router::stopListening() const
+void mantis::Router::close() const
 {
     m_app->http().close();
 }
 
-bool mantis::Router::generateTableCrudApis() const
+bool mantis::Router::generateTableCrudApis()
 {
     Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
 
@@ -107,23 +107,30 @@ bool mantis::Router::generateTableCrudApis() const
         Log::debug("Table '{}'", table);
         // For each, create table object
 
-        if (TableUnit tbMgr{ m_app, table, table, "base"}; !tbMgr.setupRoutes())
+        // We need to persist this instance, else it'll be cleaned up causing a crash
+        auto tableUnit = std::make_shared<TableUnit>(m_app, table, table, "base");
+
+        if (!tableUnit->setupRoutes())
             return false;
+
+        m_routes.push_back(tableUnit);
     }
+
+    // assert(m_r)
 
     return true;
 }
 
-bool mantis::Router::generateAdminCrudApis() const
+bool mantis::Router::generateAdminCrudApis()
 {
     Log::debug("Mantis::ServerMgr::GenerateAdminCrudApis");
 
     try
     {
-        TableUnit tbMgr{ m_app, "__admin", "admin", "auth"};
-        tbMgr.setRouteDisplayName("admin");
-        if ( !tbMgr.setupRoutes())
-            return false;
+        // We need to persist this instance, else it'll be cleaned up causing a crash
+        const auto adminUnit = std::make_shared<TableUnit>(m_app, "__admin", "admin", "auth");
+        if (!adminUnit->setupRoutes()) return false;
+        m_routes.push_back(adminUnit);
 
         // Setup Admin Dashboard
         m_app->http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
