@@ -10,7 +10,7 @@
 #include "app/app.h"
 
 #include "core/database.h"
-#include "core/crud.h"
+#include "core/crud/basecrud.h"
 #include "core/http.h"
 #include "core/logging.h"
 #include "core/router.h"

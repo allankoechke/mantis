@@ -4,6 +4,43 @@
 
 #include "../../../include/mantis/mantis.h"
 
+std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldName)
+{
+    if ( fieldName == "url") return FieldType::Url;
+    if ( fieldName == "text") return FieldType::Text;
+    if ( fieldName == "integer") return FieldType::Integer;
+    if ( fieldName == "float") return FieldType::Float;
+    if ( fieldName == "boolean") return FieldType::Boolean;
+    if ( fieldName == "datetime") return FieldType::DateTime;
+    if ( fieldName == "email") return FieldType::Email;
+    if ( fieldName == "password") return FieldType::Password;
+    if ( fieldName ==  "json") return FieldType::JSON;
+    return std::nullopt;
+}
+
+bool mantis::fieldExists(const TableType& type, const std::string& fieldName)
+{
+    // Find if field exists ...
+    const auto contains = [&](const std::vector<std::string>& vec, const std::string& fieldName) -> bool
+    {
+        return std::find(vec.begin(), vec.end(), fieldName) != vec.end();
+    };
+
+    switch (type)
+    {
+    case TableType::View: return false;
+    case TableType::Base:
+        {
+            return contains(baseFields, fieldName);
+        }
+    case TableType::Auth:
+        {
+            return contains(authFields, fieldName);
+        }
+    default: return false;
+    }
+}
+
 json mantis::Rule::to_json() const
 {
     return json{{"expression", expression}, {"enabled", enabled}};

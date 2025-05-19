@@ -53,6 +53,13 @@ namespace mantis
         { FieldType::JSON,      "json" }
     })
 
+    const std::vector<std::string> baseFields = {"id", "created", "updated"};
+    const std::vector<std::string> authFields = {"id", "created", "updated", "name", "email", "password"};
+
+    std::optional<FieldType> getFieldType(const std::string& fieldName);
+
+    bool fieldExists(const TableType& type, const std::string& fieldName);
+
     // Access Rule Struct
     typedef struct RuleDecl
     {
@@ -122,9 +129,7 @@ namespace mantis
 
         // Member Functions
         AuthTable();
-
-        bool AuthWithUsernameAndPassword() { return true; }
-        bool UpdatePassword() { return true; }
+        virtual ~AuthTable() = default;
     };
 
     // Specific model for View table

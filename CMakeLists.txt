@@ -15,8 +15,6 @@ add_executable(mantis-ctl
         include/mantis/app/app.h
         src/core/database.cpp
         include/mantis/core/database.h
-        src/core/crud.cpp
-        include/mantis/core/crud.h
         src/core/models/models.cpp
         include/mantis/core/models/models.h
         include/mantis/utils.h
@@ -35,6 +33,16 @@ add_executable(mantis-ctl
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.cpp
+
+        src/core/crud/authcrud.cpp
+        include/mantis/core/crud/authcrud.h
+        src/core/crud/viewcrud.cpp
+        include/mantis/core/crud/viewcrud.h
+        src/core/crud/admincrud.cpp
+        include/mantis/core/crud/admincrud.h
+        src/core/crud/tablescrud.cpp
+        include/mantis/core/crud/tablescrud.h
+        include/mantis/core/crud/crud.h
 )
 
 # For configuration help for SOCI,

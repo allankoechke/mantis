@@ -3,22 +3,21 @@
 //
 
 #include "../../../include/mantis/core/models/tables.h"
+#include "../../../include/mantis/core/database.h"
 
 
 mantis::TableUnit::TableUnit(
     MantisApp* app,
     const std::string& tableName,
     const std::string& tableId,
-    const std::string& tableType,
-    Rule listRule,
-    Rule getRule,
-    Rule addRule,
-    Rule updateRule,
-    Rule deleteRule)
-    : m_app(app), m_tableName(tableName),
-      m_tableId(tableId), m_tableType(tableType), m_listRule(listRule),
-      m_getRule(getRule), m_addRule(addRule),
-      m_updateRule(updateRule), m_deleteRule(deleteRule)
+    const std::string& tableType)
+    : m_app(app),
+      m_tableName(tableName),
+      m_tableId(tableId),
+      m_tableType(tableType),
+      m_listRule(Rule{}),
+      m_getRule(Rule{}), m_addRule(Rule{}),
+      m_updateRule(Rule{}), m_deleteRule(Rule{})
 {
 }
 
@@ -148,14 +147,14 @@ bool mantis::TableUnit::setupRoutes()
     catch (const std::exception& e)
     {
         Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
-                         m_tableName, m_tableType, e.what());
+                      m_tableName, m_tableType, e.what());
         return false;
     }
 
     catch (...)
     {
         Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
-                         m_tableName, m_tableType, "Unknown Error!");
+                      m_tableName, m_tableType, "Unknown Error!");
         return false;
     }
 }
@@ -288,9 +287,29 @@ std::string mantis::TableUnit::tableType()
     return m_tableType;
 }
 
+json mantis::TableUnit::fields() const
+{
+    return m_fields;
+}
+
+void mantis::TableUnit::setFields(const json& fields)
+{
+    m_fields = fields;
+}
+
+void mantis::TableUnit::setIsSystemTable(const bool isSystemTable)
+{
+    m_isSystem = isSystemTable;
+}
+
 mantis::Rule mantis::TableUnit::listRule()
 {
     return m_listRule;
+}
+
+void mantis::TableUnit::setListRule(const Rule& rule)
+{
+    m_listRule = rule;
 }
 
 mantis::Rule mantis::TableUnit::getRule()
@@ -298,9 +317,19 @@ mantis::Rule mantis::TableUnit::getRule()
     return m_getRule;
 }
 
+void mantis::TableUnit::setGetRule(const Rule& rule)
+{
+    m_getRule = rule;
+}
+
 mantis::Rule mantis::TableUnit::addRule()
 {
     return m_addRule;
+}
+
+void mantis::TableUnit::addRule(const Rule& rule)
+{
+    m_addRule = rule;
 }
 
 mantis::Rule mantis::TableUnit::updateRule()
@@ -308,7 +337,72 @@ mantis::Rule mantis::TableUnit::updateRule()
     return m_updateRule;
 }
 
+void mantis::TableUnit::updateRule(const Rule& rule)
+{
+    m_updateRule = rule;
+}
+
 mantis::Rule mantis::TableUnit::deleteRule()
 {
     return m_deleteRule;
+}
+
+void mantis::TableUnit::deleteRule(const Rule& rule)
+{
+    m_deleteRule = rule;
+}
+
+json& mantis::TableUnit::create(const json& entity, const json& opts)
+{
+    auto sql = m_app->db().session();
+    soci::transaction tr(*sql);
+
+    std::string columns, placeholders;
+    // Build column list and placeholders from data
+    // ...
+
+
+
+    // Create a values object
+    soci::values data;
+
+    // Populate it in a loop
+    for (const auto& field : m_fields) {
+        data.set(field["name"], entity["name"]);
+    }
+
+
+    for (int i=0; i<m_fields.size(); ++i)
+    {
+        const auto& field = m_fields.at(i);
+        std::string name = field["name"];
+
+        columns += name;
+        placeholders += ":" + name;
+
+        if ( i < m_fields.size()-1)
+        {
+            columns += ",";
+            placeholders += ",";
+        }
+    }
+
+    std::string query = "INSERT INTO " + m_tableName + " (" + columns + ") VALUES (" + placeholders + ")";
+    *sql << query, use(data);
+}
+
+std::optional<json> mantis::TableUnit::read(int id, const json& opts)
+{
+}
+
+json& mantis::TableUnit::update(int id, const json& entity, const json& opts)
+{
+}
+
+bool mantis::TableUnit::remove(int id, const json& opts)
+{
+}
+
+std::vector<json> mantis::TableUnit::list(const json& opts)
+{
 }
