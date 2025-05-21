@@ -1,17 +1,15 @@
 #ifndef MANTIS_SERVER_H
 #define MANTIS_SERVER_H
 
-#include <string>
 #include <memory>
-#include <soci/soci.h>
 #include <nlohmann/json.hpp>
-
 using json = nlohmann::json;
 
 namespace mantis
 {
     class MantisApp;
     class TableUnit;
+    class TableRoutes;
 
     class Router
     {
@@ -30,6 +28,8 @@ namespace mantis
         bool attachUserRoutes() const;
 
         MantisApp* m_app;
+        std::shared_ptr<TableUnit> m_adminTable;
+        std::shared_ptr<TableRoutes> m_tableRoutes;
         std::vector<std::shared_ptr<TableUnit>> m_routes = {};
     };
 }

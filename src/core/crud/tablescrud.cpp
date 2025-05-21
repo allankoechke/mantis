@@ -13,7 +13,7 @@ namespace mantis {
     TablesCrud::TablesCrud(MantisApp* app, Table* t): m_app(app), m_table(t)
     {}
 
-    json& TablesCrud::create(const json& entity, const json& opts)
+    json TablesCrud::create(const json& entity, const json& opts)
     {
         // {
         //     "name": ...,
@@ -122,7 +122,7 @@ namespace mantis {
         // Insert to __tables
         *sql << "INSERT INTO __tables (id, name, type, schema, created, updated) VALUES (:id, :name, :type, :schema, :created, :updated)",
             soci::use(id), soci::use(name), soci::use(type),
-        soci::use(schema_str), soci::use(created_tm), soci::use(created_tm);
+        soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
 
         // Create actual SQL table
         *sql << table_ddl;
@@ -142,51 +142,30 @@ namespace mantis {
     {
         const auto sql = m_app->db().session();
 
-        soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema FROM __tables");
-        nlohmann::json response = nlohmann::json::array();
+        soci::row r;
+        *sql << "SELECT id, name, type, schema FROM __tables WHERE id = :id", soci::use(id), soci::into(r);
 
-        for (const auto& row : rs) {
-            const auto id = row.get<std::string>(0);
-            const auto name = row.get<std::string>(1);
-            const auto type = row.get<std::string>(2);
-            const auto schema_json = row.get<std::string>(3);
-
-            const json j = json::parse(schema_json);
-
-            json tb;
-            tb["id"] = id;
-            tb["name"] = name;
-            tb["type"] = type;
-            tb["schema"] = j;
-
-
-            // std::shared_ptr<Table> table;
-            // if (type == "auth") {
-            //     auto t = std::make_shared<AuthTable>();
-            //     *t = j.get<AuthTable>();
-            //     table = t;
-            // } else if (type == "view") {
-            //     auto t = std::make_shared<ViewTable>();
-            //     *t = j.get<ViewTable>();
-            //     table = t;
-            // } else {
-            //     auto t = std::make_shared<BaseTable>();
-            //     *t = j.get<BaseTable>();
-            //     table = t;
-            // }
-            //
-            // table->id = id;
-            // table->name = name;
-            // schemaCache[id] = table;
+        if (!sql->got_data())
+        {
+            return nullopt;
         }
 
-        for (const auto& [id, table] : schemaCache) {
-            response.push_back(table->to_json());
-        }
-        return response;
+        // const auto id = r.get<std::string>(0);
+        const auto name = r.get<std::string>(1);
+        const auto type = r.get<std::string>(2);
+        const auto schema_json = r.get<std::string>(3);
+        const json j = json::parse(schema_json);
+
+        json tb;
+        tb["id"] = id;
+        tb["name"] = name;
+        tb["type"] = type;
+        tb["schema"] = j;
+
+        return tb;
     }
 
-    json& TablesCrud::update(const std::string& id, const json& entity, const json& opts)
+    json TablesCrud::update(const std::string& id, const json& entity, const json& opts)
     {
         const auto sql = m_app->db().session();
         soci::transaction tr(*sql);
@@ -216,34 +195,30 @@ namespace mantis {
         {
             const auto name = entity.value("name", "");
         }
-        std::shared_ptr<Table> existing = schemaCache[id];
-        auto updated = std::make_shared<BaseTable>();  // Assume base for now
-        *updated = payload.get<BaseTable>();
-        updated->id = id;
-        updated->name = existing->name;  // Keep name consistent
 
-        std::string new_schema = updated->to_json().dump();
+        std::string new_schema;
 
         // Update schema
-        sql << "UPDATE __tables SET schema = :schema WHERE id = :id",
+        *sql << "UPDATE __tables SET schema = :schema WHERE id = :id",
             soci::use(new_schema), soci::use(id);
 
         // TODO: Compare fields and generate ALTER TABLE statements
         // Simple naive strategy: just add missing columns
-        for (const auto& newField : updated->fields) {
-            bool exists = false;
-            for (const auto& oldField : existing->fields) {
-                if (newField.name == oldField.name) {
-                    exists = true;
-                    break;
-                }
-            }
-            if (!exists) {
-                *sql << "ALTER TABLE " << updated->name << " ADD COLUMN " << newField.to_sql();
-            }
-        }
+        // for (const auto& newField : updated->fields) {
+        //     bool exists = false;
+        //     for (const auto& oldField : existing->fields) {
+        //         if (newField.name == oldField.name) {
+        //             exists = true;
+        //             break;
+        //         }
+        //     }
+        //     if (!exists) {
+        //         *sql << "ALTER TABLE " << updated->name << " ADD COLUMN " << newField.to_sql();
+        //     }
+        // }
 
-        return true;
+        tr.commit();
+        return response;
     }
 
     bool TablesCrud::remove(const std::string& id, const json& opts)
@@ -290,59 +265,8 @@ namespace mantis {
             tb["schema"] = j;
 
             response.push_back(tb);
-
-            // std::shared_ptr<Table> table;
-            // if (type == "auth") {
-            //     auto t = std::make_shared<AuthTable>();
-            //     *t = j.get<AuthTable>();
-            //     table = t;
-            // } else if (type == "view") {
-            //     auto t = std::make_shared<ViewTable>();
-            //     *t = j.get<ViewTable>();
-            //     table = t;
-            // } else {
-            //     auto t = std::make_shared<BaseTable>();
-            //     *t = j.get<BaseTable>();
-            //     table = t;
-            // }
-            //
-            // table->id = id;
-            // table->name = name;
-            // schemaCache[id] = table;
         }
 
         return response;
     }
 } // mantis
-
-// Load all tables from the database and cache them
-// void load_schemas_from_db(soci::session& sql) {
-//     soci::rowset<soci::row> rs = (sql.prepare << "SELECT id, name, type, schema FROM __tables");
-//     for (const auto& row : rs) {
-//         std::string id = row.get<std::string>(0);
-//         std::string name = row.get<std::string>(1);
-//         std::string type = row.get<std::string>(2);
-//         std::string schema_json = row.get<std::string>(3);
-//
-//         nlohmann::json j = nlohmann::json::parse(schema_json);
-//
-//         std::shared_ptr<Table> table;
-//         if (type == "auth") {
-//             auto t = std::make_shared<AuthTable>();
-//             *t = j.get<AuthTable>();
-//             table = t;
-//         } else if (type == "view") {
-//             auto t = std::make_shared<ViewTable>();
-//             *t = j.get<ViewTable>();
-//             table = t;
-//         } else {
-//             auto t = std::make_shared<BaseTable>();
-//             *t = j.get<BaseTable>();
-//             table = t;
-//         }
-//
-//         table->id = id;
-//         table->name = name;
-//         schemaCache[id] = table;
-//     }
-// }

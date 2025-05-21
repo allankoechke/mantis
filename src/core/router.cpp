@@ -1,16 +1,23 @@
 #include "../../include/mantis/core/router.h"
+#include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/models/tables.h"
-#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/routes/tableroutes.h"
+
 
 mantis::Router::Router(MantisApp* app)
-    : m_app(app) {}
+    : m_app(app),
+      m_adminTable(std::make_shared<TableUnit>(m_app, "__admin", "admin", "auth")),
+      m_tableRoutes(std::make_shared<TableRoutes>(m_app, "__tables", "tables", "base"))
+{
+    m_adminTable->setRouteDisplayName("admin");
+    m_tableRoutes->setRouteDisplayName("tables");
+}
 
 bool mantis::Router::initialize()
 {
     if (!generateTableCrudApis())
         return false;
-
 
 
     // if (!attachUserRoutes())
@@ -59,7 +66,7 @@ bool mantis::Router::generateTableCrudApis()
     // id created updated schema has_api
     soci::row r;
     *sql << "SELECT id,schema,has_api,created,updated FROM __tables"
-    , soci::into(r);
+        , soci::into(r);
 
     if (sql->got_data())
     {
@@ -116,8 +123,6 @@ bool mantis::Router::generateTableCrudApis()
         m_routes.push_back(tableUnit);
     }
 
-    // assert(m_r)
-
     return true;
 }
 
@@ -127,10 +132,19 @@ bool mantis::Router::generateAdminCrudApis()
 
     try
     {
-        // We need to persist this instance, else it'll be cleaned up causing a crash
-        const auto adminUnit = std::make_shared<TableUnit>(m_app, "__admin", "admin", "auth");
-        if (!adminUnit->setupRoutes()) return false;
-        m_routes.push_back(adminUnit);
+        // Setup routes for the admin users fetch/create/update/delete
+        if (!m_adminTable->setupRoutes())
+        {
+            Log::critical("Failed to setup admin table routes");
+            return false;
+        }
+
+        // Setup routes to manage database tables fetch/create/update/delete
+        if (!m_tableRoutes->setupRoutes())
+        {
+            Log::critical("Failed to setup database table routes");
+            return false;
+        }
 
         // Setup Admin Dashboard
         m_app->http().Get("/admin", [=](const Request& req, Response& res, Context ctx)

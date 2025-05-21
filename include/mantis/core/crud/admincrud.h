@@ -5,9 +5,13 @@
 #ifndef ADMINCRUD_H
 #define ADMINCRUD_H
 
+#include "crud.h"
+#include "tablescrud.h"
+#include "../models/tables.h"
+
 namespace mantis {
 
-class admincrud {
+class AdminCrudUnit: CrudInterface<json> {
 
 };
 

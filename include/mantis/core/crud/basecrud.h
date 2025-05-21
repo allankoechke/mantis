@@ -9,6 +9,8 @@
 #include <vector>
 
 #include <nlohmann/json.hpp>
+
+#include "crud.h"
 using json = nlohmann::json;
 
 #include "../models/models.h"
@@ -18,7 +20,7 @@ namespace mantis
     class BaseTableCrud : public CrudInterface<json>
     {
     public:
-        BaseTableCrud(BaseTable& t) = default;
+        BaseTableCrud(BaseTable& t) {};
         virtual ~BaseTableCrud() = default;
     };
 }

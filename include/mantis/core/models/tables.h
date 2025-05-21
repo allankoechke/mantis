@@ -6,6 +6,7 @@
 #define TABLES_H
 
 #include <memory>
+#include <nlohmann/json.hpp>
 
 #include "models.h"
 #include "../http.h"
@@ -14,10 +15,12 @@
 
 namespace mantis
 {
+    using json = nlohmann::json;
+
     /**
      *
      */
-    class TableUnit: private CrudInterface<json>
+    class TableUnit
     {
     public:
         explicit TableUnit(MantisApp* app,
@@ -25,20 +28,16 @@ namespace mantis
                           const std::string& tableId,
                           const std::string& tableType = "base");
 
-        ~TableUnit() = default;
+        virtual ~TableUnit() = default;
 
         void setRouteDisplayName(const std::string& routeName);
-        bool setupRoutes();
+        virtual bool setupRoutes();
 
-        void fetchRecord(const Request& req, Response& res, Context& ctx);
-
-        void fetchRecords(const Request& req, Response& res, Context& ctx);
-
-        void createRecord(const Request& req, Response& res, Context& ctx);
-
-        void updateRecord(const Request& req, Response& res, Context& ctx);
-
-        void deleteRecord(const Request& req, Response& res, Context& ctx);
+        virtual void fetchRecord(const Request& req, Response& res, Context& ctx);
+        virtual void fetchRecords(const Request& req, Response& res, Context& ctx);
+        virtual void createRecord(const Request& req, Response& res, Context& ctx);
+        virtual void updateRecord(const Request& req, Response& res, Context& ctx);
+        virtual void deleteRecord(const Request& req, Response& res, Context& ctx);
 
         bool authWithPassword(const std::string& email, std::string& password);
 
@@ -74,13 +73,6 @@ namespace mantis
         void deleteRule(const Rule& rule);;
 
     private:
-        json& create(const json& entity, const json& opts=json{}) override;
-        std::optional<json> read(int id, const json& opts=json{}) override;
-        json& update(int id, const json& entity, const json& opts=json{}) override;
-        bool remove(int id, const json& opts=json{}) override;
-        std::vector<json> list(const json& opts=json{}) override;
-
-
         std::unique_ptr<MantisApp> m_app;
         std::string m_tableName;
         std::string m_tableId;
