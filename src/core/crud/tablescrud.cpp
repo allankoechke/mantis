@@ -10,8 +10,7 @@
 
 
 namespace mantis {
-    TablesCrud::TablesCrud(MantisApp* app, Table* t): m_app(app), m_table(t)
-    {}
+    TablesCrud::TablesCrud(MantisApp* app): m_app(app) {}
 
     json TablesCrud::create(const json& entity, const json& opts)
     {
@@ -247,7 +246,7 @@ namespace mantis {
     std::vector<json> TablesCrud::list(const json& opts)
     {
         const auto sql = m_app->db().session();
-        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema FROM __tables");
+        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
         nlohmann::json response = nlohmann::json::array();
 
         for (const auto& row : rs) {
@@ -255,14 +254,16 @@ namespace mantis {
             const auto name = row.get<std::string>(1);
             const auto type = row.get<std::string>(2);
             const auto schema_json = row.get<std::string>(3);
+            // const auto has_api = row.get<bool>(4);
 
-            const json j = json::parse(schema_json);
+            // const json j = json::parse(schema_json);
 
             json tb;
             tb["id"] = id;
             tb["name"] = name;
             tb["type"] = type;
-            tb["schema"] = j;
+            // tb["has_api"] = has_api;
+            // tb["schema"] = j;
 
             response.push_back(tb);
         }

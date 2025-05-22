@@ -72,7 +72,7 @@ namespace mantis
         Rule deleteRule();
         void deleteRule(const Rule& rule);;
 
-    private:
+    protected:
         std::unique_ptr<MantisApp> m_app;
         std::string m_tableName;
         std::string m_tableId;

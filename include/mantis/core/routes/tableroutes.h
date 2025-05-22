@@ -9,6 +9,7 @@
 
 namespace mantis {
     class MantisApp;
+    class TablesCrud;
 
 class TableRoutes final : public TableUnit {
     public:
@@ -25,6 +26,9 @@ class TableRoutes final : public TableUnit {
     void createRecord(const Request& req, Response& res, Context& ctx) override;
     void updateRecord(const Request& req, Response& res, Context& ctx) override;
     void deleteRecord(const Request& req, Response& res, Context& ctx) override;
+
+private:
+    std::shared_ptr<TablesCrud> m_crud;
 };
 
 

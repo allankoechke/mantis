@@ -96,6 +96,8 @@ void mantis::DatabaseUnit::migrate() {
 
         SystemTable tables;
         tables.name = "__tables";
+        tables.fields.push_back(Field("name", FieldType::Text, true, false, true));
+        tables.fields.push_back(Field("type", FieldType::Text, true, false, true));
         tables.fields.push_back(Field("schema", FieldType::Text, true, false, true));
         tables.fields.push_back(Field("has_api", FieldType::Boolean, true, false, true));
         *sql << tables.to_sql();
