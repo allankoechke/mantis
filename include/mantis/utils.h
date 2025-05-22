@@ -74,6 +74,12 @@ namespace mantis
         return "";
     }
 
+    inline std::string trim(const std::string& s) {
+        auto start = std::ranges::find_if_not(s, ::isspace);
+        auto end   = std::find_if_not(s.rbegin(), s.rend(), ::isspace).base();
+        return (start < end) ? std::string(start, end) : "";
+    }
+
 }
 
 #endif // MANTIS_UTILS_H

@@ -3,6 +3,8 @@
 //
 
 #include "../../../include/mantis/core/routes/tableroutes.h"
+
+#include "../../../include/mantis/utils.h"
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/core/crud/tablescrud.h"
 
@@ -243,14 +245,13 @@ namespace mantis
 
     void TableRoutes::createRecord(const Request& req, Response& res, Context& ctx)
     {
-        json body;
+        json body, response;
         try
         {
             body = json::parse(req.body);
         }
         catch (const std::exception& e)
         {
-            json response;
             response["status"] = 400;
             response["error"] = e.what();
             response["data"] = json{};
@@ -260,13 +261,130 @@ namespace mantis
             return;
         }
 
+        Log::debug("Create table, data = {}", body.dump());
+
         auto validateRequestBody = [&]() -> bool
         {
+            // {
+            //     "name": ...,
+            //     "type": ..., // view, auth, base
+            //     "fields": [
+            //         {
+            //             "autoGeneratePattern":null,
+            //             "defaultValue":null,
+            //             "maxValue":null,
+            //             "minValue":null,
+            //             "name":"id",
+            //             "primaryKey":true,
+            //             "required":true,
+            //             "system":true,
+            //             "type":"text"
+            //         }
+            //     ]
+            // }
 
+            // Get input structure
+            // TODO trim strings
+
+            if (trim(body.at("name").get<std::string>()).empty())
+            {
+                response["status"] = 400;
+                response["error"] = "Table name is required";
+                response["data"] = json{};
+
+                res.status = 400;
+                res.set_content(response.dump(), "application/json");
+                return false;
+            }
+
+            // Check that the type is either a view|base|auth type
+            auto type = body.at("type").get<std::string>();
+            toLowerCase(type);
+            if ( !(type == "view" || type == "base" || type == "auth") )
+            {
+                response["status"] = 400;
+                response["error"] = "Table type should be either 'base', 'view', or 'auth'";
+                response["data"] = json{};
+
+                res.status = 400;
+                res.set_content(response.dump(), "application/json");
+                return false;
+            }
+
+            // If the table type is of view type, check that the SQL is passed in ...
+            if (type == "view")
+            {
+                auto sql_stmt = body.at("sql").get<std::string>();
+                trim(sql_stmt);
+                if (sql_stmt.empty())
+                {
+                    response["status"] = 400;
+                    response["error"] = "'view' table require an SQL Statement.";
+                    response["data"] = json{};
+
+                    res.status = 400;
+                    res.set_content(response.dump(), "application/json");
+                    return false;
+                }
+            }
+            else
+            {
+                // Check fields if any is added
+                for (const auto& field: body.at("fields").get<std::vector<json>>())
+                {
+                    // On the minimum, we need field name and type
+                    auto field_name = field.at("name").get<std::string>();
+                    auto field_type = field.at("type").get<std::string>();
+
+                    if (trim(field_name).empty())
+                    {
+                        response["status"] = 400;
+                        response["error"] = "One of the fields is missing a valid name";
+                        response["data"] = json{};
+
+                        res.status = 400;
+                        res.set_content(response.dump(), "application/json");
+                        return false;
+                    }
+
+                    if (trim(field_type).empty())
+                    {
+                        response["status"] = 400;
+                        response["error"] = "Field type '" + field_type + "' for '" + field_name +"' is not a valid type";
+                        response["data"] = json{};
+
+                        res.status = 400;
+                        res.set_content(response.dump(), "application/json");
+                        return false;
+                    }
+                }
+            }
+
+            return true;
         };
 
         // Validate JSON body
         if (!validateRequestBody()) return;
+
+        auto resp = m_crud->create(body, json{});
+        if (!resp.at("error").empty())
+        {
+            response["status"] = 500;
+            response["error"] = resp.at("error");
+
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 500;
+            return;
+        }
+
+        response["status"] = 200;
+        response["error"] = "";
+        response["data"] = resp.at("data");
+
+        res.set_content(response.dump(), "application/json");
+        res.status = 200;
     }
 
     void TableRoutes::updateRecord(const Request& req, Response& res, Context& ctx)
