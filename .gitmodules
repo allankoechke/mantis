@@ -3,10 +3,10 @@
 	url = https://github.com/nlohmann/json.git
 [submodule "3rdParty/httplib-cpp"]
 	path = 3rdParty/httplib-cpp
-	url = git@github.com:allankoechke/httplib-cpp.git
+	url = https://github.com/allankoechke/httplib-cpp.git
 [submodule "3rdParty/soci"]
 	path = 3rdParty/soci
-	url = git@github.com:allankoechke/soci.git
+	url = https://github.com/allankoechke/soci.git
 [submodule "3rdParty/spdlog"]
 	path = 3rdParty/spdlog
 	url = https://github.com/gabime/spdlog.git
