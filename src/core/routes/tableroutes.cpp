@@ -145,6 +145,64 @@ namespace mantis
 
     void TableRoutes::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
+        auto id = req.path_params.at("id");
+        json response;
+        if (id.empty())
+        {
+            response["status"] = 400;
+            response["error"] = "Record ID is required";
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        try
+        {
+            const auto resp = m_crud->read(id, json{});
+            if (resp.has_value())
+            {
+                response["status"] = 200;
+                response["error"] = "";
+                response["data"] = resp.value();
+
+                res.set_content(response.dump(), "application/json");
+                res.status = 200;
+                return;
+            }
+            else
+            {
+                response["status"] = 404;
+                response["error"] = "Item Not Found";
+                response["data"] = json{};
+
+                res.set_content(response.dump(), "application/json");
+                res.status = 404;
+                return;
+            }
+        }
+        catch (const std::exception& e)
+        {
+            response["status"] = 500;
+            response["error"] = e.what();
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 500;
+            return;
+        }
+
+        catch (...)
+        {
+            response["status"] = 500;
+            response["error"] = "Unknown Error";
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 500;
+            return;
+        }
     }
 
     void TableRoutes::fetchRecords(const Request& req, Response& res, Context& ctx)
@@ -157,13 +215,18 @@ namespace mantis
             response["data"] = list;
             response["status"] = 200;
             response["error"] = "";
+
+            res.status = 200;
             res.set_content(response.dump(), "application/json");
         }
+
         catch (const std::exception& e)
         {
             response["data"] = json::array();
             response["status"] = 500;
             response["error"] = e.what();
+
+            res.status = 500;
             res.set_content(response.dump(), "application/json");
         }
 
@@ -172,14 +235,38 @@ namespace mantis
             response["data"] = json::array();
             response["status"] = 500;
             response["error"] = "Internal Server Error";
+
+            res.status = 500;
             res.set_content(response.dump(), "application/json");
         }
-
-        return;
     }
 
     void TableRoutes::createRecord(const Request& req, Response& res, Context& ctx)
     {
+        json body;
+        try
+        {
+            body = json::parse(req.body);
+        }
+        catch (const std::exception& e)
+        {
+            json response;
+            response["status"] = 400;
+            response["error"] = e.what();
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        auto validateRequestBody = [&]() -> bool
+        {
+
+        };
+
+        // Validate JSON body
+        if (!validateRequestBody()) return;
     }
 
     void TableRoutes::updateRecord(const Request& req, Response& res, Context& ctx)
