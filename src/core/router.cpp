@@ -1,4 +1,6 @@
 #include "../../include/mantis/core/router.h"
+
+#include "../../include/mantis/utils.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/models/tables.h"
@@ -65,62 +67,66 @@ bool mantis::Router::generateTableCrudApis()
 
     // id created updated schema has_api
     soci::row r;
-    *sql << "SELECT id,schema,has_api,created,updated FROM __tables"
+    *sql << "SELECT id,name,type,schema,has_api,created,updated FROM __tables"
         , soci::into(r);
 
     if (sql->got_data())
     {
         auto id = r.get<std::string>("id");
-        auto schema = r.get<json>("schema");
+        auto name = r.get<std::string>("name");
+        auto type = r.get<std::string>("type");
+        auto schema_str = r.get<std::string>("schema");
         auto has_api = r.get<bool>("has_api");
         auto created = r.get<std::tm>("created");
         auto updated = r.get<std::tm>("updated");
 
-        // if (!schema.empty())
-        // {
-        //     Table t;
-        //     t.id = schema["id"].get<std::string>();
-        //     t.name = schema["name"];
-        //     t.type = schema["name"];
-        //     t.schema = schema["name"];
-        //     json j;
-        //     j["id"] = id;
-        //     j["name"] = name;
-        //     j["type"] = type;
-        //     j["schema"] = schema;
-        //     j["system"] = system;
-        //     j["fields"] = json::array();
-        //     j["rules"] = {
-        //         {"list", listRule.to_json()},
-        //         {"get", getRule.to_json()},
-        //         {"add", addRule.to_json()},
-        //         {"update", updateRule.to_json()},
-        //         {"delete", deleteRule.to_json()}
-        //     };
-        //
-        //     Log::debug("Table '{}'", table);
-        //     // For each, create table object
-        //
-        //     if (TableMgr tbMgr{ *this, table, table, "base"}; !tbMgr.SetupRoutes())
-        //         return false;
-        // }
-    }
+        Log::debug("{} {}", created.tm_year, updated.tm_mon + 1);
 
+        json schema;
+        if (auto res = tryParseJsonStr(schema_str); res.has_value())
+        {
+            schema = std::move(res.value());
+        }
 
-    // Query Database For Data
-    std::vector<std::string> tables = {"students", "teachers", "classes", "permissions"};
-    for (const auto& table : tables)
-    {
-        Log::debug("Table '{}'", table);
-        // For each, create table object
+        if (!schema.empty())
+        {
+            Table t;
+            t.id = id;
+            t.name = name;
+            // t.type = type;
+            // t.schema = schema["name"];
+            // json j;
+            // j["id"] = id;
+            // j["name"] = name;
+            // j["type"] = type;
+            // j["schema"] = schema;
+            // j["system"] = system;
+            // j["fields"] = json::array();
+            // j["rules"] = {
+            //     {"list", listRule.to_json()},
+            //     {"get", getRule.to_json()},
+            //     {"add", addRule.to_json()},
+            //     {"update", updateRule.to_json()},
+            //     {"delete", deleteRule.to_json()}
+            // };
+            //
+            // Log::debug("Table '{}'", table);
+            // // For each, create table object
+            //
+            // if (TableMgr tbMgr{ *this, table, table, "base"}; !tbMgr.SetupRoutes())
+            //     return false;
 
-        // We need to persist this instance, else it'll be cleaned up causing a crash
-        auto tableUnit = std::make_shared<TableUnit>(m_app, table, table, "base");
+            Log::debug("Table '{}'", name);
+            // For each, create table object
 
-        if (!tableUnit->setupRoutes())
-            return false;
+            // We need to persist this instance, else it'll be cleaned up causing a crash
+            auto tableUnit = std::make_shared<TableUnit>(m_app, name, id, "base");
 
-        m_routes.push_back(tableUnit);
+            if (!tableUnit->setupRoutes())
+                return false;
+
+            m_routes.push_back(tableUnit);
+        }
     }
 
     return true;

@@ -80,6 +80,19 @@ namespace mantis
         return (start < end) ? std::string(start, end) : "";
     }
 
+    inline std::optional<json> tryParseJsonStr(const std::string& json_str)
+    {
+        try
+        {
+            auto res = json::parse(json_str);
+            return res;
+        } catch (const std::exception& e)
+        {
+            Log::critical("JSON parse error: {}", e.what());
+            return std::nullopt;
+        }
+    }
+
 }
 
 #endif // MANTIS_UTILS_H
