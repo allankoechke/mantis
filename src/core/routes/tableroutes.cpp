@@ -274,18 +274,23 @@ namespace mantis
             //             "defaultValue":null,
             //             "maxValue":null,
             //             "minValue":null,
-            //             "name":"id",
+            //             "name":"...",
             //             "primaryKey":true,
             //             "required":true,
-            //             "system":true,
-            //             "type":"text"
+            //             "type":"...."
             //         }
             //     ]
+            //      "rules": {
+            //          "add": ....
+            //          "list": ....
+            //          "delete": ....
+            //      }
             // }
 
             // Get input structure
             // TODO trim strings
 
+            // TODO hash and check if name exists already in db ...
             if (trim(body.at("name").get<std::string>()).empty())
             {
                 response["status"] = 400;
@@ -363,19 +368,24 @@ namespace mantis
             return true;
         };
 
+        Log::debug("Validating input JSON start ...");
+
         // Validate JSON body
         if (!validateRequestBody()) return;
+
+        Log::debug("Validating input JSON end ...");
 
         auto resp = m_crud->create(body, json{});
         if (!resp.at("error").empty())
         {
             response["status"] = 500;
             response["error"] = resp.at("error");
-
             response["data"] = json{};
 
             res.set_content(response.dump(), "application/json");
             res.status = 500;
+
+            Log::critical("Failed to create table, reason: {}", resp.dump());
             return;
         }
 

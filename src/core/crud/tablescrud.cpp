@@ -6,11 +6,15 @@
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/core/models/models.h"
+#include "../../../include/mantis/core/logging.h"
 #include <soci/soci.h>
 
 
-namespace mantis {
-    TablesCrud::TablesCrud(MantisApp* app): m_app(app) {}
+namespace mantis
+{
+    TablesCrud::TablesCrud(MantisApp* app): m_app(app)
+    {
+    }
 
     json TablesCrud::create(const json& entity, const json& opts)
     {
@@ -33,8 +37,13 @@ namespace mantis {
         // }
         std::string name = entity["name"];
         std::string type = entity["type"];
-        json fields = entity["fields"];
+        std::vector<json> fields = entity["fields"];
         std::string id = "mt_" + std::to_string(std::hash<std::string>{}(name)); // Hash the name for the ID
+
+        auto _sourceSQL = entity.value("sql", "");
+        auto _systemTable = entity.value("system", false);
+
+        Log::debug("Table: {} with id: {}", name, id);
 
         std::time_t t = time(nullptr);
         std::tm* created_tm = std::localtime(&t);
@@ -51,6 +60,7 @@ namespace mantis {
 
         for (const auto& field : fields)
         {
+            Log::debug("Field: {}", field.value("name", ""));
             auto _autoGeneratePattern = field.value("autoGeneratePattern", "");
             auto _defaultValue = field.value("defaultValue", "");
             auto _maxValue = field.value("maxValue", "");
@@ -83,8 +93,11 @@ namespace mantis {
             new_fields.push_back(f);
         }
 
-        if (type == "auth") {
+        if (type == "auth")
+        {
             AuthTable auth;
+            auth.name = name;
+            auth.system = false;
 
             // Default values
             // "id", "created", "updated", "email", "password", "name"
@@ -97,13 +110,29 @@ namespace mantis {
             schema_str = auth.to_json().dump();
             table_ddl = auth.to_sql();
         }
-        else if (type == "view") {
-            const ViewTable view;
+        else if (type == "view")
+        {
+            ViewTable view;
+            view.name = name;
+            view.system = false;
+            view.sourceSQL = _sourceSQL;
+
+            if (_sourceSQL.empty())
+            {
+                json err;
+                err["error"] = "View SQL Query is empty";
+                result["error"] = err;
+                return result;
+            }
+
             schema_str = view.to_json().dump();
             table_ddl = view.to_sql();
         }
-        else {
+        else
+        {
             BaseTable base;
+            base.name = name;
+            base.system = false;
 
             // Default fields
             // "id", "created", "updated"
@@ -118,13 +147,20 @@ namespace mantis {
             table_ddl = base.to_sql();
         }
 
+        // Execute DDL & Save to DB
+        Log::debug("Schema: {}", schema_str);
+        Log::debug("Table DDL: {}", table_ddl);
+
         // Insert to __tables
-        *sql << "INSERT INTO __tables (id, name, type, schema, created, updated) VALUES (:id, :name, :type, :schema, :created, :updated)",
+        *sql <<
+            "INSERT INTO __tables (id, name, type, schema, created, updated) VALUES (:id, :name, :type, :schema, :created, :updated)"
+            ,
             soci::use(id), soci::use(name), soci::use(type),
-        soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
+            soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
 
         // Create actual SQL table
         *sql << table_ddl;
+
 
         json obj{entity};
         obj["id"] = id;
@@ -249,7 +285,8 @@ namespace mantis {
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
         nlohmann::json response = nlohmann::json::array();
 
-        for (const auto& row : rs) {
+        for (const auto& row : rs)
+        {
             const auto id = row.get<std::string>(0);
             const auto name = row.get<std::string>(1);
             const auto type = row.get<std::string>(2);
