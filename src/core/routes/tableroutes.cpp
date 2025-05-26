@@ -213,7 +213,7 @@ namespace mantis
         json response;
         try
         {
-            json::array_t list = m_crud->list(json());
+            auto list = m_crud->list(json());
             response["data"] = list;
             response["status"] = 200;
             response["error"] = "";
@@ -265,32 +265,6 @@ namespace mantis
 
         auto validateRequestBody = [&]() -> bool
         {
-            // {
-            //     "name": ...,
-            //     "type": ..., // view, auth, base
-            //     "fields": [
-            //         {
-            //             "autoGeneratePattern":null,
-            //             "defaultValue":null,
-            //             "maxValue":null,
-            //             "minValue":null,
-            //             "name":"...",
-            //             "primaryKey":true,
-            //             "required":true,
-            //             "type":"...."
-            //         }
-            //     ]
-            //      "rules": {
-            //          "add": ....
-            //          "list": ....
-            //          "delete": ....
-            //      }
-            // }
-
-            // Get input structure
-            // TODO trim strings
-
-            // TODO hash and check if name exists already in db ...
             if (trim(body.at("name").get<std::string>()).empty())
             {
                 response["status"] = 400;
@@ -368,23 +342,20 @@ namespace mantis
             return true;
         };
 
-        Log::debug("Validating input JSON start ...");
-
         // Validate JSON body
         if (!validateRequestBody()) return;
-
-        Log::debug("Validating input JSON end ...");
 
         auto resp = m_crud->create(body, json{});
         if (!resp.value("error", json{}).empty())
         {
+            int s = resp.at("error").at("status").get<int>();
             Log::debug("Table creation failed: {}", resp.at("error").dump());
-            response["status"] = 500;
+            response["status"] = s > 0 ? s : 500;
             response["error"] = resp.at("error").at("error").get<std::string>();
             response["data"] = json{};
 
             res.set_content(response.dump(), "application/json");
-            res.status = 500;
+            res.status = s > 0 ? s : 500;
 
             Log::critical("Failed to create table, reason: {}", resp.dump());
             return;

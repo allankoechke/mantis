@@ -6,6 +6,8 @@
 #define TABLESCRUD_H
 
 #include "crud.h"
+#include "../database.h"
+#include "../../app/app.h"
 
 namespace mantis
 {
@@ -25,6 +27,8 @@ namespace mantis
         std::vector<json> list(const json& opts) override;
 
     private:
+        bool itemExists(const std::string& tableName, const std::string& id) const;
+
         MantisApp* m_app;
     };
 } // mantis

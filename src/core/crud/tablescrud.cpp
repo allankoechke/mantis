@@ -9,175 +9,226 @@
 #include "../../../include/mantis/core/logging.h"
 #include <soci/soci.h>
 
+#include "private/soci-mktime.h"
+
 
 namespace mantis
 {
-    TablesCrud::TablesCrud(MantisApp* app): m_app(app)
-    {
-    }
+    TablesCrud::TablesCrud(MantisApp* app): m_app(app) {}
 
     json TablesCrud::create(const json& entity, const json& opts)
     {
-        std::string name = entity["name"];
-        std::string type = entity["type"];
-        std::vector<json> fields = entity["fields"];
-        std::string id = "mt_" + std::to_string(std::hash<std::string>{}(name)); // Hash the name for the ID
-
-        Log::debug("Table: {} with id: {}", name, id);
-
-        std::time_t t = time(nullptr);
-        std::tm* created_tm = std::localtime(&t);
-
-        auto sql = m_app->db().session();
-        soci::transaction tr(*sql);
-
-        std::string schema_str;
-        std::string table_ddl;
-
-        std::vector<Field> new_fields;
         json result;
-
-
-        for (const auto& field : fields)
-        {
-            Log::debug("Field: {}", field.value("name", ""));
-            auto _autoGeneratePattern = field.value("autoGeneratePattern", "");
-            auto _defaultValue = field.value("defaultValue", "");
-            auto _maxValue = field.value("maxValue", "");
-            auto _minValue = field.value("minValue", "");
-            const auto _name = field.value("name", "");
-            auto _primaryKey = field.value("primaryKey", false);
-            auto _required = field.value("required", false);
-            auto _system = false;
-            auto _typeStr = field.value("type", "");
-            const auto _type = getFieldType(_typeStr);
-
-            if (_name.empty())
-            {
-                json err;
-                err["error"] = "Field type 'name' can't be empty";
-                err["status"] = 400;
-                result["error"] = err;
-                return result;
-            }
-
-            if (!_type.has_value())
-            {
-                json err;
-                err["error"] = "Field type '" + _typeStr + "' not recognised";
-                err["status"] = 400;
-                result["error"] = err;
-                return result;
-            }
-
-
-            Field f{_name, _type.value(), _required, _primaryKey, _system};
-            new_fields.push_back(f);
-        }
-
-        if (type == "auth")
-        {
-            AuthTable auth;
-            auth.name = name;
-            auth.system = false;
-
-            // Default values
-            // "id", "created", "updated", "email", "password", "name"
-            for (const auto& field : new_fields)
-            {
-                if (fieldExists(auth.type, field.name)) continue;
-                auth.fields.push_back(field);
-            }
-
-            schema_str = auth.to_json().dump();
-            table_ddl = auth.to_sql();
-        }
-        else if (type == "view")
-        {
-            ViewTable view;
-            view.name = name;
-            view.system = false;
-
-            // For view types, we need the SQL query
-            auto _sourceSQL = entity.value("sql", "");
-            if (_sourceSQL.empty())
-            {
-                json err;
-                err["error"] = "View SQL Query is empty";
-                err["status"] = 400;
-                result["error"] = err;
-                return result;
-            }
-            view.sourceSQL = _sourceSQL;
-
-            schema_str = view.to_json().dump();
-            table_ddl = view.to_sql();
-        }
-        else
-        {
-            BaseTable base;
-            base.name = name;
-            base.system = false;
-
-            // Default fields
-            // "id", "created", "updated"
-
-            for (const auto& field : new_fields)
-            {
-                if (fieldExists(base.type, field.name)) continue;
-                base.fields.push_back(field);
-            }
-
-            schema_str = base.to_json().dump();
-            table_ddl = base.to_sql();
-        }
-
-        // Execute DDL & Save to DB
-        Log::debug("Schema: {}", schema_str);
-        Log::debug("Table DDL: {}", table_ddl);
 
         try
         {
-            int has_api = 1;
-            // Insert to __tables
-            *sql <<
-                "INSERT INTO __tables (id, name, type, has_api, schema, created, updated) VALUES (:id, :name, :type, :has_api, :schema, :created, :updated)"
-                ,
-                soci::use(id), soci::use(name), soci::use(type), soci::use(has_api),
-                soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
+            const auto name = entity.at("name").get<std::string>();
+            const auto type = entity.at("type").get<std::string>();
+            const auto fields = entity.at("fields").get<std::vector<json>>();
 
-            // Create actual SQL table
-            *sql << table_ddl;
+            // Update rules in the individual table types
+            const auto addRule = entity.at("addRule").get<std::string>();
+            const auto getRule = entity.at("getRule").get<std::string>();
+            const auto listRule = entity.at("listRule").get<std::string>();
+            const auto updateRule = entity.at("updateRule").get<std::string>();
+            const auto deleteRule = entity.at("deleteRule").get<std::string>();
+
+            // Hash the name for the ID
+            std::string id = "mt_" + std::to_string(std::hash<std::string>{}(name));
+
+            Log::debug("Table: {} with id: {}", name, id);
+
+            // Check if item exits already in db
+            if (itemExists(name, id))
+            {
+                json err;
+                err["error"] = "Table with similar name exists.";
+                err["status"] = 400;
+                result["error"] = err;
+                return result;
+            }
+
+            Log::critical("Table: {} already will be created", name);
+
+            // Create default time values
+            std::time_t t = time(nullptr);
+            std::tm* created_tm = std::localtime(&t);
+
+            // Database session & transaction instance
+            auto sql = m_app->db().session();
+            soci::transaction tr(*sql);
+
+            std::string schema_str, table_ddl;
+            std::vector<Field> new_fields, rules_fields;
+
+            for (const auto& field : fields)
+            {
+                Log::debug("Field: {}", field.value("name", ""));
+                auto _autoGeneratePattern = field.value("autoGeneratePattern", "");
+                auto _defaultValue = field.value("defaultValue", "");
+                auto _maxValue = field.value("maxValue", "");
+                auto _minValue = field.value("minValue", "");
+                const auto _name = field.value("name", "");
+                auto _primaryKey = field.value("primaryKey", false);
+                auto _required = field.value("required", false);
+                auto _system = false;
+                auto _typeStr = field.value("type", "");
+                const auto _type = getFieldType(_typeStr);
+
+                if (_name.empty())
+                {
+                    json err;
+                    err["error"] = "Field type 'name' can't be empty";
+                    err["status"] = 400;
+                    result["error"] = err;
+                    return result;
+                }
+
+                if (!_type.has_value())
+                {
+                    json err;
+                    err["error"] = "Field type '" + _typeStr + "' not recognised";
+                    err["status"] = 400;
+                    result["error"] = err;
+                    return result;
+                }
 
 
-            json obj; // {entity};
-            obj["id"] = id;
-            // obj["created"] = created_tm;
-            // obj["created"] = created_tm;
-            result["data"] = obj;
+                Field f{_name, _type.value(), _required, _primaryKey, _system};
+                new_fields.push_back(f);
+            }
 
-            tr.commit();
-        } catch (const soci::soci_error& e)
-        {
-            tr.rollback();
+            if (type == "auth")
+            {
+                AuthTable auth;
+                auth.name = name;
+                auth.system = false;
+                auth.addRule.expression = addRule;
+                auth.getRule.expression = getRule;
+                auth.updateRule.expression = updateRule;
+                auth.deleteRule.expression = deleteRule;
+                auth.listRule.expression = listRule;
 
-            json err;
-            err["error"] = e.what();
-            err["status"] = 500;
-            result["error"] = err;
+                // Default values
+                // "id", "created", "updated", "email", "password", "name"
+                for (const auto& field : new_fields)
+                {
+                    if (fieldExists(auth.type, field.name)) continue;
+                    auth.fields.push_back(field);
+                }
+
+                schema_str = auth.to_json().dump();
+                table_ddl = auth.to_sql();
+            }
+            else if (type == "view")
+            {
+                ViewTable view;
+                view.name = name;
+                view.system = false;
+                view.getRule.expression = getRule;
+                view.listRule.expression = listRule;
+
+                // For view types, we need the SQL query
+                auto _sourceSQL = entity.value("sql", "");
+                if (_sourceSQL.empty())
+                {
+                    json err;
+                    err["error"] = "View SQL Query is empty";
+                    err["status"] = 400;
+                    result["error"] = err;
+                    return result;
+                }
+                view.sourceSQL = _sourceSQL;
+
+                schema_str = view.to_json().dump();
+                table_ddl = view.to_sql();
+            }
+            else
+            {
+                BaseTable base;
+                base.name = name;
+                base.system = false;
+                base.addRule.expression = addRule;
+                base.getRule.expression = getRule;
+                base.updateRule.expression = updateRule;
+                base.deleteRule.expression = deleteRule;
+                base.listRule.expression = listRule;
+
+                // Default fields
+                // "id", "created", "updated"
+
+                for (const auto& field : new_fields)
+                {
+                    if (fieldExists(base.type, field.name)) continue;
+                    base.fields.push_back(field);
+                }
+
+                schema_str = base.to_json().dump();
+                table_ddl = base.to_sql();
+            }
+
+            // Execute DDL & Save to DB
+            Log::debug("Schema: {}", schema_str);
+            Log::debug("Table DDL: {}", table_ddl);
+
+            try
+            {
+                int has_api = 1;
+                // Insert to __tables
+                *sql <<
+                    "INSERT INTO __tables (id, name, type, has_api, schema, created, updated) VALUES (:id, :name, :type, :has_api, :schema, :created, :updated)"
+                    ,
+                    soci::use(id), soci::use(name), soci::use(type), soci::use(has_api),
+                    soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
+
+                // Create actual SQL table
+                *sql << table_ddl;
+
+                auto toISOStringDate = [&](const std::tm& t) -> std::string
+                {
+                    char buffer[80];
+                    const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
+                    std::string iso_string(buffer, length);
+                    return iso_string;
+                };
+
+                json obj = entity;
+                obj["id"] = id;
+                obj["created"] = toISOStringDate(*created_tm);
+                obj["updated"] = toISOStringDate(*created_tm);
+                result["data"] = obj;
+
+                tr.commit();
+            } catch (const soci::soci_error& e)
+            {
+                tr.rollback();
+
+                json err;
+                err["error"] = e.what();
+                err["status"] = 500;
+                result["error"] = err;
+                return result;
+            } catch (const std::exception& e)
+            {
+                tr.rollback();
+
+                json err;
+                err["error"] = e.what();
+                err["status"] = 500;
+                result["error"] = err;
+                return result;
+            }
+
             return result;
-        } catch (const std::exception& e)
+        } catch (std::exception& e)
         {
-            tr.rollback();
-
+            Log::critical("TablesCrud::TablesCrud: {}", e.what());
             json err;
             err["error"] = e.what();
             err["status"] = 500;
             result["error"] = err;
             return result;
         }
-
-        return result;
     }
 
     std::optional<json> TablesCrud::read(const std::string& id, const json& opts)
@@ -298,7 +349,7 @@ namespace mantis
             const auto name = row.get<std::string>(1);
             const auto type = row.get<std::string>(2);
             const auto schema_json = row.get<std::string>(3);
-            // const auto has_api = row.get<bool>(4);
+            const auto has_api = row.get<int>(4);
 
             // const json j = json::parse(schema_json);
 
@@ -306,12 +357,29 @@ namespace mantis
             tb["id"] = id;
             tb["name"] = name;
             tb["type"] = type;
-            // tb["has_api"] = has_api;
-            // tb["schema"] = j;
+            tb["has_api"] = has_api;
+            tb["schema"] = schema_json;
 
             response.push_back(tb);
         }
 
         return response;
+    }
+
+    bool TablesCrud::itemExists(const std::string& tableName, const std::string& id) const
+    {
+        Log::debug("TablesCrud::itemExists for {} {}", tableName, id);
+        try
+        {
+            int count;
+            const auto sql = m_app->db().session();
+            const std::string query = "SELECT COUNT(id) FROM " + tableName + " WHERE id = :id";
+            *sql << query, soci::use(id), soci::into(count);
+            return sql->got_data();
+        } catch (soci::soci_error& e)
+        {
+            Log::critical("TablesCrud::itemExists error: {}", e.what());
+            return false;
+        }
     }
 } // mantis
