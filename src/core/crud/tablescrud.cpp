@@ -18,30 +18,10 @@ namespace mantis
 
     json TablesCrud::create(const json& entity, const json& opts)
     {
-        // {
-        //     "name": ...,
-        //     "type": ..., // view, auth, base
-        //     "fields": [
-        //         {
-        //             "autoGeneratePattern":null,
-        //             "defaultValue":null,
-        //             "maxValue":null,
-        //             "minValue":null,
-        //             "name":"id",
-        //             "primaryKey":true,
-        //             "required":true,
-        //             "system":true,
-        //             "type":"text"
-        //         }
-        //     ]
-        // }
         std::string name = entity["name"];
         std::string type = entity["type"];
         std::vector<json> fields = entity["fields"];
         std::string id = "mt_" + std::to_string(std::hash<std::string>{}(name)); // Hash the name for the ID
-
-        auto _sourceSQL = entity.value("sql", "");
-        auto _systemTable = entity.value("system", false);
 
         Log::debug("Table: {} with id: {}", name, id);
 
@@ -76,6 +56,7 @@ namespace mantis
             {
                 json err;
                 err["error"] = "Field type 'name' can't be empty";
+                err["status"] = 400;
                 result["error"] = err;
                 return result;
             }
@@ -84,6 +65,7 @@ namespace mantis
             {
                 json err;
                 err["error"] = "Field type '" + _typeStr + "' not recognised";
+                err["status"] = 400;
                 result["error"] = err;
                 return result;
             }
@@ -115,15 +97,18 @@ namespace mantis
             ViewTable view;
             view.name = name;
             view.system = false;
-            view.sourceSQL = _sourceSQL;
 
+            // For view types, we need the SQL query
+            auto _sourceSQL = entity.value("sql", "");
             if (_sourceSQL.empty())
             {
                 json err;
                 err["error"] = "View SQL Query is empty";
+                err["status"] = 400;
                 result["error"] = err;
                 return result;
             }
+            view.sourceSQL = _sourceSQL;
 
             schema_str = view.to_json().dump();
             table_ddl = view.to_sql();
@@ -151,24 +136,46 @@ namespace mantis
         Log::debug("Schema: {}", schema_str);
         Log::debug("Table DDL: {}", table_ddl);
 
-        // Insert to __tables
-        *sql <<
-            "INSERT INTO __tables (id, name, type, schema, created, updated) VALUES (:id, :name, :type, :schema, :created, :updated)"
-            ,
-            soci::use(id), soci::use(name), soci::use(type),
-            soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
+        try
+        {
+            int has_api = 1;
+            // Insert to __tables
+            *sql <<
+                "INSERT INTO __tables (id, name, type, has_api, schema, created, updated) VALUES (:id, :name, :type, :has_api, :schema, :created, :updated)"
+                ,
+                soci::use(id), soci::use(name), soci::use(type), soci::use(has_api),
+                soci::use(schema_str), soci::use(*created_tm), soci::use(*created_tm);
 
-        // Create actual SQL table
-        *sql << table_ddl;
+            // Create actual SQL table
+            *sql << table_ddl;
 
 
-        json obj{entity};
-        obj["id"] = id;
-        // obj["created"] = created_tm;
-        // obj["created"] = created_tm;
-        result["data"] = obj;
+            json obj; // {entity};
+            obj["id"] = id;
+            // obj["created"] = created_tm;
+            // obj["created"] = created_tm;
+            result["data"] = obj;
 
-        tr.commit();
+            tr.commit();
+        } catch (const soci::soci_error& e)
+        {
+            tr.rollback();
+
+            json err;
+            err["error"] = e.what();
+            err["status"] = 500;
+            result["error"] = err;
+            return result;
+        } catch (const std::exception& e)
+        {
+            tr.rollback();
+
+            json err;
+            err["error"] = e.what();
+            err["status"] = 500;
+            result["error"] = err;
+            return result;
+        }
 
         return result;
     }

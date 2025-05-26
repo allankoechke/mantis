@@ -3,6 +3,16 @@ project(mantis-ctl)
 
 set(CMAKE_CXX_STANDARD 20)
 
+# Flag for building deps as shared/static libs
+option(MANTIS_SHARED_DEPS "Build mantis dependencies as shared libs" ON)
+if(MANTIS_SHARED_DEPS)
+    # Optional: choose static/shared globally
+    set(BUILD_SHARED_LIBS ON)
+else ()
+    # Optional: choose static/shared globally
+    set(BUILD_SHARED_LIBS OFF)
+endif ()
+
 # Set output directories to match SOCI's
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -63,15 +73,34 @@ set(SOCI_FIREBIRD OFF CACHE BOOL "" )
 set(SOCI_EMPTY OFF CACHE BOOL "" )
 add_subdirectory(3rdParty/soci)
 
+if(MANTIS_SHARED_DEPS)
+    # Enable multi-header mode (compiled lib)
+    set(JSON_MultipleHeaders ON CACHE BOOL "Enable compiled mode for nlohmann/json")
+else ()
+    # Enable multi-header mode (compiled lib)
+    set(JSON_MultipleHeaders OFF CACHE BOOL "Disable compiled mode for nlohmann/json")
+endif ()
 set(JSON_Install OFF CACHE INTERNAL "")
 add_subdirectory(3rdParty/json)
 
 # Add httplib
-set(HTTPLIB_COMPILE OFF CACHE BOOL "")
+if(MANTIS_SHARED_DEPS)
+    # Build Shared lib for httplib
+    set(HTTPLIB_COMPILE ON CACHE BOOL "")
+else ()
+    # Build static lib for httplib
+    set(HTTPLIB_COMPILE OFF CACHE BOOL "")
+endif ()
 add_subdirectory(3rdParty/httplib-cpp)
 
 # Add spdlog
-set(SPDLOG_BUILD_SHARED OFF)
+if(MANTIS_SHARED_DEPS)
+    # Build Shared lib for spdlog
+    set(SPDLOG_BUILD_SHARED ON)
+else ()
+    # Build static lib for spdlog
+    set(SPDLOG_BUILD_SHARED OFF)
+endif ()
 add_subdirectory(3rdParty/spdlog)
 
 # Link to libs

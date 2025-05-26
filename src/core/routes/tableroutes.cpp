@@ -376,10 +376,11 @@ namespace mantis
         Log::debug("Validating input JSON end ...");
 
         auto resp = m_crud->create(body, json{});
-        if (!resp.at("error").empty())
+        if (!resp.value("error", json{}).empty())
         {
+            Log::debug("Table creation failed: {}", resp.at("error").dump());
             response["status"] = 500;
-            response["error"] = resp.at("error");
+            response["error"] = resp.at("error").at("error").get<std::string>();
             response["data"] = json{};
 
             res.set_content(response.dump(), "application/json");
@@ -389,12 +390,14 @@ namespace mantis
             return;
         }
 
-        response["status"] = 200;
+        Log::debug("Table creation successful");
+
+        response["status"] = 201;
         response["error"] = "";
         response["data"] = resp.at("data");
 
         res.set_content(response.dump(), "application/json");
-        res.status = 200;
+        res.status = 201;
     }
 
     void TableRoutes::updateRecord(const Request& req, Response& res, Context& ctx)
