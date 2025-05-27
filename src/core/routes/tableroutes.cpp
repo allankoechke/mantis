@@ -377,5 +377,46 @@ namespace mantis
 
     void TableRoutes::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
+        auto id = req.path_params.at("id");
+        json response;
+        if (id.empty())
+        {
+            response["status"] = 400;
+            response["error"] = "Record ID is required";
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        try
+        {
+            // If remove returns false, something didn't go right!
+            if (const auto resp = m_crud->remove(id, json{}); !resp)
+            {
+                response["status"] = 500;
+                response["error"] = "Could not delete record";
+                response["data"] = json{};
+
+                res.set_content(response.dump(), "application/json");
+                res.status = 500;
+                return;
+            }
+        } catch (const std::exception& e)
+        {
+            response["status"] = 500;
+            response["error"] = e.what();
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 500;
+            return;
+        }
+
+        Log::debug("Table deletion successful");
+
+        res.set_content("", "application/json");
+        res.status = 204;
     }
 } // mantis

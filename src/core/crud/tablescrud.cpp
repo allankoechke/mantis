@@ -101,6 +101,7 @@ namespace mantis
             if (type == "auth")
             {
                 AuthTable auth;
+                auth.id = id;
                 auth.name = name;
                 auth.system = false;
                 auth.addRule.expression = addRule;
@@ -123,6 +124,7 @@ namespace mantis
             else if (type == "view")
             {
                 ViewTable view;
+                view.id = id;
                 view.name = name;
                 view.system = false;
                 view.getRule.expression = getRule;
@@ -146,6 +148,7 @@ namespace mantis
             else
             {
                 BaseTable base;
+                base.id = id;
                 base.name = name;
                 base.system = false;
                 base.addRule.expression = addRule;
@@ -319,6 +322,8 @@ namespace mantis
         const auto sql = m_app->db().session();
         soci::transaction tr(*sql);
 
+        json response;
+
         // Check if item exists of given id
         std::string name;
         *sql << "SELECT name FROM __tables WHERE id = :id", soci::use(id), soci::into(name);
@@ -333,6 +338,8 @@ namespace mantis
         *sql << "DROP TABLE IF EXISTS " + name;
 
         tr.commit();
+
+        // TODO reload routes
 
         return true;
     }

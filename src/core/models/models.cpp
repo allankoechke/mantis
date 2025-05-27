@@ -123,6 +123,18 @@ std::string mantis::Table::to_sql() const
     sql += ");";
 
     return sql;
+
+    // std::ostringstream ddl;
+    // ddl << "CREATE TABLE " << tableName << " (";
+    //
+    // for (size_t i = 0; i < columns.size(); ++i) {
+    //     if (i > 0) ddl << ", ";
+    //     ddl << columns[i].first << " "
+    //         << sql.get_backend()->create_column_type(columns[i].second, 0, 0);
+    // }
+    //
+    // ddl << ")";
+    // return ddl.str();
 }
 
 mantis::BaseTable::BaseTable()

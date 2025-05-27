@@ -27,30 +27,39 @@ namespace mantis
         {TableType::View, "view"}
     })
 
-    // Text, Number, Bool, etc.
-    // Enum to represent different data types for fields
-    typedef enum class FieldType {
-        Url,
-        Text,
-        Integer,
-        Float,
-        Boolean,
-        DateTime,
-        Email,
-        Password,
+    typedef enum class FieldTypeDecl {
+        XML         = soci::db_xml,
+        STRING      = soci::db_string,
+        DOUBLE      = soci::db_double,
+        DATE        = soci::db_date,
+        INT8        = soci::db_int8,
+        UINT8       = soci::db_uint8,
+        INT16       = soci::db_int16,
+        UINT16      = soci::db_uint16,
+        INT32       = soci::db_int32,
+        UINT32      = soci::db_uint32,
+        INT64       = soci::db_int64,
+        UINT64      = soci::db_uint64,
+        BLOB        = soci::db_blob,
+        // User defined types
         JSON
     } FieldType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(FieldType, {
-        { FieldType::Url,       "url" },
-        { FieldType::Text,      "text" },
-        { FieldType::Integer,   "integer" },
-        { FieldType::Float,     "float" },
-        { FieldType::Boolean,   "boolean" },
-        { FieldType::DateTime,  "datetime" },
-        { FieldType::Email,     "email" },
-        { FieldType::Password,  "password" },
-        { FieldType::JSON,      "json" }
+        { FieldType::XML,       "db_xml"    },
+        { FieldType::STRING,    "db_string" },
+        { FieldType::DOUBLE,    "db_double" },
+        { FieldType::DATE,      "db_date"   },
+        { FieldType::INT8,      "db_int8"   },
+        { FieldType::UINT8,     "db_uint8"  },
+        { FieldType::INT16,     "db_int16"  },
+        { FieldType::UINT16,    "db_uint16" },
+        { FieldType::INT32,     "db_int32"  },
+        { FieldType::UINT32,    "db_uint32" },
+        { FieldType::INT64,     "db_int64"  },
+        { FieldType::UINT64,    "db_uint64" },
+        { FieldType::BLOB,      "db_blob"   },
+        { FieldType::JSON,      "db_json"   },
     })
 
     const std::vector<std::string> baseFields = {"id", "created", "updated"};
@@ -60,14 +69,8 @@ namespace mantis
 
     bool fieldExists(const TableType& type, const std::string& fieldName);
 
-    // Access Rule Struct
-    typedef struct RuleDecl
-    {
-        std::string expression = "";
-        bool enabled = false;
-
-        json to_json() const;
-    } Rule;
+    // Access rule expression
+    typedef std::string Rule;
 
     // Field definition
     struct Field {
