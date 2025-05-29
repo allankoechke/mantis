@@ -5,11 +5,14 @@
 #ifndef MODELS_H
 #define MODELS_H
 
+#include <soci/soci.h>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
 namespace mantis
 {
+    class MantisApp;
+
     // Enum of the table type created,
     // base table types provide `index`, `created`, `updated`
     // auth table type provide `base` type + `email`, `password`, `name`
@@ -42,7 +45,8 @@ namespace mantis
         UINT64      = soci::db_uint64,
         BLOB        = soci::db_blob,
         // User defined types
-        JSON
+        JSON,
+        BOOL
     } FieldType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(FieldType, {
@@ -60,6 +64,7 @@ namespace mantis
         { FieldType::UINT64,    "db_uint64" },
         { FieldType::BLOB,      "db_blob"   },
         { FieldType::JSON,      "db_json"   },
+        { FieldType::BOOL,      "db_bool"   },
     })
 
     const std::vector<std::string> baseFields = {"id", "created", "updated"};
@@ -87,17 +92,17 @@ namespace mantis
         std::optional<int> maxValue;
         std::optional<std::string> autoGeneratePattern; // regex for auto-gen strings
 
-        Field() = default;
-
         // Convenience constructor
         Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false);
 
         [[nodiscard]] json to_json() const;
-        [[nodiscard]] std::string to_sql() const;
+        [[nodiscard]] soci::db_type toSociType() const;
+        // [[nodiscard]] std::string to_sql() const;
     };
 
     // Represents a generic table in the system
     struct Table {
+        virtual ~Table() = default;
         std::string id;
         std::string name;
         TableType type;
@@ -112,6 +117,12 @@ namespace mantis
         Rule updateRule;
         Rule deleteRule;
 
+        // Pointer to main app instance,
+        // for access to get database session
+        MantisApp* m_app;
+
+        explicit Table(MantisApp* app);
+
         [[nodiscard]] virtual json to_json() const;
         [[nodiscard]] virtual std::string to_sql() const;
     };
@@ -120,7 +131,7 @@ namespace mantis
     struct BaseTable : Table {
         bool enableSync = true;
 
-        BaseTable();
+        explicit BaseTable(MantisApp* app);
     };
 
     // Specific model for Auth table
@@ -131,8 +142,8 @@ namespace mantis
         bool enableSync = true;
 
         // Member Functions
-        AuthTable();
-        virtual ~AuthTable() = default;
+        explicit AuthTable(MantisApp* app);
+        ~AuthTable() override = default;
     };
 
     // Specific model for View table
@@ -140,39 +151,20 @@ namespace mantis
         std::string sourceSQL;
         bool enableSync = false;
 
-        ViewTable();
+        explicit ViewTable(MantisApp* app);
     };
 
-    struct SystemTable : BaseTable {
+    struct SystemTable final : BaseTable {
         bool enableSync = true;
 
-        void BaseTable()
-        {
-            system = true;
-            type = TableType::Base;
-            fields = {
-                Field("id", FieldType::Text, true, true, true),
-                Field("created", FieldType::DateTime, true, false, true),
-                Field("updated", FieldType::DateTime, true, false, true)
-            };
-        }
+        explicit SystemTable(MantisApp* app);
+        ~SystemTable() override = default;
     };
 
-    struct AdminTable : AuthTable {
+    struct AdminTable final : AuthTable {
         bool enableSync = true;
 
-        void BaseTable()
-        {
-            system = true;
-            type = TableType::Auth;
-            fields = {
-                Field("id", FieldType::Text, true, true, true),
-                Field("email", FieldType::Email, true, false, true),
-                Field("password", FieldType::Password, true, false, true),
-                Field("created", FieldType::DateTime, true, false, true),
-                Field("updated", FieldType::DateTime, true, false, true)
-            };
-        }
+        explicit AdminTable(MantisApp* app);
     };
 }
 

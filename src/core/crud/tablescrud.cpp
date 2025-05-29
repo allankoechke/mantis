@@ -100,15 +100,15 @@ namespace mantis
 
             if (type == "auth")
             {
-                AuthTable auth;
+                AuthTable auth(m_app);
                 auth.id = id;
                 auth.name = name;
                 auth.system = false;
-                auth.addRule.expression = addRule;
-                auth.getRule.expression = getRule;
-                auth.updateRule.expression = updateRule;
-                auth.deleteRule.expression = deleteRule;
-                auth.listRule.expression = listRule;
+                auth.addRule = addRule;
+                auth.getRule = getRule;
+                auth.updateRule = updateRule;
+                auth.deleteRule = deleteRule;
+                auth.listRule = listRule;
 
                 // Default values
                 // "id", "created", "updated", "email", "password", "name"
@@ -123,12 +123,12 @@ namespace mantis
             }
             else if (type == "view")
             {
-                ViewTable view;
+                ViewTable view(m_app);
                 view.id = id;
                 view.name = name;
                 view.system = false;
-                view.getRule.expression = getRule;
-                view.listRule.expression = listRule;
+                view.getRule = getRule;
+                view.listRule = listRule;
 
                 // For view types, we need the SQL query
                 auto _sourceSQL = entity.value("sql", "");
@@ -147,15 +147,15 @@ namespace mantis
             }
             else
             {
-                BaseTable base;
+                BaseTable base(m_app);
                 base.id = id;
                 base.name = name;
                 base.system = false;
-                base.addRule.expression = addRule;
-                base.getRule.expression = getRule;
-                base.updateRule.expression = updateRule;
-                base.deleteRule.expression = deleteRule;
-                base.listRule.expression = listRule;
+                base.addRule = addRule;
+                base.getRule = getRule;
+                base.updateRule = updateRule;
+                base.deleteRule = deleteRule;
+                base.listRule = listRule;
 
                 // Default fields
                 // "id", "created", "updated"

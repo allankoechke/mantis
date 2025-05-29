@@ -88,18 +88,18 @@ void mantis::DatabaseUnit::migrate() {
         auto sql = session();
         soci::transaction tr{*sql};
 
-        AdminTable admin;
+        AdminTable admin(m_app);
         admin.name = "__admin";
         *sql << admin.to_sql();
         Log::debug("Generated Admin Table SQL:  {}", admin.to_sql());
         Log::debug("Generated Admin Table JSON: {}", admin.to_json().dump());
 
-        SystemTable tables;
+        SystemTable tables(m_app);
         tables.name = "__tables";
-        tables.fields.push_back(Field("name", FieldType::Text, true, false, true));
-        tables.fields.push_back(Field("type", FieldType::Text, true, false, true));
-        tables.fields.push_back(Field("schema", FieldType::Text, true, false, true));
-        tables.fields.push_back(Field("has_api", FieldType::Boolean, true, false, true));
+        tables.fields.push_back(Field("name", FieldType::STRING, true, false, true));
+        tables.fields.push_back(Field("type", FieldType::STRING, true, false, true));
+        tables.fields.push_back(Field("schema", FieldType::STRING, true, false, true));
+        tables.fields.push_back(Field("has_api", FieldType::UINT8, true, false, true));
         *sql << tables.to_sql();
 
         Log::debug("Generated Sys Tables SQL:  {}", tables.to_sql());

@@ -90,7 +90,7 @@ bool mantis::Router::generateTableCrudApis()
 
         if (!schema.empty())
         {
-            Table t;
+            Table t(m_app);
             t.id = id;
             t.name = name;
             // t.type = type;
