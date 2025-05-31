@@ -7,8 +7,10 @@
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/core/models/models.h"
 #include "../../../include/mantis/core/logging.h"
+#include "../../../include/mantis/utils.h"
 #include <soci/soci.h>
 
+#include "../../../include/mantis/core/models/tables.h"
 #include "private/soci-mktime.h"
 
 
@@ -34,7 +36,7 @@ namespace mantis
             const auto deleteRule = entity.at("deleteRule").get<std::string>();
 
             // Hash the name for the ID
-            std::string id = "mt_" + std::to_string(std::hash<std::string>{}(name));
+            std::string id = TableUnit::generateTableId(name);
 
             Log::debug("Table: {} with id: {}", name, id);
 
@@ -48,7 +50,7 @@ namespace mantis
                 return result;
             }
 
-            Log::critical("Table: {} already will be created", name);
+            Log::trace("Table: {} will be created", name);
 
             // Create default time values
             std::time_t t = time(nullptr);
@@ -63,7 +65,7 @@ namespace mantis
 
             for (const auto& field : fields)
             {
-                Log::debug("Field: {}", field.value("name", ""));
+                Log::trace("Field: {} data = {}", field.value("name", ""), field.dump());
                 auto _autoGeneratePattern = field.value("autoGeneratePattern", "");
                 auto _defaultValue = field.value("defaultValue", "");
                 auto _maxValue = field.value("maxValue", "");
@@ -187,18 +189,22 @@ namespace mantis
                 // Create actual SQL table
                 *sql << table_ddl;
 
-                auto toISOStringDate = [&](const std::tm& t) -> std::string
-                {
-                    char buffer[80];
-                    const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
-                    std::string iso_string(buffer, length);
-                    return iso_string;
-                };
-
-                json obj = entity;
+                json obj;
                 obj["id"] = id;
-                obj["created"] = toISOStringDate(*created_tm);
-                obj["updated"] = toISOStringDate(*created_tm);
+                obj["name"] = name;
+                obj["type"] = type;
+                obj["fields"] = json::array();
+                obj["created"] = DatabaseUnit::tmToISODate(*created_tm);
+                obj["updated"] = DatabaseUnit::tmToISODate(*created_tm);
+                obj["addRule"] = addRule;
+                obj["deleteRule"] = deleteRule;
+                obj["getRule"] = getRule;
+                obj["listRule"] = listRule;
+                obj["updateRule"] = updateRule;
+
+                // Dump complete field information, not just the passed in values
+                for (const auto& field : new_fields) { obj["fields"].push_back(field.to_json()); }
+                
                 result["data"] = obj;
 
                 tr.commit();
@@ -249,14 +255,13 @@ namespace mantis
         // const auto id = r.get<std::string>(0);
         const auto name = r.get<std::string>(1);
         const auto type = r.get<std::string>(2);
-        const auto schema_json = r.get<std::string>(3);
-        const json j = json::parse(schema_json);
+        const auto schema = r.get<json>(3);
 
         json tb;
         tb["id"] = id;
         tb["name"] = name;
         tb["type"] = type;
-        tb["schema"] = j;
+        tb["schema"] = schema;
 
         return tb;
     }
@@ -266,8 +271,8 @@ namespace mantis
         const auto sql = m_app->db().session();
         soci::transaction tr(*sql);
         json response;
-        response["data"] = json{};
-        response["error"] = json{};
+        response["data"] = json::object();
+        response["error"] = json::object();
 
         // Get Original Object
         soci::row rw;
@@ -290,6 +295,14 @@ namespace mantis
         if (entity.contains("name") && entity.value("name", "") != old_name)
         {
             const auto name = entity.value("name", "");
+            const auto nId = TableUnit::generateTableId(name);
+
+            // Update Name & ID in the __tables catalogue
+            *sql << "UPDATE __tables SET id = :id & name = :name WHERE id = :old_id",
+            soci::use(nId), soci::use(name), soci::use(id);
+
+            // Update the
+            // TODO LATER
         }
 
         std::string new_schema;
@@ -375,7 +388,7 @@ namespace mantis
 
     bool TablesCrud::itemExists(const std::string& tableName, const std::string& id) const
     {
-        Log::debug("TablesCrud::itemExists for {} {}", tableName, id);
+        Log::trace("TablesCrud::itemExists for {} {}", tableName, id);
         try
         {
             int count;
@@ -385,7 +398,7 @@ namespace mantis
             return sql->got_data();
         } catch (soci::soci_error& e)
         {
-            Log::critical("TablesCrud::itemExists error: {}", e.what());
+            Log::trace("TablesCrud::itemExists error: {}", e.what());
             return false;
         }
     }

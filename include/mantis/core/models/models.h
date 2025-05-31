@@ -50,21 +50,21 @@ namespace mantis
     } FieldType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(FieldType, {
-        { FieldType::XML,       "db_xml"    },
-        { FieldType::STRING,    "db_string" },
-        { FieldType::DOUBLE,    "db_double" },
-        { FieldType::DATE,      "db_date"   },
-        { FieldType::INT8,      "db_int8"   },
-        { FieldType::UINT8,     "db_uint8"  },
-        { FieldType::INT16,     "db_int16"  },
-        { FieldType::UINT16,    "db_uint16" },
-        { FieldType::INT32,     "db_int32"  },
-        { FieldType::UINT32,    "db_uint32" },
-        { FieldType::INT64,     "db_int64"  },
-        { FieldType::UINT64,    "db_uint64" },
-        { FieldType::BLOB,      "db_blob"   },
-        { FieldType::JSON,      "db_json"   },
-        { FieldType::BOOL,      "db_bool"   },
+        { FieldType::XML,       "xml"    },
+        { FieldType::STRING,    "string" },
+        { FieldType::DOUBLE,    "double" },
+        { FieldType::DATE,      "date"   },
+        { FieldType::INT8,      "int8"   },
+        { FieldType::UINT8,     "uint8"  },
+        { FieldType::INT16,     "int16"  },
+        { FieldType::UINT16,    "uint16" },
+        { FieldType::INT32,     "int32"  },
+        { FieldType::UINT32,    "uint32" },
+        { FieldType::INT64,     "int64"  },
+        { FieldType::UINT64,    "uint64" },
+        { FieldType::BLOB,      "blob"   },
+        { FieldType::JSON,      "json"   },
+        { FieldType::BOOL,      "bool"   },
     })
 
     const std::vector<std::string> baseFields = {"id", "created", "updated"};
@@ -97,7 +97,6 @@ namespace mantis
 
         [[nodiscard]] json to_json() const;
         [[nodiscard]] soci::db_type toSociType() const;
-        // [[nodiscard]] std::string to_sql() const;
     };
 
     // Represents a generic table in the system

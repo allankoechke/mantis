@@ -8,7 +8,6 @@
 #include <string>
 #include <algorithm>
 #include <filesystem>
-
 #include "core/logging.h"
 
 namespace mantis
@@ -92,7 +91,6 @@ namespace mantis
             return std::nullopt;
         }
     }
-
 }
 
 #endif // MANTIS_UTILS_H

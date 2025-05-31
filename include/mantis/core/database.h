@@ -12,9 +12,49 @@
 #include <nlohmann/json.hpp>
 
 #include "../app/app.h"
+#include "private/soci-mktime.h"
 
 using json = nlohmann::json;
 
+namespace soci {
+    // Boolean type conversion
+    template <>
+    struct type_conversion<bool> {
+        typedef int8_t base_type;
+
+        static void from_base(int8_t i, indicator ind, bool & b) {
+            if (ind == i_null) {
+                b = false;
+                return;
+            }
+            b = (i != 0);
+        }
+
+        static void to_base(const bool & b, int8_t & i, indicator & ind) {
+            i = b ? 1 : 0;
+            ind = i_ok;
+        }
+    };
+
+    // JSON type conversion (assuming you have a JSON class)
+    template <>
+    struct type_conversion<json> {
+        typedef std::string base_type;
+
+        static void from_base(const std::string & s, indicator ind, json & jb) {
+            if (ind == i_null) {
+                jb = json{}; // or handle null as appropriate
+                return;
+            }
+            jb = json::parse(s); // or however you parse JSON
+        }
+
+        static void to_base(const json & json, std::string & s, indicator & ind) {
+            s = json.dump(); // or however you serialize JSON
+            ind = i_ok;
+        }
+    };
+}
 
 namespace mantis
 {
@@ -38,6 +78,14 @@ namespace mantis
 
         // Check if the database is connected
         bool isConnected() const;
+
+        static inline std::string tmToISODate(const std::tm& t)
+        {
+            char buffer[80];
+            const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
+            std::string iso_string(buffer, length);
+            return iso_string;
+        };
 
     private:
         MantisApp* m_app;

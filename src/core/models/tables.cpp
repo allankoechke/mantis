@@ -10,17 +10,30 @@ namespace mantis
 {
     TableUnit::TableUnit(
         MantisApp* app,
-        const std::string& tableName,
-        const std::string& tableId,
-        const std::string& tableType)
+        std::string tableName,
+        std::string tableId,
+        std::string tableType)
         : m_app(app),
-          m_tableName(tableName),
-          m_tableId(tableId),
-          m_tableType(tableType),
+          m_tableName(std::move(tableName)),
+          m_tableId(std::move(tableId)),
+          m_tableType(std::move(tableType)),
           m_listRule(Rule{}),
           m_getRule(Rule{}), m_addRule(Rule{}),
           m_updateRule(Rule{}), m_deleteRule(Rule{})
     {
+    }
+
+    TableUnit::TableUnit(
+        MantisApp* app,
+        const json& schema)
+    : m_app(app),
+          m_listRule(Rule{}),
+          m_getRule(Rule{}),
+          m_addRule(Rule{}),
+          m_updateRule(Rule{}),
+          m_deleteRule(Rule{})
+    {
+        fromJson(schema);
     }
 
     void TableUnit::setRouteDisplayName(const std::string& routeName)
@@ -165,31 +178,96 @@ namespace mantis
     void TableUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
         Log::debug("TableMgr::FetchRecord for {}", req.path);
-        ctx.dump();
-
+        const auto id = req.path_params.at("id");
         json response;
-        response["status"] = 200;
-        response["body"] = json{};
-        response["message"] = "";
+        if (id.empty())
+        {
+            response["status"] = 400;
+            response["error"] = "Record ID is required";
+            response["data"] = json::object();
 
-        res.status = 200;
-        res.set_content(response.dump(), "application/json");
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        try
+        {
+            if (const auto resp = read(id, json::object()); resp.has_value())
+            {
+                response["status"] = 200;
+                response["error"] = "";
+                response["data"] = resp.value();
+
+                res.set_content(response.dump(), "application/json");
+                res.status = 200;
+                return;
+            }
+
+            response["status"] = 404;
+            response["error"] = "Item Not Found";
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 404;
+        }
+
+        catch (const std::exception& e)
+        {
+            response["status"] = 500;
+            response["error"] = e.what();
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 500;
+        }
+
+        catch (...)
+        {
+            response["status"] = 500;
+            response["error"] = "Unknown Error";
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 500;
+        }
     }
 
     void TableUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
     {
-        Log::debug("TableMgr::FetchRecords for {}", req.path);
-        ctx.dump();
-
+        Log::trace("TableMgr::FetchRecords for {}", req.path);
         json response;
-        response["status"] = 200;
-        response["body"] = json::array();
-        response["message"] = "";
+        try
+        {
+            // TODO do pagination of the data
+            auto resp = list(json::object());
+            response["data"] = resp;
+            response["status"] = 200;
+            response["error"] = "";
 
-        //  Add pagination
+            res.status = 200;
+            res.set_content(response.dump(), "application/json");
+        }
 
-        res.status = 200;
-        res.set_content(response.dump(), "application/json");
+        catch (const std::exception& e)
+        {
+            response["data"] = json::array();
+            response["status"] = 500;
+            response["error"] = e.what();
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+        }
+
+        catch (...)
+        {
+            response["data"] = json::array();
+            response["status"] = 500;
+            response["error"] = "Internal Server Error";
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+        }
     }
 
     void TableUnit::createRecord(const Request& req, Response& res, Context& ctx)
@@ -213,7 +291,7 @@ namespace mantis
 
         json response;
         response["status"] = 200;
-        response["body"] = json{};
+        response["body"] = json::object();
         response["message"] = "Record Updated";
 
         res.status = 200;
@@ -227,7 +305,7 @@ namespace mantis
 
         json response;
         response["status"] = 204;
-        response["body"] = json{};
+        response["body"] = json::object();
         response["message"] = "Record Deleted";
 
         res.status = 204;
@@ -241,7 +319,7 @@ namespace mantis
 
     bool TableUnit::getAuthToken(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
     {
-        Log::debug("TableMgr::HasAuthHeader for {}", req.path);
+        Log::trace("TableMgr::HasAuthHeader for {}", req.path);
 
         // If we have an auth header, extract it into the ctx, else
         // add a guest user type. The auth if present, should have
@@ -249,7 +327,7 @@ namespace mantis
         json auth;
         auth["token"] = "";
         auth["type"] = "guest"; // or 'user'
-        auth["user"] = json{};
+        auth["user"] = json::object();
 
         if (req.has_header("Authorization"))
         {
@@ -279,25 +357,53 @@ namespace mantis
         return m_tableName;
     }
 
+    void TableUnit::setTableName(const std::string& name)
+    { m_tableName = name; }
+
     std::string TableUnit::tableId()
     {
         return m_tableId;
     }
+
+    void TableUnit::setTableId(const std::string& id)
+    { m_tableId = id; }
 
     std::string TableUnit::tableType()
     {
         return m_tableType;
     }
 
-    json TableUnit::fields() const
+    void TableUnit::fromJson(const json& j)
+    {
+        m_tableName = "";
+        m_tableId = "";
+
+        m_fields.clear();
+        m_fields = j.value("fields", json::array());
+
+        m_listRule = j.value("listRule", "");
+        m_getRule = j.value("getRule", "");
+        m_addRule = j.value("addRule", "");
+        m_updateRule = j.value("updateRule", "");
+        m_deleteRule = j.value("deleteRule", "");
+
+        m_isSystem = j.value("system", false);
+        m_tableType = j.value("type", "base");
+    }
+
+    std::vector<json> TableUnit::fields() const
     {
         return m_fields;
     }
 
-    void TableUnit::setFields(const json& fields)
+    void TableUnit::setFields(const std::vector<json>& fields)
     {
-        m_fields = fields;
+        m_fields.clear();
+        for (const auto field : fields) m_fields.push_back(field);
     }
+
+    bool TableUnit::isSystem() const
+    { return m_isSystem; }
 
     void TableUnit::setIsSystemTable(const bool isSystemTable)
     {
@@ -329,7 +435,7 @@ namespace mantis
         return m_addRule;
     }
 
-    void TableUnit::addRule(const Rule& rule)
+    void TableUnit::setAddRule(const Rule& rule)
     {
         m_addRule = rule;
     }
@@ -339,7 +445,7 @@ namespace mantis
         return m_updateRule;
     }
 
-    void TableUnit::updateRule(const Rule& rule)
+    void TableUnit::setUpdateRule(const Rule& rule)
     {
         m_updateRule = rule;
     }
@@ -349,8 +455,145 @@ namespace mantis
         return m_deleteRule;
     }
 
-    void TableUnit::deleteRule(const Rule& rule)
+    void TableUnit::setDeleteRule(const Rule& rule)
     {
         m_deleteRule = rule;
+    }
+
+    std::string TableUnit::generateTableId(const std::string& tablename)
+    {
+        return "mt_" + std::to_string(std::hash<std::string>{}(tablename));
+    }
+
+    json TableUnit::create(const json& entity, const json& opts)
+    {
+        return json::object();
+    }
+
+    std::optional<json> TableUnit::read(const std::string& id, const json& opts)
+    {
+        const auto sql = m_app->db().session();
+        soci::row r;
+        *sql << "SELECT * FROM " + tableName() + " WHERE id = :id", soci::use(id), soci::into(r);
+
+        if (!sql->got_data())
+        {
+            return nullopt;
+        }
+
+        return parseDbRowToJson(r);
+    }
+
+    json TableUnit::update(const std::string& id, const json& entity, const json& opts)
+    {
+        return entity;
+    }
+
+    bool TableUnit::remove(const std::string& id, const json& opts)
+    {
+        return false;
+    }
+
+    std::vector<json> TableUnit::list(const json& opts)
+    {
+        const auto sql = m_app->db().session();
+        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT * FROM " + tableName());
+        nlohmann::json response = nlohmann::json::array();
+
+        for (const auto& row : rs)
+        {
+            auto rowJson = parseDbRowToJson(row);
+            response.push_back(rowJson);
+        }
+
+        return response;
+    }
+
+    std::string TableUnit::getColTypeFromName(const std::string& col) const
+    {
+        for (const auto& field : m_fields)
+        {
+            if (field.value("name", "") == col && !col.empty())
+                return field.value("type", "");
+        }
+
+        return "";
+    }
+
+    json TableUnit::parseDbRowToJson(const soci::row& row) const
+    {
+        json j;
+        for (int i = 0; i < row.size(); i++)
+        {
+            const soci::column_properties& props = row.get_properties(i);
+            const std::string colType = getColTypeFromName(props.get_name());
+
+            if (colType == "xml")
+            {
+                j[colType] = row.get<soci::xml_type>(i).value;
+            }
+            else if (colType == "string")
+            {
+                j[colType] = row.get<std::string>(i);
+            }
+            else if (colType == "double")
+            {
+                j[colType] = row.get<double>(i);
+            }
+            else if (colType == "date")
+            {
+                j[colType] = DatabaseUnit::tmToISODate(row.get<std::tm>(i));
+            }
+            else if (colType == "int8")
+            {
+                j[colType] = row.get<int8_t>(i);
+            }
+            else if (colType == "uint8")
+            {
+                j[colType] = row.get<uint8_t>(i);
+            }
+            else if (colType == "int16")
+            {
+                j[colType] = row.get<int16_t>(i);
+            }
+            else if (colType == "uint16")
+            {
+                j[colType] = row.get<uint16_t>(i);
+            }
+            else if (colType == "int32")
+            {
+                j[colType] = row.get<int32_t>(i);
+            }
+            else if (colType == "uint32")
+            {
+                j[colType] = row.get<uint32_t>(i);
+            }
+            else if (colType == "int64")
+            {
+                j[colType] = row.get<int64_t>(i);
+            }
+            else if (colType == "uint64")
+            {
+                j[colType] = row.get<uint64_t>(i);
+            }
+            else if (colType == "blob")
+            {
+                j[colType] = row.get<BLOB>(i).cbSize;
+            }
+            else if (colType == "json")
+            {
+                j[colType] = row.get<json>(i);
+            }
+            else if (colType == "bool")
+            {
+                j[colType] = row.get<bool>(i);
+            }
+            else // Return a string for unknown types // TODO avoid errors
+            {
+                j[colType] = row.get<std::string>(i);
+            }
+        }
+
+        return j;
     }
 }

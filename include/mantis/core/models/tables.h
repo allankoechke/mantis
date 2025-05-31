@@ -20,13 +20,15 @@ namespace mantis
     /**
      *
      */
-    class TableUnit
+    class TableUnit : public CrudInterface<json>
     {
     public:
         explicit TableUnit(MantisApp* app,
-                          const std::string& tableName,
-                          const std::string& tableId,
-                          const std::string& tableType = "base");
+                          std::string tableName,
+                          std::string tableId,
+                          std::string tableType = "base");
+        explicit TableUnit(MantisApp* app,
+                          const json& schema = json::object());
 
         virtual ~TableUnit() = default;
 
@@ -47,14 +49,19 @@ namespace mantis
 
         // Getters
         std::string tableName();
+        void  setTableName(const std::string& name);;
+
         std::string tableId();
+        void setTableId(const std::string& id);
+
         std::string tableType();
+        void fromJson(const json& j);
 
-        json fields() const;
-        void setFields(const json& fields);
+        std::vector<json> fields() const;
+        void setFields(const std::vector<json>& fields);
 
-        bool isSystem() const { return m_isSystem; }
-        void setIsSystemTable(const bool isSystemTable);;
+        bool isSystem() const;
+        void setIsSystemTable(bool isSystemTable);;
 
         // Store the rules cached
         Rule listRule();
@@ -64,13 +71,28 @@ namespace mantis
         void setGetRule(const Rule& rule);;
 
         Rule addRule();
-        void addRule(const Rule& rule);;
+        void setAddRule(const Rule& rule);;
 
         Rule updateRule();
-        void updateRule(const Rule& rule);;
+        void setUpdateRule(const Rule& rule);
 
         Rule deleteRule();
-        void deleteRule(const Rule& rule);;
+        void setDeleteRule(const Rule& rule);
+
+        static std::string generateTableId(const std::string& tablename);
+
+        // CRUD endpoints
+        // Create/read/list/update/delete record(s), use opts to config optional params
+        json create(const json& entity, const json& opts) override;
+        std::optional<json> read(const std::string& id, const json& opts) override;
+        json update(const std::string& id, const json& entity, const json& opts) override;
+        bool remove(const std::string& id, const json& opts) override;
+        std::vector<json> list(const json& opts) override;
+
+        // Helper methods
+        std::string getColTypeFromName(const std::string& col) const;;
+        json parseDbRowToJson(const soci::row& row) const;
+
 
     protected:
         std::unique_ptr<MantisApp> m_app;

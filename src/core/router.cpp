@@ -62,65 +62,27 @@ bool mantis::Router::generateTableCrudApis()
 {
     Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
 
-    auto sql = m_app->db().session();
-    soci::transaction tr(*sql);
+    const auto sql = m_app->db().session();
 
     // id created updated schema has_api
     soci::row r;
-    *sql << "SELECT id,name,type,schema,has_api,created,updated FROM __tables"
+    *sql << "SELECT id,name,type,schema FROM __tables"
         , soci::into(r);
 
     if (sql->got_data())
     {
-        auto id = r.get<std::string>("id");
-        auto name = r.get<std::string>("name");
-        auto type = r.get<std::string>("type");
-        auto schema_str = r.get<std::string>("schema");
-        auto has_api = r.get<bool>("has_api");
-        auto created = r.get<std::tm>("created");
-        auto updated = r.get<std::tm>("updated");
+        const auto id = r.get<std::string>("id");
+        const auto name = r.get<std::string>("name");
+        const auto type = r.get<std::string>("type");
+        const auto hasApi = r.get<bool>("has_api");
 
-        Log::debug("{} {}", created.tm_year, updated.tm_mon + 1);
-
-        json schema;
-        if (auto res = tryParseJsonStr(schema_str); res.has_value())
+        // If `hasApi` is set, schema is valid, then, add API endpoints
+        if (const auto schema = r.get<json>("schema"); (hasApi && !schema.empty()))
         {
-            schema = std::move(res.value());
-        }
-
-        if (!schema.empty())
-        {
-            Table t(m_app);
-            t.id = id;
-            t.name = name;
-            // t.type = type;
-            // t.schema = schema["name"];
-            // json j;
-            // j["id"] = id;
-            // j["name"] = name;
-            // j["type"] = type;
-            // j["schema"] = schema;
-            // j["system"] = system;
-            // j["fields"] = json::array();
-            // j["rules"] = {
-            //     {"list", listRule.to_json()},
-            //     {"get", getRule.to_json()},
-            //     {"add", addRule.to_json()},
-            //     {"update", updateRule.to_json()},
-            //     {"delete", deleteRule.to_json()}
-            // };
-            //
-            // Log::debug("Table '{}'", table);
-            // // For each, create table object
-            //
-            // if (TableMgr tbMgr{ *this, table, table, "base"}; !tbMgr.SetupRoutes())
-            //     return false;
-
-            Log::debug("Table '{}'", name);
-            // For each, create table object
-
             // We need to persist this instance, else it'll be cleaned up causing a crash
-            auto tableUnit = std::make_shared<TableUnit>(m_app, name, id, "base");
+            const auto tableUnit = std::make_shared<TableUnit>(m_app, schema);
+            tableUnit->setTableName(name);
+            tableUnit->setTableId(id);
 
             if (!tableUnit->setupRoutes())
                 return false;
@@ -134,7 +96,7 @@ bool mantis::Router::generateTableCrudApis()
 
 bool mantis::Router::generateAdminCrudApis()
 {
-    Log::debug("Mantis::ServerMgr::GenerateAdminCrudApis");
+    Log::trace("Mantis::ServerMgr::GenerateAdminCrudApis");
 
     try
     {
@@ -162,8 +124,7 @@ bool mantis::Router::generateAdminCrudApis()
             json response;
 
             // Check for correct admin user ...
-            const auto admin = ctx.get<json>("admin");
-            if (!admin)
+            if (const auto admin = ctx.get<json>("admin"); !admin)
             {
                 Log::critical("User ID is required for admin endpoints ...");
 
@@ -180,7 +141,6 @@ bool mantis::Router::generateAdminCrudApis()
                 Log::critical("User ID set is = '{}'", admin->dump());
             }
 
-            std::cout << req.path << " [END] SUBMIT HANDLER!" << std::endl;
             res.status = 200;
             response["status"] = "OK";
             response["data"] = "Admin crud apis";
@@ -220,7 +180,7 @@ bool mantis::Router::attachUserRoutes() const
 {
     // Log::debug("Mantis::ServerMgr::AttachUserRoutes");
     // Just to
-    [[maybe_unused]] auto ctx = m_app->http().context();
+    // [[maybe_unused]] auto ctx = m_app->http().context();
 
     return true;
 }

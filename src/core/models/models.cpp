@@ -6,21 +6,21 @@
 
 std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldName)
 {
-    if ( fieldName == "db_xml")     return FieldType::XML;
-    if ( fieldName == "db_string")  return FieldType::STRING;
-    if ( fieldName == "db_double")  return FieldType::DOUBLE;
-    if ( fieldName == "db_date")    return FieldType::DATE;
-    if ( fieldName == "db_int8")    return FieldType::INT8;
-    if ( fieldName == "db_uint8")   return FieldType::UINT8;
-    if ( fieldName == "db_int16")   return FieldType::INT16;
-    if ( fieldName == "db_uint16")  return FieldType::UINT16;
-    if ( fieldName ==  "db_int32")  return FieldType::INT32;
-    if ( fieldName == "db_uint32")  return FieldType::UINT32;
-    if ( fieldName == "db_int64")   return FieldType::INT64;
-    if ( fieldName == "db_uint64")  return FieldType::UINT64;
-    if ( fieldName ==  "db_blob")   return FieldType::BLOB;
-    if ( fieldName ==  "db_json")   return FieldType::JSON;
-    if ( fieldName ==  "db_bool")   return FieldType::BOOL;
+    if ( fieldName == "xml"     ) return FieldType::XML;
+    if ( fieldName == "string"  ) return FieldType::STRING;
+    if ( fieldName == "double"  ) return FieldType::DOUBLE;
+    if ( fieldName == "date"    ) return FieldType::DATE;
+    if ( fieldName == "int8"    ) return FieldType::INT8;
+    if ( fieldName == "uint8"   ) return FieldType::UINT8;
+    if ( fieldName == "int16"   ) return FieldType::INT16;
+    if ( fieldName == "uint16"  ) return FieldType::UINT16;
+    if ( fieldName == "int32"   ) return FieldType::INT32;
+    if ( fieldName == "uint32"  ) return FieldType::UINT32;
+    if ( fieldName == "int64"   ) return FieldType::INT64;
+    if ( fieldName == "uint64"  ) return FieldType::UINT64;
+    if ( fieldName == "blob"    ) return FieldType::BLOB;
+    if ( fieldName == "json"    ) return FieldType::JSON;
+    if ( fieldName == "bool"    ) return FieldType::BOOL;
     return std::nullopt;
 }
 
@@ -68,21 +68,21 @@ json mantis::Field::to_json() const
 
 soci::db_type mantis::Field::toSociType() const
 {
-    if( type == FieldType::XML)     return soci::db_xml;
-    if( type == FieldType::STRING)  return soci::db_string;
-    if( type == FieldType::DOUBLE)  return soci::db_double;
-    if( type == FieldType::DATE)    return soci::db_date;
-    if( type == FieldType::INT8)    return soci::db_int8;
-    if( type == FieldType::UINT8)   return soci::db_uint8;
-    if( type == FieldType::INT16)   return soci::db_int16;
-    if( type == FieldType::UINT16)  return soci::db_uint16;
-    if( type == FieldType::INT32)   return soci::db_int32;
-    if( type == FieldType::UINT32)  return soci::db_uint32;
-    if( type == FieldType::INT64)   return soci::db_int64;
-    if( type == FieldType::UINT64)  return soci::db_uint64;
-    if( type == FieldType::BLOB)    return soci::db_blob;
-    if( type == FieldType::JSON)    return soci::db_string;
-    if( type == FieldType::BOOL)    return soci::db_uint8;
+    if(type == FieldType::XML)     return soci::db_xml;
+    if(type == FieldType::STRING)  return soci::db_string;
+    if(type == FieldType::DOUBLE)  return soci::db_double;
+    if(type == FieldType::DATE)    return soci::db_date;
+    if(type == FieldType::INT8)    return soci::db_int8;
+    if(type == FieldType::UINT8)   return soci::db_uint8;
+    if(type == FieldType::INT16)   return soci::db_int16;
+    if(type == FieldType::UINT16)  return soci::db_uint16;
+    if(type == FieldType::INT32)   return soci::db_int32;
+    if(type == FieldType::UINT32)  return soci::db_uint32;
+    if(type == FieldType::INT64)   return soci::db_int64;
+    if(type == FieldType::UINT64)  return soci::db_uint64;
+    if(type == FieldType::BLOB)    return soci::db_blob;
+    if(type == FieldType::JSON)    return soci::db_string;
+    if(type == FieldType::BOOL)    return soci::db_int8;
     return  soci::db_string;
 }
 
@@ -100,31 +100,19 @@ json mantis::Table::to_json() const
 
     for (const auto& f : fields) j["fields"].push_back(f.to_json());
 
-    j["rules"] = {
-        {"list", listRule},
-        {"get", getRule},
-        {"add", addRule},
-        {"update", updateRule},
-        {"delete", deleteRule}
-    };
+    j["listRule"] = listRule;
+    j["getRule"] = getRule;
+    j["addRule"] = addRule;
+    j["updateRule"] = updateRule;
+    j["deleteRule"] = deleteRule;
 
     return j;
 }
 
 std::string mantis::Table::to_sql() const
 {
-    // std::string sql = "CREATE TABLE IF NOT EXISTS " + name + " (";
-    //
-    // for (size_t i = 0; i < fields.size(); ++i) {
-    //     sql += fields[i].to_sql();
-    //     if (i < fields.size() - 1) sql += ", ";
-    // }
-    // sql += ");";
-    //
-    // return sql;
-
     // Get DB Session
-    auto sql = m_app->db().session();
+    const auto sql = m_app->db().session();
 
     std::ostringstream ddl;
     ddl << "CREATE TABLE IF NOT EXISTS " << name << " (";
