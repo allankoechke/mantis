@@ -65,19 +65,17 @@ bool mantis::Router::generateTableCrudApis()
     const auto sql = m_app->db().session();
 
     // id created updated schema has_api
-    soci::row r;
-    *sql << "SELECT id,name,type,schema FROM __tables"
-        , soci::into(r);
+    const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
 
-    if (sql->got_data())
+    for (const auto& row : rs)
     {
-        const auto id = r.get<std::string>("id");
-        const auto name = r.get<std::string>("name");
-        const auto type = r.get<std::string>("type");
-        const auto hasApi = r.get<bool>("has_api");
+        const auto id = row.get<std::string>("id");
+        const auto name = row.get<std::string>("name");
+        const auto type = row.get<std::string>("type");
+        const auto hasApi = row.get<bool>("has_api");
 
         // If `hasApi` is set, schema is valid, then, add API endpoints
-        if (const auto schema = r.get<json>("schema"); (hasApi && !schema.empty()))
+        if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty()))
         {
             // We need to persist this instance, else it'll be cleaned up causing a crash
             const auto tableUnit = std::make_shared<TableUnit>(m_app, schema);

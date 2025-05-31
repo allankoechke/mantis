@@ -377,7 +377,7 @@ namespace mantis
 
     void TableRoutes::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
-        auto id = req.path_params.at("id");
+        const auto id = req.path_params.at("id");
         json response;
         if (id.empty())
         {

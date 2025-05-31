@@ -369,7 +369,7 @@ namespace mantis
             const auto name = row.get<std::string>(1);
             const auto type = row.get<std::string>(2);
             const auto schema_json = row.get<std::string>(3);
-            const auto has_api = row.get<int>(4);
+            const auto has_api = row.get<bool>(4);
 
             // const json j = json::parse(schema_json);
 

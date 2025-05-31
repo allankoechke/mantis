@@ -491,7 +491,27 @@ namespace mantis
 
     bool TableUnit::remove(const std::string& id, const json& opts)
     {
-        return false;
+        // TODO ensure views dont delete items
+        const auto sql = m_app->db().session();
+        soci::transaction tr(*sql);
+
+        // Check if item exists of given id
+        soci::row r;
+        *sql << "SELECT * FROM __tables WHERE id = :id LIMIT 1", soci::use(id), soci::into(r);
+
+        if (!sql->got_data())
+        {
+            throw std::runtime_error("Item with id = '" + id + "' was not found!");
+        }
+
+        // Remove from DB
+        *sql << "DELETE FROM " + tableName() + " WHERE id = :id", soci::use(id);
+
+        tr.commit();
+
+        // TODO reload routes
+
+        return true;
     }
 
     std::vector<json> TableUnit::list(const json& opts)
