@@ -17,6 +17,20 @@ namespace mantis
 {
     using json = nlohmann::json;
 
+    using TableValue = std::variant<
+        std::monostate,
+        std::string,
+        double,
+        std::tm,
+        int8_t, uint8_t,
+        int16_t, uint16_t,
+        int32_t, uint32_t,
+        int64_t, uint64_t,
+        bool,
+        json,
+        BLOB
+    >;
+
     /**
      *
      */
@@ -24,11 +38,11 @@ namespace mantis
     {
     public:
         explicit TableUnit(MantisApp* app,
-                          std::string tableName,
-                          std::string tableId,
-                          std::string tableType = "base");
+                           std::string tableName,
+                           std::string tableId,
+                           std::string tableType = "base");
         explicit TableUnit(MantisApp* app,
-                          const json& schema = json::object());
+                           const json& schema = json::object());
 
         virtual ~TableUnit() = default;
 
@@ -49,7 +63,7 @@ namespace mantis
 
         // Getters
         std::string tableName();
-        void  setTableName(const std::string& name);;
+        void setTableName(const std::string& name);;
 
         std::string tableId();
         void setTableId(const std::string& id);
@@ -92,7 +106,9 @@ namespace mantis
         // Helper methods
         std::string getColTypeFromName(const std::string& col) const;;
         json parseDbRowToJson(const soci::row& row) const;
-
+        json validateRequestBody(const json& body) const;
+        static TableValue getTypedValue(const json& row, const std::string& colName, const std::string& type);
+        bool recordExists(const std::string& id) const;
 
     protected:
         std::unique_ptr<MantisApp> m_app;

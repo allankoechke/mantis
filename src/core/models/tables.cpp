@@ -5,6 +5,7 @@
 #include "../../../include/mantis/core/models/tables.h"
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/app/app.h"
+#include "../../../include/mantis/utils.h"
 
 namespace mantis
 {
@@ -26,7 +27,7 @@ namespace mantis
     TableUnit::TableUnit(
         MantisApp* app,
         const json& schema)
-    : m_app(app),
+        : m_app(app),
           m_listRule(Rule{}),
           m_getRule(Rule{}),
           m_addRule(Rule{}),
@@ -273,15 +274,59 @@ namespace mantis
     void TableUnit::createRecord(const Request& req, Response& res, Context& ctx)
     {
         Log::debug("TableMgr::CreateRecord for {}", req.path);
-        ctx.dump();
+        json body, response;
+        try
+        {
+            body = json::parse(req.body);
+        }
+        catch (const std::exception& e)
+        {
+            response["status"] = 400;
+            response["error"] = e.what();
+            response["data"] = json::object();
 
-        json response;
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        Log::debug("Create record for table {} with data = {}", tableName(), body.dump());
+
+        // Validate JSON body
+        if (const auto resp = validateRequestBody(body); !resp.at("error").empty())
+        {
+            Log::critical("Error Validating Field: {}", resp.at("error").get<std::string>());
+            response["status"] = resp.value("status", 500);
+            response["error"] = resp.at("error").get<std::string>();
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = resp.value("status", 500);
+            return;
+        };
+
+        auto resp = create(body, json{});
+        if (!resp.value("error", "").empty())
+        {
+            int status = resp.value("status", 500);
+            response["status"] = status;
+            response["error"] = resp.at("error").get<std::string>();
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = status;
+
+            Log::critical("Failed to create record, reason: {}", resp.dump());
+            return;
+        }
+
+        Log::trace("Record creation successful");
         response["status"] = 201;
-        response["body"] = json::array();
-        response["message"] = "Record created";
+        response["error"] = "";
+        response["data"] = resp.at("data");
 
-        res.status = 201;
         res.set_content(response.dump(), "application/json");
+        res.status = 201;
     }
 
     void TableUnit::updateRecord(const Request& req, Response& res, Context& ctx)
@@ -358,7 +403,9 @@ namespace mantis
     }
 
     void TableUnit::setTableName(const std::string& name)
-    { m_tableName = name; }
+    {
+        m_tableName = name;
+    }
 
     std::string TableUnit::tableId()
     {
@@ -366,7 +413,9 @@ namespace mantis
     }
 
     void TableUnit::setTableId(const std::string& id)
-    { m_tableId = id; }
+    {
+        m_tableId = id;
+    }
 
     std::string TableUnit::tableType()
     {
@@ -403,7 +452,9 @@ namespace mantis
     }
 
     bool TableUnit::isSystem() const
-    { return m_isSystem; }
+    {
+        return m_isSystem;
+    }
 
     void TableUnit::setIsSystemTable(const bool isSystemTable)
     {
@@ -467,7 +518,165 @@ namespace mantis
 
     json TableUnit::create(const json& entity, const json& opts)
     {
-        return json::object();
+        json result;
+        result["data"] = json::object();
+        result["status"] = 200;
+        result["error"] = "";
+
+        // Database session & transaction instance
+        auto sql = m_app->db().session();
+        soci::transaction tr(*sql);
+
+        try
+        {
+            // Create a random ID, then check if it exists already in the DB
+            std::string id = generateShortId();
+            while (recordExists(id))
+                id = generateShortId();
+
+            // Create default time values
+            std::time_t current_t = time(nullptr);
+            std::tm* created_tm = std::localtime(&current_t);
+            std::string columns, placeholders;
+
+            // Create the field cols and value cols as concatenated strings
+            for (const auto& field : m_fields)
+            {
+                const auto field_name = field.at("name").get<std::string>();
+                columns += columns.empty() ? field_name : ", " + field_name;
+                placeholders += placeholders.empty() ? field_name : ", :" + field_name;
+            }
+
+            // Create the SQL Query
+            std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES(" + placeholders + ")";
+
+            // Prepare statement
+            soci::statement st = sql->prepare << sql_query;
+
+            // Bind parameters dynamically
+            for (const auto& field : m_fields)
+            {
+                const auto field_name = field.at("name").get<std::string>();
+
+                if (field_name == "id")
+                {
+                    st.exchange(soci::use(id, field_name));
+                }
+
+                else if (field_name == "created" || field_name == "updated")
+                {
+                    st.exchange(soci::use(*created_tm, field_name));
+                }
+
+                else
+                {
+                    if (const auto field_type = field.at("type").get<std::string>();
+                        field_type == "xml" || field_type == "string")
+                    {
+                        auto d = entity.value(field_name, "");
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "double")
+                    {
+                        double d = entity.value(field_name, 0.0f);
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "date")
+                    {
+                        // TODO may throw an error?
+                        std::tm tm{};
+                        std::istringstream ss(entity.value(field_name, ""));
+                        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+                        st.exchange(soci::use(tm, field_name));
+                    }
+                    else if (field_type == "int8")
+                    {
+                        auto d = static_cast<int8_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "uint8")
+                    {
+                        auto d = static_cast<uint8_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "int16")
+                    {
+                        auto d = static_cast<int16_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "uint16")
+                    {
+                        auto d = static_cast<uint16_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "int32")
+                    {
+                        auto d = static_cast<int32_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "uint32")
+                    {
+                        auto d = static_cast<uint32_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "int64")
+                    {
+                        auto d = static_cast<int64_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "uint64")
+                    {
+                        auto d = static_cast<uint64_t>(entity.value(field_name, 0));
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "blob")
+                    {
+                        auto d = entity.value(field_name, sql->empty_blob());
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "json")
+                    {
+                        auto d = entity.value(field_name, json::object());
+                        st.exchange(soci::use(d, field_name));
+                    }
+                    else if (field_type == "bool")
+                    {
+                        auto d = entity.value(field_name, false);
+                        st.exchange(soci::use(d, field_name));
+                    }
+                }
+            }
+
+            st.execute(true);
+
+            soci::row r;
+            *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
+            const auto addedRow = parseDbRowToJson(r);
+            tr.commit();
+
+            result["error"] = "";
+            result["data"] = addedRow;
+            result["status"] = 201;
+            return result;
+        }
+        catch (const soci::soci_error& e)
+        {
+            tr.rollback();
+
+            result["error"] = e.what();
+            result["status"] = 500;
+            return result;
+        } catch (const std::exception& e)
+        {
+            tr.rollback();
+
+            json err;
+            result["error"] = e.what();
+            result["status"] = 500;
+            return result;
+        }
+
+        return result;
     }
 
     std::optional<json> TableUnit::read(const std::string& id, const json& opts)
@@ -538,6 +747,27 @@ namespace mantis
         }
 
         return "";
+    }
+
+    bool TableUnit::recordExists(const std::string& id) const
+    {
+        Log::trace("TablesUnit::RecordExists for {} {}", m_tableName, id);
+        try
+        {
+            int count;
+            const auto sql = m_app->db().session();
+            const std::string query = "SELECT COUNT(id) FROM " + m_tableName + " WHERE id = :id";
+            *sql << query, soci::use(id), soci::into(count);
+            return sql->got_data();
+        }
+        catch (soci::soci_error& e)
+        {
+            Log::trace("TablesUnit::RecordExists error: {}", e.what());
+
+            // If an error, return false. This means, if the id existed, we will end up throwing
+            // UNIQUE violation error from the SQL side to avoid infinite looping
+            return false;
+        }
     }
 
     json TableUnit::parseDbRowToJson(const soci::row& row) const
@@ -615,5 +845,163 @@ namespace mantis
         }
 
         return j;
+    }
+
+    TableValue TableUnit::getTypedValue(const json& row, const std::string& colName, const std::string& type)
+    {
+        if (!row.contains(colName) || row[colName].is_null())
+            return std::monostate{};
+
+        const json& value = row[colName];
+
+        try
+        {
+            if (type == "double")
+                return value.get<double>();
+            if (type == "bool")
+                return value.get<bool>();
+            if (type == "int8")
+                return static_cast<int8_t>(value.get<int>());
+            if (type == "uint8")
+                return static_cast<uint8_t>(value.get<int>());
+            if (type == "int16")
+                return static_cast<int16_t>(value.get<int>());
+            if (type == "uint16")
+                return static_cast<uint16_t>(value.get<int>());
+            if (type == "int32")
+                return value.get<int32_t>();
+            if (type == "uint32")
+                return value.get<uint32_t>();
+            if (type == "int64")
+                return value.get<int64_t>();
+            if (type == "uint64")
+                return value.get<uint64_t>();
+            if (type == "json")
+                return value;
+            if (type == "date")
+            {
+                std::tm tm{};
+                std::istringstream ss(value.get<std::string>());
+                ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+                return tm;
+            }
+
+            // TODO Add BLOB and XML support here as well, this as is may throw an error
+
+            // Unknown type, fallback to string
+            return value.get<std::string>();
+        }
+        catch (const std::exception&)
+        {
+            return std::monostate{}; // or throw if preferred
+        }
+    }
+
+    json TableUnit::validateRequestBody(const json& body) const
+    {
+        // TODO add default values later
+        json obj;
+
+        // Create default base object
+        for (const auto& field : m_fields)
+        {
+            const auto& name = field.value("name", "");
+
+            // Skip system generated fields
+            if (name=="id" || name=="created" || name=="updated") continue;
+
+            const auto& type = field.value("type", "");
+            const auto& required = field.value("required", false);
+            const auto& value = getTypedValue(body, name, type);
+
+            // || body.at(name).is_null()
+            // TODO current assumption is that the value is not empty, fix that later
+            if (required && !body.contains(name))
+            {
+                obj["error"] = "Field '" + name + "' is required";
+                obj["status"] = 400;
+                return obj;
+            }
+
+            Log::trace("Check for min value");
+            if (field["minValue"])
+            {
+                const auto minValue = field["minValue"].get<double>();
+
+                Log::trace("Min Value check ... 01");
+                if (type == "string" && body.at(name).size() < minValue)
+                {
+                    obj["error"] = "String value should be at least " + std::to_string(minValue) + " characters long.";
+                    obj["status"] = 400;
+                    return obj;
+                }
+
+                Log::trace("Min Value check ... 02");
+                if (type == "double"
+                    || type == "int8" || type == "uint8"
+                    || type == "int16" || type == "uint16"
+                    || type == "int32" || type == "uint32"
+                    || type == "int64" || type == "uint64")
+                {
+                    if (body.at(name) < minValue)
+                    {
+                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(minValue);
+                        obj["status"] = 400;
+                        return obj;
+                    }
+                }
+            }
+
+            Log::trace("Check for max value");
+            if (field["maxValue"])
+            {
+                const auto maxValue = field["maxValue"].get<double>();
+
+                if (type == "string" && body.at(name).size() > maxValue)
+                {
+                    obj["error"] = "String value should be at most " + std::to_string(maxValue) + " characters long.";
+                    obj["status"] = 400;
+                    return obj;
+                }
+
+                if (type == "double"
+                    || type == "int8" || type == "uint8"
+                    || type == "int16" || type == "uint16"
+                    || type == "int32" || type == "uint32"
+                    || type == "int64" || type == "uint64")
+                {
+                    if (body.at(name) > maxValue)
+                    {
+                        obj["error"] = "Field '" + name + "' value should be less or equal to " + std::to_string(
+                            maxValue);
+                        obj["status"] = 400;
+                        return obj;
+                    }
+                }
+            }
+
+            // if (field["defaultValue"] && !body.contains(name))
+            // {
+            //
+            // }
+
+            Log::trace("Check for view type");
+            // If the table type is of view type, check that the SQL is passed in ...
+            if (m_tableType == "view")
+            {
+                auto sql_stmt = body.at("sql").get<std::string>();
+                trim(sql_stmt);
+                if (sql_stmt.empty())
+                {
+                    obj["error"] = "View tables require SQL query Statement";
+                    obj["status"] = 400;
+                    return obj;
+                }
+            }
+
+            Log::trace("Done checking");
+        }
+
+        return obj;
     }
 }
