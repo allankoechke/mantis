@@ -293,37 +293,38 @@ namespace mantis
         Log::debug("Create record for table {} with data = {}", tableName(), body.dump());
 
         // Validate JSON body
-        if (const auto resp = validateRequestBody(body); !resp.at("error").empty())
+        if ( const auto resp = validateRequestBody(body) )
         {
-            Log::critical("Error Validating Field: {}", resp.at("error").get<std::string>());
-            response["status"] = resp.value("status", 500);
-            response["error"] = resp.at("error").get<std::string>();
+            response["status"] = resp.value().value("status", 500);
+            response["error"] = resp.value().value("error", "");
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
-            res.status = resp.value("status", 500);
+            res.status = resp.value().value("status", 500);
+            Log::critical("Error Validating Field: {}", resp.value().value("error", ""));
+
             return;
         };
 
-        auto resp = create(body, json{});
-        if (!resp.value("error", "").empty())
+        auto respObj = create(body, json{});
+        if (!respObj.value("error", "").empty())
         {
-            int status = resp.value("status", 500);
+            int status = respObj.value("status", 500);
             response["status"] = status;
-            response["error"] = resp.at("error").get<std::string>();
+            response["error"] = respObj.at("error").get<std::string>();
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = status;
 
-            Log::critical("Failed to create record, reason: {}", resp.dump());
+            Log::critical("Failed to create record, reason: {}", respObj.dump());
             return;
         }
 
         Log::trace("Record creation successful");
         response["status"] = 201;
         response["error"] = "";
-        response["data"] = resp.at("data");
+        response["data"] = respObj.at("data");
 
         res.set_content(response.dump(), "application/json");
         res.status = 201;
@@ -518,6 +519,7 @@ namespace mantis
 
     json TableUnit::create(const json& entity, const json& opts)
     {
+        Log::trace("TableMgr::create");
         json result;
         result["data"] = json::object();
         result["status"] = 200;
@@ -531,8 +533,26 @@ namespace mantis
         {
             // Create a random ID, then check if it exists already in the DB
             std::string id = generateShortId();
+            int trials = 0;
             while (recordExists(id))
-                id = generateShortId();
+            {
+                trials++;
+
+                //  As trials go over 5, expand the id size by a character every time
+                if (trials >  5)
+                {
+                    id = generateShortId( 12 + trials%5);
+                }
+
+                else
+                {
+                    id = generateShortId();
+                }
+
+                // Try getting a new ID ten times before giving up. Avoid infinite loops
+                if (trials >= 10)
+                    break;
+            }
 
             // Create default time values
             std::time_t current_t = time(nullptr);
@@ -544,11 +564,12 @@ namespace mantis
             {
                 const auto field_name = field.at("name").get<std::string>();
                 columns += columns.empty() ? field_name : ", " + field_name;
-                placeholders += placeholders.empty() ? field_name : ", :" + field_name;
+                placeholders += placeholders.empty() ? (":"+field_name) : (", :" + field_name);
             }
 
             // Create the SQL Query
             std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES(" + placeholders + ")";
+            Log::trace("SQL Query: {}", sql_query);
 
             // Prepare statement
             soci::statement st = sql->prepare << sql_query;
@@ -657,6 +678,7 @@ namespace mantis
             result["error"] = "";
             result["data"] = addedRow;
             result["status"] = 201;
+
             return result;
         }
         catch (const soci::soci_error& e)
@@ -665,6 +687,7 @@ namespace mantis
 
             result["error"] = e.what();
             result["status"] = 500;
+
             return result;
         } catch (const std::exception& e)
         {
@@ -673,6 +696,16 @@ namespace mantis
             json err;
             result["error"] = e.what();
             result["status"] = 500;
+
+            return result;
+        } catch (...)
+        {
+            tr.rollback();
+
+            json err;
+            result["error"] = "Unknown Error!";
+            result["status"] = 500;
+
             return result;
         }
 
@@ -756,9 +789,9 @@ namespace mantis
         {
             int count;
             const auto sql = m_app->db().session();
-            const std::string query = "SELECT COUNT(id) FROM " + m_tableName + " WHERE id = :id";
+            const std::string query = "SELECT COUNT(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1";
             *sql << query, soci::use(id), soci::into(count);
-            return sql->got_data();
+            return count > 0;
         }
         catch (soci::soci_error& e)
         {
@@ -897,26 +930,24 @@ namespace mantis
         }
     }
 
-    json TableUnit::validateRequestBody(const json& body) const
+    std::optional<json> TableUnit::validateRequestBody(const json& body) const
     {
-        // TODO add default values later
-        json obj;
-
         // Create default base object
         for (const auto& field : m_fields)
         {
+            json obj;
             const auto& name = field.value("name", "");
 
             // Skip system generated fields
             if (name=="id" || name=="created" || name=="updated") continue;
 
             const auto& type = field.value("type", "");
-            const auto& required = field.value("required", false);
-            const auto& value = getTypedValue(body, name, type);
+            // const auto& value = getTypedValue(body, name, type);
 
             // || body.at(name).is_null()
             // TODO current assumption is that the value is not empty, fix that later
-            if (required && !body.contains(name))
+            if (const auto& required = field.value("required", false);
+                required && !body.contains(name))
             {
                 obj["error"] = "Field '" + name + "' is required";
                 obj["status"] = 400;
@@ -924,7 +955,7 @@ namespace mantis
             }
 
             Log::trace("Check for min value");
-            if (field["minValue"])
+            if (!field["minValue"].is_null())
             {
                 const auto minValue = field["minValue"].get<double>();
 
@@ -953,7 +984,7 @@ namespace mantis
             }
 
             Log::trace("Check for max value");
-            if (field["maxValue"])
+            if (!field["maxValue"].is_null())
             {
                 const auto maxValue = field["maxValue"].get<double>();
 
@@ -998,10 +1029,9 @@ namespace mantis
                     return obj;
                 }
             }
-
-            Log::trace("Done checking");
         }
 
-        return obj;
+        Log::trace("Done checking");
+        return nullopt;
     }
 }

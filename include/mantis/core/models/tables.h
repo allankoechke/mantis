@@ -106,7 +106,7 @@ namespace mantis
         // Helper methods
         std::string getColTypeFromName(const std::string& col) const;;
         json parseDbRowToJson(const soci::row& row) const;
-        json validateRequestBody(const json& body) const;
+        std::optional<json> validateRequestBody(const json& body) const;
         static TableValue getTypedValue(const json& row, const std::string& colName, const std::string& type);
         bool recordExists(const std::string& id) const;
 
