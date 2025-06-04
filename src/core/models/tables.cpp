@@ -347,16 +347,43 @@ namespace mantis
 
     void TableUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
-        Log::debug("TableMgr::DeleteRecord for {}", req.path);
-        ctx.dump();
+        // Extract request ID and check that it's not empty
+        const auto id = req.path;
 
-        json response;
-        response["status"] = 204;
-        response["body"] = json::object();
-        response["message"] = "Record Deleted";
+        // For empty IDs, return 400, BAD REQUEST
+        if (id.empty())
+        {
+            json response;
+            response["status"] = 400;
+            response["body"] = json::object();
+            response["message"] = "Record ID is required!";
 
-        res.status = 204;
-        res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        // The delete record may throw an error, lets catch it here and return
+        // appropriately.
+        try
+        {
+            const auto resp = remove(id, json::object());
+
+            // If all went well, lets return Status OK response
+            // no need of a body here
+            res.status = 204;
+            res.set_content("", "application/json");
+        }
+        catch (const std::exception& e)
+        {
+            json response;
+            response["status"] = 500;
+            response["body"] = json::object();
+            response["message"] = e.what();
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+        }
     }
 
     bool TableUnit::authWithPassword(const std::string& email, std::string& password)
@@ -803,6 +830,7 @@ namespace mantis
 
         // Remove from DB
         *sql << "DELETE FROM " + tableName() + " WHERE id = :id", soci::use(id);
+        Log::trace("SQL Query: {}", sql->get_query());
 
         tr.commit();
 
@@ -864,13 +892,9 @@ namespace mantis
         for (int i = 0; i < row.size(); i++)
         {
             const auto colName = row.get_properties(i).get_name();
-            const std::string colType = getColTypeFromName(colName);
 
-            if (colType == "xml")
-            {
-                j[colName] = row.get<soci::xml_type>(i).value;
-            }
-            else if (colType == "string")
+            if (const std::string colType = getColTypeFromName(colName);
+                colType == "xml" || colType == "string")
             {
                 j[colName] = row.get<std::string>(i);
             }

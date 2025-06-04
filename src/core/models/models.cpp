@@ -48,8 +48,8 @@ bool mantis::fieldExists(const TableType& type, const std::string& fieldName)
     }
 }
 
-mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys)
-    : name(std::move(n)), type(t), required(req), primaryKey(pk), system(sys)
+mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys, const bool unique)
+    : name(std::move(n)), type(t), required(req), primaryKey(pk), system(sys), isUnique(unique)
 {
 }
 
@@ -61,6 +61,7 @@ json mantis::Field::to_json() const
         {"required", required},
         {"primaryKey", primaryKey},
         {"system", system},
+        {"unique", isUnique},
         {"defaultValue", defaultValue},
         {"minValue", minValue},
         {"maxValue", maxValue},
@@ -134,6 +135,7 @@ std::string mantis::Table::to_sql() const
 
         if (field.primaryKey) ddl << " PRIMARY KEY";
         if (field.required) ddl << " NOT NULL";
+        if (field.isUnique) ddl << " UNIQUE";
         if (field.defaultValue.has_value()) ddl << " DEFAULT '" << field.defaultValue.value() << "'";
     }
 
@@ -158,9 +160,9 @@ mantis::AuthTable::AuthTable(MantisApp* app): Table(app)
         Field("id", FieldType::STRING, true, true, true),
         Field("created", FieldType::DATE, true, false, true),
         Field("updated", FieldType::DATE, true, false, true),
-        Field("email", FieldType::STRING, true, false, true),
+        Field("email", FieldType::STRING, true, false, true, true),
         Field("password", FieldType::STRING, true, false, true),
-        Field("name", FieldType::STRING)
+        Field("name", FieldType::STRING, true)
     };
 }
 
@@ -186,7 +188,7 @@ mantis::AdminTable::AdminTable(MantisApp* app): AuthTable(app)
     type = TableType::Auth;
     fields = {
         Field("id", FieldType::STRING, true, true, true),
-        Field("email", FieldType::STRING, true, false, true),
+        Field("email", FieldType::STRING, true, false, true, true),
         Field("password", FieldType::STRING, true, false, true),
         Field("created", FieldType::DATE, true, false, true),
         Field("updated", FieldType::DATE, true, false, true)

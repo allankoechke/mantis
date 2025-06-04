@@ -90,10 +90,11 @@ namespace mantis
         std::optional<std::string> regexPattern;
         std::optional<int> minValue;
         std::optional<int> maxValue;
+        std::optional<bool> isUnique;
         std::optional<std::string> autoGeneratePattern; // regex for auto-gen strings
 
         // Convenience constructor
-        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false);
+        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false, bool unique=false);
 
         [[nodiscard]] json to_json() const;
         [[nodiscard]] soci::db_type toSociType() const;
