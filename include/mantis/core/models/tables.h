@@ -108,8 +108,10 @@ namespace mantis
         std::string getColTypeFromName(const std::string& col) const;;
         json parseDbRowToJson(const soci::row& row) const;
         std::optional<json> validateRequestBody(const json& body) const;
+        std::optional<json> validateUpdateRequestBody(const json& body) const;
         static TableValue getTypedValue(const json& row, const std::string& colName, const std::string& type);
         bool recordExists(const std::string& id) const;
+        std::optional<json> findFieldByKey(const string& key) const;
 
     protected:
         std::unique_ptr<MantisApp> m_app;

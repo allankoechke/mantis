@@ -349,12 +349,7 @@ namespace mantis
 
         // For auth types, remove the password field from the response
         if (m_tableType == "auth" && record.contains("password"))
-        {
-            // Replace the existing password information ...
-            // TODO Maybe remove the password field altogether
-            record["password"] = "*<! password !>*";
-            record.erase("password");
-        }
+        { record.erase("password"); }
 
         // Return the added record + the system generated fields
         response["status"] = 201;
@@ -367,13 +362,82 @@ namespace mantis
 
     void TableUnit::updateRecord(const Request& req, Response& res, Context& ctx)
     {
-        Log::debug("TableMgr::UpdateRecord for {}", req.path);
-        ctx.dump();
+        json body, response;
+        // Extract request ID and check that it's not empty
+        const auto id = req.path_params.at("id");
 
-        json response;
+        // For empty IDs, return 400, BAD REQUEST
+        if (id.empty())
+        {
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "Record ID is required!";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        try
+        {
+            // Try parsing the request body, may fail ...
+            body = json::parse(req.body);
+        }
+        catch (const std::exception& e)
+        {
+            // Return 400 BAD REQUEST for any parse errors
+            response["status"] = 400;
+            response["error"] = e.what();
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        // Validate JSON body, return any validation errors encountered
+        if (const auto resp = validateUpdateRequestBody(body))
+        {
+            response["status"] = resp.value().value("status", 500);
+            response["error"] = resp.value().value("error", "");
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = resp.value().value("status", 500);
+
+            Log::critical("Error Validating Field: {}", resp.value().value("error", ""));
+            return;
+        };
+
+        // Try creating the record, if it fails, return the error
+        auto respObj = update(id, body, json{});
+        if (!respObj.value("error", "").empty())
+        {
+            int status = respObj.value("status", 500);
+            response["status"] = status;
+            response["error"] = respObj.at("error").get<std::string>();
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = status;
+
+            Log::critical("Failed to update record, id = {}, reason: {}", id, respObj.dump());
+            return;
+        }
+
+        // Get the data, for auth types, redact the password information
+        // it's not useful data to return in the response despite being hashed
+        auto record = respObj.at("data");
+        Log::trace("Record update successful: {}", record.dump());
+
+        // For auth types, remove the password field from the response
+        if (m_tableType == "auth" && record.contains("password"))
+        { record.erase("password"); }
+
+        // Return the added record + the system generated fields
         response["status"] = 200;
-        response["body"] = json::object();
-        response["message"] = "Record Updated";
+        response["error"] = "";
+        response["data"] = record;
 
         res.status = 200;
         res.set_content(response.dump(), "application/json");
@@ -508,8 +572,10 @@ namespace mantis
             if ( tokens[0] == std::to_string(std::hash<std::string>{}(password + tokens[1])))
             {
                 // Create JWT Token and return to the user ...
-                json user, data;
-                auto u = parseDbRowToJson(r);
+                auto user = parseDbRowToJson(r);
+                user.erase("password"); // Remove password field
+
+                json data;
                 data["user"] = user;
                 data["token"] = "A Useful token here ..."; // TODO
 
@@ -519,7 +585,7 @@ namespace mantis
 
                 res.status = 200;
                 res.set_content(response.dump(), "application/json");
-                Log::critical("Login Successful, user: {}", response.dump());
+                Log::info("Login Successful, user: {}", response.dump());
                 return;
             }
 
@@ -999,7 +1065,266 @@ namespace mantis
 
     json TableUnit::update(const std::string& id, const json& entity, const json& opts)
     {
-        return entity;
+        Log::trace("TableMgr::Update");
+
+        json result;
+        result["data"] = json::object();
+        result["status"] = 200;
+        result["error"] = "";
+
+        // Database session & transaction instance
+        auto sql = m_app->db().session();
+        soci::transaction tr(*sql);
+
+        try
+        {
+            // Create default time values
+            std::time_t current_t = time(nullptr);
+            std::tm* created_tm = std::localtime(&current_t);
+            std::string columns, placeholders;
+
+            // Create a temporary container to track fields we intend to update.
+            // Why? We'll limit to the fields we have in our schema, that way, we
+            // don't have any surprises.
+            // TODO Maybe open it up? But how do we handle other types?
+            std::vector<std::string> updateFields;
+            updateFields.reserve(entity.size());
+
+            // Create the field cols and value cols as concatenated strings
+            for (const auto& [key, val] : entity.items())
+            {
+                // For system fields, let's ignore them for now.
+                if (key == "id") continue;
+                if (key == "created") continue;
+                if (key == "updated") continue;
+
+                // First, ensure the key exists in our schema fields
+                if (!findFieldByKey(key).has_value()) continue;
+
+                columns += columns.empty() ? (key + " = :"+key) : (", " + key + " = :"+key);
+                updateFields.push_back(key);
+            }
+
+            // Add Updated field as an extra field for updates ...
+            columns += columns.empty() ? ("updated = :updated") : (", updated = :updated");
+            updateFields.push_back("updated");
+
+            // Create the SQL Query
+            std::string sql_query = "UPDATE " + m_tableName + " SET (" + columns + ") WHERE id = :id";
+            Log::trace("SQL Query: {}", sql_query);
+
+            // Prepare statement
+            soci::statement st = sql->prepare << sql_query;
+
+            // Store all bound values to ensure lifetime
+            std::vector<std::shared_ptr<void>> bound_values;
+            soci::values vals;
+
+            // Bind parameters dynamically
+            for (const auto& key : updateFields)
+            {
+                const auto field = findFieldByKey(key).value();
+                const auto field_name = field.at("name").get<std::string>();
+
+                // Just skip these fields
+                if (key == "id" || key == "created") continue;
+
+                if (key == "updated")
+                {
+                    auto value = std::make_shared<std::tm>(*created_tm);
+                    bound_values.push_back(value);
+                    soci::indicator ind;
+                    vals.set(field_name, *value, ind);
+                }
+
+                // For password types, let's hash them before binding to DB
+                else if (field_name == "password")
+                {
+                    // TODO MOVE THIS SEGMENT TO A STRONG CRYPTOGRAPHIC ENGINE
+                    // Maybe Argon | PBKDF2 | etc.
+
+                    // Create SALT, append to the
+                    const auto salt = generateShortId(); // Create SALT key
+                    std::string pswd = entity.value(field_name, "");
+                    const auto n_pswd = std::to_string(std::hash<std::string>{}(pswd + salt));
+
+                    // Add the hashed password to the soci::vals
+                    auto value = std::make_shared<std::string>(n_pswd + ":" + salt);
+                    bound_values.push_back(value);
+                    soci::indicator ind;
+                    vals.set(field_name, *value, ind);
+                }
+
+                else
+                {
+                    if (const auto field_type = field.at("type").get<std::string>();
+                        field_type == "xml" || field_type == "string")
+                    {
+                        auto value = std::make_shared<std::string>(entity.value(field_name, ""));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "double")
+                    {
+                        auto value = std::make_shared<double>(entity.value(field_name, 0.0));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "date")
+                    {
+                        // TODO may throw an error?
+                        std::tm tm{};
+                        std::istringstream ss(entity.value(field_name, ""));
+                        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+
+                        auto value = std::make_shared<std::tm>(tm);
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "int8")
+                    {
+                        auto value = std::make_shared<int8_t>(static_cast<int8_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "uint8")
+                    {
+                        auto value = std::make_shared<uint8_t>(static_cast<uint8_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "int16")
+                    {
+                        auto value = std::make_shared<int16_t>(static_cast<int16_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "uint16")
+                    {
+                        auto value = std::make_shared<uint16_t>(static_cast<uint16_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "int32")
+                    {
+                        auto value = std::make_shared<int32_t>(static_cast<int32_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "uint32")
+                    {
+                        auto value = std::make_shared<uint32_t>(static_cast<uint32_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "int64")
+                    {
+                        auto value = std::make_shared<int64_t>(static_cast<int64_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "uint64")
+                    {
+                        auto value = std::make_shared<uint64_t>(static_cast<uint64_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "blob")
+                    {
+                        auto value = std::make_shared<std::string>(entity.value(field_name, sql->empty_blob()));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "json")
+                    {
+                        auto value = std::make_shared<json>(entity.value(field_name, json::object()));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+
+                    else if (field_type == "bool")
+                    {
+                        auto value = std::make_shared<bool>(entity.value(field_name, false));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
+                    }
+                }
+            }
+
+            // Add binding for 'id'
+            vals.set("id");
+
+            // Bind values, then execute
+            st.bind(vals);
+            st.execute(true);
+            tr.commit();
+
+            // Query back the created record and send it back to the client
+            soci::row r;
+            *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
+            const auto updatedRow = parseDbRowToJson(r);
+
+            result["error"] = "";
+            result["data"] = updatedRow;
+            result["status"] = 200;
+
+            return result;
+        }
+        catch (const soci::soci_error& e)
+        {
+            tr.rollback();
+
+            result["error"] = e.what();
+            result["status"] = 500;
+
+            return result;
+        } catch (const std::exception& e)
+        {
+            tr.rollback();
+
+            json err;
+            result["error"] = e.what();
+            result["status"] = 500;
+
+            return result;
+        } catch (...)
+        {
+            tr.rollback();
+
+            json err;
+            result["error"] = "Unknown Error!";
+            result["status"] = 500;
+
+            return result;
+        }
+
+        return result;
     }
 
     bool TableUnit::remove(const std::string& id, const json& opts)
@@ -1074,6 +1399,18 @@ namespace mantis
             // UNIQUE violation error from the SQL side to avoid infinite looping
             return false;
         }
+    }
+
+    std::optional<json> TableUnit::findFieldByKey(const string& key) const
+    {
+        if (key.empty()) return nullopt;
+
+        for (const auto& field : m_fields)
+        {
+            if (field.value("name", "") == key) return field;
+        }
+
+        return nullopt;
     }
 
     json TableUnit::parseDbRowToJson(const soci::row& row) const
@@ -1327,6 +1664,118 @@ namespace mantis
         }
 
         Log::trace("Done checking");
+        return nullopt;
+    }
+
+    std::optional<json> TableUnit::validateUpdateRequestBody(const json& body) const
+    {
+        // Create default base object
+        for (const auto& key : body.items())
+        {
+            json obj;
+            const auto j = findFieldByKey(key.value());
+
+            if (!j.has_value())
+            {
+                obj["error"] = "Field '" + std::string(key.value()) + "' is required";
+                obj["status"] = 400;
+                return obj;
+            }
+
+            const auto& field = j.value();
+            const auto& name = field.value("name", "");
+
+            // Skip system generated fields
+            if (name == "id" || name == "created" || name == "updated") continue;
+
+            const auto& type = field.value("type", "");
+
+            if (const auto& required = field.value("required", false);
+                required && !body.contains(name))
+            {
+                obj["error"] = "Field '" + name + "' is required";
+                obj["status"] = 400;
+                return obj;
+            }
+
+            Log::trace("Check for min value");
+            if (!field["minValue"].is_null())
+            {
+                const auto minValue = field["minValue"].get<double>();
+
+                Log::trace("Min Value check ... 01");
+                if (type == "string" && body.at(name).size() < minValue)
+                {
+                    obj["error"] = "String value should be at least " + std::to_string(minValue) + " characters long.";
+                    obj["status"] = 400;
+                    return obj;
+                }
+
+                // Log::trace("Min Value check ... 02");
+                if (type == "double"
+                    || type == "int8" || type == "uint8"
+                    || type == "int16" || type == "uint16"
+                    || type == "int32" || type == "uint32"
+                    || type == "int64" || type == "uint64")
+                {
+                    if (body.at(name) < minValue)
+                    {
+                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(minValue);
+                        obj["status"] = 400;
+                        return obj;
+                    }
+                }
+            }
+
+            // Log::trace("Check for max value");
+            if (!field["maxValue"].is_null())
+            {
+                const auto maxValue = field["maxValue"].get<double>();
+
+                if (type == "string" && body.at(name).size() > maxValue)
+                {
+                    obj["error"] = "String value should be at most " + std::to_string(maxValue) + " characters long.";
+                    obj["status"] = 400;
+                    return obj;
+                }
+
+                if (type == "double"
+                    || type == "int8" || type == "uint8"
+                    || type == "int16" || type == "uint16"
+                    || type == "int32" || type == "uint32"
+                    || type == "int64" || type == "uint64")
+                {
+                    if (body.at(name) > maxValue)
+                    {
+                        obj["error"] = "Field '" + name + "' value should be less or equal to " + std::to_string(
+                            maxValue);
+                        obj["status"] = 400;
+                        return obj;
+                    }
+                }
+            }
+
+            // if (field["defaultValue"] && !body.contains(name))
+            // {
+            //
+            // }
+
+            // Log::trace("Check for view type");
+            // If the table type is of view type, check that the SQL is passed in ...
+            if (m_tableType == "view")
+            {
+                auto sql_stmt = body.at("sql").get<std::string>();
+                trim(sql_stmt);
+                if (sql_stmt.empty())
+                {
+                    obj["error"] = "View tables require SQL query Statement";
+                    obj["status"] = 400;
+                    return obj;
+                }
+            }
+        }
+
+        // Log::trace("Done checking");
         return nullopt;
     }
 }
