@@ -6,6 +6,7 @@
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/utils.h"
+#include "spdlog/fmt/bundled/compile.h"
 
 namespace mantis
 {
@@ -568,11 +569,15 @@ namespace mantis
             }
 
             // Create the SQL Query
-            std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES(" + placeholders + ")";
+            std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES (" + placeholders + ")";
             Log::trace("SQL Query: {}", sql_query);
 
             // Prepare statement
             soci::statement st = sql->prepare << sql_query;
+
+            // Store all bound values to ensure lifetime
+            std::vector<std::shared_ptr<void>> bound_values;
+            soci::values vals;
 
             // Bind parameters dynamically
             for (const auto& field : m_fields)
@@ -581,12 +586,18 @@ namespace mantis
 
                 if (field_name == "id")
                 {
-                    st.exchange(soci::use(id, field_name));
+                    auto value = std::make_shared<std::string>(id.c_str());
+                    bound_values.push_back(value);
+                    soci::indicator ind;
+                    vals.set(field_name, *value, ind);
                 }
 
                 else if (field_name == "created" || field_name == "updated")
                 {
-                    st.exchange(soci::use(*created_tm, field_name));
+                    auto value = std::make_shared<std::tm>(*created_tm);
+                    bound_values.push_back(value);
+                    soci::indicator ind;
+                    vals.set(field_name, *value, ind);
                 }
 
                 else
@@ -594,86 +605,130 @@ namespace mantis
                     if (const auto field_type = field.at("type").get<std::string>();
                         field_type == "xml" || field_type == "string")
                     {
-                        auto d = entity.value(field_name, "");
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<std::string>(entity.value(field_name, ""));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "double")
                     {
-                        double d = entity.value(field_name, 0.0f);
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<double>(entity.value(field_name, 0.0));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "date")
                     {
                         // TODO may throw an error?
                         std::tm tm{};
                         std::istringstream ss(entity.value(field_name, ""));
                         ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
-                        st.exchange(soci::use(tm, field_name));
+
+                        auto value = std::make_shared<std::tm>(tm);
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "int8")
                     {
-                        auto d = static_cast<int8_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<int8_t>(static_cast<int8_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "uint8")
                     {
-                        auto d = static_cast<uint8_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<uint8_t>(static_cast<uint8_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "int16")
                     {
-                        auto d = static_cast<int16_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<int16_t>(static_cast<int16_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "uint16")
                     {
-                        auto d = static_cast<uint16_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<uint16_t>(static_cast<uint16_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "int32")
                     {
-                        auto d = static_cast<int32_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<int32_t>(static_cast<int32_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "uint32")
                     {
-                        auto d = static_cast<uint32_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<uint32_t>(static_cast<uint32_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "int64")
                     {
-                        auto d = static_cast<int64_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<int64_t>(static_cast<int64_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "uint64")
                     {
-                        auto d = static_cast<uint64_t>(entity.value(field_name, 0));
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<uint64_t>(static_cast<uint64_t>(entity.value(field_name, 0)));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "blob")
                     {
-                        auto d = entity.value(field_name, sql->empty_blob());
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<std::string>(entity.value(field_name, sql->empty_blob()));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "json")
                     {
-                        auto d = entity.value(field_name, json::object());
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<json>(entity.value(field_name, json::object()));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
+
                     else if (field_type == "bool")
                     {
-                        auto d = entity.value(field_name, false);
-                        st.exchange(soci::use(d, field_name));
+                        auto value = std::make_shared<bool>(entity.value(field_name, false));
+                        bound_values.push_back(value);
+                        soci::indicator ind;
+                        vals.set(field_name, *value, ind);
                     }
                 }
             }
 
+            st.bind(vals);
             st.execute(true);
+            tr.commit();
 
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
             const auto addedRow = parseDbRowToJson(r);
-            tr.commit();
 
             result["error"] = "";
             result["data"] = addedRow;
@@ -808,72 +863,97 @@ namespace mantis
         json j;
         for (int i = 0; i < row.size(); i++)
         {
-            const soci::column_properties& props = row.get_properties(i);
-            const std::string colType = getColTypeFromName(props.get_name());
+            const auto colName = row.get_properties(i).get_name();
+            const std::string colType = getColTypeFromName(colName);
 
             if (colType == "xml")
             {
-                j[colType] = row.get<soci::xml_type>(i).value;
+                j[colName] = row.get<soci::xml_type>(i).value;
             }
             else if (colType == "string")
             {
-                j[colType] = row.get<std::string>(i);
+                j[colName] = row.get<std::string>(i);
             }
             else if (colType == "double")
             {
-                j[colType] = row.get<double>(i);
+                j[colName] = row.get<double>(i);
             }
             else if (colType == "date")
             {
-                j[colType] = DatabaseUnit::tmToISODate(row.get<std::tm>(i));
+                if (row.get_properties(i).get_db_type() == soci::db_date)
+                {
+                    auto t = row.get<std::tm>(i);
+                    auto ts = DatabaseUnit::tmToISODate(t);
+
+                    std::cout << "Date String: " << ts << std::endl;
+                    j[colName] = ts;
+                }
+                else // Parse as string regardless
+                {
+                    try
+                    {
+                        // Date stored as string or in integer column - get as string and parse manually
+                        auto date_str = row.get<std::string>(i);
+
+                        // Use SOCI's internal parser
+                        // soci::details::parse_std_tm(date_str.c_str(), t);
+                        j[colName] = date_str;
+                    }catch (soci::soci_error& e)
+                    {
+                        j[colName] = "";
+                        Log::critical("TablesUnit::parseDbRowToJson Date Parse Error: {}", e.what());
+                        throw std::runtime_error("Failed to parse date");
+                    }
+                }
             }
             else if (colType == "int8")
             {
-                j[colType] = row.get<int8_t>(i);
+                j[colName] = row.get<int8_t>(i);
             }
             else if (colType == "uint8")
             {
-                j[colType] = row.get<uint8_t>(i);
+                j[colName] = row.get<uint8_t>(i);
             }
             else if (colType == "int16")
             {
-                j[colType] = row.get<int16_t>(i);
+                j[colName] = row.get<int16_t>(i);
             }
             else if (colType == "uint16")
             {
-                j[colType] = row.get<uint16_t>(i);
+                j[colName] = row.get<uint16_t>(i);
             }
             else if (colType == "int32")
             {
-                j[colType] = row.get<int32_t>(i);
+                j[colName] = row.get<int32_t>(i);
             }
             else if (colType == "uint32")
             {
-                j[colType] = row.get<uint32_t>(i);
+                j[colName] = row.get<uint32_t>(i);
             }
             else if (colType == "int64")
             {
-                j[colType] = row.get<int64_t>(i);
+                j[colName] = row.get<int64_t>(i);
             }
             else if (colType == "uint64")
             {
-                j[colType] = row.get<uint64_t>(i);
+                j[colName] = row.get<uint64_t>(i);
             }
             else if (colType == "blob")
             {
-                j[colType] = row.get<BLOB>(i).cbSize;
+                // TODO ? How do we handle BLOB?
+                j[colName] = row.get<std::string>(i);
             }
             else if (colType == "json")
             {
-                j[colType] = row.get<json>(i);
+                j[colName] = row.get<json>(i);
             }
             else if (colType == "bool")
             {
-                j[colType] = row.get<bool>(i);
+                j[colName] = row.get<bool>(i);
             }
             else // Return a string for unknown types // TODO avoid errors
             {
-                j[colType] = row.get<std::string>(i);
+                j[colName] = row.get<std::string>(i);
             }
         }
 
