@@ -158,6 +158,20 @@ namespace mantis
                 );
             }
 
+            // Add auth endpoints for login
+            if (m_tableType == "auth")
+            {
+                // Add Record
+                Log::debug("Adding POST Request for table '{}/auth-with-password'", m_tableName);
+                m_app->http().Post(
+                    basePath + "/auth-with-password",
+                    [this](const Request& req, Response& res, Context& ctx) -> void
+                    {
+                        authWithEmailAndPassword(req, res, ctx);
+                    }
+                );
+            }
+
             return true;
         }
 
@@ -179,8 +193,9 @@ namespace mantis
 
     void TableUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
-        Log::debug("TableMgr::FetchRecord for {}", req.path);
+        // Extract request ID and check that it's not empty
         const auto id = req.path_params.at("id");
+
         json response;
         if (id.empty())
         {
@@ -195,6 +210,9 @@ namespace mantis
 
         try
         {
+            // For every read, check that the optional<T> has a value.
+            // If it's not null, get the data and respond back to the client
+            // else, handle the 404 NOT FOUND response to the client
             if (const auto resp = read(id, json::object()); resp.has_value())
             {
                 response["status"] = 200;
@@ -214,6 +232,8 @@ namespace mantis
             res.status = 404;
         }
 
+        // For any server errors, send it back to the client
+        // Capture std::exception, and a catch-all block as well
         catch (const std::exception& e)
         {
             response["status"] = 500;
@@ -274,14 +294,15 @@ namespace mantis
 
     void TableUnit::createRecord(const Request& req, Response& res, Context& ctx)
     {
-        Log::debug("TableMgr::CreateRecord for {}", req.path);
         json body, response;
         try
         {
+            // Try parsing the request body, may fail ...
             body = json::parse(req.body);
         }
         catch (const std::exception& e)
         {
+            // Return 400 BAD REQUEST for any parse errors
             response["status"] = 400;
             response["error"] = e.what();
             response["data"] = json::object();
@@ -291,10 +312,8 @@ namespace mantis
             return;
         }
 
-        Log::debug("Create record for table {} with data = {}", tableName(), body.dump());
-
-        // Validate JSON body
-        if ( const auto resp = validateRequestBody(body) )
+        // Validate JSON body, return any validation errors encountered
+        if (const auto resp = validateRequestBody(body))
         {
             response["status"] = resp.value().value("status", 500);
             response["error"] = resp.value().value("error", "");
@@ -302,11 +321,12 @@ namespace mantis
 
             res.set_content(response.dump(), "application/json");
             res.status = resp.value().value("status", 500);
-            Log::critical("Error Validating Field: {}", resp.value().value("error", ""));
 
+            Log::critical("Error Validating Field: {}", resp.value().value("error", ""));
             return;
         };
 
+        // Try creating the record, if it fails, return the error
         auto respObj = create(body, json{});
         if (!respObj.value("error", "").empty())
         {
@@ -322,13 +342,27 @@ namespace mantis
             return;
         }
 
-        Log::trace("Record creation successful");
+        // Get the data, for auth types, redact the password information
+        // it's not useful data to return in the response despite being hashed
+        auto record = respObj.at("data");
+        Log::trace("Record creation successful: {}", record.dump());
+
+        // For auth types, remove the password field from the response
+        if (m_tableType == "auth" && record.contains("password"))
+        {
+            // Replace the existing password information ...
+            // TODO Maybe remove the password field altogether
+            record["password"] = "*<! password !>*";
+            record.erase("password");
+        }
+
+        // Return the added record + the system generated fields
         response["status"] = 201;
         response["error"] = "";
-        response["data"] = respObj.at("data");
+        response["data"] = record;
 
-        res.set_content(response.dump(), "application/json");
         res.status = 201;
+        res.set_content(response.dump(), "application/json");
     }
 
     void TableUnit::updateRecord(const Request& req, Response& res, Context& ctx)
@@ -348,15 +382,15 @@ namespace mantis
     void TableUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
         // Extract request ID and check that it's not empty
-        const auto id = req.path;
+        const auto id = req.path_params.at("id");
 
         // For empty IDs, return 400, BAD REQUEST
         if (id.empty())
         {
             json response;
             response["status"] = 400;
-            response["body"] = json::object();
-            response["message"] = "Record ID is required!";
+            response["data"] = json::object();
+            response["error"] = "Record ID is required!";
 
             res.status = 400;
             res.set_content(response.dump(), "application/json");
@@ -367,7 +401,7 @@ namespace mantis
         // appropriately.
         try
         {
-            const auto resp = remove(id, json::object());
+            [[maybe_unused]] const auto resp = remove(id, json::object());
 
             // If all went well, lets return Status OK response
             // no need of a body here
@@ -377,18 +411,154 @@ namespace mantis
         catch (const std::exception& e)
         {
             json response;
-            response["status"] = 500;
-            response["body"] = json::object();
-            response["message"] = e.what();
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = e.what();
 
-            res.status = 500;
+            res.status = 404;
             res.set_content(response.dump(), "application/json");
         }
     }
 
-    bool TableUnit::authWithPassword(const std::string& email, std::string& password)
+    void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) const
     {
-        return true;
+        json body, response;
+        try { body = json::parse(req.body); }
+        catch (const std::exception& e)
+        {
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = "Could not parse request body! ";
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+
+            Log::critical("Could not parse request body! Reason: {}", e.what());
+            return;
+
+        }
+
+        // We expect, the user email and password to be passed in
+        if (!body.contains("email") || body.value("email", "").length() < 3) // TODO add a proper email validation
+        {
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "User email is missing!";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        if (!body.contains("password") || body.value("password", "").length() < 5)
+        {
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "User password is missing!";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        try
+        {
+            const auto email = body.value("email", "");
+            const auto password = body.value("password", "");
+            Log::trace("User: {}, {}", email, password);
+
+            // Find user with an email passed in ....
+            const auto sql = m_app->db().session();
+
+            soci::row r;
+            const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
+            *sql << query, soci::use(email), soci::into(r);
+            Log::trace("Executed Query: {}", query);
+
+            // r.size()
+            if (!sql->got_data())
+            {
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
+
+                res.status = 404;
+                res.set_content(response.dump(), "application/json");
+
+                Log::debug("No user found matching given email/password combination.");
+                return;
+            }
+
+            // Extract user password value
+            const auto db_password = r.get<std::string>("password");
+            auto tokens = splitString(db_password, ":");
+            if (tokens.size() < 2 ) // Check that splitting yield two parts ...
+            {
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
+
+                res.status = 404;
+                res.set_content(response.dump(), "application/json");
+
+                Log::critical("Could not split database password");
+                return;
+            }
+
+            if ( tokens[0] == std::to_string(std::hash<std::string>{}(password + tokens[1])))
+            {
+                // Create JWT Token and return to the user ...
+                json user, data;
+                auto u = parseDbRowToJson(r);
+                data["user"] = user;
+                data["token"] = "A Useful token here ..."; // TODO
+
+                response["status"] = 200;
+                response["data"] = data;
+                response["error"] = "";
+
+                res.status = 200;
+                res.set_content(response.dump(), "application/json");
+                Log::critical("Login Successful, user: {}", response.dump());
+                return;
+            }
+
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = "No user found matching given email/password combination.";
+
+            res.status = 404;
+            res.set_content(response.dump(), "application/json");
+
+            Log::debug("No user found for given email/password combination.");
+            return;
+        }
+        catch (std::exception& e)
+        {
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = e.what();
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+
+            Log::critical("Error Processing Request: {}", e.what());
+        }
+        catch (...)
+        {
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = "Internal Server Error";
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+
+            Log::critical("Internal Server Error");
+        }
+    }
+
+    void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
+    {
     }
 
     bool TableUnit::getAuthToken(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
@@ -567,9 +737,9 @@ namespace mantis
                 trials++;
 
                 //  As trials go over 5, expand the id size by a character every time
-                if (trials >  5)
+                if (trials > 5)
                 {
-                    id = generateShortId( 12 + trials%5);
+                    id = generateShortId(12 + trials % 5);
                 }
 
                 else
@@ -592,7 +762,7 @@ namespace mantis
             {
                 const auto field_name = field.at("name").get<std::string>();
                 columns += columns.empty() ? field_name : ", " + field_name;
-                placeholders += placeholders.empty() ? (":"+field_name) : (", :" + field_name);
+                placeholders += placeholders.empty() ? (":" + field_name) : (", :" + field_name);
             }
 
             // Create the SQL Query
@@ -622,6 +792,24 @@ namespace mantis
                 else if (field_name == "created" || field_name == "updated")
                 {
                     auto value = std::make_shared<std::tm>(*created_tm);
+                    bound_values.push_back(value);
+                    soci::indicator ind;
+                    vals.set(field_name, *value, ind);
+                }
+
+                // For password types, let's hash them before binding to DB
+                else if (field_name == "password")
+                {
+                    // TODO MOVE THIS SEGMENT TO A STRONG CRYPTOGRAPHIC ENGINE
+                    // Maybe Argon | PBKDF2 | etc.
+
+                    // Create SALT, append to the
+                    const auto salt = generateShortId(); // Create SALT key
+                    std::string pswd = entity.value(field_name, "");
+                    const auto n_pswd = std::to_string(std::hash<std::string>{}(pswd + salt));
+
+                    // Add the hashed password to the soci::vals
+                    auto value = std::make_shared<std::string>(n_pswd + ":" + salt);
                     bound_values.push_back(value);
                     soci::indicator ind;
                     vals.set(field_name, *value, ind);
@@ -753,6 +941,7 @@ namespace mantis
             st.execute(true);
             tr.commit();
 
+            // Query back the created record and send it back to the client
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
             const auto addedRow = parseDbRowToJson(r);
@@ -820,16 +1009,17 @@ namespace mantis
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
-        soci::row r;
-        *sql << "SELECT * FROM __tables WHERE id = :id LIMIT 1", soci::use(id), soci::into(r);
+        int count;
+        const std::string sqlStr = ("SELECT count(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1");
+        *sql << sqlStr, soci::use(id), soci::into(count);
 
-        if (!sql->got_data())
+        if (count == 0)
         {
             throw std::runtime_error("Item with id = '" + id + "' was not found!");
         }
 
         // Remove from DB
-        *sql << "DELETE FROM " + tableName() + " WHERE id = :id", soci::use(id);
+        *sql << "DELETE FROM " + m_tableName + " WHERE id = :id", soci::use(id);
         Log::trace("SQL Query: {}", sql->get_query());
 
         tr.commit();
@@ -922,7 +1112,8 @@ namespace mantis
                         // Use SOCI's internal parser
                         // soci::details::parse_std_tm(date_str.c_str(), t);
                         j[colName] = date_str;
-                    }catch (soci::soci_error& e)
+                    }
+                    catch (soci::soci_error& e)
                     {
                         j[colName] = "";
                         Log::critical("TablesUnit::parseDbRowToJson Date Parse Error: {}", e.what());
@@ -1043,7 +1234,7 @@ namespace mantis
             const auto& name = field.value("name", "");
 
             // Skip system generated fields
-            if (name=="id" || name=="created" || name=="updated") continue;
+            if (name == "id" || name == "created" || name == "updated") continue;
 
             const auto& type = field.value("type", "");
             // const auto& value = getTypedValue(body, name, type);

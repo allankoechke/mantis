@@ -55,7 +55,8 @@ namespace mantis
         virtual void updateRecord(const Request& req, Response& res, Context& ctx);
         virtual void deleteRecord(const Request& req, Response& res, Context& ctx);
 
-        bool authWithPassword(const std::string& email, std::string& password);
+        void authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) const;
+        void resetPassword(const Request& req, Response& res, Context& ctx);
 
         // Middleware
         static bool getAuthToken(const Request& req, Response& res, Context& ctx);

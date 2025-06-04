@@ -155,13 +155,17 @@ mantis::BaseTable::BaseTable(MantisApp* app): Table(app)
 
 mantis::AuthTable::AuthTable(MantisApp* app): Table(app)
 {
+    // Create a password field and set minimum char size
+    Field password("password", FieldType::STRING, true, false, true);
+    password.minValue = 6;
+
     type = TableType::Auth;
     fields = {
         Field("id", FieldType::STRING, true, true, true),
         Field("created", FieldType::DATE, true, false, true),
         Field("updated", FieldType::DATE, true, false, true),
         Field("email", FieldType::STRING, true, false, true, true),
-        Field("password", FieldType::STRING, true, false, true),
+        password,
         Field("name", FieldType::STRING, true)
     };
 }
@@ -184,12 +188,16 @@ mantis::SystemTable::SystemTable(MantisApp* app): BaseTable(app)
 
 mantis::AdminTable::AdminTable(MantisApp* app): AuthTable(app)
 {
+    // Create a password field and set minimum char size
+    Field password("password", FieldType::STRING, true, false, true);
+    password.minValue = 8;
+
     system = true;
     type = TableType::Auth;
     fields = {
         Field("id", FieldType::STRING, true, true, true),
         Field("email", FieldType::STRING, true, false, true, true),
-        Field("password", FieldType::STRING, true, false, true),
+        password,
         Field("created", FieldType::DATE, true, false, true),
         Field("updated", FieldType::DATE, true, false, true)
     };
