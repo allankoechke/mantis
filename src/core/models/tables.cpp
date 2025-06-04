@@ -1278,7 +1278,7 @@ namespace mantis
             }
 
             // Add binding for 'id'
-            vals.set("id");
+            vals.set("id", id);
 
             // Bind values, then execute
             st.bind(vals);
@@ -1405,7 +1405,7 @@ namespace mantis
     {
         if (key.empty()) return nullopt;
 
-        for (const auto& field : m_fields)
+        for (auto field : m_fields)
         {
             if (field.value("name", "") == key) return field;
         }
