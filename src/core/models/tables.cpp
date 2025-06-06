@@ -193,6 +193,8 @@ namespace mantis
 
     void TableUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
+        Log::trace("Fetching record from endpoint {}", req.path);
+
         // Extract request ID and check that it's not empty
         const auto id = req.path_params.at("id");
 
@@ -257,7 +259,8 @@ namespace mantis
 
     void TableUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
     {
-        Log::trace("TableMgr::FetchRecords for {}", req.path);
+        Log::trace("Fetching all record from endpoint {}", req.path);
+
         json response;
         try
         {
@@ -294,10 +297,12 @@ namespace mantis
 
     void TableUnit::createRecord(const Request& req, Response& res, Context& ctx)
     {
+        Log::trace("Creating new record, endpoint {}", req.path);
+
         json body, response;
         try
         {
-            // Try parsing the request body, may fail ...
+            // Try parsing the request body, may checkMinValueFunc ...
             body = json::parse(req.body);
         }
         catch (const std::exception& e)
@@ -326,7 +331,7 @@ namespace mantis
             return;
         };
 
-        // Try creating the record, if it fails, return the error
+        // Try creating the record, if it checkMinValueFuncs, return the error
         auto respObj = create(body, json{});
         if (!respObj.value("error", "").empty())
         {
@@ -349,7 +354,9 @@ namespace mantis
 
         // For auth types, remove the password field from the response
         if (m_tableType == "auth" && record.contains("password"))
-        { record.erase("password"); }
+        {
+            record.erase("password");
+        }
 
         // Return the added record + the system generated fields
         response["status"] = 201;
@@ -362,6 +369,8 @@ namespace mantis
 
     void TableUnit::updateRecord(const Request& req, Response& res, Context& ctx)
     {
+        Log::trace("Updating record, endpoint {}", req.path);
+
         json body, response;
         // Extract request ID and check that it's not empty
         const auto id = req.path_params.at("id");
@@ -380,7 +389,7 @@ namespace mantis
 
         try
         {
-            // Try parsing the request body, may fail ...
+            // Try parsing the request body, may checkMinValueFunc ...
             body = json::parse(req.body);
         }
         catch (const std::exception& e)
@@ -392,6 +401,18 @@ namespace mantis
 
             res.set_content(response.dump(), "application/json");
             res.status = 400;
+            return;
+        }
+
+        // Check that record exists before we continue ...
+        if (!recordExists(id))
+        {
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = "Record with id " + id + " was not found.";
+
+            res.status = 404;
+            res.set_content(response.dump(), "application/json");
             return;
         }
 
@@ -409,7 +430,7 @@ namespace mantis
             return;
         };
 
-        // Try creating the record, if it fails, return the error
+        // Try creating the record, if it checkMinValueFuncs, return the error
         auto respObj = update(id, body, json{});
         if (!respObj.value("error", "").empty())
         {
@@ -432,7 +453,9 @@ namespace mantis
 
         // For auth types, remove the password field from the response
         if (m_tableType == "auth" && record.contains("password"))
-        { record.erase("password"); }
+        {
+            record.erase("password");
+        }
 
         // Return the added record + the system generated fields
         response["status"] = 200;
@@ -445,6 +468,8 @@ namespace mantis
 
     void TableUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
+        Log::trace("Deleting record, endpoint {}", req.path);
+
         // Extract request ID and check that it's not empty
         const auto id = req.path_params.at("id");
 
@@ -486,6 +511,8 @@ namespace mantis
 
     void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) const
     {
+        Log::trace("Auth on record, endpoint {}", req.path);
+
         json body, response;
         try { body = json::parse(req.body); }
         catch (const std::exception& e)
@@ -499,11 +526,10 @@ namespace mantis
 
             Log::critical("Could not parse request body! Reason: {}", e.what());
             return;
-
         }
 
         // We expect, the user email and password to be passed in
-        if (!body.contains("email") || body.value("email", "").length() < 3) // TODO add a proper email validation
+        if (!body.contains("email") || body.value("email", "").length() < 5)
         {
             response["status"] = 400;
             response["data"] = json::object();
@@ -514,7 +540,7 @@ namespace mantis
             return;
         }
 
-        if (!body.contains("password") || body.value("password", "").length() < 5)
+        if (!body.contains("password") || body.value("password", "").length() < 8)
         {
             response["status"] = 400;
             response["data"] = json::object();
@@ -529,7 +555,6 @@ namespace mantis
         {
             const auto email = body.value("email", "");
             const auto password = body.value("password", "");
-            Log::trace("User: {}, {}", email, password);
 
             // Find user with an email passed in ....
             const auto sql = m_app->db().session();
@@ -539,7 +564,6 @@ namespace mantis
             *sql << query, soci::use(email), soci::into(r);
             Log::trace("Executed Query: {}", query);
 
-            // r.size()
             if (!sql->got_data())
             {
                 response["status"] = 404;
@@ -556,7 +580,7 @@ namespace mantis
             // Extract user password value
             const auto db_password = r.get<std::string>("password");
             auto tokens = splitString(db_password, ":");
-            if (tokens.size() < 2 ) // Check that splitting yield two parts ...
+            if (tokens.size() < 2) // Check that splitting yield two parts ...
             {
                 response["status"] = 404;
                 response["data"] = json::object();
@@ -569,7 +593,7 @@ namespace mantis
                 return;
             }
 
-            if ( tokens[0] == std::to_string(std::hash<std::string>{}(password + tokens[1])))
+            if (tokens[0] == std::to_string(std::hash<std::string>{}(password + tokens[1])))
             {
                 // Create JWT Token and return to the user ...
                 auto user = parseDbRowToJson(r);
@@ -625,11 +649,14 @@ namespace mantis
 
     void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
     {
+        Log::trace("Resetting password on record, endpoint {}", req.path);
+        res.status = 200;
+        res.set_content(req.body, "application/json");
     }
 
     bool TableUnit::getAuthToken(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
     {
-        Log::trace("TableMgr::HasAuthHeader for {}", req.path);
+        Log::trace("Extracting Auth Token on path {}", req.path);
 
         // If we have an auth header, extract it into the ctx, else
         // add a guest user type. The auth if present, should have
@@ -1053,7 +1080,7 @@ namespace mantis
     {
         const auto sql = m_app->db().session();
         soci::row r;
-        *sql << "SELECT * FROM " + tableName() + " WHERE id = :id", soci::use(id), soci::into(r);
+        *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
 
         if (!sql->got_data())
         {
@@ -1094,15 +1121,22 @@ namespace mantis
             for (const auto& [key, val] : entity.items())
             {
                 // For system fields, let's ignore them for now.
-                if (key == "id") continue;
-                if (key == "created") continue;
-                if (key == "updated") continue;
+                if (key == "id" || key == "created" || key == "updated") continue;
 
                 // First, ensure the key exists in our schema fields
                 if (!findFieldByKey(key).has_value()) continue;
 
-                columns += columns.empty() ? (key + " = :"+key) : (", " + key + " = :"+key);
+                columns += columns.empty() ? (key + " = :" + key) : (", " + key + " = :" + key);
                 updateFields.push_back(key);
+            }
+
+            // Check that we have fields to update, if not so, just return
+            if (updateFields.empty())
+            {
+                result["error"] = "Nothing to update";
+                result["data"] = json::object();
+                result["status"] = 200;
+                return result;
             }
 
             // Add Updated field as an extra field for updates ...
@@ -1110,7 +1144,7 @@ namespace mantis
             updateFields.push_back("updated");
 
             // Create the SQL Query
-            std::string sql_query = "UPDATE " + m_tableName + " SET (" + columns + ") WHERE id = :id";
+            std::string sql_query = "UPDATE " + m_tableName + " SET " + columns + " WHERE id = :id";
             Log::trace("SQL Query: {}", sql_query);
 
             // Prepare statement
@@ -1288,36 +1322,28 @@ namespace mantis
             // Query back the created record and send it back to the client
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
-            const auto updatedRow = parseDbRowToJson(r);
+            const auto record = parseDbRowToJson(r);
 
             result["error"] = "";
-            result["data"] = updatedRow;
+            result["data"] = record;
             result["status"] = 200;
 
             return result;
         }
         catch (const soci::soci_error& e)
         {
-            tr.rollback();
-
             result["error"] = e.what();
             result["status"] = 500;
 
             return result;
         } catch (const std::exception& e)
         {
-            tr.rollback();
-
-            json err;
             result["error"] = e.what();
             result["status"] = 500;
 
             return result;
         } catch (...)
         {
-            tr.rollback();
-
-            json err;
             result["error"] = "Unknown Error!";
             result["status"] = 500;
 
@@ -1382,13 +1408,12 @@ namespace mantis
 
     bool TableUnit::recordExists(const std::string& id) const
     {
-        Log::trace("TablesUnit::RecordExists for {} {}", m_tableName, id);
         try
         {
             int count;
             const auto sql = m_app->db().session();
-            const std::string query = "SELECT COUNT(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1";
-            *sql << query, soci::use(id), soci::into(count);
+            *sql << "SELECT COUNT(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1",
+                soci::use(id), soci::into(count);
             return count > 0;
         }
         catch (soci::soci_error& e)
@@ -1423,7 +1448,7 @@ namespace mantis
             if (const std::string colType = getColTypeFromName(colName);
                 colType == "xml" || colType == "string")
             {
-                j[colName] = row.get<std::string>(i);
+                j[colName] = row.get<std::string>(i, "");
             }
             else if (colType == "double")
             {
@@ -1453,8 +1478,14 @@ namespace mantis
                     catch (soci::soci_error& e)
                     {
                         j[colName] = "";
-                        Log::critical("TablesUnit::parseDbRowToJson Date Parse Error: {}", e.what());
-                        throw std::runtime_error("Failed to parse date");
+                        Log::critical("TablesUnit::Parse DB Row Error: {}", e.what());
+                        // throw std::runtime_error(e.what());
+                    }
+                    catch (std::exception& e)
+                    {
+                        j[colName] = "";
+                        Log::critical("TablesUnit::Parse DB Row Error: {}", e.what());
+                        // throw std::runtime_error(e.what());
                     }
                 }
             }
@@ -1590,28 +1621,73 @@ namespace mantis
             if (!field["minValue"].is_null())
             {
                 const auto minValue = field["minValue"].get<double>();
-
-                Log::trace("Min Value check ... 01");
-                if (type == "string" && body.at(name).size() < minValue)
+                Log::trace("Checking if minValue is satisfied: Is String? {}, Value? {}, Condition: {}",
+                           type == "string", body.value(name, "").size(),
+                           body.value(name, "").size() < static_cast<int>(minValue));
+                if (type == "string" && body.value(name, "").size() < static_cast<int>(minValue))
                 {
-                    obj["error"] = "String value should be at least " + std::to_string(minValue) + " characters long.";
+                    obj["error"] = name + " should be at least " + std::to_string(static_cast<int>(minValue)) +
+                        " chars long.";
                     obj["status"] = 400;
                     return obj;
                 }
 
-                Log::trace("Min Value check ... 02");
-                if (type == "double"
-                    || type == "int8" || type == "uint8"
-                    || type == "int16" || type == "uint16"
-                    || type == "int32" || type == "uint32"
-                    || type == "int64" || type == "uint64")
+                Log::trace("Min Value check for integral types ...");
+                auto checkMinValueFunc = [&](auto _val, auto _min)
                 {
-                    if (body.at(name) < minValue)
+                    if (_val < _min)
                     {
-                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(minValue);
+                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(_min);
                         obj["status"] = 400;
-                        return obj;
+                        return true;
                     }
+                    return false;
+                };
+
+                if (type == "double" &&
+                    checkMinValueFunc(body.at(name).get<double>(), minValue))
+                {
+                    return obj;
+                }
+                else if (type == "int8" &&
+                    checkMinValueFunc(body.at(name).get<int8_t>(), static_cast<int8_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint8" &&
+                    checkMinValueFunc(body.at(name).get<uint8_t>(), static_cast<uint8_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "int16" &&
+                    checkMinValueFunc(body.at(name).get<int16_t>(), static_cast<int16_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint16" &&
+                    checkMinValueFunc(body.at(name).get<uint16_t>(), static_cast<uint16_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "int32" &&
+                    checkMinValueFunc(body.at(name).get<int32_t>(), static_cast<int32_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint32" &&
+                    checkMinValueFunc(body.at(name).get<uint32_t>(), static_cast<uint32_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "int64" &&
+                    checkMinValueFunc(body.at(name).get<int64_t>(), static_cast<int64_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint64" &&
+                    checkMinValueFunc(body.at(name).get<uint64_t>(), static_cast<uint64_t>(minValue)))
+                {
+                    return obj;
                 }
             }
 
@@ -1670,14 +1746,14 @@ namespace mantis
     std::optional<json> TableUnit::validateUpdateRequestBody(const json& body) const
     {
         // Create default base object
-        for (const auto& key : body.items())
+        for (const auto& [key, val] : body.items())
         {
             json obj;
-            const auto j = findFieldByKey(key.value());
+            const auto j = findFieldByKey(key);
 
             if (!j.has_value())
             {
-                obj["error"] = "Field '" + std::string(key.value()) + "' is required";
+                obj["error"] = "Field '" + key + "' is required";
                 obj["status"] = 400;
                 return obj;
             }
@@ -1698,32 +1774,77 @@ namespace mantis
                 return obj;
             }
 
-            Log::trace("Check for min value");
+            Log::trace("Is minValue set? {}", field["minValue"].is_null());
             if (!field["minValue"].is_null())
             {
                 const auto minValue = field["minValue"].get<double>();
 
-                Log::trace("Min Value check ... 01");
-                if (type == "string" && body.at(name).size() < minValue)
+                Log::trace("Checking if minValue is satisfied: Is String? {}, Value? {}, Condition: {}",
+                           type == "string", body.value(name, "").size(),
+                           body.value(name, "").size() < static_cast<int>(minValue));
+                if (type == "string" && body.value(name, "").size() < static_cast<int>(minValue))
                 {
                     obj["error"] = "String value should be at least " + std::to_string(minValue) + " characters long.";
                     obj["status"] = 400;
                     return obj;
                 }
 
-                // Log::trace("Min Value check ... 02");
-                if (type == "double"
-                    || type == "int8" || type == "uint8"
-                    || type == "int16" || type == "uint16"
-                    || type == "int32" || type == "uint32"
-                    || type == "int64" || type == "uint64")
+                Log::trace("Min Value check for integral types ...");
+                auto checkMinValueFunc = [&](auto _val, auto _min)
                 {
-                    if (body.at(name) < minValue)
+                    if (_val < _min)
                     {
-                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(minValue);
+                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(_min);
                         obj["status"] = 400;
-                        return obj;
+                        return true;
                     }
+                    return false;
+                };
+
+                if (type == "double" &&
+                    checkMinValueFunc(body.at(name).get<double>(), minValue))
+                {
+                    return obj;
+                }
+                else if (type == "int8" &&
+                    checkMinValueFunc(body.at(name).get<int8_t>(), static_cast<int8_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint8" &&
+                    checkMinValueFunc(body.at(name).get<uint8_t>(), static_cast<uint8_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "int16" &&
+                    checkMinValueFunc(body.at(name).get<int16_t>(), static_cast<int16_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint16" &&
+                    checkMinValueFunc(body.at(name).get<uint16_t>(), static_cast<uint16_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "int32" &&
+                    checkMinValueFunc(body.at(name).get<int32_t>(), static_cast<int32_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint32" &&
+                    checkMinValueFunc(body.at(name).get<uint32_t>(), static_cast<uint32_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "int64" &&
+                    checkMinValueFunc(body.at(name).get<int64_t>(), static_cast<int64_t>(minValue)))
+                {
+                    return obj;
+                }
+                else if (type == "uint64" &&
+                    checkMinValueFunc(body.at(name).get<uint64_t>(), static_cast<uint64_t>(minValue)))
+                {
+                    return obj;
                 }
             }
 
@@ -1732,7 +1853,7 @@ namespace mantis
             {
                 const auto maxValue = field["maxValue"].get<double>();
 
-                if (type == "string" && body.at(name).size() > maxValue)
+                if (type == "string" && body.value(name, "").size() > maxValue)
                 {
                     obj["error"] = "String value should be at most " + std::to_string(maxValue) + " characters long.";
                     obj["status"] = 400;
@@ -1749,6 +1870,26 @@ namespace mantis
                     {
                         obj["error"] = "Field '" + name + "' value should be less or equal to " + std::to_string(
                             maxValue);
+                        obj["status"] = 400;
+                        return obj;
+                    }
+                }
+            }
+
+            if (!field["validator"].is_null())
+            {
+                auto pattern = field["validator"].get<std::string>();
+                if (const auto opt = m_app->validators().find(pattern);
+                    opt.has_value() && type == "string")
+                {
+                    // Since we have a regex string, lets validate it and return if it fails ...
+                    const auto& reg = opt.value()["regex"].get<std::string>();
+                    const auto& err = opt.value()["error"].get<std::string>();
+
+                    auto f = body.at(name).get<std::string>();
+                    if (const std::regex r_pattern(reg); !std::regex_match(f, r_pattern))
+                    {
+                        obj["error"] = err;
                         obj["status"] = 400;
                         return obj;
                     }

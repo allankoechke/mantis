@@ -5,6 +5,37 @@
 #include "../../../include/mantis/mantis.h"
 #include "soci/sqlite3/soci-sqlite3.h"
 
+mantis::Validator::Validator()
+{
+    m_validators.clear();
+    m_validators["email"] = json{
+        {"regex", R"(^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$)"},
+        {"error", "Email format is not valid"}
+    };
+
+    m_validators["password"] = json{
+        {"regex", R"(^\S{8,}$)"},
+        {"error", "Expected 8 chars minimum with no whitespaces."}
+    };
+
+    m_validators["password-long"] = json{
+        {"regex", R"(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$)"},
+        {"error", "Expected at least one lowercase, uppercase, digit, special character, and a min 8 chars."}
+    };
+
+    std::cout << "VALIDATOR INIT()\n";
+}
+
+std::optional<json> mantis::Validator::find(const std::string& key)
+{
+    if (const auto it = m_validators.find(key); it != m_validators.end())
+    {
+        return it->second;
+    }
+
+    return nullopt;
+}
+
 std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldName)
 {
     if (fieldName == "xml") return FieldType::XML;
@@ -48,9 +79,43 @@ bool mantis::fieldExists(const TableType& type, const std::string& fieldName)
     }
 }
 
-mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys, const bool unique)
-    : name(std::move(n)), type(t), required(req), primaryKey(pk), system(sys), isUnique(unique)
+mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys, json opts)
+    : name(std::move(n)), type(t), required(req), primaryKey(pk), system(sys)
 {
+    if (!opts.empty())
+    {
+        if (opts.contains("validator"))
+        {
+            validator = opts.at("validator").get<std::string>();
+        }
+
+        if (opts.contains("unique"))
+        {
+            isUnique = opts.at("unique").get<bool>();
+        }
+
+        if (opts.contains("defaultValue"))
+        {
+            // Handle different types ...
+            // TODO This may/will throw an error, check on that
+            defaultValue = opts.at("defaultValue").get<std::string>();
+        }
+
+        if (opts.contains("minValue"))
+        {
+            minValue = opts.at("minValue").get<double>();
+        }
+
+        if (opts.contains("maxValue"))
+        {
+            maxValue = opts.at("maxValue").get<double>();
+        }
+
+        if (opts.contains("autoGeneratePattern"))
+        {
+            autoGeneratePattern = opts.at("autoGeneratePattern").get<std::string>();
+        }
+    }
 }
 
 json mantis::Field::to_json() const
@@ -62,6 +127,7 @@ json mantis::Field::to_json() const
         {"primaryKey", primaryKey},
         {"system", system},
         {"unique", isUnique},
+        {"validator", validator},
         {"defaultValue", defaultValue},
         {"minValue", minValue},
         {"maxValue", maxValue},
@@ -89,9 +155,7 @@ soci::db_type mantis::Field::toSociType() const
     return soci::db_string;
 }
 
-mantis::Table::Table(MantisApp* app): m_app(app)
-{
-}
+mantis::Table::Table(MantisApp* app): m_app(app) {}
 
 json mantis::Table::to_json() const
 {
@@ -155,18 +219,17 @@ mantis::BaseTable::BaseTable(MantisApp* app): Table(app)
 
 mantis::AuthTable::AuthTable(MantisApp* app): Table(app)
 {
-    // Create a password field and set minimum char size
-    Field password("password", FieldType::STRING, true, false, true);
-    password.minValue = 6;
-
     type = TableType::Auth;
     fields = {
         Field("id", FieldType::STRING, true, true, true),
         Field("created", FieldType::DATE, true, false, true),
         Field("updated", FieldType::DATE, true, false, true),
-        Field("email", FieldType::STRING, true, false, true, true),
-        password,
-        Field("name", FieldType::STRING, true)
+        Field("email", FieldType::STRING, true, false, true,
+              json{{"unique", true}, {"minValue", 5}, {"validator", "email"}}),
+        Field("password", FieldType::STRING, true, false, true,
+              json{{"minValue", 8}, {"validator", "password"}}),
+        Field("name", FieldType::STRING, true, false, true,
+              json{{"unique", true}, {"minValue", 6}})
     };
 }
 
@@ -188,16 +251,14 @@ mantis::SystemTable::SystemTable(MantisApp* app): BaseTable(app)
 
 mantis::AdminTable::AdminTable(MantisApp* app): AuthTable(app)
 {
-    // Create a password field and set minimum char size
-    Field password("password", FieldType::STRING, true, false, true);
-    password.minValue = 8;
-
     system = true;
     type = TableType::Auth;
     fields = {
         Field("id", FieldType::STRING, true, true, true),
-        Field("email", FieldType::STRING, true, false, true, true),
-        password,
+        Field("email", FieldType::STRING, true, false, true,
+              json{{"unique", true}, {"minValue", 5}, {"validator", "email"}}),
+        Field("password", FieldType::STRING, true, false, true,
+              json{{"minValue", 8}, {"validator", "password"}}),
         Field("created", FieldType::DATE, true, false, true),
         Field("updated", FieldType::DATE, true, false, true)
     };

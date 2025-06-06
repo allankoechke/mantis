@@ -13,6 +13,19 @@ namespace mantis
 {
     class MantisApp;
 
+    class Validator
+    {
+    private:
+        std::unordered_map<std::string, json> m_validators;
+
+    public:
+        Validator();
+
+        std::optional<json> find(const std::string& key);
+    };
+
+
+
     // Enum of the table type created,
     // base table types provide `index`, `created`, `updated`
     // auth table type provide `base` type + `email`, `password`, `name`
@@ -91,10 +104,11 @@ namespace mantis
         std::optional<int> minValue;
         std::optional<int> maxValue;
         std::optional<bool> isUnique;
+        std::optional<std::string> validator;
         std::optional<std::string> autoGeneratePattern; // regex for auto-gen strings
 
         // Convenience constructor
-        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false, bool unique=false);
+        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false, json opts = json::object());
 
         [[nodiscard]] json to_json() const;
         [[nodiscard]] soci::db_type toSociType() const;

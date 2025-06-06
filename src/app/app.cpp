@@ -168,6 +168,7 @@ void mantis::MantisApp::initialize() {
     m_http = std::make_unique<HttpUnit>();
     m_opts = std::make_unique<AnyOption>();
     m_router = std::make_unique<Router>(this);
+    m_validators = std::make_unique<Validator>();
 }
 
 int mantis::MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -219,9 +220,24 @@ AnyOption& mantis::MantisApp::cmd() const
     return *m_opts;
 }
 
+mantis::Router& mantis::MantisApp::router() const
+{
+    return *m_router;
+}
+
+mantis::Validator& mantis::MantisApp::validators() const
+{
+    return *m_validators;
+}
+
 void mantis::MantisApp::setDbType(const DbType& dbType)
 {
     m_dbType = dbType;
+}
+
+std::string mantis::MantisApp::jwtSecretKey()
+{
+    return "Uj8ubu bububa398ghu8gh8hbub ubip0398u #bu7u";
 }
 
 mantis::DbType mantis::MantisApp::dbType() const

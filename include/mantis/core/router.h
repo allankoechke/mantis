@@ -24,7 +24,7 @@ namespace mantis
 
     private:
         bool generateTableCrudApis();
-        bool generateAdminCrudApis();
+        bool generateAdminCrudApis() const;
         bool attachUserRoutes() const;
 
         MantisApp* m_app;

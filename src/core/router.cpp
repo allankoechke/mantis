@@ -92,7 +92,7 @@ bool mantis::Router::generateTableCrudApis()
     return true;
 }
 
-bool mantis::Router::generateAdminCrudApis()
+bool mantis::Router::generateAdminCrudApis() const
 {
     Log::trace("Mantis::ServerMgr::GenerateAdminCrudApis");
 
@@ -127,11 +127,11 @@ bool mantis::Router::generateAdminCrudApis()
                 Log::critical("User ID is required for admin endpoints ...");
 
                 response["status"] = "404";
-                response["message"] = "Admin with the provided Id was not found!";
+                response["error"] = "Admin with the provided Id was not found!";
 
                 res.status = 404;
-                res.reason = "Not Found";
                 res.set_content(response, "application/json");
+                return;
             }
 
             else

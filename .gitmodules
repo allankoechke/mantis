@@ -10,3 +10,15 @@
 [submodule "3rdParty/spdlog"]
 	path = 3rdParty/spdlog
 	url = https://github.com/gabime/spdlog.git
+[submodule "3rdParty/l8w8jwt"]
+	path = 3rdParty/l8w8jwt
+	url = https://github.com/GlitchedPolygons/l8w8jwt.git
+[submodule "3rdParty/jwt-cpp"]
+    path = 3rdParty/jwt-cpp
+    url = https://github.com/Thalhammer/jwt-cpp.git
+[submodule "3rdParty/openssl-cmake"]
+    path = 3rdParty/openssl-cmake
+    url = https://github.com/jimmy-park/openssl-cmake.git
+[submodule "3rdParty/cpp-jwt"]
+    path = 3rdParty/cpp-jwt
+    url = https://github.com/arun11299/cpp-jwt.git

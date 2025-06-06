@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(mantis-ctl)
+project(mantisapp)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -18,7 +18,7 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
-add_executable(mantis-ctl
+add_executable(mantisapp
         src/main.cpp
         include/mantis/mantis.h
         src/app/app.cpp
@@ -53,35 +53,9 @@ add_executable(mantis-ctl
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.cpp
+        include/mantis/core/token.cpp
+        include/mantis/core/token.h
 )
-
-# For configuration help for SOCI,
-# check https://github.com/allankoechke/soci/blob/master/docs/installation.md
-# For now, disable all backends except SQLite
-# set(SOCI_SHARED OFF CACHE BOOL "OFF" FORCE )
-set(SOCI_TESTS OFF CACHE BOOL "OFF" FORCE )
-set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
-set(WITH_BOOST OFF CACHE BOOL "OFF" FORCE )
-set(SOCI_SQLITE3 ON CACHE BOOL "OFF" FORCE )
-set(SOCI_SQLITE3_BUILTIN ON CACHE BOOL "OFF" FORCE )
-set(SOCI_MYSQL OFF CACHE BOOL "" )
-set(SOCI_POSTGRESQL OFF CACHE BOOL "" )
-set(SOCI_ORACLE OFF CACHE BOOL "" )
-set(SOCI_ODBC OFF CACHE BOOL "" )
-set(SOCI_DB2 OFF CACHE BOOL "" )
-set(SOCI_FIREBIRD OFF CACHE BOOL "" )
-set(SOCI_EMPTY OFF CACHE BOOL "" )
-add_subdirectory(3rdParty/soci)
-
-if(MANTIS_SHARED_DEPS)
-    # Enable multi-header mode (compiled lib)
-    set(JSON_MultipleHeaders ON CACHE BOOL "Enable compiled mode for nlohmann/json")
-else ()
-    # Enable multi-header mode (compiled lib)
-    set(JSON_MultipleHeaders OFF CACHE BOOL "Disable compiled mode for nlohmann/json")
-endif ()
-set(JSON_Install OFF CACHE INTERNAL "")
-add_subdirectory(3rdParty/json)
 
 # Add httplib
 if(MANTIS_SHARED_DEPS)
@@ -101,39 +75,31 @@ else ()
     # Build static lib for spdlog
     set(SPDLOG_BUILD_SHARED OFF)
 endif ()
+
 add_subdirectory(3rdParty/spdlog)
 
+# Add JSON, SOCI
+include(cmake/add-json.cmake)
+include(cmake/add-soci.cmake)
+
+# Add cpp-jwt library
+#set(CPP_JWT_BUILD_EXAMPLES OFF)
+#set(CPP_JWT_BUILD_TESTS OFF)
+add_subdirectory(3rdParty/l8w8jwt)
+
 # Link to libs
-target_link_libraries(mantis-ctl
+target_link_libraries(mantisapp
     PRIVATE
         httplib::httplib
-        nlohmann_json::nlohmann_json
-        soci_core
-        soci_sqlite3
-#        soci_empty
-#        soci_odbc
         spdlog::spdlog
+        l8w8jwt
 )
 
 # Include directories
-target_include_directories(mantis-ctl
+target_include_directories(mantisapp
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/soci/3rdParty
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/soci/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/json/single_include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
 )
-
-#if(CMAKE_BUILD_TYPE STREQUAL "Debug")
-#    message(STATUS "Debug build")
-#elseif(CMAKE_BUILD_TYPE STREQUAL "Release")
-#    message(STATUS "Release build")
-#elseif(CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-#    message(STATUS "RelWithDebInfo build")
-#elseif(CMAKE_BUILD_TYPE STREQUAL "MinSizeRel")
-#    message(STATUS "MinSizeRel build")
-#else()
-#    message(WARNING "Unknown or unset CMAKE_BUILD_TYPE: ${CMAKE_BUILD_TYPE}")
-#endif()

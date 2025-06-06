@@ -17,6 +17,7 @@ namespace mantis
     class HttpUnit;
     class LoggingUnit;
     class Router;
+    class Validator;
 
     enum class DbType
     {
@@ -53,11 +54,14 @@ namespace mantis
         DbType dbType() const;
         void setDbType(const DbType& dbType);
 
+        static std::string jwtSecretKey();
+
         [[nodiscard]] DatabaseUnit& db() const;
-        [[nodiscard]] LoggingUnit& log() const;
-        [[nodiscard]] HttpUnit& http() const;
-        [[nodiscard]] AnyOption& cmd() const;
-        [[nodiscard]] Router& router() const;
+        [[nodiscard]] LoggingUnit&  log() const;
+        [[nodiscard]] HttpUnit&     http() const;
+        [[nodiscard]] AnyOption&    cmd() const;
+        [[nodiscard]] Router&       router() const;
+        [[nodiscard]] Validator&    validators() const;
 
     private:
         void parseArgs(int argc, char** argv);
@@ -79,6 +83,7 @@ namespace mantis
         std::unique_ptr<HttpUnit> m_http;
         std::unique_ptr<AnyOption> m_opts;
         std::unique_ptr<Router> m_router;
+        std::unique_ptr<Validator> m_validators;
     };
 }
 
