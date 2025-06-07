@@ -65,8 +65,8 @@ namespace mantis
         void setRouteDisplayName(const std::string& routeName);
 
         // Middleware
-        static bool getAuthToken(const Request& req, Response& res, Context& ctx);
-        static bool hasAccess(const Request& req, Response& res, Context& ctx);
+        bool getAuthToken(const Request& req, Response& res, Context& ctx);
+        bool hasAccess(const Request& req, Response& res, Context& ctx);
 
         // Getters
         std::string tableName();

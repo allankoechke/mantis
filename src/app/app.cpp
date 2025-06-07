@@ -237,7 +237,10 @@ void mantis::MantisApp::setDbType(const DbType& dbType)
 
 std::string mantis::MantisApp::jwtSecretKey()
 {
-    return "Uj8ubu bububa398ghu8gh8hbub ubip0398u #bu7u";
+    // This is the default secret key, override it through environment variable
+    // MANTIS_JWT_SECRET, recommended to override this key
+    // TODO add commandline input for overriding the key
+    return getEnvOrDefault("MANTIS_JWT_SECRET", "ed12086b9a609a5e410053b0541cb2d8da7087c1bb5e045962377d323ea6eb59");
 }
 
 mantis::DbType mantis::MantisApp::dbType() const

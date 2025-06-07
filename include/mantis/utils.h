@@ -183,6 +183,12 @@ namespace mantis
         tokens.push_back(input.substr(start)); // last token
         return tokens;
     }
+
+    inline std::string getEnvOrDefault(const std::string& key, const std::string& defaultValue)
+    {
+        const char* value = std::getenv(key.c_str());
+        return value ? std::string(value) : defaultValue;
+    }
 }
 
 #endif // MANTIS_UTILS_H
