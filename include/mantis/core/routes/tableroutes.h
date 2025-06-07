@@ -5,7 +5,7 @@
 #ifndef TABLEROUTES_H
 #define TABLEROUTES_H
 
-#include "../models/tables.h"
+#include "../../tables/tables.h"
 
 namespace mantis {
     class MantisApp;

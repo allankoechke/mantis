@@ -36,8 +36,6 @@ add_executable(mantisapp
         include/mantis/core/http.h
         src/core/routes/admin.cpp
         include/mantis/core/routes/admin.h
-        src/core/models/tables.cpp
-        include/mantis/core/models/tables.h
         src/core/crud/authcrud.cpp
         include/mantis/core/crud/authcrud.h
         src/core/crud/viewcrud.cpp
@@ -49,12 +47,20 @@ add_executable(mantisapp
         include/mantis/core/crud/crud.h
         src/core/routes/tableroutes.cpp
         include/mantis/core/routes/tableroutes.h
+        include/mantis/core/jwtprovider.h
 
         # Add AnyOption Source Files, no need of linking later
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.cpp
-        include/mantis/core/token.cpp
-        include/mantis/core/token.h
+
+        # All table operations
+        include/mantis/tables/tables.h
+        src/core/tables/tables.cpp
+        src/core/tables/tables_crud.cpp
+        src/core/tables/tables_routes.cpp
+        src/core/tables/tables_auth.cpp
+        src/core/tables/tables_utils.cpp
+        src/core/tables/tables_validation.cpp
 )
 
 # Add httplib

@@ -9,6 +9,8 @@
 #include <filesystem>
 #include <anyoption.h>
 
+#include "../core/jwtprovider.h"
+
 namespace fs = std::filesystem;
 
 namespace mantis
@@ -55,6 +57,10 @@ namespace mantis
         void setDbType(const DbType& dbType);
 
         static std::string jwtSecretKey();
+        json createJWTToken(const std::string& id, const json& claims) const
+        {
+            return JWT::createJWT(id, claims);
+        }
 
         [[nodiscard]] DatabaseUnit& db() const;
         [[nodiscard]] LoggingUnit&  log() const;

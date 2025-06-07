@@ -3,7 +3,7 @@
 #include "../../include/mantis/utils.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
-#include "../../include/mantis/core/models/tables.h"
+#include "../../include/mantis/tables/tables.h"
 #include "../../include/mantis/core/routes/tableroutes.h"
 
 

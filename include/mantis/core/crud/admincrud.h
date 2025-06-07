@@ -7,7 +7,7 @@
 
 #include "crud.h"
 #include "tablescrud.h"
-#include "../models/tables.h"
+#include "../../tables/tables.h"
 
 namespace mantis {
 

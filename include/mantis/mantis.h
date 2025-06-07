@@ -16,7 +16,7 @@
 #include "core/router.h"
 
 #include "core/models/models.h"
-#include "core/models/tables.h"
+#include "tables/tables.h"
 
 #include "core/routes/admin.h"
 

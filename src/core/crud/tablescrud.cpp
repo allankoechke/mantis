@@ -10,7 +10,7 @@
 #include "../../../include/mantis/utils.h"
 #include <soci/soci.h>
 
-#include "../../../include/mantis/core/models/tables.h"
+#include "../../../include/mantis/tables/tables.h"
 #include "private/soci-mktime.h"
 
 
