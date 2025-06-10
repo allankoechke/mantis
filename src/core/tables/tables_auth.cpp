@@ -192,19 +192,18 @@ namespace mantis
             auth["table"] = "";
         }
 
-        Log::trace("Context: {}", auth.dump());
-        ctx.dump();
-
         // Update the context
         ctx.set("auth", auth);
-        return true;
+        return REQUEST_PENDING;
     }
 
     bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx) const
     {
+        // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
-        std::string rule;
 
+        // Store rule, depending on the request type
+        std::string rule;
         if (req.method == "GET")
         {
             // Check if we are fetching single record using the ID
@@ -212,23 +211,19 @@ namespace mantis
             if (req.path_params.empty()) rule = m_listRule;
             else rule = m_getRule;
         }
-        else if (req.method == "POST")
-        {
-            rule = m_addRule;
-        }
-        else if (req.method == "PATCH")
-        {
-            rule = m_addRule;
-        }
-        else if (req.method == "DELETE")
-        {
-            rule = m_addRule;
-        }
+        else if (req.method == "POST") { rule = m_addRule; }
+        else if (req.method == "PATCH") { rule = m_addRule; }
+        else if (req.method == "DELETE") { rule = m_addRule; }
         else
         {
-            res.status = 404;
-            res.set_content("Unsupported Method.", "application/json");
-            return false;
+            json response;
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "Unsupported method";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return REQUEST_HANDLED;
         }
 
         // Remove whitespaces
@@ -249,11 +244,14 @@ namespace mantis
 
                 res.status = 403;
                 res.set_content(response.dump(), "application/json");
-                return false;
+                return REQUEST_HANDLED;
             }
 
+            // Extract and verify that the id and table data is provided, else,
+            // return an error
             const auto _id = resp.value("id", "");
             const auto _table = resp.value("table", "");
+            Log::trace("Auth Cred: id = {} table = {}", _id, _table);
 
             if (_id.empty() || _table.empty())
             {
@@ -264,26 +262,34 @@ namespace mantis
 
                 res.status = 403;
                 res.set_content(resp.dump(), "application/json");
-                return false;
+                return REQUEST_HANDLED;
             }
 
+            // Query for user with given ID, this info will be populated to the
+            // expression evaluator args as well as available through
+            // the session context, queried by:
+            //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
+            //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
             auto sql = m_app->db().session();
             soci::row r;
             std::string query = "SELECT * FROM " + _table + " WHERE id = :id LIMIT 1";
             *sql << query, soci::use(_id), soci::into(r);
 
+            // Return 404 if user was not found
             if (!sql->got_data())
             {
                 json response;
-                response["status"] = 403;
+                response["status"] = 404;
                 response["data"] = json::object();
                 response["error"] = "Auth id was not found.";
 
-                res.status = 403;
+                res.status = 404;
                 res.set_content(resp.dump(), "application/json");
-                return false;
+                return REQUEST_HANDLED;
             }
 
+            // Populate the auth object with additional data from the database
+            // remove `password` field if available
             auto user = parseDbRowToJson(r);
             auth["type"] = "user";
             auth["id"] = _id;
@@ -295,6 +301,9 @@ namespace mantis
                 auth[key] = value;
             }
 
+            // Remove password field
+            auth.erase("password");
+
             // Update context data
             ctx.set("auth", auth);
         }
@@ -303,11 +312,15 @@ namespace mantis
         cparse::TokenMap vars;
 
         auto request = json::object();
-        try { request = json::parse(req.body); } catch (...) {}
+        try { request = json::parse(req.body); }
+        catch (...)
+        {
+        }
 
-        // Add auth details to the map var
+        // Add `auth` and `request` details to the `TokenMap` var stack for use in
+        // expression evaluation. First, convert the `json` to `TokenMap`.
         vars["auth"] = m_app->evaluator().jsonToTokenMap(auth);
-        vars["request"] = m_app->evaluator().jsonToTokenMap(request);
+        vars["req"] = m_app->evaluator().jsonToTokenMap(request);
 
         // If the rule is empty, enforce admin login
         if (rule.empty())
@@ -317,9 +330,11 @@ namespace mantis
             if (table_name == "__admin")
             {
                 // If logged in as admin, grant access
-                return true;
+                // Admins get unconditional data access
+                return REQUEST_HANDLED;
             }
 
+            // User was not an admin, lets return access denied error
             json response;
             response["status"] = 403;
             response["data"] = json::object();
@@ -327,10 +342,22 @@ namespace mantis
 
             res.status = 403;
             res.set_content(response.dump(), "application/json");
-            return false;
+            return REQUEST_HANDLED;
         }
 
-        // Return evaluated expression ...
-        return m_app->evaluator().evaluate(rule, vars);
+        // If expression evaluation returns true, lets return allowing execution
+        // continuation. Else, we'll craft an error response.
+        if (m_app->evaluator().evaluate(rule, vars))
+            return REQUEST_PENDING; // Proceed to next mware
+
+        // Evaluation yielded false, return generic access denied error
+        json response;
+        response["status"] = 403;
+        response["data"] = json::object();
+        response["error"] = "Access denied!";
+
+        res.status = 403;
+        res.set_content(response.dump(), "application/json");
+        return REQUEST_HANDLED;
     }
 }

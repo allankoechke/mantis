@@ -15,6 +15,9 @@
 
 #include "logging.h"
 
+#define REQUEST_HANDLED false
+#define REQUEST_PENDING true
+
 using json = nlohmann::json;
 
 namespace mantis

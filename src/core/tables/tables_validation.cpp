@@ -39,8 +39,8 @@ namespace mantis
                 const auto minValue = field["minValue"].get<double>();
                 Log::trace("Checking if minValue is satisfied: Is String? {}, Value? {}, Condition: {}",
                            type == "string", body.value(name, "").size(),
-                           body.value(name, "").size() < static_cast<int>(minValue));
-                if (type == "string" && body.value(name, "").size() < static_cast<int>(minValue))
+                           body.value(name, "").size() < static_cast<size_t>(minValue));
+                if (type == "string" && body.value(name, "").size() < static_cast<size_t>(minValue))
                 {
                     obj["error"] = name + " should be at least " + std::to_string(static_cast<int>(minValue)) +
                         " chars long.";
@@ -197,8 +197,8 @@ namespace mantis
 
                 Log::trace("Checking if minValue is satisfied: Is String? {}, Value? {}, Condition: {}",
                            type == "string", body.value(name, "").size(),
-                           body.value(name, "").size() < static_cast<int>(minValue));
-                if (type == "string" && body.value(name, "").size() < static_cast<int>(minValue))
+                           body.value(name, "").size() < static_cast<size_t>(minValue));
+                if (type == "string" && body.value(name, "").size() < static_cast<size_t>(minValue))
                 {
                     obj["error"] = "String value should be at least " + std::to_string(minValue) + " characters long.";
                     obj["status"] = 400;

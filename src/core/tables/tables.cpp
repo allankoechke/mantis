@@ -92,7 +92,7 @@ namespace mantis
     void TableUnit::setFields(const std::vector<json>& fields)
     {
         m_fields.clear();
-        for (const auto field : fields) m_fields.push_back(field);
+        for (const auto& field : fields) m_fields.push_back(field);
     }
 
     bool TableUnit::isSystem() const
