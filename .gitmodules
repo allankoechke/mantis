@@ -22,3 +22,6 @@
 [submodule "3rdParty/cpp-jwt"]
     path = 3rdParty/cpp-jwt
     url = https://github.com/arun11299/cpp-jwt.git
+[submodule "3rdParty/cparse"]
+	path = 3rdParty/cparse
+	url = https://github.com/allankoechke/cparse.git
