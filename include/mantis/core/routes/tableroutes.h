@@ -6,6 +6,8 @@
 #define TABLEROUTES_H
 
 #include "../../tables/tables.h"
+#include <shunting-yard.h>
+#include <containers.h>
 
 namespace mantis {
     class MantisApp;

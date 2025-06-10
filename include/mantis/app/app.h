@@ -10,6 +10,7 @@
 #include <anyoption.h>
 
 #include "../core/jwtprovider.h"
+#include "../core/expr_evaluator.h"
 
 namespace fs = std::filesystem;
 
@@ -38,10 +39,10 @@ namespace mantis
         void close() const;
         static int quit(const int& exitCode = 0, const std::string& reason = "Something went wrong!");
 
-        int port() const;;
+        int port() const;
         void setPort(const int& port);
 
-        int poolSize() const;;
+        int poolSize() const;
         void setPoolSize(const int& pool_size);
 
         std::string host() const;
@@ -64,6 +65,7 @@ namespace mantis
         [[nodiscard]] AnyOption&    cmd() const;
         [[nodiscard]] Router&       router() const;
         [[nodiscard]] Validator&    validators() const;
+        [[nodiscard]] ExprEvaluator& evaluator() const;
 
     private:
         void parseArgs(int argc, char** argv);
@@ -86,6 +88,7 @@ namespace mantis
         std::unique_ptr<AnyOption> m_opts;
         std::unique_ptr<Router> m_router;
         std::unique_ptr<Validator> m_validators;
+        std::unique_ptr<ExprEvaluator> m_exprEval;
     };
 }
 

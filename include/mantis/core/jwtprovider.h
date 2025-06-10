@@ -55,7 +55,7 @@ namespace mantis
             std::cout << id << " : " << table << std::endl;
 
             additional_claims[0] = {
-                .key = "id",
+                .key = const_cast<char*>("id"),
                 .key_length = 2,
                 .value = id,
                 .value_length = strlen(id),
@@ -63,7 +63,7 @@ namespace mantis
             };
 
             additional_claims[1] = {
-                .key = "table",
+                .key = const_cast<char*>("table"),
                 .key_length = strlen("table"),
                 .value = table,
                 .value_length = strlen(table),

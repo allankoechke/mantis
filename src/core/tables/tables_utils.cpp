@@ -24,7 +24,7 @@ namespace mantis
     json TableUnit::parseDbRowToJson(const soci::row& row) const
     {
         json j;
-        for (int i = 0; i < row.size(); i++)
+        for (size_t i = 0; i < row.size(); i++)
         {
             const auto colName = row.get_properties(i).get_name();
 

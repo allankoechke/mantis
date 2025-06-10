@@ -7,6 +7,8 @@
 
 #include <memory>
 #include <nlohmann/json.hpp>
+// #include <shunting-yard.h>
+// #include <containers.h>
 
 #include "../core/models/models.h"
 #include "../core/http.h"
@@ -17,6 +19,7 @@
 namespace mantis
 {
     using json = nlohmann::json;
+    // using cparse::TokenMap;
 
     using TableValue = std::variant<
         std::monostate,
@@ -56,7 +59,7 @@ namespace mantis
 
         // Auth Routes Handlers
         void authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) const;
-        void resetPassword(const Request& req, Response& res, Context& ctx);
+        void resetPassword(const Request& req, Response& res, Context& ctx) const;
 
         // Router setup
         virtual bool setupRoutes();
@@ -65,12 +68,12 @@ namespace mantis
         void setRouteDisplayName(const std::string& routeName);
 
         // Middleware
-        bool getAuthToken(const Request& req, Response& res, Context& ctx);
-        bool hasAccess(const Request& req, Response& res, Context& ctx);
+        static bool getAuthToken(const Request& req, Response& res, Context& ctx);
+        bool hasAccess(const Request& req, Response& res, Context& ctx) const;
 
         // Getters
         std::string tableName();
-        void setTableName(const std::string& name);;
+        void setTableName(const std::string& name);
 
         std::string tableId();
         void setTableId(const std::string& id);
@@ -82,17 +85,17 @@ namespace mantis
         void setFields(const std::vector<json>& fields);
 
         bool isSystem() const;
-        void setIsSystemTable(bool isSystemTable);;
+        void setIsSystemTable(bool isSystemTable);
 
         // Store the rules cached
         Rule listRule();
-        void setListRule(const Rule& rule);;
+        void setListRule(const Rule& rule);
 
         Rule getRule();
-        void setGetRule(const Rule& rule);;
+        void setGetRule(const Rule& rule);
 
         Rule addRule();
-        void setAddRule(const Rule& rule);;
+        void setAddRule(const Rule& rule);
 
         Rule updateRule();
         void setUpdateRule(const Rule& rule);
@@ -110,7 +113,7 @@ namespace mantis
 
         // Helper methods
         static std::string generateTableId(const std::string& tablename);
-        std::string getColTypeFromName(const std::string& col) const;;
+        std::string getColTypeFromName(const std::string& col) const;
         json parseDbRowToJson(const soci::row& row) const;
         std::optional<json> validateRequestBody(const json& body) const;
         std::optional<json> validateUpdateRequestBody(const json& body) const;

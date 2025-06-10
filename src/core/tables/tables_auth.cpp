@@ -162,8 +162,10 @@ namespace mantis
         }
     }
 
-    void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
+    void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx) const
     {
+        [[maybe_unused]] auto sql = m_app->db().session();
+
         Log::trace("Resetting password on record, endpoint {}", req.path);
         res.status = 200;
         res.set_content(req.body, "application/json");
@@ -179,18 +181,64 @@ namespace mantis
         json auth;
         auth["token"] = "";
         auth["type"] = "guest"; // or 'user'
-        auth["user"] = json::object();
+        auth["table"] = "";
 
         if (req.has_header("Authorization"))
         {
             const auto token = get_bearer_token_auth(req);
-            auth["token"] = token;
+            auth["token"] = trim(token);
             auth["type"] = "user";
             auth["id"] = "";
             auth["table"] = "";
+        }
 
-            // Maybe Query User information if it exists?
-            // id, tableName, ...
+        Log::trace("Context: {}", auth.dump());
+        ctx.dump();
+
+        // Update the context
+        ctx.set("auth", auth);
+        return true;
+    }
+
+    bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx) const
+    {
+        auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
+        std::string rule;
+
+        if (req.method == "GET")
+        {
+            // Check if we are fetching single record using the ID
+            // empty params means we are listing through the endpoint
+            if (req.path_params.empty()) rule = m_listRule;
+            else rule = m_getRule;
+        }
+        else if (req.method == "POST")
+        {
+            rule = m_addRule;
+        }
+        else if (req.method == "PATCH")
+        {
+            rule = m_addRule;
+        }
+        else if (req.method == "DELETE")
+        {
+            rule = m_addRule;
+        }
+        else
+        {
+            res.status = 404;
+            res.set_content("Unsupported Method.", "application/json");
+            return false;
+        }
+
+        // Remove whitespaces
+        rule = trim(rule);
+
+        // Expand logged user if token is present
+        // Maybe Query User information if it exists?
+        // id, tableName, ...
+        if (const auto& token = auth.value("token", ""); !token.empty())
+        {
             const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
             if (!resp.value("verified", false) || !resp.value("error", "").empty())
             {
@@ -238,22 +286,51 @@ namespace mantis
 
             auto user = parseDbRowToJson(r);
             auth["type"] = "user";
-            auth["user"] = user;
             auth["id"] = _id;
             auth["table"] = _table;
+
+            // Populate auth obj with user details ...
+            for (const auto& [key, value] : user.items())
+            {
+                auth[key] = value;
+            }
+
+            // Update context data
+            ctx.set("auth", auth);
         }
 
-        // Update the context
-        ctx.set("auth", auth);
-        ctx.dump();
+        // Token map variables
+        cparse::TokenMap vars;
 
-        return true;
-    }
+        auto request = json::object();
+        try { request = json::parse(req.body); } catch (...) {}
 
-    bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx)
-    {
-        Log::debug("TableMgr::HasAccessPermission for {}", req.path);
-        ctx.dump();
-        return true;
+        // Add auth details to the map var
+        vars["auth"] = m_app->evaluator().jsonToTokenMap(auth);
+        vars["request"] = m_app->evaluator().jsonToTokenMap(request);
+
+        // If the rule is empty, enforce admin login
+        if (rule.empty())
+        {
+            const auto table_name = auth.value("table", "");
+            // Check if user is logged in as Admin
+            if (table_name == "__admin")
+            {
+                // If logged in as admin, grant access
+                return true;
+            }
+
+            json response;
+            response["status"] = 403;
+            response["data"] = json::object();
+            response["error"] = "Admin auth required to access this resource.";
+
+            res.status = 403;
+            res.set_content(response.dump(), "application/json");
+            return false;
+        }
+
+        // Return evaluated expression ...
+        return m_app->evaluator().evaluate(rule, vars);
     }
 }

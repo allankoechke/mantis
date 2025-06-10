@@ -28,7 +28,7 @@ bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn
         m_connPool = std::make_unique<soci::connection_pool>(m_app->poolSize());
 
         // Populate the pools with db connections
-        for (std::size_t i = 0; i < m_app->poolSize(); ++i)
+        for (int i = 0; i < m_app->poolSize(); ++i)
         {
             switch(m_app->dbType())
             {

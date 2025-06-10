@@ -5,12 +5,30 @@
 #ifndef EXPR_EVALUATOR_H
 #define EXPR_EVALUATOR_H
 
-namespace mantis {
+#include <string>
+// #include <builtin-features.inc>
+#include <shunting-yard.h>
+#include <containers.h>
+#include <nlohmann/json.hpp>
 
-class expr_evaluator {
 
-};
+namespace mantis
+{
+    using cparse::TokenMap;
+    using cparse::calculator;
+    using cparse::packToken;
+    using json = nlohmann::json;
 
+    struct ExprEvaluator
+    {
+        ExprEvaluator();
+
+        auto evaluate(const std::string& expr, const cparse::TokenMap& vars) -> bool;
+
+        auto evaluate(const std::string& expr, const nlohmann::json& vars) -> bool;
+
+        auto jsonToTokenMap(const nlohmann::json& j) -> TokenMap;
+    };
 } // mantis
 
 #endif //EXPR_EVALUATOR_H

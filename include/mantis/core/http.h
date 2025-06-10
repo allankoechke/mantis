@@ -33,11 +33,11 @@ namespace mantis
         }
 
         template <typename T>
-        T* get(const std::string& key)
+        std::optional<T*> get(const std::string& key)
         {
             auto it = data.find(key);
             if (it != data.end()) return std::any_cast<T>(&it->second);
-            return nullptr;
+            return std::nullopt;
         }
     };
 

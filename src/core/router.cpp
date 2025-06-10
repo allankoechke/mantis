@@ -136,7 +136,7 @@ bool mantis::Router::generateAdminCrudApis() const
 
             else
             {
-                Log::critical("User ID set is = '{}'", admin->dump());
+                Log::critical("User ID set is = '{}'", admin.value() ? admin.value()->dump() : "{}");
             }
 
             res.status = 200;

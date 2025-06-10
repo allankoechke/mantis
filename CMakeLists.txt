@@ -61,6 +61,9 @@ add_executable(mantisapp
         src/core/tables/tables_auth.cpp
         src/core/tables/tables_utils.cpp
         src/core/tables/tables_validation.cpp
+
+        src/core/expr_evaluator.cpp
+        include/mantis/core/expr_evaluator.h
 )
 
 # Add httplib
@@ -93,12 +96,16 @@ include(cmake/add-soci.cmake)
 #set(CPP_JWT_BUILD_TESTS OFF)
 add_subdirectory(3rdParty/l8w8jwt)
 
+# Add the cparse module for expr evaluation
+include(cmake/cparse.cmake)
+
 # Link to libs
 target_link_libraries(mantisapp
     PRIVATE
         httplib::httplib
         spdlog::spdlog
         l8w8jwt
+        cparse
 )
 
 # Include directories
@@ -108,4 +115,5 @@ target_include_directories(mantisapp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse
 )

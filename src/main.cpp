@@ -3,8 +3,6 @@
 //
 
 #include "../include/mantis/mantis.h"
-#include <l8w8jwt/encode.h>
-#include <string>
 
 int main(const int argc, char* argv[])
 {

@@ -163,12 +163,13 @@ void mantis::MantisApp::initialize() {
         quit(-1, "Failed to create database directories!");
 
     // Create instance objects
-    m_logger = std::make_unique<LoggingUnit>();
-    m_database = std::make_unique<DatabaseUnit>(this);
-    m_http = std::make_unique<HttpUnit>();
-    m_opts = std::make_unique<AnyOption>();
-    m_router = std::make_unique<Router>(this);
-    m_validators = std::make_unique<Validator>();
+    m_exprEval      = std::make_unique<ExprEvaluator>();
+    m_logger        = std::make_unique<LoggingUnit>();
+    m_database      = std::make_unique<DatabaseUnit>(this);
+    m_http          = std::make_unique<HttpUnit>();
+    m_opts          = std::make_unique<AnyOption>();
+    m_router        = std::make_unique<Router>(this);
+    m_validators    = std::make_unique<Validator>();
 }
 
 int mantis::MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -228,6 +229,11 @@ mantis::Router& mantis::MantisApp::router() const
 mantis::Validator& mantis::MantisApp::validators() const
 {
     return *m_validators;
+}
+
+mantis::ExprEvaluator& mantis::MantisApp::evaluator() const
+{
+    return *m_exprEval;
 }
 
 void mantis::MantisApp::setDbType(const DbType& dbType)
