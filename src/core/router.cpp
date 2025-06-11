@@ -9,10 +9,15 @@
 
 mantis::Router::Router(MantisApp* app)
     : m_app(app),
-      m_adminTable(std::make_shared<TableUnit>(m_app, "__admin", "admins", "auth")),
-      m_tableRoutes(std::make_shared<SysTablesUnit>(m_app, "__tables", "tables", "base"))
+      m_adminTable(std::make_shared<TableUnit>(m_app, "__admin",
+          TableUnit::generateTableId("__admin"), "auth")),
+      m_tableRoutes(std::make_shared<SysTablesUnit>(m_app, "__tables",
+          TableUnit::generateTableId("__tables"), "base"))
 {
-    m_adminTable->setRouteDisplayName("admin");
+    // Override the route display name to easier names. This means that,
+    // instead of `<root>/__admin` -> <root>/admins
+    // instead of `<root>/__tables` -> <root>/tables
+    m_adminTable->setRouteDisplayName("admins");
     m_tableRoutes->setRouteDisplayName("tables");
 }
 
@@ -116,53 +121,15 @@ bool mantis::Router::generateAdminCrudApis() const
         m_app->http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
             Log::debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
-            ctx.dump();
 
             // Response Object
             json response;
-
-            // Check for correct admin user ...
-            if (const auto admin = ctx.get<json>("admin"); !admin)
-            {
-                Log::critical("User ID is required for admin endpoints ...");
-
-                response["status"] = "404";
-                response["error"] = "Admin with the provided Id was not found!";
-
-                res.status = 404;
-                res.set_content(response, "application/json");
-                return;
-            }
-
-            else
-            {
-                Log::critical("User ID set is = '{}'", admin.value() ? admin.value()->dump() : "{}");
-            }
-
             res.status = 200;
-            response["status"] = "OK";
-            response["data"] = "Admin crud apis";
+            response["status"] = 200;
+
+            response["data"] = "{}";
             res.set_content(response, "application/json");
-            return;
-        }, {
-            [=](const Request& req, Response& res, Context ctx)-> bool
-            {
-                std::cout << req.path << " SUBMIT HANDLER MIDDLEWARE!" << std::endl;
-
-                json admin;
-                admin["id"] = "123456789";
-                admin["name"] = "John Doe";
-                admin["password"] = "--";
-                admin["email"] = "john.doe@h.com";
-                admin["age"] = 23;
-                admin["valid"] = true;
-
-                ctx.set<json>("admin", admin);
-                ctx.dump();
-
-                return true;
-            }
-        });
+        }, {});
     }
 
     catch (const std::exception& e)

@@ -26,19 +26,19 @@
 
 ## 📦 Features
 
-| Feature                          | Status    |
-|----------------------------------|-----------|
-| ✅ Modular C++ core library       | 🟡 In Progress    |
+| Feature                          | Status         |
+|----------------------------------|----------------|
+| ✅ Modular C++ core library       | 🟡 In Progress |
 | 🧩 Pluggable database interface   | 🟡 In Progress |
-| 🔐 Authentication (JWT/session)  | ⬜ Planned |
-| 📄 Auto API generation from schema | 🟡 In Progress |
-| 🧱 System metadata tables         | 🟡 In Progress     |
-| 🔁 Client/server sync modes       | ⬜ Planned |
-| 🔄 WebSocket sync support         | ⬜ Planned |
-| 🧩 Middleware support             | 🟡 In Progress  |
-| 💾 Static file serving            | ⬜ Planned     |
-| 🚀 Docker-ready deployment        | ⬜ Planned |
-| 🧪 Unit + integration tests       | ⬜ Planned |
+| 🔐 Authentication (JWT/session)  | ✅ Completed    |
+| 📄 Auto API generation from schema | ✅ Completed    |
+| 🧱 System metadata tables         | ✅ Completed    |
+| 🔁 Client/server sync modes       | ⬜ Planned      |
+| 🔄 WebSocket sync support         | ⬜ Planned      |
+| 🧩 Middleware support             | 🟡 In Progress |
+| 💾 Static file serving            | ⬜ Planned      |
+| 🚀 Docker-ready deployment        | ⬜ Planned      |
+| 🧪 Unit + integration tests       | ⬜ Planned      |
 | 📘 CLI + embeddable modes         | 🟡 In Progress |
 
 ---

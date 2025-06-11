@@ -494,9 +494,12 @@ namespace mantis
                 res.status = 404;
                 res.set_content(response.dump(), "application/json");
 
-                Log::debug("No user found matching given email/password combination.");
+                Log::debug("[No DB Match] No user found matching given email/password combination. {}",
+                    response.dump());
                 return;
             }
+
+            Log::trace("Checking for password match ...");
 
             // Extract user password value
             const auto db_password = r.get<std::string>("password");
@@ -563,6 +566,7 @@ namespace mantis
         }
         catch (std::exception& e)
         {
+            Log::critical("Error on admin login: {}", e.what());
             response["status"] = 500;
             response["data"] = json::object();
             response["error"] = e.what();
@@ -580,8 +584,7 @@ namespace mantis
 
             res.status = 500;
             res.set_content(response.dump(), "application/json");
-
-            Log::critical("Internal Server Error");
+            Log::critical("Error on admin login: Unknown Error");
         }
     }
 

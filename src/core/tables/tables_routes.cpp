@@ -19,7 +19,7 @@ namespace mantis
         try
         {
             // Fetch All Records
-            Log::debug("Adding GET Request for table '{}'", m_tableName);
+            Log::debug("Adding GET Request for table '{}'", basePath);
             m_app->http().Get(
                 basePath,
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -39,7 +39,7 @@ namespace mantis
             );
 
             // Fetch Single Record
-            Log::debug("Adding GET/1 Request for table '{}'", m_tableName);
+            Log::debug("Adding GET/1 Request for table '{}'", basePath);
             m_app->http().Get(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -62,7 +62,7 @@ namespace mantis
             if (m_tableType != "view")
             {
                 // Add Record
-                Log::debug("Adding POST Request for table '{}'", m_tableName);
+                Log::debug("Adding POST Request for table '{}'", basePath);
                 m_app->http().Post(
                     basePath, [this](const Request& req, Response& res, Context& ctx)-> void
                     {
@@ -81,7 +81,7 @@ namespace mantis
                 );
 
                 // Update Record
-                Log::debug("Adding PATCH Request for table '{}'", m_tableName);
+                Log::debug("Adding PATCH Request for table '{}'", basePath);
                 m_app->http().Patch(
                     basePath + "/:id",
                     [this](const Request& req, Response& res, Context& ctx)-> void
@@ -101,7 +101,7 @@ namespace mantis
                 );
 
                 // Delete Record
-                Log::debug("Adding DELETE Request for table '{}'", m_tableName);
+                Log::debug("Adding DELETE Request for table '{}'", basePath);
                 m_app->http().Delete(
                     basePath + "/:id",
                     [this](const Request& req, Response& res, Context& ctx)-> void
@@ -125,7 +125,7 @@ namespace mantis
             if (m_tableType == "auth")
             {
                 // Add Record
-                Log::debug("Adding POST Request for table '{}/auth-with-password'", m_tableName);
+                Log::debug("Adding POST Request for table '{}/auth-with-password'", basePath);
                 m_app->http().Post(
                     basePath + "/auth-with-password",
                     [this](const Request& req, Response& res, Context& ctx) -> void
