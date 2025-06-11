@@ -7,15 +7,11 @@ set(CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/packToken.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/functions.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/containers.cpp
-)
-
-# Built-in features
-set(BUILTIN_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/builtin-features.cpp
 )
 
 # Create static library
-add_library(cparse STATIC ${CORE_SOURCES} ${BUILTIN_SOURCES})
+add_library(cparse STATIC ${CORE_SOURCES})
 
 # Include directories
 target_include_directories(cparse PUBLIC

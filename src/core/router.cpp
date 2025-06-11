@@ -3,14 +3,14 @@
 #include "../../include/mantis/utils.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
-#include "../../include/mantis/tables/tables.h"
-#include "../../include/mantis/core/routes/tableroutes.h"
+#include "../../include/mantis/core/tables/tables.h"
+#include "../../include/mantis/core/tables/sys_tables.h"
 
 
 mantis::Router::Router(MantisApp* app)
     : m_app(app),
-      m_adminTable(std::make_shared<TableUnit>(m_app, "__admin", "admin", "auth")),
-      m_tableRoutes(std::make_shared<TableRoutes>(m_app, "__tables", "tables", "base"))
+      m_adminTable(std::make_shared<TableUnit>(m_app, "__admin", "admins", "auth")),
+      m_tableRoutes(std::make_shared<SysTablesUnit>(m_app, "__tables", "tables", "base"))
 {
     m_adminTable->setRouteDisplayName("admin");
     m_tableRoutes->setRouteDisplayName("tables");

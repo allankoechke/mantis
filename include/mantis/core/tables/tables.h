@@ -7,19 +7,16 @@
 
 #include <memory>
 #include <nlohmann/json.hpp>
-// #include <shunting-yard.h>
-// #include <containers.h>
 
-#include "../core/models/models.h"
-#include "../core/http.h"
-#include "../app/app.h"
-#include "../core/crud/basecrud.h"
-#include "../core/jwtprovider.h"
+#include "../models/models.h"
+#include "../http.h"
+#include "../crud/crud.h"
+#include "../jwtprovider.h"
+#include "../../app/app.h"
 
 namespace mantis
 {
     using json = nlohmann::json;
-    // using cparse::TokenMap;
 
     using TableValue = std::variant<
         std::monostate,
@@ -58,8 +55,8 @@ namespace mantis
         virtual void deleteRecord(const Request& req, Response& res, Context& ctx);
 
         // Auth Routes Handlers
-        void authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) const;
-        void resetPassword(const Request& req, Response& res, Context& ctx) const;
+        virtual void authWithEmailAndPassword(const Request& req, Response& res, Context& ctx);
+        virtual void resetPassword(const Request& req, Response& res, Context& ctx);
 
         // Router setup
         virtual bool setupRoutes();
@@ -69,7 +66,7 @@ namespace mantis
 
         // Middleware
         static bool getAuthToken(const Request& req, Response& res, Context& ctx);
-        bool hasAccess(const Request& req, Response& res, Context& ctx) const;
+        virtual bool hasAccess(const Request& req, Response& res, Context& ctx);
 
         // Getters
         std::string tableName();

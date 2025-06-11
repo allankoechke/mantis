@@ -2,7 +2,7 @@
 // Created by allan on 07/06/2025.
 //
 
-#include "../../include/mantis/tables/tables.h"
+#include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/utils.h"
@@ -79,7 +79,7 @@ namespace mantis
                 {
                     auto value = std::make_shared<std::string>(id.c_str());
                     bound_values.push_back(value);
-                    soci::indicator ind;
+                    soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);
                 }
 
@@ -87,7 +87,7 @@ namespace mantis
                 {
                     auto value = std::make_shared<std::tm>(*created_tm);
                     bound_values.push_back(value);
-                    soci::indicator ind;
+                    soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);
                 }
 
@@ -105,7 +105,7 @@ namespace mantis
                     // Add the hashed password to the soci::vals
                     auto value = std::make_shared<std::string>(n_pswd + ":" + salt);
                     bound_values.push_back(value);
-                    soci::indicator ind;
+                    soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);
                 }
 
@@ -116,7 +116,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<std::string>(entity.value(field_name, ""));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -124,7 +124,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<double>(entity.value(field_name, 0.0));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -137,7 +137,7 @@ namespace mantis
 
                         auto value = std::make_shared<std::tm>(tm);
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -145,7 +145,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int8_t>(static_cast<int8_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -153,7 +153,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint8_t>(static_cast<uint8_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -161,7 +161,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int16_t>(static_cast<int16_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -169,7 +169,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint16_t>(static_cast<uint16_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -177,7 +177,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int32_t>(static_cast<int32_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -185,7 +185,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint32_t>(static_cast<uint32_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -193,7 +193,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int64_t>(static_cast<int64_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -201,7 +201,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint64_t>(static_cast<uint64_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -209,7 +209,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<std::string>(entity.value(field_name, sql->empty_blob()));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -217,7 +217,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<json>(entity.value(field_name, json::object()));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -225,7 +225,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<bool>(entity.value(field_name, false));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
                 }
@@ -368,7 +368,7 @@ namespace mantis
                 {
                     auto value = std::make_shared<std::tm>(*created_tm);
                     bound_values.push_back(value);
-                    soci::indicator ind;
+                    soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);
                 }
 
@@ -386,7 +386,7 @@ namespace mantis
                     // Add the hashed password to the soci::vals
                     auto value = std::make_shared<std::string>(n_pswd + ":" + salt);
                     bound_values.push_back(value);
-                    soci::indicator ind;
+                    soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);
                 }
 
@@ -397,7 +397,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<std::string>(entity.value(field_name, ""));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -405,7 +405,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<double>(entity.value(field_name, 0.0));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -418,7 +418,7 @@ namespace mantis
 
                         auto value = std::make_shared<std::tm>(tm);
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -426,7 +426,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int8_t>(static_cast<int8_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -434,7 +434,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint8_t>(static_cast<uint8_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -442,7 +442,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int16_t>(static_cast<int16_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -450,7 +450,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint16_t>(static_cast<uint16_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -458,7 +458,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int32_t>(static_cast<int32_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -466,7 +466,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint32_t>(static_cast<uint32_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -474,7 +474,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<int64_t>(static_cast<int64_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -482,7 +482,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<uint64_t>(static_cast<uint64_t>(entity.value(field_name, 0)));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -490,7 +490,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<std::string>(entity.value(field_name, sql->empty_blob()));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -498,7 +498,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<json>(entity.value(field_name, json::object()));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
 
@@ -506,7 +506,7 @@ namespace mantis
                     {
                         auto value = std::make_shared<bool>(entity.value(field_name, false));
                         bound_values.push_back(value);
-                        soci::indicator ind;
+                        soci::indicator ind = soci::i_ok;;
                         vals.set(field_name, *value, ind);
                     }
                 }

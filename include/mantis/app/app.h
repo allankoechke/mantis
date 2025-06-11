@@ -9,6 +9,7 @@
 #include <filesystem>
 #include <anyoption.h>
 
+#include <builtin_features.h>
 #include "../core/jwtprovider.h"
 #include "../core/expr_evaluator.h"
 

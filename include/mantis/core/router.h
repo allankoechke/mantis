@@ -9,7 +9,7 @@ namespace mantis
 {
     class MantisApp;
     class TableUnit;
-    class TableRoutes;
+    class SysTablesUnit;
 
     class Router
     {
@@ -29,7 +29,7 @@ namespace mantis
 
         MantisApp* m_app;
         std::shared_ptr<TableUnit> m_adminTable;
-        std::shared_ptr<TableRoutes> m_tableRoutes;
+        std::shared_ptr<SysTablesUnit> m_tableRoutes;
         std::vector<std::shared_ptr<TableUnit>> m_routes = {};
     };
 }

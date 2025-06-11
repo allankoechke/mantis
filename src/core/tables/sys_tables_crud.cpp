@@ -2,51 +2,48 @@
 // Created by allan on 18/05/2025.
 //
 
-#include "../../../include/mantis/core/crud/tablescrud.h"
+#include "../../../include/mantis/core/tables/sys_tables.h"
 #include "../../../include/mantis/app/app.h"
+#include "../../../include/mantis/core/crud/crud.h"
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/core/models/models.h"
+#include "../../../include/mantis/core/tables/tables.h"
 #include "../../../include/mantis/core/logging.h"
 #include "../../../include/mantis/utils.h"
-#include <soci/soci.h>
 
-#include "../../../include/mantis/tables/tables.h"
+#include <soci/soci.h>
 #include "private/soci-mktime.h"
 
 
 namespace mantis
 {
-    TablesCrud::TablesCrud(MantisApp* app): m_app(app) {}
-
-    json TablesCrud::create(const json& entity, const json& opts)
+    json SysTablesUnit::create(const json& entity, const json& opts)
     {
         json result;
 
         try
         {
-            const auto name = entity.at("name").get<std::string>();
-            const auto type = entity.at("type").get<std::string>();
-            const auto fields = entity.at("fields").get<std::vector<json>>();
+            const auto name = entity.value("name", "");
+            const auto type = entity.value("type", "");
+            const auto fields = entity.value("fields", json::array());
 
             // Update rules in the individual table types
-            const auto addRule = entity.at("addRule").get<std::string>();
-            const auto getRule = entity.at("getRule").get<std::string>();
-            const auto listRule = entity.at("listRule").get<std::string>();
-            const auto updateRule = entity.at("updateRule").get<std::string>();
-            const auto deleteRule = entity.at("deleteRule").get<std::string>();
+            const auto addRule = entity.value("addRule", "");
+            const auto getRule = entity.value("getRule", "");
+            const auto listRule = entity.value("listRule", "");
+            const auto updateRule = entity.value("updateRule", "");
+            const auto deleteRule = entity.value("deleteRule", "");
 
             // Hash the name for the ID
             std::string id = TableUnit::generateTableId(name);
 
-            Log::debug("Table: {} with id: {}", name, id);
+            Log::debug("Creating table: {} with id: {}", name, id);
 
             // Check if item exits already in db
             if (itemExists(name, id))
             {
-                json err;
-                err["error"] = "Table with similar name exists.";
-                err["status"] = 400;
-                result["error"] = err;
+                result["error"] = "Table with similar name exists.";
+                result["status"] = 400;
                 return result;
             }
 
@@ -77,21 +74,19 @@ namespace mantis
                 auto _typeStr = field.value("type", "");
                 const auto _type = getFieldType(_typeStr);
 
-                if (_name.empty())
+                // Ensure field name is provided
+                if (trim(_name).empty())
                 {
-                    json err;
-                    err["error"] = "Field type 'name' can't be empty";
-                    err["status"] = 400;
-                    result["error"] = err;
+                    result["error"] = "Field type 'name' can't be empty";
+                    result["status"] = 400;
                     return result;
                 }
 
+                // Ensure field type is provided
                 if (!_type.has_value())
                 {
-                    json err;
-                    err["error"] = "Field type '" + _typeStr + "' not recognised";
-                    err["status"] = 400;
-                    result["error"] = err;
+                    result["error"] = "Field type '" + _typeStr + "' not recognised";
+                    result["status"] = 400;
                     return result;
                 }
 
@@ -102,7 +97,7 @@ namespace mantis
 
             if (type == "auth")
             {
-                AuthTable auth(m_app);
+                AuthTable auth(m_app.get());
                 auth.id = id;
                 auth.name = name;
                 auth.system = false;
@@ -125,7 +120,7 @@ namespace mantis
             }
             else if (type == "view")
             {
-                ViewTable view(m_app);
+                ViewTable view(m_app.get());
                 view.id = id;
                 view.name = name;
                 view.system = false;
@@ -134,22 +129,22 @@ namespace mantis
 
                 // For view types, we need the SQL query
                 auto _sourceSQL = entity.value("sql", "");
+
+                // Ensure SQL query is provided
                 if (_sourceSQL.empty())
                 {
-                    json err;
-                    err["error"] = "View SQL Query is empty";
-                    err["status"] = 400;
-                    result["error"] = err;
+                    result["error"] = "View SQL Query is empty";
+                    result["status"] = 400;
                     return result;
                 }
-                view.sourceSQL = _sourceSQL;
 
+                view.sourceSQL = _sourceSQL;
                 schema_str = view.to_json().dump();
                 table_ddl = view.to_sql();
             }
             else
             {
-                BaseTable base(m_app);
+                BaseTable base(m_app.get());
                 base.id = id;
                 base.name = name;
                 base.system = false;
@@ -204,34 +199,32 @@ namespace mantis
 
                 // Dump complete field information, not just the passed in values
                 for (const auto& field : new_fields) { obj["fields"].push_back(field.to_json()); }
-                
+
                 result["data"] = obj;
 
                 tr.commit();
-            } catch (const soci::soci_error& e)
+            }
+            catch (const soci::soci_error& e)
             {
                 tr.rollback();
 
-                json err;
-                err["error"] = e.what();
-                err["status"] = 500;
-                result["error"] = err;
+                result["error"] = e.what();
+                result["status"] = 500;
                 return result;
             } catch (const std::exception& e)
             {
                 tr.rollback();
 
-                json err;
-                err["error"] = e.what();
-                err["status"] = 500;
-                result["error"] = err;
+                result["error"] = e.what();
+                result["status"] = 500;
                 return result;
             }
 
             return result;
-        } catch (std::exception& e)
+        }
+        catch (std::exception& e)
         {
-            Log::critical("TablesCrud::TablesCrud: {}", e.what());
+            Log::critical("SysTablesUnit::SysTablesUnit: {}", e.what());
             json err;
             err["error"] = e.what();
             err["status"] = 500;
@@ -240,7 +233,7 @@ namespace mantis
         }
     }
 
-    std::optional<json> TablesCrud::read(const std::string& id, const json& opts)
+    std::optional<json> SysTablesUnit::read(const std::string& id, const json& opts)
     {
         const auto sql = m_app->db().session();
 
@@ -266,7 +259,7 @@ namespace mantis
         return tb;
     }
 
-    json TablesCrud::update(const std::string& id, const json& entity, const json& opts)
+    json SysTablesUnit::update(const std::string& id, const json& entity, const json& opts)
     {
         const auto sql = m_app->db().session();
         soci::transaction tr(*sql);
@@ -299,7 +292,7 @@ namespace mantis
 
             // Update Name & ID in the __tables catalogue
             *sql << "UPDATE __tables SET id = :id & name = :name WHERE id = :old_id",
-            soci::use(nId), soci::use(name), soci::use(id);
+                soci::use(nId), soci::use(name), soci::use(id);
 
             // Update the
             // TODO LATER
@@ -330,7 +323,7 @@ namespace mantis
         return response;
     }
 
-    bool TablesCrud::remove(const std::string& id, const json& opts)
+    bool SysTablesUnit::remove(const std::string& id, const json& opts)
     {
         const auto sql = m_app->db().session();
         soci::transaction tr(*sql);
@@ -357,7 +350,7 @@ namespace mantis
         return true;
     }
 
-    std::vector<json> TablesCrud::list(const json& opts)
+    std::vector<json> SysTablesUnit::list(const json& opts)
     {
         const auto sql = m_app->db().session();
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
@@ -386,9 +379,9 @@ namespace mantis
         return response;
     }
 
-    bool TablesCrud::itemExists(const std::string& tableName, const std::string& id) const
+    bool SysTablesUnit::itemExists(const std::string& tableName, const std::string& id) const
     {
-        Log::trace("TablesCrud::itemExists for {} {}", tableName, id);
+        Log::trace("SysTablesUnit::itemExists for {} {}", tableName, id);
         try
         {
             int count;
@@ -396,9 +389,10 @@ namespace mantis
             const std::string query = "SELECT COUNT(id) FROM " + tableName + " WHERE id = :id";
             *sql << query, soci::use(id), soci::into(count);
             return sql->got_data();
-        } catch (soci::soci_error& e)
+        }
+        catch (soci::soci_error& e)
         {
-            Log::trace("TablesCrud::itemExists error: {}", e.what());
+            Log::trace("SysTablesUnit::itemExists error: {}", e.what());
             return false;
         }
     }

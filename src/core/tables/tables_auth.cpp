@@ -2,14 +2,14 @@
 // Created by allan on 07/06/2025.
 //
 
-#include "../../include/mantis/tables/tables.h"
+#include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/utils.h"
 
 namespace mantis
 {
-    void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) const
+    void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
     {
         Log::trace("Auth on record, endpoint {}", req.path);
 
@@ -162,7 +162,7 @@ namespace mantis
         }
     }
 
-    void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx) const
+    void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
     {
         [[maybe_unused]] auto sql = m_app->db().session();
 
@@ -197,7 +197,7 @@ namespace mantis
         return REQUEST_PENDING;
     }
 
-    bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx) const
+    bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx)
     {
         // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
@@ -251,7 +251,6 @@ namespace mantis
             // return an error
             const auto _id = resp.value("id", "");
             const auto _table = resp.value("table", "");
-            Log::trace("Auth Cred: id = {} table = {}", _id, _table);
 
             if (_id.empty() || _table.empty())
             {
@@ -331,7 +330,7 @@ namespace mantis
             {
                 // If logged in as admin, grant access
                 // Admins get unconditional data access
-                return REQUEST_HANDLED;
+                return REQUEST_PENDING;
             }
 
             // User was not an admin, lets return access denied error
@@ -344,6 +343,8 @@ namespace mantis
             res.set_content(response.dump(), "application/json");
             return REQUEST_HANDLED;
         }
+
+        Log::trace("Expression Rule = {}", rule);
 
         // If expression evaluation returns true, lets return allowing execution
         // continuation. Else, we'll craft an error response.

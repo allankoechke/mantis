@@ -2,24 +2,21 @@
 // Created by allan on 20/05/2025.
 //
 
-#include "../../../include/mantis/core/routes/tableroutes.h"
-
-#include "../../../include/mantis/utils.h"
+#include "../../../include/mantis/core/tables/sys_tables.h"
+#include "../../../include/mantis/core/crud/crud.h"
+#include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/app/app.h"
-#include "../../../include/mantis/core/crud/tablescrud.h"
+#include "../../../include/mantis/utils.h"
 
 namespace mantis
 {
-    TableRoutes::TableRoutes(MantisApp* app,
-                             const std::string& tableName,
-                             const std::string& tableId,
-                             const std::string& tableType)
-        : TableUnit(app, tableName, tableId, tableType),
-          m_crud(new TablesCrud(app))
-    {
-    }
+    SysTablesUnit::SysTablesUnit(MantisApp* app,
+                                 const std::string& tableName,
+                                 const std::string& tableId,
+                                 const std::string& tableType)
+        : TableUnit(app, tableName, tableId, tableType) {}
 
-    bool TableRoutes::setupRoutes()
+    bool SysTablesUnit::setupRoutes()
     {
         if (m_tableName.empty() && m_routeName.empty()) return false;
 
@@ -127,6 +124,16 @@ namespace mantis
                 }
             );
 
+            // Add Record
+            Log::debug("Adding POST Request for table '{}/auth-with-password'", m_routeName);
+            m_app->http().Post(
+                basePath + "/auth-with-password",
+                [this](const Request& req, Response& res, Context& ctx) -> void
+                {
+                    authWithEmailAndPassword(req, res, ctx);
+                }
+            );
+
             return true;
         }
 
@@ -145,10 +152,13 @@ namespace mantis
         }
     }
 
-    void TableRoutes::fetchRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
-        auto id = req.path_params.at("id");
+        // Response Object
         json response;
+
+        // Get the path param ID value, return 400 error if its invalid
+        const auto id = req.path_params.at("id");
         if (id.empty())
         {
             response["status"] = 400;
@@ -162,8 +172,8 @@ namespace mantis
 
         try
         {
-            const auto resp = m_crud->read(id, json{});
-            if (resp.has_value())
+            // Read record by 'id' above and return record if its found
+            if (const auto resp = read(id, json{}); resp.has_value())
             {
                 response["status"] = 200;
                 response["error"] = "";
@@ -173,16 +183,15 @@ namespace mantis
                 res.status = 200;
                 return;
             }
-            else
-            {
-                response["status"] = 404;
-                response["error"] = "Item Not Found";
-                response["data"] = json{};
 
-                res.set_content(response.dump(), "application/json");
-                res.status = 404;
-                return;
-            }
+            // If no record is available, return 404
+            response["status"] = 404;
+            response["error"] = "Item Not Found";
+            response["data"] = json{};
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 404;
+            return;
         }
         catch (const std::exception& e)
         {
@@ -207,14 +216,14 @@ namespace mantis
         }
     }
 
-    void TableRoutes::fetchRecords(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
     {
-        Log::info("Fetch all tables from database");
         json response;
         try
         {
-            auto list = m_crud->list(json());
-            response["data"] = list;
+            // Fetch all records in the database
+            auto items = list(json::object());
+            response["data"] = items;
             response["status"] = 200;
             response["error"] = "";
 
@@ -243,13 +252,12 @@ namespace mantis
         }
     }
 
-    void TableRoutes::createRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::createRecord(const Request& req, Response& res, Context& ctx)
     {
         json body, response;
-        try
-        {
-            body = json::parse(req.body);
-        }
+
+        // Parse request body to JSON Object, return an error if it fails
+        try { body = json::parse(req.body); }
         catch (const std::exception& e)
         {
             response["status"] = 400;
@@ -263,6 +271,7 @@ namespace mantis
 
         Log::debug("Create table, data = {}", body.dump());
 
+        // Create validator method
         auto validateRequestBody = [&]() -> bool
         {
             if (trim(body.at("name").get<std::string>()).empty())
@@ -279,7 +288,7 @@ namespace mantis
             // Check that the type is either a view|base|auth type
             auto type = body.at("type").get<std::string>();
             toLowerCase(type);
-            if ( !(type == "view" || type == "base" || type == "auth") )
+            if (!(type == "view" || type == "base" || type == "auth"))
             {
                 response["status"] = 400;
                 response["error"] = "Table type should be either 'base', 'view', or 'auth'";
@@ -309,7 +318,7 @@ namespace mantis
             else
             {
                 // Check fields if any is added
-                for (const auto& field: body.at("fields").get<std::vector<json>>())
+                for (const auto& field : body.at("fields").get<std::vector<json>>())
                 {
                     // On the minimum, we need field name and type
                     auto field_name = field.at("name").get<std::string>();
@@ -329,7 +338,8 @@ namespace mantis
                     if (trim(field_type).empty())
                     {
                         response["status"] = 400;
-                        response["error"] = "Field type '" + field_type + "' for '" + field_name +"' is not a valid type";
+                        response["error"] = "Field type '" + field_type + "' for '" + field_name +
+                            "' is not a valid type";
                         response["data"] = json{};
 
                         res.status = 400;
@@ -345,37 +355,35 @@ namespace mantis
         // Validate JSON body
         if (!validateRequestBody()) return;
 
-        auto resp = m_crud->create(body, json{});
+        // Invoke create table method, return the result
+        auto resp = create(body, json{});
         if (!resp.value("error", json{}).empty())
         {
-            int s = resp.at("error").at("status").get<int>();
-            Log::debug("Table creation failed: {}", resp.at("error").dump());
-            response["status"] = s > 0 ? s : 500;
+            int status = resp.value("status", 500);
+            response["status"] = status;
             response["error"] = resp.at("error").at("error").get<std::string>();
             response["data"] = json{};
 
+            res.status = status;
             res.set_content(response.dump(), "application/json");
-            res.status = s > 0 ? s : 500;
 
             Log::critical("Failed to create table, reason: {}", resp.dump());
             return;
         }
 
-        Log::debug("Table creation successful");
-
         response["status"] = 201;
         response["error"] = "";
         response["data"] = resp.at("data");
 
-        res.set_content(response.dump(), "application/json");
         res.status = 201;
+        res.set_content(response.dump(), "application/json");
     }
 
-    void TableRoutes::updateRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::updateRecord(const Request& req, Response& res, Context& ctx)
     {
     }
 
-    void TableRoutes::deleteRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
         const auto id = req.path_params.at("id");
         json response;
@@ -393,7 +401,7 @@ namespace mantis
         try
         {
             // If remove returns false, something didn't go right!
-            if (const auto resp = m_crud->remove(id, json{}); !resp)
+            if (const auto resp = remove(id, json{}); !resp)
             {
                 response["status"] = 500;
                 response["error"] = "Could not delete record";
@@ -403,7 +411,8 @@ namespace mantis
                 res.status = 500;
                 return;
             }
-        } catch (const std::exception& e)
+        }
+        catch (const std::exception& e)
         {
             response["status"] = 500;
             response["error"] = e.what();
@@ -418,5 +427,185 @@ namespace mantis
 
         res.set_content("", "application/json");
         res.status = 204;
+    }
+
+    void SysTablesUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
+    {
+        Log::trace("Auth on record, endpoint {}", req.path);
+
+        json body, response;
+        try { body = json::parse(req.body); }
+        catch (const std::exception& e)
+        {
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = "Could not parse request body! ";
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+
+            Log::critical("Could not parse request body! Reason: {}", e.what());
+            return;
+        }
+
+        // Get email & password values
+        const auto email = body.value("email", "");
+        const auto password = body.value("password", "");
+
+        // We expect, the user email and password to be passed in
+        if (email.length() < 5)
+        {
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "Admin user `email` is missing!";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        if (password.length() < 8)
+        {
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "Admin user `password` is missing!";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        try
+        {
+            // Find user with an email passed in ....
+            const auto sql = m_app->db().session();
+
+            soci::row r;
+            const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
+            *sql << query, soci::use(email), soci::into(r);
+            Log::trace("Executed Query: {}", query);
+
+            if (!sql->got_data())
+            {
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
+
+                res.status = 404;
+                res.set_content(response.dump(), "application/json");
+
+                Log::debug("No user found matching given email/password combination.");
+                return;
+            }
+
+            // Extract user password value
+            const auto db_password = r.get<std::string>("password");
+            auto tokens = splitString(db_password, ":");
+            if (tokens.size() < 2) // Check that splitting yield two parts ...
+            {
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
+
+                res.status = 404;
+                res.set_content(response.dump(), "application/json");
+
+                Log::critical("Could not split database password");
+                return;
+            }
+
+            if (tokens[0] == std::to_string(std::hash<std::string>{}(password + tokens[1])))
+            {
+                // Create JWT Token and return to the user ...
+                auto user = parseDbRowToJson(r);
+                user.erase("password"); // Remove password field
+
+                // C
+                const json claims{{"id", user.at("id").get<std::string>()}, {"table", m_tableName}};
+                const auto obj = JWT::createJWTToken(claims, MantisApp::jwtSecretKey());
+                if (const auto err = obj.at("error").get<std::string>(); !err.empty())
+                {
+                    response["status"] = 500;
+                    response["data"] = "";
+                    response["error"] = err;
+
+                    res.status = 500;
+                    res.set_content(response.dump(), "application/json");
+
+                    Log::info("Error creating JWT token: {}", response.dump());
+
+                    return;
+                }
+
+                json data;
+                data["user"] = user;
+                data["token"] = obj.at("token").get<std::string>();
+
+                response["status"] = 200;
+                response["data"] = data;
+                response["error"] = "";
+
+                res.status = 200;
+                res.set_content(response.dump(), "application/json");
+                Log::info("Login Successful, user: {}", response.dump());
+                return;
+            }
+
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = "No user found matching given email/password combination.";
+
+            res.status = 404;
+            res.set_content(response.dump(), "application/json");
+
+            Log::debug("No user found for given email/password combination.");
+            return;
+        }
+        catch (std::exception& e)
+        {
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = e.what();
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+
+            Log::critical("Error Processing Request: {}", e.what());
+        }
+        catch (...)
+        {
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = "Internal Server Error";
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+
+            Log::critical("Internal Server Error");
+        }
+    }
+
+    bool SysTablesUnit::hasAccess(const Request& req, Response& res, Context& ctx)
+    {
+        // Get the auth var from the context, resort to empty object if it's not set.
+        auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
+
+        // Check if user is logged in as Admin
+        if (const auto table_name = auth.value("table", ""); table_name == "__admin")
+        {
+            // If logged in as admin, grant access
+            // Admins get unconditional data access
+            return REQUEST_PENDING;
+        }
+
+        // User was not an admin, lets return access denied error
+        json response;
+        response["status"] = 403;
+        response["data"] = json::object();
+        response["error"] = "Admin auth required to access this resource.";
+
+        res.status = 403;
+        res.set_content(response.dump(), "application/json");
+        return REQUEST_HANDLED;
     }
 } // mantis

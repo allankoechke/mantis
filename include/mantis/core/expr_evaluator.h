@@ -8,7 +8,7 @@
 #include <string>
 #include <nlohmann/json.hpp>
 
-#define STATIC_CPARSE_STARTUP
+// #define STATIC_CPARSE_STARTUP
 #include <shunting-yard.h>
 #include <containers.h>
 

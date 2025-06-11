@@ -2,11 +2,9 @@
 // Created by allan on 13/05/2025.
 //
 
-#include "../../../include/mantis/tables/tables.h"
+#include "../../../include/mantis/core/tables/tables.h"
 #include "../../../include/mantis/core/database.h"
-#include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/utils.h"
-#include "spdlog/fmt/bundled/compile.h"
 
 namespace mantis
 {

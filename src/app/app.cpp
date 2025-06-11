@@ -7,6 +7,9 @@
 mantis::MantisApp::MantisApp(int argc, char** argv)
     :m_dbType(DbType::SQLITE)
 {
+    // Initialize Default Features in cparse
+    cparse::cparse_init();
+
     // Enable Multi Sinks
    Log::init();
 
