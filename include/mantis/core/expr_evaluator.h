@@ -6,10 +6,11 @@
 #define EXPR_EVALUATOR_H
 
 #include <string>
-// #include <builtin-features.inc>
+#include <nlohmann/json.hpp>
+
+#define STATIC_CPARSE_STARTUP
 #include <shunting-yard.h>
 #include <containers.h>
-#include <nlohmann/json.hpp>
 
 
 namespace mantis

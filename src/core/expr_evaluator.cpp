@@ -4,6 +4,8 @@
 
 #include "../../include/mantis/core/expr_evaluator.h"
 
+#include "../../include/mantis/core/logging.h"
+
 namespace mantis
 {
     ExprEvaluator::ExprEvaluator()
@@ -13,8 +15,15 @@ namespace mantis
 
     bool ExprEvaluator::evaluate(const std::string& expr, const cparse::TokenMap& vars)
     {
-        cparse::packToken result = cparse::calculator::calculate(expr.c_str(), vars);
-        return result.asBool(); // true/false
+        try
+        {
+            cparse::packToken result = cparse::calculator::calculate(expr.c_str(), vars);
+            return result.asBool(); // true/false
+        } catch (std::exception& e)
+        {
+            Log::critical("Error evaluating expression '{}', error: {}", expr, e.what());
+            return false;
+        }
     }
 
     bool ExprEvaluator::evaluate(const std::string& expr, const nlohmann::json& vars)
