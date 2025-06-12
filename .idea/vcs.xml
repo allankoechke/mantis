@@ -3,10 +3,8 @@
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/AnyOption" vcs="" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/cpp-jwt" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/jwt-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/acutest" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/checknum" vcs="Git" />
@@ -17,7 +15,6 @@
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/jsmn" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/mbedtls" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/mbedtls/framework" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/openssl-cmake" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/spdlog" vcs="Git" />

@@ -242,7 +242,7 @@ namespace mantis
 
         if (!sql->got_data())
         {
-            return nullopt;
+            return std::nullopt;
         }
 
         // const auto id = r.get<std::string>(0);

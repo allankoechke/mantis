@@ -9,16 +9,16 @@
 
 namespace mantis
 {
-    std::optional<json> TableUnit::findFieldByKey(const string& key) const
+    std::optional<json> TableUnit::findFieldByKey(const std::string& key) const
     {
-        if (key.empty()) return nullopt;
+        if (key.empty()) return std::nullopt;
 
         for (auto field : m_fields)
         {
             if (field.value("name", "") == key) return field;
         }
 
-        return nullopt;
+        return std::nullopt;
     }
 
     json TableUnit::parseDbRowToJson(const soci::row& row) const

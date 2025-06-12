@@ -37,10 +37,6 @@ add_executable(mantisapp
         include/mantis/core/crud/crud.h
         include/mantis/core/jwtprovider.h
 
-        # Add AnyOption Source Files, no need of linking later
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.h
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption/anyoption.cpp
-
         # All table operations
         include/mantis/core/tables/tables.h
         src/core/tables/tables.cpp
@@ -105,7 +101,7 @@ target_link_libraries(mantisapp
 target_include_directories(mantisapp
     PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/AnyOption
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/argparse/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse

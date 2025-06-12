@@ -33,7 +33,7 @@ std::optional<json> mantis::Validator::find(const std::string& key)
         return it->second;
     }
 
-    return nullopt;
+    return std::nullopt;
 }
 
 std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldName)

@@ -23,4 +23,5 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+#include <argparse/argparse.hpp>
 #endif //MANTIS_H

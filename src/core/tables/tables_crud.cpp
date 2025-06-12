@@ -285,7 +285,7 @@ namespace mantis
 
         if (!sql->got_data())
         {
-            return nullopt;
+            return std::nullopt;
         }
 
         return parseDbRowToJson(r);

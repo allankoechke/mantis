@@ -7,7 +7,7 @@
 
 #include <string>
 #include <filesystem>
-#include <anyoption.h>
+#include <argparse/argparse.hpp>
 
 #include <builtin_features.h>
 #include "../core/jwtprovider.h"
@@ -63,7 +63,7 @@ namespace mantis
         [[nodiscard]] DatabaseUnit& db() const;
         [[nodiscard]] LoggingUnit&  log() const;
         [[nodiscard]] HttpUnit&     http() const;
-        [[nodiscard]] AnyOption&    cmd() const;
+        [[nodiscard]] argparse::ArgumentParser&    cmd() const;
         [[nodiscard]] Router&       router() const;
         [[nodiscard]] Validator&    validators() const;
         [[nodiscard]] ExprEvaluator& evaluator() const;
@@ -76,7 +76,7 @@ namespace mantis
         std::string     m_publicDir;
         std::string     m_dataDir;
         DbType          m_dbType;
-        std::string     m_connString = "";
+        std::string     m_connString{};
 
         int m_port = 7070;
         std::string m_host = "127.0.0.1";
@@ -86,7 +86,7 @@ namespace mantis
         std::unique_ptr<DatabaseUnit> m_database;
         std::unique_ptr<LoggingUnit> m_logger;
         std::unique_ptr<HttpUnit> m_http;
-        std::unique_ptr<AnyOption> m_opts;
+        std::unique_ptr<argparse::ArgumentParser> m_opts;
         std::unique_ptr<Router> m_router;
         std::unique_ptr<Validator> m_validators;
         std::unique_ptr<ExprEvaluator> m_exprEval;

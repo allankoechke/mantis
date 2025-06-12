@@ -156,7 +156,7 @@ namespace mantis
         }
 
         Log::trace("Done checking");
-        return nullopt;
+        return std::nullopt;
     }
 
     std::optional<json> TableUnit::validateUpdateRequestBody(const json& body) const
@@ -333,6 +333,6 @@ namespace mantis
         }
 
         // Log::trace("Done checking");
-        return nullopt;
+        return std::nullopt;
     }
 }

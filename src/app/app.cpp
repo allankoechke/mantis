@@ -31,118 +31,103 @@ mantis::MantisApp::~MantisApp()
 }
 
 void mantis::MantisApp::parseArgs(const int argc, char** argv) {
-    m_opts->setVerbose(); /* print warnings about unknown options */
+    // Main program parser with global arguments
+    argparse::ArgumentParser program("mantisapp");
+    program.add_argument("--database", "-d")
+           .nargs(1)
+           .help("<type> Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE)");
+    program.add_argument("--connection", "-c")
+           .nargs(1)
+           .help("<conn> Database connection string.");
+    program.add_argument("--dataDir")
+           .nargs(1)
+           .help("<dir> Data directory (default: ./data)");
+    program.add_argument("--publicDir")
+           .nargs(1)
+           .help("<dir> Static files directory (default: ./public).");
+    program.add_argument("--dev").flag();
 
-    // SET THE USAGE/HELP
-    m_opts->addUsage("Usage: ");
-    m_opts->addUsage("  mantis [Optional Flags] --serve ");
-    m_opts->addUsage("  mantis -p 7070 --publicDir ./www --serve ");
-    m_opts->addUsage("  mantis -p 7070 --db SQLITE --serve ");
-    m_opts->addUsage("");
-    m_opts->addUsage("");
-    m_opts->addUsage("  -h  --help  		    Prints this help ");
-    m_opts->addUsage("  -p  --port  <port>      Server Port (default: 7070)");
-    m_opts->addUsage("  -h  --host  <host>      Server Host (default: 0.0.0.0) ");
-    m_opts->addUsage("  -d  --db    <db>        Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE) ");
-    m_opts->addUsage("  -c  --conn  <str>       Database connection string (default: "") ");
-    m_opts->addUsage("  --publicDir   <dir>     Static files directory (default: ./public) ");
-    m_opts->addUsage("  --dataDir     <dir>     Data directory (default: ./data) ");
-    m_opts->addUsage("  --serve                 Start & Run the HTTP Server ");
-    m_opts->addUsage("  --dev                   Print developer logs & SQL Statements ");
-    m_opts->addUsage("");
+    // Serve subcommand
+    argparse::ArgumentParser serve_command("serve");
+    serve_command.add_argument("--port", "-p")
+                 .default_value(7070)
+                 .scan<'i', int>()
+                 .help("<port> Server Port (default: 7070)");
+    serve_command.add_argument("--host", "-h")
+                 .nargs(1)
+                 .default_value("0.0.0.0")
+                 .help("<host> Server Host (default: 0.0.0.0)");
 
-    m_opts->setFlag("help", 'h');
-    m_opts->setOption("host", 'i');
-    m_opts->setOption("port", 'p');
-    m_opts->setOption("db", 'd');
-    m_opts->setOption("conn", 'c');
-    m_opts->setOption("publicDir");
-    m_opts->setOption("dataDir");
-    m_opts->setCommandFlag("serve");
-    m_opts->setCommandFlag("dev");
+    // Admins subcommand with nested subcommands
+    argparse::ArgumentParser admins_command("admins");
+    // Create mutually exclusive group for --add and --rm
+    auto &group = admins_command.add_mutually_exclusive_group(true);
+    group.add_argument("--add")
+                  .nargs(1)
+                  .help("<email> Add a new admin user.");
+    group.add_argument("--rm")
+                  .nargs(1)
+                  .help("<email/id> Remove existing admin user.");
 
-    /* go through the command line and get the options  */
-    m_opts->processCommandArgs(argc, argv);
+    // Migrations subcommand with nested subcommands
+    argparse::ArgumentParser migrations_command("migrate");
+    admins_command.add_argument("--up")
+                  .nargs(1)
+                  .help("<file> Initiate Migration from .json file.");
+    admins_command.add_argument("--down")
+                  .nargs(1)
+                  .help(".");
 
-    if (m_opts->getFlag("dev"))
+    // Migrations subcommand with nested subcommands
+    argparse::ArgumentParser sync_command("sync");
+
+    // Add main subparsers
+    program.add_subparser(serve_command);
+    program.add_subparser(admins_command);
+    program.add_subparser(migrations_command);
+    program.add_subparser(sync_command);
+
+    // Print the help page
+    std::cout << program << std::endl;
+
+    try
     {
-        // Print developer messages ...
-        // Set it to debug for now
+        program.parse_args(argc, argv);
+    }
+    catch (const std::exception& err)
+    {
+        std::cerr << err.what() << std::endl;
+        std::stringstream ss;
+        ss << program;
+        Log::trace("{}", ss.str());
+        quit(1, err.what());
+    }
+
+    // Get main program args
+    auto db = program.present<std::string>("--database").value_or("sqlite");
+    const auto m_connString = program.present<std::string>("--connection").value_or("");
+    const auto dataDir = program.present<std::string>("--dataDir").value_or("./data");
+    const auto pubDir = program.present<std::string>("--publicDir").value_or("./public");
+
+    // Set trace mode if flag is set
+    if (const auto isDev = program.get<bool>("--dev"))
+    {
+        // Print developer messages - set it to trace for now
         Log::setLogLevel(LogLevel::TRACE);
     }
 
-    if (!m_opts->hasOptions())
-    {
-        /* print usage if no options */
-        std::cout << std::endl;
-        m_opts->printUsage();
-        std::cout << std::endl;
-    }
+    // TODO validate directory paths
+    const auto pub_dir = dirFromPath(pubDir);
+    setPublicDir(pub_dir);
 
-    // GET THE VALUES
-    if (m_opts->getFlag("help") || m_opts->getFlag('h'))
-    {
-        m_opts->printUsage();
-    }
+    const auto data_dir = dirFromPath(dataDir);
+    setDataDir(data_dir);
 
-    if (m_opts->getValue('h') != nullptr || m_opts->getValue("host") != nullptr)
-    {
-        const auto host = m_opts->getValue("host");
-        setHost(host);
-    }
-
-    if (m_opts->getValue('p') != nullptr || m_opts->getValue("port") != nullptr)
-    {
-        const auto port = std::atoi(m_opts->getValue("port"));
-        setPort(port);
-    }
-
-    if (m_opts->getValue("publicDir") != nullptr)
-    {
-        const auto pth = m_opts->getValue("publicDir");
-        const auto dir = dirFromPath(pth);
-        setPublicDir(dir);
-    }
-
-    if (m_opts->getValue("dataDir") != nullptr)
-    {
-        const auto pth = m_opts->getValue("dataDir");
-        const auto dir = dirFromPath(pth);
-        setDataDir(dir);
-    }
-
-    if (m_opts->getValue('d') != nullptr || m_opts->getValue("db") != nullptr)
-    {
-        std::string db = m_opts->getValue("db");
-        toLowerCase(db);
-
-        if (db == "sqlite")
-        {
-            setDbType(DbType::SQLITE);
-        }
-
-        if (db == "mysql")
-        {
-            setDbType(DbType::MYSQL);
-        }
-
-        if (db == "psql")
-        {
-            setDbType(DbType::PSQL);
-        }
-
-        else
-        {
-            quit(-1, "Backend Database '" + db + "' is unknown!");
-        }
-
-        Log::debug("Setting Backend Database to [{}]", db);
-    }
-
-    if (m_opts->getValue('c') != nullptr || m_opts->getValue("conn") != nullptr)
-    {
-        m_connString = m_opts->getValue("conn");
-    }
+    toLowerCase(db);
+    if      (db == "sqlite")    setDbType(DbType::SQLITE);
+    else if (db == "mysql")     setDbType(DbType::MYSQL);
+    else if (db == "psql")      setDbType(DbType::PSQL);
+    else    quit(-1, "Backend Database '" + db + "' is unknown!");
 
     // Initialize database connection & Migration
     m_database->connect(m_dbType, m_connString);
@@ -154,10 +139,62 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
         quit(-1, "Database opening failed!");
     }
 
-    // TODO ...
-    if (m_opts->getFlag("serve"))
+    // Check which commands were used
+    if (program.is_subcommand_used("serve"))
     {
-        m_toStartServer = true;
+        const auto host = serve_command.get<std::string>("--host");
+        const auto port = serve_command.get<int>("--port");
+
+        setHost(host);
+        setPort(port);
+        std::cout << "- " << host << ":" << port << std::endl;
+    }
+    else if (program.is_subcommand_used("admins"))
+    {
+        const auto admin_user = admins_command.present<std::vector<std::string>>("--add")
+                                              .value_or(std::vector<std::string>{});
+
+        // You'll need to implement or use a library for secure password input
+        const auto getPassword = [&] () ->std::string {
+            // This would need to use platform-specific code or a library
+            // like termios on Unix/Linux or conio.h on Windows
+            // to hide password input from terminal display
+            std::string password;
+            std::cout << "Enter password: ";
+            // Secure input implementation needed here
+            std::getline(std::cin, password);
+            return password;
+        };
+
+        TableUnit t{this, "__admins", TableUnit::generateTableId("__admins"), "auth"};
+        // json admin{{"email", admin_user.at(0)}, }
+        // t.create();
+
+        if (admins_command.is_used("--add"))
+        {
+
+            // Handle creating user account here ...
+        }
+
+        else if (admins_command.is_used("--rm"))
+        {
+            const auto admin_email_or_id = admins_command.present<std::string>("--rm")
+                                                     .value_or("");
+            if (trim(admin_email_or_id).length() < 5)
+            {
+                quit(1, "Invalid Admin email or password provided!");
+            }
+
+            // Handle deleting user account here ...
+        }
+    }
+    else if (program.is_subcommand_used("migrate"))
+    {
+        // Do migration stuff here
+    }
+    else if (program.is_subcommand_used("sync"))
+    {
+        // Do sync actions
     }
 }
 
@@ -170,7 +207,7 @@ void mantis::MantisApp::initialize() {
     m_logger        = std::make_unique<LoggingUnit>();
     m_database      = std::make_unique<DatabaseUnit>(this);
     m_http          = std::make_unique<HttpUnit>();
-    m_opts          = std::make_unique<AnyOption>();
+    m_opts          = std::make_unique<argparse::ArgumentParser>();
     m_router        = std::make_unique<Router>(this);
     m_validators    = std::make_unique<Validator>();
 }
@@ -219,7 +256,7 @@ mantis::HttpUnit& mantis::MantisApp::http() const
     return *m_http;
 }
 
-AnyOption& mantis::MantisApp::cmd() const
+argparse::ArgumentParser& mantis::MantisApp::cmd() const
 {
     return *m_opts;
 }

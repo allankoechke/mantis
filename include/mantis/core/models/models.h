@@ -5,6 +5,7 @@
 #ifndef MODELS_H
 #define MODELS_H
 
+#include <optional>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
