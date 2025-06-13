@@ -111,7 +111,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
     const auto pubDir = program.present<std::string>("--publicDir").value_or("./public");
 
     // Set trace mode if flag is set
-    if (const auto isDev = program.get<bool>("--dev"))
+    if (program.get<bool>("--dev"))
     {
         // Print developer messages - set it to trace for now
         Log::setLogLevel(LogLevel::TRACE);
@@ -169,16 +169,16 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
             if (const auto ev = validators().validate("email", admin_user.at(0));
                 !ev.at("error").get<std::string>().empty())
             {
-                std::cerr << ev.at("error").get<std::string>() << std::endl;
+                Log::critical("Error validating admin email: {}", ev.at("error").get<std::string>());
                 quit(-1, "Email validation failed!");
             }
 
             // Get password from user then validate it!
-            auto password = trim(getUserValueSecurely("Admin Password"));
+            auto password = trim(getUserValueSecurely("Getting Admin Password"));
             if (auto c_password = trim(getUserValueSecurely("Confirm Admin Password"));
                 password!=c_password)
             {
-                std::cerr << "Passwords do not match!" << std::endl;
+                Log::critical("Passwords do not match!");
                 quit(-1, "Passwords do not match!");
             }
 
@@ -186,7 +186,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
             if (const auto ev = validators().validate("password", password);
                 !ev.at("error").get<std::string>().empty())
             {
-                std::cerr << ev.at("error").get<std::string>() << std::endl;
+                Log::critical("Error validating email: {}", ev.at("error").get<std::string>());
                 quit(-1, "Email validation failed!");
             }
 
@@ -210,14 +210,16 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
                                                          .value_or("");
             if (trim(admin_email_or_id).length() < 5)
             {
-                quit(1, "Invalid Admin email or id provided!");
+                Log::critical("Invalid Admin email or id provided!");
+                quit(1, "");
             }
 
             // Check if a record exists in db of such user ...
             auto resp = t.checkValueInColumns(admin_email_or_id, {"id", "email"});
             if (!resp.at("error").get<std::string>().empty())
             {
-                std::cerr << resp.at("error").get<std::string>() << std::endl;
+                Log::critical("Failed to get admin account matching id/email = {} - {}",
+                    admin_email_or_id, resp.at("error").get<std::string>());
                 quit(-1, "");
             }
 
@@ -228,7 +230,10 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
                     Log::info("Admin removed successfully.");
                     quit(0, "");
                 }
-            } catch (...) {}
+            } catch (soci::soci_error& e)
+            {
+                Log::critical("Failed to remove admin account: {}", e.what());
+            }
 
             Log::info("Failed to remove Admin having id/email of '{}'", admin_email_or_id);
             quit(-1, "");
@@ -424,7 +429,8 @@ inline bool mantis::MantisApp::ensureDirsAreCreated() const
 std::string mantis::MantisApp::getUserValueSecurely(const std::string& prompt)
 {
     std::string password;
-    std::cout << "\n\t> " << prompt << ": ";
+    Log::info("{}", prompt);
+    std::cout << " [Type In] > ";
 
 #ifdef WIN32
     char ch;
