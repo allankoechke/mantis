@@ -13,6 +13,15 @@
 #include "../core/jwtprovider.h"
 #include "../core/expr_evaluator.h"
 
+// For password management ... // TODO get a proper library
+#ifdef _WIN32
+#include <conio.h>
+#else
+#include <termios.h>
+#include <unistd.h>
+#endif
+
+
 namespace fs = std::filesystem;
 
 namespace mantis
@@ -31,7 +40,8 @@ namespace mantis
     };
 
 
-    class MantisApp {
+    class MantisApp
+    {
     public:
         explicit MantisApp(int argc = 0, char** argv = nullptr);
         ~MantisApp();
@@ -61,11 +71,11 @@ namespace mantis
         static std::string jwtSecretKey();
 
         [[nodiscard]] DatabaseUnit& db() const;
-        [[nodiscard]] LoggingUnit&  log() const;
-        [[nodiscard]] HttpUnit&     http() const;
-        [[nodiscard]] argparse::ArgumentParser&    cmd() const;
-        [[nodiscard]] Router&       router() const;
-        [[nodiscard]] Validator&    validators() const;
+        [[nodiscard]] LoggingUnit& log() const;
+        [[nodiscard]] HttpUnit& http() const;
+        [[nodiscard]] argparse::ArgumentParser& cmd() const;
+        [[nodiscard]] Router& router() const;
+        [[nodiscard]] Validator& validators() const;
         [[nodiscard]] ExprEvaluator& evaluator() const;
 
     private:
@@ -73,10 +83,12 @@ namespace mantis
         void initialize();
         [[nodiscard]] bool ensureDirsAreCreated() const;
 
-        std::string     m_publicDir;
-        std::string     m_dataDir;
-        DbType          m_dbType;
-        std::string     m_connString{};
+        static std::string getUserValueSecurely(const std::string& prompt);
+
+        std::string m_publicDir;
+        std::string m_dataDir;
+        DbType m_dbType;
+        std::string m_connString{};
 
         int m_port = 7070;
         std::string m_host = "127.0.0.1";

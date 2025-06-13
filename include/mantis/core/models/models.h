@@ -23,6 +23,8 @@ namespace mantis
         Validator();
 
         std::optional<json> find(const std::string& key);
+
+        json validate(const std::string& key, const std::string& value);
     };
 
 
@@ -121,7 +123,6 @@ namespace mantis
         std::string id;
         std::string name;
         TableType type;
-        std::string schema;
         bool system;
 
         std::vector<Field> fields;

@@ -89,10 +89,10 @@ void mantis::DatabaseUnit::migrate() {
         soci::transaction tr{*sql};
 
         AdminTable admin(m_app);
-        admin.name = "__admin";
+        admin.name = "__admins";
         *sql << admin.to_sql();
-        Log::debug("Generated Admin Table SQL:  {}", admin.to_sql());
-        Log::debug("Generated Admin Table JSON: {}", admin.to_json().dump());
+        Log::trace("Generated Admin Table SQL:  {}", admin.to_sql());
+        Log::trace("Generated Admin Table JSON: {}", admin.to_json().dump());
 
         SystemTable tables(m_app);
         tables.name = "__tables";

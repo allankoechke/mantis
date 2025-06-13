@@ -5,13 +5,13 @@
 #include "../../include/mantis/mantis.h"
 
 mantis::MantisApp::MantisApp(int argc, char** argv)
-    :m_dbType(DbType::SQLITE)
+    : m_dbType(DbType::SQLITE)
 {
     // Initialize Default Features in cparse
     cparse::cparse_init();
 
     // Enable Multi Sinks
-   Log::init();
+    Log::init();
 
     // Set initial public directory
     auto dir = dirFromPath("./public");
@@ -30,7 +30,8 @@ mantis::MantisApp::~MantisApp()
     Log::close();
 }
 
-void mantis::MantisApp::parseArgs(const int argc, char** argv) {
+void mantis::MantisApp::parseArgs(const int argc, char** argv)
+{
     // Main program parser with global arguments
     argparse::ArgumentParser program("mantisapp");
     program.add_argument("--database", "-d")
@@ -61,13 +62,13 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
     // Admins subcommand with nested subcommands
     argparse::ArgumentParser admins_command("admins");
     // Create mutually exclusive group for --add and --rm
-    auto &group = admins_command.add_mutually_exclusive_group(true);
+    auto& group = admins_command.add_mutually_exclusive_group(true);
     group.add_argument("--add")
-                  .nargs(1)
-                  .help("<email> Add a new admin user.");
+         .nargs(1)
+         .help("<email> Add a new admin user.");
     group.add_argument("--rm")
-                  .nargs(1)
-                  .help("<email/id> Remove existing admin user.");
+         .nargs(1)
+         .help("<email/id> Remove existing admin user.");
 
     // Migrations subcommand with nested subcommands
     argparse::ArgumentParser migrations_command("migrate");
@@ -124,10 +125,10 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
     setDataDir(data_dir);
 
     toLowerCase(db);
-    if      (db == "sqlite")    setDbType(DbType::SQLITE);
-    else if (db == "mysql")     setDbType(DbType::MYSQL);
-    else if (db == "psql")      setDbType(DbType::PSQL);
-    else    quit(-1, "Backend Database '" + db + "' is unknown!");
+    if (db == "sqlite") setDbType(DbType::SQLITE);
+    else if (db == "mysql") setDbType(DbType::MYSQL);
+    else if (db == "psql") setDbType(DbType::PSQL);
+    else quit(-1, "Backend Database '" + db + "' is unknown!");
 
     // Initialize database connection & Migration
     m_database->connect(m_dbType, m_connString);
@@ -154,38 +155,83 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
         const auto admin_user = admins_command.present<std::vector<std::string>>("--add")
                                               .value_or(std::vector<std::string>{});
 
-        // You'll need to implement or use a library for secure password input
-        const auto getPassword = [&] () ->std::string {
-            // This would need to use platform-specific code or a library
-            // like termios on Unix/Linux or conio.h on Windows
-            // to hide password input from terminal display
-            std::string password;
-            std::cout << "Enter password: ";
-            // Secure input implementation needed here
-            std::getline(std::cin, password);
-            return password;
-        };
+        // Create admin table object, we'll use it to get JSON rep for use in
+        // the TableUnit construction. Similar to what we do when creating routes.
+        AdminTable admin(this);
+            admin.name = "__admins";
+            admin.id = TableUnit::generateTableId("__admins");
 
-        TableUnit t{this, "__admins", TableUnit::generateTableId("__admins"), "auth"};
-        // json admin{{"email", admin_user.at(0)}, }
-        // t.create();
+        // Create TableUnit from admin json dump
+        TableUnit t{this, admin.to_json()};
 
         if (admins_command.is_used("--add"))
         {
+            if (const auto ev = validators().validate("email", admin_user.at(0));
+                !ev.at("error").get<std::string>().empty())
+            {
+                std::cerr << ev.at("error").get<std::string>() << std::endl;
+                quit(-1, "Email validation failed!");
+            }
 
-            // Handle creating user account here ...
+            // Get password from user then validate it!
+            auto password = trim(getUserValueSecurely("Admin Password"));
+            if (auto c_password = trim(getUserValueSecurely("Confirm Admin Password"));
+                password!=c_password)
+            {
+                std::cerr << "Passwords do not match!" << std::endl;
+                quit(-1, "Passwords do not match!");
+            }
+
+            // Validate password against regex stored
+            if (const auto ev = validators().validate("password", password);
+                !ev.at("error").get<std::string>().empty())
+            {
+                std::cerr << ev.at("error").get<std::string>() << std::endl;
+                quit(-1, "Email validation failed!");
+            }
+
+            // Create new admin user
+            json new_admin{{"email", admin_user.at(0)}, {"password", password}};
+            if (const auto resp = t.create(new_admin, json::object());
+                resp.at("status").get<int>() != 201)
+            {
+                Log::critical("Failed to created Admin user: {}", resp.at("error").get<std::string>());
+                quit(-1, "");
+            }
+
+            // Admin User was created!
+            Log::info("Yes! Admin created successfully.");
+            quit(0, "");
         }
 
         else if (admins_command.is_used("--rm"))
         {
             const auto admin_email_or_id = admins_command.present<std::string>("--rm")
-                                                     .value_or("");
+                                                         .value_or("");
             if (trim(admin_email_or_id).length() < 5)
             {
-                quit(1, "Invalid Admin email or password provided!");
+                quit(1, "Invalid Admin email or id provided!");
             }
 
-            // Handle deleting user account here ...
+            // Check if a record exists in db of such user ...
+            auto resp = t.checkValueInColumns(admin_email_or_id, {"id", "email"});
+            if (!resp.at("error").get<std::string>().empty())
+            {
+                std::cerr << resp.at("error").get<std::string>() << std::endl;
+                quit(-1, "");
+            }
+
+            try
+            {
+                if (t.remove(resp.at("id").get<std::string>(), json::object()))
+                {
+                    Log::info("Admin removed successfully.");
+                    quit(0, "");
+                }
+            } catch (...) {}
+
+            Log::info("Failed to remove Admin having id/email of '{}'", admin_email_or_id);
+            quit(-1, "");
         }
     }
     else if (program.is_subcommand_used("migrate"))
@@ -198,18 +244,19 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv) {
     }
 }
 
-void mantis::MantisApp::initialize() {
+void mantis::MantisApp::initialize()
+{
     if (!ensureDirsAreCreated())
         quit(-1, "Failed to create database directories!");
 
     // Create instance objects
-    m_exprEval      = std::make_unique<ExprEvaluator>();
-    m_logger        = std::make_unique<LoggingUnit>();
-    m_database      = std::make_unique<DatabaseUnit>(this);
-    m_http          = std::make_unique<HttpUnit>();
-    m_opts          = std::make_unique<argparse::ArgumentParser>();
-    m_router        = std::make_unique<Router>(this);
-    m_validators    = std::make_unique<Validator>();
+    m_exprEval = std::make_unique<ExprEvaluator>();
+    m_logger = std::make_unique<LoggingUnit>();
+    m_database = std::make_unique<DatabaseUnit>(this);
+    m_http = std::make_unique<HttpUnit>();
+    m_opts = std::make_unique<argparse::ArgumentParser>();
+    m_router = std::make_unique<Router>(this);
+    m_validators = std::make_unique<Validator>();
 }
 
 int mantis::MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -231,7 +278,8 @@ void mantis::MantisApp::close() const
     http().close();
 }
 
-int mantis::MantisApp::run() const {
+int mantis::MantisApp::run() const
+{
     if (!m_router->initialize())
         quit(-1, "Failed to initialize router!");
 
@@ -371,4 +419,43 @@ inline bool mantis::MantisApp::ensureDirsAreCreated() const
         return false;
 
     return true;
+}
+
+std::string mantis::MantisApp::getUserValueSecurely(const std::string& prompt)
+{
+    std::string password;
+    std::cout << "\n\t> " << prompt << ": ";
+
+#ifdef WIN32
+    char ch;
+    while ((ch = _getch()) != '\r')
+    {
+        // Enter key
+        if (ch == '\b')
+        {
+            // Backspace
+            if (!password.empty())
+            {
+                password.pop_back();
+                std::cout << "\b \b"; // Erase character from console
+            }
+        }
+        else
+        {
+            password += ch;
+            std::cout << '*'; // Optional: print '*' for each char
+        }
+    }
+#else
+            termios oldt, newt;
+            tcgetattr(STDIN_FILENO, &oldt);           // get current terminal settings
+            newt = oldt;
+            newt.c_lflag &= ~ECHO;                    // disable echo
+            tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // set new settings
+            std::getline(std::cin, password);         // read password
+            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // restore old settings
+#endif
+
+    std::cout << '\n';
+    return password;
 }

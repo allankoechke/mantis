@@ -117,6 +117,7 @@ namespace mantis
         static TableValue getTypedValue(const json& row, const std::string& colName, const std::string& type);
         bool recordExists(const std::string& id) const;
         std::optional<json> findFieldByKey(const std::string& key) const;
+        json checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const;
 
     protected:
         std::unique_ptr<MantisApp> m_app;

@@ -14,7 +14,7 @@ namespace mantis
         Log::trace("TableMgr::create");
         json result;
         result["data"] = json::object();
-        result["status"] = 200;
+        result["status"] = 201;
         result["error"] = "";
 
         // Database session & transaction instance

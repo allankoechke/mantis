@@ -9,13 +9,13 @@
 
 mantis::Router::Router(MantisApp* app)
     : m_app(app),
-      m_adminTable(std::make_shared<TableUnit>(m_app, "__admin",
-          TableUnit::generateTableId("__admin"), "auth")),
+      m_adminTable(std::make_shared<TableUnit>(m_app, "__admins",
+          TableUnit::generateTableId("__admins"), "auth")),
       m_tableRoutes(std::make_shared<SysTablesUnit>(m_app, "__tables",
           TableUnit::generateTableId("__tables"), "base"))
 {
     // Override the route display name to easier names. This means that,
-    // instead of `<root>/__admin` -> <root>/admins
+    // instead of `<root>/__admins` -> <root>/admins
     // instead of `<root>/__tables` -> <root>/tables
     m_adminTable->setRouteDisplayName("admins");
     m_tableRoutes->setRouteDisplayName("tables");

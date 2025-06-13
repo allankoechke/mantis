@@ -33,8 +33,13 @@ namespace mantis
 
     void TableUnit::fromJson(const json& j)
     {
-        m_tableName = "";
-        m_tableId = "";
+        // Ensure table name is passed in by the caller ...
+        if (j.value("name", "").empty())
+            throw std::invalid_argument("empty table name");
+
+        // Set table name from JSON
+        m_tableName = j.value("name", "");
+        m_tableId = generateTableId(m_tableName);
 
         m_fields.clear();
         m_fields = j.value("fields", json::array());

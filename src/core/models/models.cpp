@@ -22,8 +22,6 @@ mantis::Validator::Validator()
         {"regex", R"(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$)"},
         {"error", "Expected at least one lowercase, uppercase, digit, special character, and a min 8 chars."}
     };
-
-    std::cout << "VALIDATOR INIT()\n";
 }
 
 std::optional<json> mantis::Validator::find(const std::string& key)
@@ -36,23 +34,56 @@ std::optional<json> mantis::Validator::find(const std::string& key)
     return std::nullopt;
 }
 
+mantis::json mantis::Validator::validate(const std::string& key, const std::string& value)
+{
+    json response{{"error", ""}, {"validated", false}};
+
+    if (trim(key).empty())
+    {
+        response["error"] = "Validator key can't be empty!";
+        return response;
+    }
+
+    const auto v = find(key).value_or(json::object());
+    if (v.empty())
+    {
+        response["error"] = "Validator key is not available!";
+        return response;
+    }
+
+    // Since we have a regex string, lets validate it and return if it fails ...
+    const auto& reg = v["regex"].get<std::string>();
+    const auto& err = v["error"].get<std::string>();
+
+    if (const std::regex r_pattern(reg); !std::regex_match(value, r_pattern))
+    {
+        response["error"] = err;
+        return response;
+    }
+
+    // If we reach here, then, all was validated correctly!
+    response["error"] = "";
+    response["validated"] = true;
+    return response;
+}
+
 std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldName)
 {
-    if (fieldName == "xml") return FieldType::XML;
-    if (fieldName == "string") return FieldType::STRING;
-    if (fieldName == "double") return FieldType::DOUBLE;
-    if (fieldName == "date") return FieldType::DATE;
-    if (fieldName == "int8") return FieldType::INT8;
-    if (fieldName == "uint8") return FieldType::UINT8;
-    if (fieldName == "int16") return FieldType::INT16;
-    if (fieldName == "uint16") return FieldType::UINT16;
-    if (fieldName == "int32") return FieldType::INT32;
-    if (fieldName == "uint32") return FieldType::UINT32;
-    if (fieldName == "int64") return FieldType::INT64;
-    if (fieldName == "uint64") return FieldType::UINT64;
-    if (fieldName == "blob") return FieldType::BLOB;
-    if (fieldName == "json") return FieldType::JSON;
-    if (fieldName == "bool") return FieldType::BOOL;
+    if (fieldName == "xml")     return FieldType::XML;
+    if (fieldName == "string")  return FieldType::STRING;
+    if (fieldName == "double")  return FieldType::DOUBLE;
+    if (fieldName == "date")    return FieldType::DATE;
+    if (fieldName == "int8")    return FieldType::INT8;
+    if (fieldName == "uint8")   return FieldType::UINT8;
+    if (fieldName == "int16")   return FieldType::INT16;
+    if (fieldName == "uint16")  return FieldType::UINT16;
+    if (fieldName == "int32")   return FieldType::INT32;
+    if (fieldName == "uint32")  return FieldType::UINT32;
+    if (fieldName == "int64")   return FieldType::INT64;
+    if (fieldName == "uint64")  return FieldType::UINT64;
+    if (fieldName == "blob")    return FieldType::BLOB;
+    if (fieldName == "json")    return FieldType::JSON;
+    if (fieldName == "bool")    return FieldType::BOOL;
     return std::nullopt;
 }
 
@@ -163,7 +194,6 @@ json mantis::Table::to_json() const
     j["id"] = id;
     j["name"] = name;
     j["type"] = type;
-    j["schema"] = schema;
     j["system"] = system;
     j["fields"] = json::array();
 
