@@ -10,40 +10,40 @@ thread_local mantis::Context mantis::HttpUnit::current_context;
 
 void mantis::Context::dump()
 {
-    const auto i = "Context::Dump";
     for (const auto& [key, value] : data)
     {
+        const auto i = "Context::Dump";
         if (value.type() == typeid(std::string))
         {
-            Log::info("{} - {}: {}", i, key, std::any_cast<std::string>(value));
+            Log::debug("{} - {}: {}", i, key, std::any_cast<std::string>(value));
         }
         else if (value.type() == typeid(const char*))
         {
-            Log::info("{} - {}: {}", i, key, std::any_cast<const char*>(value));
+            Log::debug("{} - {}: {}", i, key, std::any_cast<const char*>(value));
         }
         else if (value.type() == typeid(int))
         {
-            Log::info("{} - {}: {}", i, key, std::any_cast<int>(value));
+            Log::debug("{} - {}: {}", i, key, std::any_cast<int>(value));
         }
         else if (value.type() == typeid(double))
         {
-            Log::info("{} - {}: {}", i, key, std::any_cast<double>(value));
+            Log::debug("{} - {}: {}", i, key, std::any_cast<double>(value));
         }
         else if (value.type() == typeid(float))
         {
-            Log::info("{} - {}: {}", i, key, std::any_cast<float>(value));
+            Log::debug("{} - {}: {}", i, key, std::any_cast<float>(value));
         }
         else if (value.type() == typeid(bool))
         {
-            Log::info("{} - {}: {}", i, key, (std::any_cast<bool>(value) ? "true" : "false"));
+            Log::debug("{} - {}: {}", i, key, (std::any_cast<bool>(value) ? "true" : "false"));
         }
         else if (value.type() == typeid(json))
         {
-            Log::info("{} - {}: {}", i, key, std::any_cast<json>(value).dump());
+            Log::debug("{} - {}: {}", i, key, std::any_cast<json>(value).dump());
         }
         else
         {
-            Log::info("{} - {}: {}", i, key, "<Unknown Type>");
+            Log::debug("{} - {}: {}", i, key, "<Unknown Type>");
         }
     }
 }
@@ -69,7 +69,7 @@ const mantis::RouteHandler* mantis::RouteRegistry::find(const std::string& metho
 
 mantis::HttpUnit::HttpUnit()
 {
-    // Lets fix timing initialization, set the start time to current time
+    // Let's fix timing initialization, set the start time to current time
     server.set_pre_routing_handler([](const httplib::Request& req, httplib::Response& res)
     {
         auto& mutable_req = const_cast<httplib::Request&>(req);
@@ -96,8 +96,8 @@ mantis::HttpUnit::HttpUnit()
         {
             json response;
             response["status"] = 404;
-            response["message"] = "Not Found";
-            response["data"] = json{};
+            response["message"] = "Resource Not Found";
+            response["data"] = json::object();
 
             res.status = 404;
             res.set_content(response.dump(), "application/json");
@@ -143,14 +143,14 @@ void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
 
 bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 {
-    Log::info("API Endpoints: http://{}:{}/api/v1/<table>", host, port);
+    Log::info("API Endpoints: http://{}:{}/api/v1/", host, port);
     Log::info("Admin Dashboard: http://{}:{}/admin", host, port);
     return server.listen(host, port);
 }
 
 void mantis::HttpUnit::close()
 {
-    Log::info("Stopping Server, if its running ...");
+    Log::trace("Stopping Server, if its running ...");
     if (server.is_running())
         server.stop();
 }
@@ -177,13 +177,11 @@ void mantis::HttpUnit::route(
         {
             json response;
             response["status"] = 404;
-            response["message"] = "Not Found";
-            response["data"] = json{};
+            response["message"] = "Resource Not Found";
+            response["data"] = json::object();
 
             res.status = 404;
             res.set_content(response.dump(), "application/json");
-
-            std::cout << "NOT FOUND: " << response.dump() << std::endl;
             return;
         }
 

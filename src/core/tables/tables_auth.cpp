@@ -105,7 +105,7 @@ namespace mantis
                 if (const auto err = obj.at("error").get<std::string>(); !err.empty())
                 {
                     response["status"] = 500;
-                    response["data"] = "";
+                    response["data"] = json::object();
                     response["error"] = err;
 
                     res.status = 500;

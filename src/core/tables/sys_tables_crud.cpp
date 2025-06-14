@@ -285,6 +285,18 @@ namespace mantis
         const auto old_schema_json = rw.get<std::string>(3);
         const json old_schema_obj = json::parse(old_schema_json);
 
+        // Delete fields ...
+        if (const auto delFields = entity.value("deletedFields", std::vector<std::string>{}); !delFields.empty())
+        {
+            // Drop all columns in this segment ...
+            for (const auto& field : delFields)
+            {
+                // If the field is valid, generate drop colum statement and execute!
+                if (!trim(field).empty())
+                    *sql <<  sql->get_backend()->drop_column(m_tableName, trim(field));
+            }
+        }
+
         if (entity.contains("name") && entity.value("name", "") != old_name)
         {
             const auto name = entity.value("name", "");

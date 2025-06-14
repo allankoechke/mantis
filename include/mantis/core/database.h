@@ -8,13 +8,14 @@
 #include <memory>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
+#include <private/soci-mktime.h>
 
 #include "../app/app.h"
-#include "private/soci-mktime.h"
-
-using json = nlohmann::json;
+#include "logging.h"
 
 namespace soci {
+    using json = nlohmann::json;
+
     // Boolean type conversion
     template <>
     struct type_conversion<bool> {
@@ -56,6 +57,8 @@ namespace soci {
 
 namespace mantis
 {
+    using json = nlohmann::json;
+
     class MantisApp;
 
     class DatabaseUnit {
@@ -63,7 +66,7 @@ namespace mantis
         explicit DatabaseUnit(MantisApp* app);
 
         // Initialize the connection pool & connect to specific database
-        bool connect(const DbType backend, const std::string& conn_str);
+        bool connect(DbType backend, const std::string& conn_str);
 
         // Run database migrations
         void migrate();
@@ -75,19 +78,29 @@ namespace mantis
         [[nodiscard]] soci::connection_pool& connectionPool() const;
 
         // Check if the database is connected
-        bool isConnected() const;
+        [[nodiscard]] bool isConnected() const;
 
-        static inline std::string tmToISODate(const std::tm& t)
-        {
-            char buffer[80];
-            const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
-            std::string iso_string(buffer, length);
-            return iso_string;
-        };
+        static std::string tmToISODate(const std::tm& t);
 
     private:
         MantisApp* m_app;
         std::unique_ptr<soci::connection_pool> m_connPool;
+    };
+
+    class MantisLoggerImpl : public soci::logger_impl
+    {
+    public:
+        void start_query(std::string const & query) override
+        {
+            logger_impl::start_query(query);
+            Log::trace("SQL Query: {}", query);
+        }
+
+    private:
+        logger_impl* do_clone() const override
+        {
+            return new MantisLoggerImpl();
+        }
     };
 }
 

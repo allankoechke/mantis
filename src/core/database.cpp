@@ -16,11 +16,11 @@ mantis::DatabaseUnit::DatabaseUnit(MantisApp* app)
 bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn_str) {
     // If pool size is invalid, just return
     if (m_app->poolSize() <= 0)
-        throw "Session pool size must be greater than 0";
+        throw std::runtime_error("Session pool size must be greater than 0");
 
     // All databases apart from SQLite should pass in a connection string
     if (m_app->dbType() != DbType::SQLITE && conn_str.empty())
-        throw "Connection string for database is required!";
+        throw std::runtime_error("Connection string for database is required!");
 
     try
     {
@@ -39,6 +39,7 @@ bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn
                     auto sqlite_str = "db=" + joinPaths(m_app->dataDir(), "mantis.db").string();
                     soci::session& sql = m_connPool->at(i);
                     sql.open(soci::sqlite3, sqlite_str);
+                    sql.set_logger(new MantisLoggerImpl());     // Set custom query logger
                     break;
                 }
 
@@ -72,11 +73,6 @@ bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn
 }
 
 void mantis::DatabaseUnit::migrate() {
-    // *m_sql << "CREATE TABLE IF NOT EXISTS users ("
-    //          "id INTEGER PRIMARY KEY AUTOINCREMENT,"
-    //          "name TEXT NOT NULL,"
-    //          "email TEXT NOT NULL UNIQUE);";
-
     // Create system tables as follows:
     // __tables for managing user tables & schema
     // __admins for managing system admin users
@@ -85,7 +81,7 @@ void mantis::DatabaseUnit::migrate() {
 
     try
     {
-        auto sql = session();
+        const auto sql = session();
         soci::transaction tr{*sql};
 
         AdminTable admin(m_app);
@@ -140,51 +136,10 @@ bool mantis::DatabaseUnit::isConnected() const
     return sql->is_connected();
 }
 
-// std::shared_ptr<mantis::DatabaseUnit::UserCrud> mantis::DatabaseUnit::users() {
-//     return user_crud_;
-// }
-//
-// mantis::DatabaseUnit::UserCrud::UserCrud(soci::session& sql) : m_sql(sql) {}
-//
-// bool mantis::DatabaseUnit::UserCrud::create(const User& entity) {
-//     m_sql << "INSERT INTO users(name, email) VALUES(:name, :email)",
-//         soci::use(entity.name), soci::use(entity.email);
-//     return true;
-// }
-//
-// std::optional<mantis::User> mantis::DatabaseUnit::UserCrud::read(int id) {
-//     User user;
-//     soci::indicator ind;
-//     try {
-//         m_sql << "SELECT id, name, email FROM users WHERE id = :id",
-//             soci::use(id), soci::into(user.user_id, ind), soci::into(user.name), soci::into(user.email);
-//         if (ind == soci::i_ok)
-//             return user;
-//     } catch (...) {}
-//     return std::nullopt;
-// }
-//
-// bool mantis::DatabaseUnit::UserCrud::update(int id, const User& entity) {
-//     m_sql << "UPDATE users SET name = :name, email = :email WHERE id = :id",
-//         soci::use(entity.name), soci::use(entity.email), soci::use(id);
-//     return true;
-// }
-//
-// bool mantis::DatabaseUnit::UserCrud::remove(int id) {
-//     m_sql << "DELETE FROM users WHERE id = :id", soci::use(id);
-//     return true;
-// }
-//
-// std::vector<mantis::User> mantis::DatabaseUnit::UserCrud::list() {
-//     soci::rowset<soci::row> rs = (m_sql.prepare << "SELECT id, name, email FROM users");
-//     std::vector<User> users;
-//     for (auto const& r : rs) {
-//         User user;
-//         user.user_id = r.get<int>(0);
-//         user.name = r.get<std::string>(1);
-//         user.email = r.get<std::string>(2);
-//         users.push_back(user);
-//     }
-//     return users;
-// }
-
+std::string mantis::DatabaseUnit::tmToISODate(const std::tm& t)
+{
+    char buffer[80];
+    const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
+    std::string iso_string(buffer, length);
+    return iso_string;
+}
