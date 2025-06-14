@@ -14,7 +14,9 @@ namespace mantis
                                  const std::string& tableName,
                                  const std::string& tableId,
                                  const std::string& tableType)
-        : TableUnit(app, tableName, tableId, tableType) {}
+        : TableUnit(app, tableName, tableId, tableType)
+    {
+    }
 
     bool SysTablesUnit::setupRoutes()
     {
@@ -495,7 +497,7 @@ namespace mantis
                 res.set_content(response.dump(), "application/json");
 
                 Log::debug("[No DB Match] No user found matching given email/password combination. {}",
-                    response.dump());
+                           response.dump());
                 return;
             }
 
@@ -591,10 +593,87 @@ namespace mantis
     bool SysTablesUnit::hasAccess(const Request& req, Response& res, Context& ctx)
     {
         // Get the auth var from the context, resort to empty object if it's not set.
-        auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
+        auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
 
+        // Expand logged user if token is present
+        if (const auto& token = auth.value("token", ""); !token.empty())
+        {
+            const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
+            if (!resp.value("verified", false) || !resp.value("error", "").empty())
+            {
+                json response;
+                response["status"] = 403;
+                response["data"] = json::object();
+                response["error"] = resp.value("error", "");
+
+                res.status = 403;
+                res.set_content(response.dump(), "application/json");
+                return REQUEST_HANDLED;
+            }
+
+            // Extract and verify that the id and table data is provided, else,
+            // return an error
+            const auto _id = resp.value("id", "");
+            const auto _table = resp.value("table", "");
+
+            if (_id.empty() || _table.empty())
+            {
+                json response;
+                response["status"] = 403;
+                response["data"] = json::object();
+                response["error"] = "Auth token missing user id or table name";
+
+                res.status = 403;
+                res.set_content(resp.dump(), "application/json");
+                return REQUEST_HANDLED;
+            }
+
+            // Query for user with given ID, this info will be populated to the
+            // expression evaluator args as well as available through
+            // the session context, queried by:
+            //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
+            //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
+            auto sql = m_app->db().session();
+            soci::row r;
+            std::string query = "SELECT * FROM __admins WHERE id = :id LIMIT 1";
+            *sql << query, soci::use(_id), soci::into(r);
+
+            // Return 404 if user was not found
+            if (!sql->got_data())
+            {
+                json response;
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "Auth id was not found.";
+
+                res.status = 404;
+                res.set_content(resp.dump(), "application/json");
+                return REQUEST_HANDLED;
+            }
+
+            // Populate the auth object with additional data from the database
+            // remove `password` field if available
+            auto user = parseDbRowToJson(r);
+            auth["type"] = "user";
+            auth["id"] = _id;
+            auth["table"] = _table;
+
+            // Populate auth obj with user details ...
+            for (const auto& [key, value] : user.items())
+            {
+                auth[key] = value;
+            }
+
+            // Remove password field
+            auth.erase("password");
+
+            // Update context data
+            ctx.set("auth", auth);
+        }
+
+        const auto table_name = auth.value("table", "");
         // Check if user is logged in as Admin
-        if (const auto table_name = auth.value("table", ""); table_name == "__admins")
+        if (table_name == "__admins")
         {
             // If logged in as admin, grant access
             // Admins get unconditional data access

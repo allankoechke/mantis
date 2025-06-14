@@ -200,7 +200,7 @@ namespace mantis
     bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx)
     {
         // Get the auth var from the context, resort to empty object if it's not set.
-        auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
+        auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
 
         // Store rule, depending on the request type
         std::string rule;
