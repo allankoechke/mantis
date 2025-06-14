@@ -165,7 +165,7 @@ namespace mantis
         {
             response["status"] = 400;
             response["error"] = "Record ID is required";
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 400;
@@ -175,7 +175,7 @@ namespace mantis
         try
         {
             // Read record by 'id' above and return record if its found
-            if (const auto resp = read(id, json{}); resp.has_value())
+            if (const auto resp = read(id, json::object()); resp.has_value())
             {
                 response["status"] = 200;
                 response["error"] = "";
@@ -189,7 +189,7 @@ namespace mantis
             // If no record is available, return 404
             response["status"] = 404;
             response["error"] = "Item Not Found";
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 404;
@@ -199,7 +199,7 @@ namespace mantis
         {
             response["status"] = 500;
             response["error"] = e.what();
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 500;
@@ -210,7 +210,7 @@ namespace mantis
         {
             response["status"] = 500;
             response["error"] = "Unknown Error";
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 500;
@@ -264,7 +264,7 @@ namespace mantis
         {
             response["status"] = 400;
             response["error"] = e.what();
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 400;
@@ -276,11 +276,11 @@ namespace mantis
         // Create validator method
         auto validateRequestBody = [&]() -> bool
         {
-            if (trim(body.at("name").get<std::string>()).empty())
+            if (trim(body.value("name", "")).empty())
             {
                 response["status"] = 400;
                 response["error"] = "Table name is required";
-                response["data"] = json{};
+                response["data"] = json::object();
 
                 res.status = 400;
                 res.set_content(response.dump(), "application/json");
@@ -288,13 +288,13 @@ namespace mantis
             }
 
             // Check that the type is either a view|base|auth type
-            auto type = body.at("type").get<std::string>();
+            auto type = trim(body.value("type", ""));
             toLowerCase(type);
             if (!(type == "view" || type == "base" || type == "auth"))
             {
                 response["status"] = 400;
                 response["error"] = "Table type should be either 'base', 'view', or 'auth'";
-                response["data"] = json{};
+                response["data"] = json::object();
 
                 res.status = 400;
                 res.set_content(response.dump(), "application/json");
@@ -304,13 +304,11 @@ namespace mantis
             // If the table type is of view type, check that the SQL is passed in ...
             if (type == "view")
             {
-                auto sql_stmt = body.at("sql").get<std::string>();
-                trim(sql_stmt);
-                if (sql_stmt.empty())
+                if (trim(body.value("sql", "")).empty())
                 {
                     response["status"] = 400;
-                    response["error"] = "'view' table require an SQL Statement.";
-                    response["data"] = json{};
+                    response["error"] = "Table of view type require an SQL Statement.";
+                    response["data"] = json::object();
 
                     res.status = 400;
                     res.set_content(response.dump(), "application/json");
@@ -320,29 +318,28 @@ namespace mantis
             else
             {
                 // Check fields if any is added
-                for (const auto& field : body.at("fields").get<std::vector<json>>())
+                for (const auto& field : body.value("fields", std::vector<json>()))
                 {
-                    // On the minimum, we need field name and type
-                    auto field_name = field.at("name").get<std::string>();
-                    auto field_type = field.at("type").get<std::string>();
-
-                    if (trim(field_name).empty())
+                    const auto name = trim(field.value("name", ""));
+                    if (name.empty())
                     {
                         response["status"] = 400;
                         response["error"] = "One of the fields is missing a valid name";
-                        response["data"] = json{};
+                        response["data"] = json::object();
 
                         res.status = 400;
                         res.set_content(response.dump(), "application/json");
                         return false;
                     }
 
-                    if (trim(field_type).empty())
+                    // TODO check if it's a valid field type ...
+                    if (const auto field_type = trim(field.value("type", ""));
+                        field_type.empty())
                     {
                         response["status"] = 400;
-                        response["error"] = "Field type '" + field_type + "' for '" + field_name +
+                        response["error"] = "Field type '" + field_type + "' for '" + name +
                             "' is not a valid type";
-                        response["data"] = json{};
+                        response["data"] = json::object();
 
                         res.status = 400;
                         res.set_content(response.dump(), "application/json");
@@ -358,13 +355,13 @@ namespace mantis
         if (!validateRequestBody()) return;
 
         // Invoke create table method, return the result
-        auto resp = create(body, json{});
-        if (!resp.value("error", json{}).empty())
+        auto resp = create(body, json::object());
+        if (!resp.value("error", json::object()).empty())
         {
             int status = resp.value("status", 500);
             response["status"] = status;
             response["error"] = resp.at("error").at("error").get<std::string>();
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.status = status;
             res.set_content(response.dump(), "application/json");
@@ -393,7 +390,7 @@ namespace mantis
         {
             response["status"] = 400;
             response["error"] = "Record ID is required";
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 400;
@@ -403,11 +400,11 @@ namespace mantis
         try
         {
             // If remove returns false, something didn't go right!
-            if (const auto resp = remove(id, json{}); !resp)
+            if (const auto resp = remove(id, json::object()); !resp)
             {
                 response["status"] = 500;
                 response["error"] = "Could not delete record";
-                response["data"] = json{};
+                response["data"] = json::object();
 
                 res.set_content(response.dump(), "application/json");
                 res.status = 500;
@@ -418,7 +415,7 @@ namespace mantis
         {
             response["status"] = 500;
             response["error"] = e.what();
-            response["data"] = json{};
+            response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
             res.status = 500;
@@ -595,81 +592,92 @@ namespace mantis
         // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
 
-        // Expand logged user if token is present
-        if (const auto& token = auth.value("token", ""); !token.empty())
+        // fetch auth token
+        const auto& token = auth.value("token", "");
+        if (token.empty())
         {
-            const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
-            if (!resp.value("verified", false) || !resp.value("error", "").empty())
-            {
-                json response;
-                response["status"] = 403;
-                response["data"] = json::object();
-                response["error"] = resp.value("error", "");
+            json response;
+            response["status"] = 403;
+            response["data"] = json::object();
+            response["error"] = "Auth token missing";
 
-                res.status = 403;
-                res.set_content(response.dump(), "application/json");
-                return REQUEST_HANDLED;
-            }
-
-            // Extract and verify that the id and table data is provided, else,
-            // return an error
-            const auto _id = resp.value("id", "");
-            const auto _table = resp.value("table", "");
-
-            if (_id.empty() || _table.empty())
-            {
-                json response;
-                response["status"] = 403;
-                response["data"] = json::object();
-                response["error"] = "Auth token missing user id or table name";
-
-                res.status = 403;
-                res.set_content(resp.dump(), "application/json");
-                return REQUEST_HANDLED;
-            }
-
-            // Query for user with given ID, this info will be populated to the
-            // expression evaluator args as well as available through
-            // the session context, queried by:
-            //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
-            //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
-            auto sql = m_app->db().session();
-            soci::row r;
-            std::string query = "SELECT * FROM __admins WHERE id = :id LIMIT 1";
-            *sql << query, soci::use(_id), soci::into(r);
-
-            // Return 404 if user was not found
-            if (!sql->got_data())
-            {
-                json response;
-                response["status"] = 404;
-                response["data"] = json::object();
-                response["error"] = "Auth id was not found.";
-
-                res.status = 404;
-                res.set_content(resp.dump(), "application/json");
-                return REQUEST_HANDLED;
-            }
-
-            // Populate the auth object with additional data from the database
-            // remove `password` field if available
-            auto user = parseDbRowToJson(r);
-            auth["type"] = "user";
-            auth["id"] = _id;
-            auth["table"] = _table;
-
-            // Populate auth obj with user details ...
-            for (const auto& [key, value] : user.items())
-            {
-                auth[key] = value;
-            }
-
-            // Remove password field
-            auth.erase("password");
-
-            // Update context data
-            ctx.set("auth", auth);
+            res.status = 403;
+            res.set_content(response.dump(), "application/json");
+            return REQUEST_HANDLED;
         }
+
+        // Expand logged user if token is present
+        const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
+        if (!resp.value("verified", false) || !resp.value("error", "").empty())
+        {
+            json response;
+            response["status"] = 403;
+            response["data"] = json::object();
+            response["error"] = resp.value("error", "");
+
+            res.status = 403;
+            res.set_content(response.dump(), "application/json");
+            return REQUEST_HANDLED;
+        }
+
+        // Extract and verify that the id and table data is provided, else,
+        // return an error
+        const auto _id = resp.value("id", "");
+        const auto _table = resp.value("table", "");
+
+        if (_id.empty() || _table.empty())
+        {
+            json response;
+            response["status"] = 403;
+            response["data"] = json::object();
+            response["error"] = "Auth token missing user id or table name";
+
+            res.status = 403;
+            res.set_content(resp.dump(), "application/json");
+            return REQUEST_HANDLED;
+        }
+
+        // Query for user with given ID, this info will be populated to the
+        // expression evaluator args as well as available through
+        // the session context, queried by:
+        //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
+        //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
+        auto sql = m_app->db().session();
+        soci::row r;
+        std::string query = "SELECT * FROM __admins WHERE id = :id LIMIT 1";
+        *sql << query, soci::use(_id), soci::into(r);
+
+        // Return 404 if user was not found
+        if (!sql->got_data())
+        {
+            json response;
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = "Auth id was not found.";
+
+            res.status = 404;
+            res.set_content(resp.dump(), "application/json");
+            return REQUEST_HANDLED;
+        }
+
+        // Populate the auth object with additional data from the database
+        // remove `password` field if available
+        auto user = parseDbRowToJson(r);
+        auth["type"] = "user";
+        auth["id"] = _id;
+        auth["table"] = _table;
+
+        // Populate auth obj with user details ...
+        for (const auto& [key, value] : user.items())
+        {
+            auth[key] = value;
+        }
+
+        // Remove password field
+        auth.erase("password");
+
+        // Update context data
+        ctx.set("auth", auth);
 
         const auto table_name = auth.value("table", "");
         // Check if user is logged in as Admin

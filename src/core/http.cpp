@@ -143,9 +143,18 @@ void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
 
 bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 {
-    Log::info("API Endpoints: http://{}:{}/api/v1/", host, port);
-    Log::info("Admin Dashboard: http://{}:{}/admin", host, port);
-    return server.listen(host, port);
+    std::cout << std::endl;
+    std::string endpoint = host + ":" + std::to_string(port);
+    Log::info("Starting Servers: \n\t API Endpoints: http://{}/api/v1/ \n\t Admin Dashboard: http://{}/admin",
+        endpoint, endpoint);
+
+    if (!server.listen(host, port))
+    {
+        Log::critical("Error: Failed to bind to {}:{}", host, port);
+        return false;
+    }
+
+    return true;
 }
 
 void mantis::HttpUnit::close()

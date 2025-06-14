@@ -25,6 +25,7 @@ namespace mantis
         {
             const auto name = entity.value("name", "");
             const auto type = entity.value("type", "");
+            const auto has_api = entity.value("has_api", true);
             const auto fields = entity.value("fields", json::array());
 
             // Update rules in the individual table types
@@ -35,9 +36,9 @@ namespace mantis
             const auto deleteRule = entity.value("deleteRule", "");
 
             // Hash the name for the ID
-            std::string id = TableUnit::generateTableId(name);
+            std::string id = generateTableId(name);
 
-            Log::debug("Creating table: {} with id: {}", name, id);
+            Log::trace("Creating table: {} with id: {}", name, id);
 
             // Check if item exits already in db
             if (itemExists(name, id))
@@ -89,7 +90,6 @@ namespace mantis
                     result["status"] = 400;
                     return result;
                 }
-
 
                 Field f{_name, _type.value(), _required, _primaryKey, _system};
                 new_fields.push_back(f);
@@ -173,7 +173,6 @@ namespace mantis
 
             try
             {
-                int has_api = 1;
                 // Insert to __tables
                 *sql <<
                     "INSERT INTO __tables (id, name, type, has_api, schema, created, updated) VALUES (:id, :name, :type, :has_api, :schema, :created, :updated)"
@@ -183,26 +182,18 @@ namespace mantis
 
                 // Create actual SQL table
                 *sql << table_ddl;
+                tr.commit();
 
                 json obj;
                 obj["id"] = id;
                 obj["name"] = name;
                 obj["type"] = type;
-                obj["fields"] = json::array();
+                obj["has_api"] = has_api;
+                obj["schema"] = json::parse(schema_str);
                 obj["created"] = DatabaseUnit::tmToISODate(*created_tm);
                 obj["updated"] = DatabaseUnit::tmToISODate(*created_tm);
-                obj["addRule"] = addRule;
-                obj["deleteRule"] = deleteRule;
-                obj["getRule"] = getRule;
-                obj["listRule"] = listRule;
-                obj["updateRule"] = updateRule;
-
-                // Dump complete field information, not just the passed in values
-                for (const auto& field : new_fields) { obj["fields"].push_back(field.to_json()); }
 
                 result["data"] = obj;
-
-                tr.commit();
             }
             catch (const soci::soci_error& e)
             {
@@ -238,14 +229,14 @@ namespace mantis
         const auto sql = m_app->db().session();
 
         soci::row r;
-        *sql << "SELECT id, name, type, schema FROM __tables WHERE id = :id", soci::use(id), soci::into(r);
+        *sql << "SELECT has_api, name, type, schema FROM __tables WHERE id = :id", soci::use(id), soci::into(r);
 
         if (!sql->got_data())
         {
             return std::nullopt;
         }
 
-        // const auto id = r.get<std::string>(0);
+        const auto has_api = r.get<std::string>(0);
         const auto name = r.get<std::string>(1);
         const auto type = r.get<std::string>(2);
         const auto schema = r.get<json>(3);
@@ -253,6 +244,7 @@ namespace mantis
         json tb;
         tb["id"] = id;
         tb["name"] = name;
+        tb["has_api"] = has_api;
         tb["type"] = type;
         tb["schema"] = schema;
 
@@ -373,10 +365,8 @@ namespace mantis
             const auto id = row.get<std::string>(0);
             const auto name = row.get<std::string>(1);
             const auto type = row.get<std::string>(2);
-            const auto schema_json = row.get<std::string>(3);
+            const auto schema_json = row.get<json>(3);
             const auto has_api = row.get<bool>(4);
-
-            // const json j = json::parse(schema_json);
 
             json tb;
             tb["id"] = id;
