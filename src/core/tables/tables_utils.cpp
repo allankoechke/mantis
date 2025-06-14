@@ -39,7 +39,7 @@ namespace mantis
                 whereClause += columns[i] + " = :value";
             }
 
-            const std::string query = "SELECT COUNT(*) FROM " + m_tableName + " WHERE " + whereClause + " LIMIT 1";
+            const std::string query = "SELECT * FROM " + m_tableName + " WHERE " + whereClause + " LIMIT 1";
 
             // Run query
             soci::row r;

@@ -326,7 +326,7 @@ namespace mantis
         {
             const auto table_name = auth.value("table", "");
             // Check if user is logged in as Admin
-            if (table_name == "__admin")
+            if (table_name == "__admins")
             {
                 // If logged in as admin, grant access
                 // Admins get unconditional data access

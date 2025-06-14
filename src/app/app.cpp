@@ -3,9 +3,11 @@
 //
 
 #include "../../include/mantis/mantis.h"
+#include <builtin_features.h>
 
 mantis::MantisApp::MantisApp(int argc, char** argv)
-    : m_dbType(DbType::SQLITE)
+    : m_dbType(DbType::SQLITE),
+      m_toStartServer(false)
 {
     // Initialize Default Features in cparse
     cparse::cparse_init();
@@ -89,7 +91,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
     program.add_subparser(sync_command);
 
     // Print the help page
-    std::cout << program << std::endl;
+    // std::cout << program << std::endl;
 
     try
     {
@@ -149,6 +151,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
         setHost(host);
         setPort(port);
         std::cout << "- " << host << ":" << port << std::endl;
+        m_toStartServer = true;
     }
     else if (program.is_subcommand_used("admins"))
     {
@@ -158,8 +161,8 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
         // Create admin table object, we'll use it to get JSON rep for use in
         // the TableUnit construction. Similar to what we do when creating routes.
         AdminTable admin(this);
-            admin.name = "__admins";
-            admin.id = TableUnit::generateTableId("__admins");
+        admin.name = "__admins";
+        admin.id = TableUnit::generateTableId("__admins");
 
         // Create TableUnit from admin json dump
         TableUnit t{this, admin.to_json()};
@@ -176,7 +179,7 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
             // Get password from user then validate it!
             auto password = trim(getUserValueSecurely("Getting Admin Password"));
             if (auto c_password = trim(getUserValueSecurely("Confirm Admin Password"));
-                password!=c_password)
+                password != c_password)
             {
                 Log::critical("Passwords do not match!");
                 quit(-1, "Passwords do not match!");
@@ -215,27 +218,30 @@ void mantis::MantisApp::parseArgs(const int argc, char** argv)
             }
 
             // Check if a record exists in db of such user ...
+            Log::trace("Check if email/id [{}] exists", admin_email_or_id);
             auto resp = t.checkValueInColumns(admin_email_or_id, {"id", "email"});
+            Log::trace("Admin Found Response: {}", resp.dump());
             if (!resp.at("error").get<std::string>().empty())
             {
                 Log::critical("Failed to get admin account matching id/email = {} - {}",
-                    admin_email_or_id, resp.at("error").get<std::string>());
+                              admin_email_or_id, resp.at("error").get<std::string>());
                 quit(-1, "");
             }
 
             try
             {
-                if (t.remove(resp.at("id").get<std::string>(), json::object()))
+                const auto data = resp.at("data").get<json>();
+                Log::trace("Admin Data: {}", data.dump());
+                if (t.remove(data.at("id").get<std::string>(), json::object()))
                 {
                     Log::info("Admin removed successfully.");
                     quit(0, "");
                 }
-            } catch (soci::soci_error& e)
+            }
+            catch (soci::soci_error& e)
             {
                 Log::critical("Failed to remove admin account: {}", e.what());
             }
-
-            Log::info("Failed to remove Admin having id/email of '{}'", admin_email_or_id);
             quit(-1, "");
         }
     }
@@ -288,8 +294,13 @@ int mantis::MantisApp::run() const
     if (!m_router->initialize())
         quit(-1, "Failed to initialize router!");
 
-    if (!m_http->listen(m_host, m_port))
-        return -1;
+    // If server command is explicitly passed in, start listening,
+    // else, exit!
+    if (m_toStartServer)
+    {
+        if (!m_http->listen(m_host, m_port))
+            return -1;
+    }
 
     return 0;
 }

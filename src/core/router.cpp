@@ -8,12 +8,18 @@
 
 
 mantis::Router::Router(MantisApp* app)
-    : m_app(app),
-      m_adminTable(std::make_shared<TableUnit>(m_app, "__admins",
-          TableUnit::generateTableId("__admins"), "auth")),
-      m_tableRoutes(std::make_shared<SysTablesUnit>(m_app, "__tables",
-          TableUnit::generateTableId("__tables"), "base"))
+    : m_app(app)
 {
+    // Create admin table object, we'll use it to get JSON rep for use in
+    // the TableUnit construction. Similar to what we do when creating routes.
+    AdminTable admin(m_app);
+    admin.name = "__admins";
+    admin.id = TableUnit::generateTableId("__admins");
+
+    m_adminTable = std::make_shared<TableUnit>(m_app, admin.to_json());
+    m_tableRoutes = std::make_shared<SysTablesUnit>(m_app, "__tables",
+          TableUnit::generateTableId("__tables"), "base");
+    
     // Override the route display name to easier names. This means that,
     // instead of `<root>/__admins` -> <root>/admins
     // instead of `<root>/__tables` -> <root>/tables

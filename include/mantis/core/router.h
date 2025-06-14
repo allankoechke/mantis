@@ -2,8 +2,7 @@
 #define MANTIS_SERVER_H
 
 #include <memory>
-#include <nlohmann/json.hpp>
-using json = nlohmann::json;
+#include <vector>
 
 namespace mantis
 {

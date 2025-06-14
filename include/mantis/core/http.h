@@ -18,10 +18,11 @@
 #define REQUEST_HANDLED false
 #define REQUEST_PENDING true
 
-using json = nlohmann::json;
 
 namespace mantis
 {
+    using json = nlohmann::json;
+
     class Context
     {
         std::unordered_map<std::string, std::any> data;

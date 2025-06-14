@@ -8,10 +8,11 @@
 #include <../../3rdParty/json/single_include/nlohmann/json.hpp>
 #include <../../3rdParty/spdlog/include/spdlog/spdlog.h>
 #include <../../3rdParty/spdlog/include/spdlog/sinks/basic_file_sink.h>
-using json = nlohmann::json;
 
 namespace mantis
 {
+    using json = nlohmann::json;
+
     typedef enum class LogLevel : uint8_t
     {
         TRACE = 0,

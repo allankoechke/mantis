@@ -53,6 +53,7 @@ add_executable(mantisapp
 
         src/core/expr_evaluator.cpp
         include/mantis/core/expr_evaluator.h
+        include/mantis/app/pch.hpp
 )
 
 # Add httplib

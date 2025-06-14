@@ -8,10 +8,11 @@
 #include <optional>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
-using json = nlohmann::json;
 
 namespace mantis
 {
+    using json = nlohmann::json;
+
     class MantisApp;
 
     class Validator

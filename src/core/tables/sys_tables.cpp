@@ -594,7 +594,7 @@ namespace mantis
         auto auth = ctx.get<json>("auth").has_value() ? *ctx.get<json>("auth").value() : json::object();
 
         // Check if user is logged in as Admin
-        if (const auto table_name = auth.value("table", ""); table_name == "__admin")
+        if (const auto table_name = auth.value("table", ""); table_name == "__admins")
         {
             // If logged in as admin, grant access
             // Admins get unconditional data access
