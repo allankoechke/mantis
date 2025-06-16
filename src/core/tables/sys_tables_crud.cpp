@@ -326,42 +326,81 @@ namespace mantis
 
             for (const auto& field : entity.value("fields", std::vector<json>{}))
             {
-            //     Log::trace("Field: {}", field.value("name", ""), field.dump());
-            //
-            //     // Ensure field name is provided, if not so, throw an error!
-            //     const auto field_name = field.value("name", "");
-            //     if (field_name.empty())
-            //     {
-            //         response["error"] = "Field name can't be empty!";
-            //         return response;
-            //     }
-            //
-            //     // Check if the field exists or not
-            //     auto it = std::find_if(t_fields.begin(), t_fields.end(), [&](const auto& f)
-            //     { return f.value("name", "") == field_name; });
-            //
-            //     json field_opts;
-            //     if (it != t_fields.end()) field_opts = *it;
-            //
-            //     auto field_autoGeneratePattern = field.value("autoGeneratePattern", "");
-            //     auto field_defaultValue = field.value("defaultValue", "");
-            //     auto field_maxValue = field.value("maxValue", "");
-            //     auto field_minValue = field.value("minValue", "");
-            //     auto field_primaryKey = field.value("primaryKey", false);
-            //     auto field_required = field.value("required", false);
-            //     auto field_system = false;
-            //     auto field_typeStr = field.value("type", "");
-            //     const auto field_type = getFieldType(field_typeStr);
-            //
-            //     // Ensure field type is provided
-            //     if (!field_type.has_value())
-            //     {
-            //         response["error"] = "Field type '" + field_typeStr + "' not recognised";
-            //         return response;
-            //     }
-            //
-            //     Field f{field_name, field_type.value(), field_required, field_primaryKey, field_system};
-            //     new_fields.push_back(f);
+                Log::trace("Field: {}", field.value("name", ""), field.dump());
+
+                // Ensure field name is provided, if not so, throw an error!
+                const auto field_name = field.value("name", "");
+                if (field_name.empty())
+                {
+                    response["error"] = "Field name can't be empty!";
+                    return response;
+                }
+
+                // Check if the field exists or not
+                auto it = std::find_if(t_fields.begin(), t_fields.end(), [&](const auto& f)
+                {
+                    return f.value("name", "") == field_name;
+                });
+
+                bool is_new_field = true;
+                json _field_opts;
+                if (it != t_fields.end())
+                {
+                    _field_opts = *it;
+                    is_new_field = false;
+                }
+
+                if (is_new_field)
+                {
+                    json field_opts;
+                    if (field.contains("autoGeneratePattern"))
+                        field_opts["autoGeneratePattern"] = field.value("autoGeneratePattern", "");
+
+                    if (field.contains("defaultValue"))
+                        field_opts["defaultValue"] = field.value("defaultValue", "");
+
+                    if (field.contains("maxValue"))
+                        field_opts["maxValue"] = field.value("maxValue", "");
+
+                    if (field.contains("minValue"))
+                        field_opts["minValue"] = field.value("minValue", "");
+
+                    if (field.contains("validator"))
+                        field_opts["validator"] = field.value("validator", "");
+
+
+                    if (field.contains("unique"))
+                        field_opts["unique"] = field.value("unique", "");
+
+                    // Extract field data
+                    auto field_primaryKey = field.value("primaryKey", false);
+                    auto field_required = field.value("required", false);
+                    auto field_system = false;
+                    auto field_typeStr = field.value("type", "");
+                    auto field_unique = field.value("unique", false);
+                    const auto field_type = getFieldType(field_typeStr);
+
+                    // Ensure field type is provided
+                    if (!field_type.has_value())
+                    {
+                        response["error"] = "Field type for " + field_name + " is required!";
+                        return response;
+                    }
+
+                    // Create field item ...
+                    Field f{field_name, field_type.value(), field_required, field_primaryKey, field_system, field_opts};
+                    t_fields.push_back(f.to_json());
+
+                    // Execute SQL
+                    *sql << sql->get_backend()->add_column(t_name, field_name, f.toSociType(), 0, 0);
+
+                    if (field_unique) // TODO remove unique constraint later ...
+                        *sql << "ALTER TABLE " + t_name + " ADD " + sql->get_backend()->constraint_unique(
+                            "unique_" + field_name, field_name);
+                } else
+                {
+                    // TODO Update existing field ...
+                }
             }
 
             // Update has_api field ...
