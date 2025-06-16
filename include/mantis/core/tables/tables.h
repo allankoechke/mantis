@@ -110,7 +110,7 @@ namespace mantis
 
         // Helper methods
         static std::string generateTableId(const std::string& tablename);
-        std::string getColTypeFromName(const std::string& col) const;
+        std::string getColTypeFromName(const std::string& col, const std::vector<json>& fields) const;
         json parseDbRowToJson(const soci::row& row) const;
         std::optional<json> validateRequestBody(const json& body) const;
         std::optional<json> validateUpdateRequestBody(const json& body) const;

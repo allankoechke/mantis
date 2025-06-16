@@ -19,7 +19,8 @@ namespace mantis
         bool initialize();
 
         bool listen() const;
-        void close() const;
+        void close();
+        void restart();
 
     private:
         bool generateTableCrudApis();

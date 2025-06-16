@@ -124,7 +124,8 @@ namespace mantis
         std::string id;
         std::string name;
         TableType type;
-        bool system;
+        bool system = false;
+        bool has_api = true;
 
         std::vector<Field> fields;
 

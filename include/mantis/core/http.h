@@ -75,6 +75,7 @@ namespace mantis
                       const std::vector<Middleware>& middlewares);
 
         const RouteHandler* find(const std::string& method, const std::string& path) const;
+        // TODO const RouteHandler* remove(const std::string& method, const std::string& path);
     };
 
     class HttpUnit

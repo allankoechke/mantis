@@ -6,6 +6,8 @@
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/core/tables/sys_tables.h"
 
+#include <nlohmann/json.hpp>
+using json = nlohmann::json;
 
 mantis::Router::Router(MantisApp* app)
     : m_app(app)
@@ -64,9 +66,21 @@ bool mantis::Router::listen() const
     return false;
 }
 
-void mantis::Router::close() const
+void mantis::Router::close()
 {
     m_app->http().close();
+    m_routes.clear();
+}
+
+void mantis::Router::restart()
+{
+    // close();
+    // initialize();
+    // if (!listen())
+    // {
+    //     Log::critical("Failed to restart server");
+    //     MantisApp::quit(-1);
+    // }
 }
 
 bool mantis::Router::generateTableCrudApis()

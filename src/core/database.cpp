@@ -108,15 +108,6 @@ void mantis::DatabaseUnit::migrate() {
     {
         Log::critical("Create System Tables Failed: {}", e.what());
     }
-
-    // Create Base Table
-    // mantis::BaseTable sysTableSchema;
-    // sysTableSchema.name = "__tables";
-    // sysTableSchema.enableSync = true;
-    // sysTableSchema.id = "";
-    // sysTableSchema.type = TableType::Base;
-    //
-    // sysTableSchema.to_sql();
 }
 
 std::shared_ptr<soci::session> mantis::DatabaseUnit::session() const {

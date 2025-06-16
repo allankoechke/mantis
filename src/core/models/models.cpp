@@ -196,6 +196,7 @@ json mantis::Table::to_json() const
     j["type"] = type;
     j["system"] = system;
     j["fields"] = json::array();
+    j["has_api"] = has_api;
 
     for (const auto& f : fields) j["fields"].push_back(f.to_json());
 

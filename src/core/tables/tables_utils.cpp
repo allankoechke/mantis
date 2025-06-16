@@ -65,9 +65,11 @@ namespace mantis
         for (size_t i = 0; i < row.size(); i++)
         {
             const auto colName = row.get_properties(i).get_name();
+            const auto colType = getColTypeFromName(colName, m_fields);
 
-            if (const std::string colType = getColTypeFromName(colName);
-                colType == "xml" || colType == "string")
+            // Log::trace("Col: {}, Type: {}, Indicator? {}", colName, colType, std::vector<std::string>{"io_ok", "io_null", "io_truncated"}[row.get_indicator(i)]);
+
+            if (colType == "xml" || colType == "string")
             {
                 j[colName] = row.get<std::string>(i, "");
             }
@@ -81,32 +83,18 @@ namespace mantis
                 {
                     auto t = row.get<std::tm>(i);
                     auto ts = DatabaseUnit::tmToISODate(t);
-
-                    std::cout << "Date String: " << ts << std::endl;
                     j[colName] = ts;
                 }
-                else // Parse as string regardless
+                else if(row.get_properties(i).get_db_type() == soci::db_date)
                 {
                     try
                     {
-                        // Date stored as string or in integer column - get as string and parse manually
-                        auto date_str = row.get<std::string>(i);
-
-                        // Use SOCI's internal parser
-                        // soci::details::parse_std_tm(date_str.c_str(), t);
-                        j[colName] = date_str;
+                        j[colName] = row.get<std::string>(i, "");
                     }
                     catch (soci::soci_error& e)
                     {
                         j[colName] = "";
-                        Log::critical("TablesUnit::Parse DB Row Error: {}", e.what());
-                        // throw std::runtime_error(e.what());
-                    }
-                    catch (std::exception& e)
-                    {
-                        j[colName] = "";
-                        Log::critical("TablesUnit::Parse DB Row Error: {}", e.what());
-                        // throw std::runtime_error(e.what());
+                        Log::critical("TablesUnit::Parse Column Name = {}, Column Type: {} - DB Row Error: {}", colName, colType, e.what());
                     }
                 }
             }
@@ -219,10 +207,11 @@ namespace mantis
         return "mt_" + std::to_string(std::hash<std::string>{}(tablename));
     }
 
-    std::string TableUnit::getColTypeFromName(const std::string& col) const
+    std::string TableUnit::getColTypeFromName(const std::string& col, const std::vector<json>& fields) const
     {
-        for (const auto& field : m_fields)
+        for (const auto& field : fields)
         {
+            // Log::trace("Field: {}, Type: {}, col: {}", field.at("name").get<std::string>(), field.at("type").get<std::string>(), col);
             if (field.value("name", "") == col && !col.empty())
                 return field.value("type", "");
         }

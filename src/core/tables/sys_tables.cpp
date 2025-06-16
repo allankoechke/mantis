@@ -7,6 +7,7 @@
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/utils.h"
+#include "../../../include/mantis/core/router.h"
 
 namespace mantis
 {
@@ -15,8 +16,7 @@ namespace mantis
                                  const std::string& tableId,
                                  const std::string& tableType)
         : TableUnit(app, tableName, tableId, tableType)
-    {
-    }
+    { }
 
     bool SysTablesUnit::setupRoutes()
     {
@@ -356,11 +356,11 @@ namespace mantis
 
         // Invoke create table method, return the result
         auto resp = create(body, json::object());
-        if (!resp.value("error", json::object()).empty())
+        if (const auto err = resp.value("error", json::object()); !err.empty())
         {
             int status = resp.value("status", 500);
             response["status"] = status;
-            response["error"] = resp.at("error").at("error").get<std::string>();
+            response["error"] = err;
             response["data"] = json::object();
 
             res.status = status;
@@ -376,10 +376,89 @@ namespace mantis
 
         res.status = 201;
         res.set_content(response.dump(), "application/json");
+
+        // Restart server to pickup new changes ...
+        // TODO maybe bury these behind a flag? That way we dont restart server randomly ...
+        m_app->router().restart();
     }
 
     void SysTablesUnit::updateRecord(const Request& req, Response& res, Context& ctx)
     {
+        Log::trace("Updating table, endpoint {}", req.path);
+
+        json body, response;
+        // Extract request ID and check that it's not empty
+        const auto id = req.path_params.at("id");
+
+        // For empty IDs, return 400, BAD REQUEST
+        if (id.empty())
+        {
+            response["status"] = 400;
+            response["data"] = json::object();
+            response["error"] = "Table ID is required!";
+
+            res.status = 400;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
+        try
+        {
+            // Try parsing the request body, may checkMinValueFunc ...
+            body = json::parse(req.body);
+        }
+        catch (const std::exception& e)
+        {
+            // Return 400 BAD REQUEST for any parse errors
+            response["status"] = 400;
+            response["error"] = e.what();
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = 400;
+            return;
+        }
+
+        // Check that record exists before we continue ...
+        if (!recordExists(id))
+        {
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = "Record with id " + id + " was not found.";
+
+            res.status = 404;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+        
+        // Try creating the record, if it checkMinValueFuncs, return the error
+        auto respObj = update(id, body, json::object());
+        if (const auto err = respObj.value("error", ""); !err.empty())
+        {
+            int status = respObj.value("status", 500);
+            response["status"] = status;
+            response["error"] = err;
+            response["data"] = json::object();
+
+            res.set_content(response.dump(), "application/json");
+            res.status = status;
+
+            Log::critical("Failed to update table, id = {}, reason: {}", id, respObj.dump());
+            return;
+        }
+
+        // Get the data, for auth types, redact the password information
+        // it's not useful data to return in the response despite being hashed
+        const auto record = respObj.at("data");
+        Log::trace("Record update successful: {}", record.dump());
+
+        // Return the added record + the system generated fields
+        response["status"] = 200;
+        response["error"] = "";
+        response["data"] = record;
+
+        res.status = 200;
+        res.set_content(response.dump(), "application/json");
     }
 
     void SysTablesUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
@@ -426,6 +505,10 @@ namespace mantis
 
         res.set_content("", "application/json");
         res.status = 204;
+
+        // Restart server to pickup new changes ...
+        // TODO maybe bury these behind a flag? That way we dont restart server randomly ...
+        m_app->router().restart();
     }
 
     void SysTablesUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)

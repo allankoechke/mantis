@@ -236,7 +236,7 @@ namespace mantis
             return std::nullopt;
         }
 
-        const auto has_api = r.get<std::string>(0);
+        const auto has_api = r.get<bool>(0);
         const auto name = r.get<std::string>(1);
         const auto type = r.get<std::string>(2);
         const auto schema = r.get<json>(3);
@@ -257,73 +257,197 @@ namespace mantis
         soci::transaction tr(*sql);
         json response;
         response["data"] = json::object();
-        response["error"] = json::object();
+        response["error"] = "";
 
-        // Get Original Object
-        soci::row rw;
-        *sql << "SELECT * FROM __tables WHERE id = :id", soci::use(id), soci::into(rw);
-
-        if (!sql->got_data())
+        try
         {
-            json err;
-            err["message"] = "Table with that ID does not exist!";
-            response["error"] = err;
-            return response;
-        }
+            // Get Original Object
+            soci::row rw;
+            *sql << "SELECT id,name,type,schema,has_api FROM __tables WHERE id = :id", soci::use(id), soci::into(rw);
 
-        const auto old_id = rw.get<std::string>(0);
-        const auto old_name = rw.get<std::string>(1);
-        const auto old_type = rw.get<std::string>(2);
-        const auto old_schema_json = rw.get<std::string>(3);
-        const json old_schema_obj = json::parse(old_schema_json);
-
-        // Delete fields ...
-        if (const auto delFields = entity.value("deletedFields", std::vector<std::string>{}); !delFields.empty())
-        {
-            // Drop all columns in this segment ...
-            for (const auto& field : delFields)
+            if (!sql->got_data())
             {
-                // If the field is valid, generate drop colum statement and execute!
-                if (!trim(field).empty())
-                    *sql <<  sql->get_backend()->drop_column(m_tableName, trim(field));
+                response["error"] = "Table with that ID was not found!";
+                return response;
+            }
+
+            // Old data ...
+            auto t_id = rw.get<std::string>(0);
+            auto t_name = rw.get<std::string>(1);
+            auto t_type = rw.get<std::string>(2);
+            auto t_schema = rw.get<json>(3);
+            auto t_has_api = rw.get<bool>(4);
+            std::vector<json> t_fields = t_schema.value("fields", json::array());
+
+            // For now, we don't support changing types
+            if (entity.contains("type") && t_type != entity["type"].get<std::string>())
+            {
+                response["error"] = "Changing table types is not supported yet!";
+                return response;
+            }
+
+            // Delete fields ...
+            if (const auto delFields = entity.value("deletedFields", std::vector<std::string>{}); !delFields.empty())
+            {
+                std::vector<std::string> sys_fields{};
+
+                // Drop all columns in this segment ...
+                for (const auto& field_name : delFields)
+                {
+                    // Skip empty fields ..
+                    if (trim(field_name).empty())
+                    {
+                        response["error"] = "Field name can't be empty!";
+                        response["status"] = 400;
+                        return response;
+                    };
+
+                    // We can't drop system fields here, so, lets check for that ...
+                    if (t_type == "base") sys_fields = baseFields;
+                    else if (t_type == "auth") sys_fields = authFields;
+                    // For views, ignore ...
+
+                    // If the field exists in system types, ignore it
+                    if (std::find(sys_fields.begin(), sys_fields.end(), field_name) != sys_fields.end())
+                        continue;
+
+                    // If the field is valid, generate drop colum statement and execute!
+                    *sql << sql->get_backend()->drop_column(t_name, trim(field_name));
+
+                    // Log::trace("Fields array size before removing {} = {}", field_name, t_fields.size());
+                    // Remove the field from the array as well.
+                    t_fields.erase(std::remove_if(t_fields.begin(), t_fields.end(), [&](const auto& field)
+                    {
+                        return field.value("name", "") == trim(field_name);
+                    }));
+                    // Log::trace("Fields array size after removing {} = {}", field_name, t_fields.size());
+                }
+            }
+
+            for (const auto& field : entity.value("fields", std::vector<json>{}))
+            {
+            //     Log::trace("Field: {}", field.value("name", ""), field.dump());
+            //
+            //     // Ensure field name is provided, if not so, throw an error!
+            //     const auto field_name = field.value("name", "");
+            //     if (field_name.empty())
+            //     {
+            //         response["error"] = "Field name can't be empty!";
+            //         return response;
+            //     }
+            //
+            //     // Check if the field exists or not
+            //     auto it = std::find_if(t_fields.begin(), t_fields.end(), [&](const auto& f)
+            //     { return f.value("name", "") == field_name; });
+            //
+            //     json field_opts;
+            //     if (it != t_fields.end()) field_opts = *it;
+            //
+            //     auto field_autoGeneratePattern = field.value("autoGeneratePattern", "");
+            //     auto field_defaultValue = field.value("defaultValue", "");
+            //     auto field_maxValue = field.value("maxValue", "");
+            //     auto field_minValue = field.value("minValue", "");
+            //     auto field_primaryKey = field.value("primaryKey", false);
+            //     auto field_required = field.value("required", false);
+            //     auto field_system = false;
+            //     auto field_typeStr = field.value("type", "");
+            //     const auto field_type = getFieldType(field_typeStr);
+            //
+            //     // Ensure field type is provided
+            //     if (!field_type.has_value())
+            //     {
+            //         response["error"] = "Field type '" + field_typeStr + "' not recognised";
+            //         return response;
+            //     }
+            //
+            //     Field f{field_name, field_type.value(), field_required, field_primaryKey, field_system};
+            //     new_fields.push_back(f);
+            }
+
+            // Update has_api field ...
+            if (entity.contains("has_api"))
+            {
+                t_has_api = entity.at("has_api").get<bool>();
+                t_schema["has_api"] = t_has_api;
+            }
+
+            // Update access rules if passed in
+            if (entity.contains("addRule")) t_schema["addRule"] = entity.value("addRule", "");
+            if (entity.contains("getRule")) t_schema["getRule"] = entity.value("getRule", "");
+            if (entity.contains("listRule")) t_schema["listRule"] = entity.value("listRule", "");
+            if (entity.contains("updateRule")) t_schema["updateRule"] = entity.value("updateRule", "");
+            if (entity.contains("deleteRule")) t_schema["deleteRule"] = entity.value("deleteRule", "");
+
+            // If we are changing table names, then ensure it's not empty nor system name kind of ...
+            if (const auto& name = trim(entity.value("name", ""));
+                !name.empty() && name != t_name)
+            {
+                // Hold system table names ...
+                const std::vector<std::string> sys_tables{"__admin", "__tables"};
+
+                // Check that the new name is not matching any system table names
+                if (std::find(sys_tables.begin(), sys_tables.end(), name) != sys_tables.end())
+                {
+                    response["error"] = "The selected table name '" + name + "' is system reserved!";
+                    return response;
+                }
+
+                // Update table name
+                // TODO check if this syntax works for all db types
+                *sql << "ALTER TABLE " + t_name + " RENAME TO " + name;
+
+                const auto nId = generateTableId(name);
+                t_schema["id"] = nId;
+                t_schema["name"] = name;
+                t_id = nId;
+                t_name = name;
+            }
+
+            // Update fields ...
+            t_schema["fields"] = t_fields; // Create default time values
+
+            // Get updated timestamp
+            std::time_t t = time(nullptr);
+            std::tm* updated_tm = std::localtime(&t);
+
+            // Update table record, if all went well.
+            std::string query = "UPDATE __tables SET id = :id, name = :name, type = :type, schema = :schema,";
+            query += " has_api = :has_api, updated = :updated WHERE id = :old_id";
+
+            *sql << query, soci::use(t_id), soci::use(t_name), soci::use(t_type), soci::use(t_schema),
+                soci::use(t_has_api), soci::use(*updated_tm), soci::use(id);
+
+            // Write out any pending changes ...
+            tr.commit();
+
+            // Fetch the new record and return it to the user ...
+            soci::row r;
+            *sql << ("SELECT id,name,type,schema,has_api,created,updated FROM __tables WHERE id = :id"),
+                soci::use(t_id), soci::into(r);
+
+            // Get the data into a json object, if it was found ...
+            if (sql->got_data())
+            {
+                json record;
+                record["id"] = r.get<std::string>(0);
+                record["name"] = r.get<std::string>(1);
+                record["type"] = r.get<std::string>(2);
+                record["schema"] = r.get<json>(3);
+                record["has_api"] = r.get<bool>(4);
+                record["created"] = r.get<std::string>(5);
+                record["updated"] = r.get<std::string>(6);
+
+                response["data"] = record;
             }
         }
-
-        if (entity.contains("name") && entity.value("name", "") != old_name)
+        catch (std::exception& e)
         {
-            const auto name = entity.value("name", "");
-            const auto nId = TableUnit::generateTableId(name);
+            response["error"] = e.what();
+            response["status"] = 500;
 
-            // Update Name & ID in the __tables catalogue
-            *sql << "UPDATE __tables SET id = :id & name = :name WHERE id = :old_id",
-                soci::use(nId), soci::use(name), soci::use(id);
-
-            // Update the
-            // TODO LATER
+            Log::critical("Error Updating Table: {}", e.what());
         }
 
-        std::string new_schema;
-
-        // Update schema
-        *sql << "UPDATE __tables SET schema = :schema WHERE id = :id",
-            soci::use(new_schema), soci::use(id);
-
-        // TODO: Compare fields and generate ALTER TABLE statements
-        // Simple naive strategy: just add missing columns
-        // for (const auto& newField : updated->fields) {
-        //     bool exists = false;
-        //     for (const auto& oldField : existing->fields) {
-        //         if (newField.name == oldField.name) {
-        //             exists = true;
-        //             break;
-        //         }
-        //     }
-        //     if (!exists) {
-        //         *sql << "ALTER TABLE " << updated->name << " ADD COLUMN " << newField.to_sql();
-        //     }
-        // }
-
-        tr.commit();
         return response;
     }
 
