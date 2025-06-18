@@ -326,7 +326,7 @@ namespace mantis
 
             for (const auto& field : entity.value("fields", std::vector<json>{}))
             {
-                Log::trace("Field: {}", field.value("name", ""), field.dump());
+                // Log::trace("Field: {}", field.value("name", ""), field.dump());
 
                 // Ensure field name is provided, if not so, throw an error!
                 const auto field_name = field.value("name", "");
@@ -336,10 +336,10 @@ namespace mantis
                     return response;
                 }
 
-                int found_index = -1, i=0;
+                int found_index = -1, i = 0;
                 for (const auto& _field : t_fields)
                 {
-                    Log::trace("Field: {}", _field.dump());
+                    // Log::trace("Field: {}", _field.dump());
                     if (_field.value("name", "") == field_name)
                     {
                         found_index = i;
@@ -427,8 +427,10 @@ namespace mantis
                         old_field["unique"] = is_unique;
 
                         if (is_unique)
-                            *sql << "ALTER TABLE " + t_name + " ADD " + sql->get_backend()->constraint_unique(
-                                "unique_" + field_name, field_name);
+                        {
+                            *sql << ("ALTER TABLE " + t_name + " ADD " + sql->get_backend()->constraint_unique(
+                                "unique_" + field_name, field_name));
+                        }
 
                         // Removing unique constraint is database specific
                         // TODO look into removing unique constraint later
@@ -449,35 +451,54 @@ namespace mantis
                         // TODO maybe check that the table name doesn't exist yet, but, the db will throw an error
 
                         std::string backend_name = sql->get_backend()->get_backend_name();
-                        auto rename_sql = "ALTER TABLE " + t_name + " RENAME COLUMN " + field_name + " TO " + new_name;
+                        std::string rename_sql = "ALTER TABLE ";
+                        rename_sql.append(t_name).append(" RENAME COLUMN ").append(field_name).append(" TO ").append(new_name);
 
+                        // Execute rename SQL query
                         *sql << rename_sql;
                     }
 
                     if (field.contains("type"))
                     {
                         const auto t = old_field.value("type", "");
-                        if (t.empty())
+                        // Only if the field type is changed, avoid throwing errors for unchanged types
+                        if (t != field.value("type", ""))
                         {
-                            tr.rollback();
-                            response["error"] = "Field type for " + field_name + " can't be empty!";
-                            return response;
-                        }
+                            // SQLite does not support this type changes, for now, maybe look at it later
+                            // TODO ..
+                            if (sql->get_backend_name() == "sqlite3")
+                            {
+                                response["error"] = "Changing column type not supported in SQLite databases yet!";
+                                response["status"] = 500;
+                                return response;
+                            }
 
-                        auto f_type = getFieldType(old_field.at("type").get<std::string>());
-                        if (!f_type.has_value())
-                        {
-                            tr.rollback();
-                            response["error"] = "Unsupported field type for column " + field_name + "!";
-                            return response;
-                        }
+                            if (t.empty())
+                            {
+                                tr.rollback();
+                                response["error"] = "Field type for " + field_name + " can't be empty!";
+                                return response;
+                            }
 
-                        // Update field data type in our json object ...
-                        old_field["type"] = t;
-                        sql->alter_column(
-                            t_name,
-                            old_field.at("name").get<std::string>(),
-                            Field::toSociType(f_type.value()));
+                            auto f_type = getFieldType(old_field.at("type").get<std::string>());
+                            if (!f_type.has_value())
+                            {
+                                tr.rollback();
+                                response["error"] = "Unsupported field type for column " + field_name + "!";
+                                return response;
+                            }
+
+                            // TODO test on all database types
+                            // Fails on SQLite?
+                            Log::trace("Attempt to change column type ...");
+
+                            // Update field data type in our json object ...
+                            old_field["type"] = t;
+                            sql->alter_column(
+                                t_name,
+                                old_field.at("name").get<std::string>(),
+                                Field::toSociType(f_type.value()));
+                        }
                     }
 
                     auto _type = getFieldType(old_field.value("type", ""));
@@ -535,8 +556,10 @@ namespace mantis
 
                 // Update table name
                 // TODO check if this syntax works for all db types
+                // Works on SQLite
                 *sql << "ALTER TABLE " + t_name + " RENAME TO " + name;
 
+                // Create new table ID and update the json object
                 const auto nId = generateTableId(name);
                 t_schema["id"] = nId;
                 t_schema["name"] = name;
@@ -586,7 +609,7 @@ namespace mantis
             response["error"] = e.what();
             response["status"] = 500;
 
-            Log::critical("Error Updating Table: {}", e.what());
+            Log::critical("Error Updating Table Schema: {}", e.what());
         }
 
         return response;
