@@ -117,34 +117,56 @@ mantis::Field::Field(std::string n, const FieldType t, const bool req, const boo
     {
         if (opts.contains("validator"))
         {
-            validator = opts.at("validator").get<std::string>();
+            // Log::trace("Validator ...? {}", opts["validator"].is_null());
+            if (opts["validator"].is_null())
+                validator = std::nullopt;
+            else
+                validator = opts["validator"];
         }
 
         if (opts.contains("unique"))
         {
-            isUnique = opts.at("unique").get<bool>();
+            // Log::trace("Unique ...? {}", opts["unique"].is_null());
+            if (opts["unique"].is_null())
+                isUnique = false;
+            else
+                isUnique = opts["unique"];
         }
 
         if (opts.contains("defaultValue"))
         {
-            // Handle different types ...
-            // TODO This may/will throw an error, check on that
-            defaultValue = opts.at("defaultValue").get<std::string>();
+            // Log::trace("Default Value ...? {}", opts["defaultValue"].is_null());
+            if (opts["defaultValue"].is_null())
+                defaultValue = std::nullopt;
+            else
+                defaultValue = opts.at("defaultValue").get<std::string>();
         }
 
         if (opts.contains("minValue"))
         {
-            minValue = opts.at("minValue").get<double>();
+            // Log::trace("Min Value ...? {}", opts["minValue"].is_null());
+            if (opts["minValue"].is_null())
+                minValue = std::nullopt;
+            else
+                minValue = opts.at("minValue").get<double>();
         }
 
         if (opts.contains("maxValue"))
         {
-            maxValue = opts.at("maxValue").get<double>();
+            // Log::trace("Max Value ...? {}", opts["maxValue"].is_null());
+            if (opts["maxValue"].is_null())
+                maxValue = std::nullopt;
+            else
+                maxValue = opts.at("maxValue").get<double>();
         }
 
         if (opts.contains("autoGeneratePattern"))
         {
-            autoGeneratePattern = opts.at("autoGeneratePattern").get<std::string>();
+            // Log::trace("Auto-Generate Pattern ...? {}", opts["autoGeneratePattern"].is_null());
+            if (opts["autoGeneratePattern"].is_null())
+                autoGeneratePattern = std::nullopt;
+            else
+                autoGeneratePattern = opts.at("autoGeneratePattern").get<std::string>();
         }
     }
 }
@@ -168,21 +190,25 @@ json mantis::Field::to_json() const
 
 soci::db_type mantis::Field::toSociType() const
 {
-    if (type == FieldType::XML) return soci::db_xml;
-    if (type == FieldType::STRING) return soci::db_string;
-    if (type == FieldType::DOUBLE) return soci::db_double;
-    if (type == FieldType::DATE) return soci::db_date;
-    if (type == FieldType::INT8) return soci::db_int8;
-    if (type == FieldType::UINT8) return soci::db_uint8;
-    if (type == FieldType::INT16) return soci::db_int16;
-    if (type == FieldType::UINT16) return soci::db_uint16;
-    if (type == FieldType::INT32) return soci::db_int32;
-    if (type == FieldType::UINT32) return soci::db_uint32;
-    if (type == FieldType::INT64) return soci::db_int64;
-    if (type == FieldType::UINT64) return soci::db_uint64;
-    if (type == FieldType::BLOB) return soci::db_blob;
-    if (type == FieldType::JSON) return soci::db_string;
-    if (type == FieldType::BOOL) return soci::db_int8;
+    return Field::toSociType(type);
+}
+
+soci::db_type mantis::Field::toSociType(const FieldType& f_type)
+{
+    if (f_type == FieldType::XML) return soci::db_xml;
+    if (f_type == FieldType::STRING || f_type == FieldType::JSON) return soci::db_string;
+    if (f_type == FieldType::DOUBLE) return soci::db_double;
+    if (f_type == FieldType::DATE) return soci::db_date;
+    if (f_type == FieldType::INT8) return soci::db_int8;
+    if (f_type == FieldType::UINT8) return soci::db_uint8;
+    if (f_type == FieldType::INT16) return soci::db_int16;
+    if (f_type == FieldType::UINT16) return soci::db_uint16;
+    if (f_type == FieldType::INT32) return soci::db_int32;
+    if (f_type == FieldType::UINT32) return soci::db_uint32;
+    if (f_type == FieldType::INT64) return soci::db_int64;
+    if (f_type == FieldType::UINT64) return soci::db_uint64;
+    if (f_type == FieldType::BLOB) return soci::db_blob;
+    if (f_type == FieldType::BOOL) return soci::db_int8;
     return soci::db_string;
 }
 

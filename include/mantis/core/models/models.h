@@ -105,9 +105,9 @@ namespace mantis
 
         std::optional<std::string> defaultValue;        // as string, parse based on type
         std::optional<std::string> regexPattern;
-        std::optional<int> minValue;
-        std::optional<int> maxValue;
-        std::optional<bool> isUnique;
+        std::optional<double> minValue;
+        std::optional<double> maxValue;
+        bool isUnique = false;
         std::optional<std::string> validator;
         std::optional<std::string> autoGeneratePattern; // regex for auto-gen strings
 
@@ -116,6 +116,7 @@ namespace mantis
 
         [[nodiscard]] json to_json() const;
         [[nodiscard]] soci::db_type toSociType() const;
+        [[nodiscard]] static soci::db_type toSociType(const FieldType& f_type);
     };
 
     // Represents a generic table in the system

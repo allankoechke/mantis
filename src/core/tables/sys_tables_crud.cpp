@@ -336,21 +336,21 @@ namespace mantis
                     return response;
                 }
 
-                // Check if the field exists or not
-                auto it = std::find_if(t_fields.begin(), t_fields.end(), [&](const auto& f)
+                int found_index = -1, i=0;
+                for (const auto& _field : t_fields)
                 {
-                    return f.value("name", "") == field_name;
-                });
-
-                bool is_new_field = true;
-                json _field_opts;
-                if (it != t_fields.end())
-                {
-                    _field_opts = *it;
-                    is_new_field = false;
+                    Log::trace("Field: {}", _field.dump());
+                    if (_field.value("name", "") == field_name)
+                    {
+                        found_index = i;
+                        break;
+                    }
+                    i++;
                 }
 
-                if (is_new_field)
+                // If we didn't find any matching field, then, lets treat it like a new
+                // field. We shall create a new Field object and alter the table structure.
+                if (found_index == -1)
                 {
                     json field_opts;
                     if (field.contains("autoGeneratePattern"))
@@ -391,15 +391,117 @@ namespace mantis
                     Field f{field_name, field_type.value(), field_required, field_primaryKey, field_system, field_opts};
                     t_fields.push_back(f.to_json());
 
-                    // Execute SQL
-                    *sql << sql->get_backend()->add_column(t_name, field_name, f.toSociType(), 0, 0);
+                    // Execute SQL to create the column (field)
+                    std::string query = sql->get_backend()->add_column(t_name, field_name, f.toSociType(), 0, 0);
+                    query += field_required ? " NOT NULL" : ""; // Add Not Null constraint
+                    *sql << query;
 
-                    if (field_unique) // TODO remove unique constraint later ...
+                    // Add unique constraint to the created column
+                    if (field_unique)
                         *sql << "ALTER TABLE " + t_name + " ADD " + sql->get_backend()->constraint_unique(
                             "unique_" + field_name, field_name);
-                } else
+                }
+                else
                 {
-                    // TODO Update existing field ...
+                    // Get the found json object, we'll use it to update data before dumping it back.
+                    auto old_field = t_fields.at(found_index);
+
+                    if (field.contains("autoGeneratePattern"))
+                        old_field["autoGeneratePattern"] = field["autoGeneratePattern"];
+
+                    if (field.contains("defaultValue"))
+                        old_field["defaultValue"] = field["defaultValue"];
+
+                    if (field.contains("maxValue"))
+                        old_field["maxValue"] = field["maxValue"];
+
+                    if (field.contains("minValue"))
+                        old_field["minValue"] = field["minValue"];
+
+                    if (field.contains("validator"))
+                        old_field["validator"] = field["validator"];
+
+                    if (field.contains("unique"))
+                    {
+                        const auto is_unique = field.value("unique", false);
+                        old_field["unique"] = is_unique;
+
+                        if (is_unique)
+                            *sql << "ALTER TABLE " + t_name + " ADD " + sql->get_backend()->constraint_unique(
+                                "unique_" + field_name, field_name);
+
+                        // Removing unique constraint is database specific
+                        // TODO look into removing unique constraint later
+                    }
+
+                    if (field.contains("new_name"))
+                    {
+                        const auto new_name = field.value("new_name", "");
+                        old_field["name"] = new_name;
+
+                        if (new_name.empty())
+                        {
+                            tr.rollback();
+                            response["error"] = "Field new_name can't be empty!";
+                            return response;
+                        }
+
+                        // TODO maybe check that the table name doesn't exist yet, but, the db will throw an error
+
+                        std::string backend_name = sql->get_backend()->get_backend_name();
+                        auto rename_sql = "ALTER TABLE " + t_name + " RENAME COLUMN " + field_name + " TO " + new_name;
+
+                        *sql << rename_sql;
+                    }
+
+                    if (field.contains("type"))
+                    {
+                        const auto t = old_field.value("type", "");
+                        if (t.empty())
+                        {
+                            tr.rollback();
+                            response["error"] = "Field type for " + field_name + " can't be empty!";
+                            return response;
+                        }
+
+                        auto f_type = getFieldType(old_field.at("type").get<std::string>());
+                        if (!f_type.has_value())
+                        {
+                            tr.rollback();
+                            response["error"] = "Unsupported field type for column " + field_name + "!";
+                            return response;
+                        }
+
+                        // Update field data type in our json object ...
+                        old_field["type"] = t;
+                        sql->alter_column(
+                            t_name,
+                            old_field.at("name").get<std::string>(),
+                            Field::toSociType(f_type.value()));
+                    }
+
+                    auto _type = getFieldType(old_field.value("type", ""));
+                    if (!_type.has_value())
+                    {
+                        tr.rollback();
+                        Log::critical("Error parsing field type of {} in {}", old_field.value("type", ""), field_name);
+
+                        response["error"] = "Error parsing field type!";
+                        return response;
+                    }
+
+                    // Create new field object with the updated data then dump it back to the `t_fields` array.
+                    Field f{
+                        old_field.at("name").get<std::string>(),
+                        _type.value(),
+                        old_field.value("required", false),
+                        old_field.value("primaryKey", false),
+                        false,
+                        old_field
+                    };
+
+                    // Replace field in place in the array
+                    t_fields[found_index] = f.to_json();
                 }
             }
 
