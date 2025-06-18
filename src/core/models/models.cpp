@@ -286,7 +286,7 @@ mantis::AuthTable::AuthTable(MantisApp* app): Table(app)
         Field("password", FieldType::STRING, true, false, true,
               json{{"minValue", 8}, {"validator", "password"}}),
         Field("name", FieldType::STRING, true, false, true,
-              json{{"unique", true}, {"minValue", 6}})
+              json{{"unique", false}, {"minValue", 2}})
     };
 }
 

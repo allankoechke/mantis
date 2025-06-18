@@ -1,6 +1,6 @@
 #include "../../include/mantis/core/router.h"
 
-#include "../../include/mantis/utils.h"
+#include "../../include/mantis/utils/utils.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/tables/tables.h"

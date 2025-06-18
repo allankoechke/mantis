@@ -9,7 +9,7 @@
 #include "../../../include/mantis/core/models/models.h"
 #include "../../../include/mantis/core/tables/tables.h"
 #include "../../../include/mantis/core/logging.h"
-#include "../../../include/mantis/utils.h"
+#include "../../../include/mantis/utils/utils.h"
 
 #include <soci/soci.h>
 #include "private/soci-mktime.h"

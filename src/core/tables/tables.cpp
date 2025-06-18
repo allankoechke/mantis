@@ -4,7 +4,7 @@
 
 #include "../../../include/mantis/core/tables/tables.h"
 #include "../../../include/mantis/core/database.h"
-#include "../../../include/mantis/utils.h"
+#include "../../../include/mantis/utils/utils.h"
 
 namespace mantis
 {
