@@ -5,36 +5,98 @@
 #include <gtest/gtest.h>
 #include <httplib.h>
 #include  <mantis/app/app.h>
-#include "mantis/mantis.h"
 
 class APITest : public ::testing::Test {
 protected:
     void SetUp() override {
-        app = std::make_unique<mantis::MantisApp>();
-        // app->initialize();
-        // app->parseArgs(0, nullptr); // Use defaults
+        // Just create the HTTP client - server is already running
+        client = std::make_unique<httplib::Client>("http://localhost:8081");
 
-        // Start server in background thread
-        server_thread = std::thread([this]() {
-            app->run();
-        });
+        // Clean up any test data from previous tests
+        cleanupTestData();
 
-        // Wait for server to start
-        std::this_thread::sleep_for(std::chrono::milliseconds(100));
-
-        client = std::make_unique<httplib::Client>("http://localhost:7070");
+        // Create test tables for this test suite
+        createTestTableWithRules();
     }
 
     void TearDown() override {
-        app->close();
-        if (server_thread.joinable()) {
-            server_thread.join();
-        }
+        // Clean up test data after each test
+        cleanupTestData();
     }
 
-    std::unique_ptr<mantis::MantisApp> app;
+    void cleanupTestData() const
+    {
+        // Delete test tables and data created by this test
+        client->Delete("/api/v1/tables/test_permissions");
+        client->Delete("/api/v1/tables/admin_only");
+        // etc.
+    }
+
+    void createTestTableWithRules() const
+    {
+        // Create a table with specific access rules for testing
+        const nlohmann::json table_schema = {
+            {"name", "test_permissions"},
+            {"type", "base"},
+            {"listRule", "auth.table == 'users'"},           // Only users can list
+            {"getRule", "auth.id == req.id"},                // Users can only get their own records
+            {"addRule", "auth.table == 'users'"},            // Only users can add
+            {"updateRule", "auth.id == req.id"},             // Users can only update their own records
+            {"deleteRule", "auth.table == '__admin'"},       // Only admins can delete
+            {"fields", nlohmann::json::array({
+                {{"name", "title"}, {"type", "string"}, {"required", true}},
+                {{"name", "user_id"}, {"type", "string"}, {"required", true}}
+            })}
+        };
+
+        // Create table through system API
+        auto result = client->Post("/api/v1/tables",
+            table_schema.dump(), "application/json");
+    }
+
+    [[nodiscard]]
+    std::string createUserAndGetToken(const std::string& email) const
+    {
+        // Create user
+        const nlohmann::json user = {
+            {"name", "Test User"},
+            {"email", email},
+            {"password", "testpass123"}
+        };
+
+        client->Post("/api/v1/users", user.dump(), "application/json");
+
+        // Login and get token
+        const nlohmann::json login = {{"email", email}, {"password", "testpass123"}};
+        auto auth_result = client->Post("/api/v1/users/auth-with-password",
+            login.dump(), "application/json");
+
+        auto response = nlohmann::json::parse(auth_result->body);
+        return response["data"]["token"].get<std::string>();
+    }
+
+    [[nodiscard]]
+    std::string createAdminAndGetToken() const
+    {
+        // Create admin user
+        const nlohmann::json admin = {
+            {"name", "Admin User"},
+            {"email", "admin@test.com"},
+            {"password", "adminpass123"}
+        };
+
+        client->Post("/api/v1/admins", admin.dump(), "application/json");
+
+        // Login as admin
+        const nlohmann::json login = {{"email", "admin@test.com"}, {"password", "adminpass123"}};
+        auto auth_result = client->Post("/api/v1/admins/auth-with-password",
+            login.dump(), "application/json");
+
+        auto response = nlohmann::json::parse(auth_result->body);
+        return response["data"]["token"].get<std::string>();
+    }
+
     std::unique_ptr<httplib::Client> client;
-    std::thread server_thread;
 };
 
 TEST_F(APITest, GetAllRecordsFromTable) {

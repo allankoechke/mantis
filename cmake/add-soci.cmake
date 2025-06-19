@@ -24,7 +24,7 @@ add_subdirectory ( ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/soci )
 
 
 target_link_libraries ( mantis
-        PRIVATE
+        PUBLIC
         soci_core
         soci_sqlite3
         #        soci_empty

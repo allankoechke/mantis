@@ -3,10 +3,10 @@
 //
 #include <gtest/gtest.h>
 #include "mantis/core/jwtprovider.h"
-#include <mantis/mantis.h>
+#include <nlohmann/json.hpp>
 
 TEST(JWTTest, CreateValidToken) {
-    nlohmann::json claims = {{"id", "123"}, {"table", "users"}};
+    const nlohmann::json claims = {{"id", "123"}, {"table", "users"}};
     auto result = mantis::JWT::createJWTToken(claims, "test_secret");
 
     EXPECT_TRUE(result.at("error").get<std::string>().empty());
@@ -14,7 +14,7 @@ TEST(JWTTest, CreateValidToken) {
 }
 
 TEST(JWTTest, VerifyValidToken) {
-    nlohmann::json claims = {{"id", "123"}, {"table", "users"}};
+    const nlohmann::json claims = {{"id", "123"}, {"table", "users"}};
     auto token_result = mantis::JWT::createJWTToken(claims, "test_secret");
     auto verify_result = mantis::JWT::verifyJWTToken(
         token_result["token"], "test_secret");

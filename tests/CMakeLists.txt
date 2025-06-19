@@ -31,19 +31,26 @@ endif()
 
 # Create test executable
 add_executable(mantis_tests
+        main.cpp
+        test_environment.h
         unit/test_database.cpp
         unit/test_jwt.cpp
         unit/test_models.cpp
-        # unit/test_validators.cpp
         integration/test_api_endpoints.cpp
         integration/test_auth_flow.cpp
-        integration/test_access_permissions.cpp
+        integration/test_access_permissions_base.cpp
+        integration/test_crud_add_permissions.cpp
+        integration/test_crud_get_permissions.cpp
+        integration/test_crud_delete_permissions.cpp
+        integration/test_crud_list_permissions.cpp
+        integration/test_crud_update_permissions.cpp
 )
 
 # Link libraries
 target_link_libraries(mantis_tests
         PRIVATE
-        mantis  # Link to main library
+        mantis
+        GTest::gtest
         GTest::gtest_main
         GTest::gmock_main
 )
@@ -53,6 +60,12 @@ target_include_directories(mantis_tests
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
+
+if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+    target_compile_options(mantis_tests PRIVATE
+            -Wa,-mbig-obj  # Tell assembler to handle large objects
+    )
+endif()
 
 # Register tests with CTest
 include(GoogleTest)

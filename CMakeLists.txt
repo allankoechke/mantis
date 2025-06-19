@@ -93,7 +93,7 @@ add_subdirectory(3rdParty/l8w8jwt)
 include(cmake/cparse.cmake)
 
 # Add to CMakeLists.txt
-option(MANTIS_BUILD_TESTS "Build tests" OFF)
+option(MANTIS_BUILD_TESTS "Build tests" ON)
 
 if(MANTIS_BUILD_TESTS)
     enable_testing()
@@ -102,7 +102,7 @@ endif()
 
 # Link to libs
 target_link_libraries(mantis
-    PRIVATE
+    PUBLIC
         httplib::httplib
         spdlog::spdlog
         l8w8jwt

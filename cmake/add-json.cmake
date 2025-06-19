@@ -13,7 +13,7 @@ add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/json)
 
 # Link to libs
 target_link_libraries(mantis
-        PRIVATE
+        PUBLIC
         nlohmann_json::nlohmann_json
 )
 
