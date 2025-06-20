@@ -9,6 +9,8 @@
 #include "mantis/app/app.h"
 #include <httplib.h>
 
+#include "mantis/core/models/models.h"
+
 class MantisTestEnvironment final : public ::testing::Environment {
 public:
     void SetUp() override {

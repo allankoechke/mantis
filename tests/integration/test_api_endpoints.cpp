@@ -109,14 +109,16 @@ TEST_F(APITest, GetAllRecordsFromTable) {
 }
 
 TEST_F(APITest, CreateAndRetrieveRecord) {
-    nlohmann::json record = {{"name", "Test User"}, {"email", "test@example.com"}};
+    nlohmann::json record;
+    record["name"] = "Test User";
+    record["email"] = "createandretrieve@record.com";
 
     auto create_result = client->Post("/api/v1/users",
         record.dump(), "application/json");
     EXPECT_EQ(create_result->status, 201);
 
     auto response = nlohmann::json::parse(create_result->body);
-    std::string record_id = response["data"]["id"];
+    const std::string record_id = response["data"]["id"];
 
     auto get_result = client->Get("/api/v1/users/" + record_id);
     EXPECT_EQ(get_result->status, 200);
