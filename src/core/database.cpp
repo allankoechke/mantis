@@ -5,7 +5,7 @@
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/logging.h"
 #include "../../include/mantis/app/app.h"
-#include "../../include/mantis/utils.h"
+#include "../../include/mantis/utils/utils.h"
 #include "../../include/mantis/core/models/models.h"
 
 #include <soci/sqlite3/soci-sqlite3.h>

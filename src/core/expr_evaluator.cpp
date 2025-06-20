@@ -13,11 +13,11 @@ namespace mantis
         // cparse_startup();
     }
 
-    bool ExprEvaluator::evaluate(const std::string& expr, const cparse::TokenMap& vars)
+    bool ExprEvaluator::evaluate(const std::string& expr, const TokenMap& vars)
     {
         try
         {
-            cparse::packToken result = cparse::calculator::calculate(expr.c_str(), vars);
+            const packToken result = calculator::calculate(expr.c_str(), vars);
             return result.asBool(); // true/false
         } catch (std::exception& e)
         {
@@ -26,13 +26,13 @@ namespace mantis
         }
     }
 
-    bool ExprEvaluator::evaluate(const std::string& expr, const nlohmann::json& vars)
+    bool ExprEvaluator::evaluate(const std::string& expr, const json& vars)
     {
         const auto t_vars = jsonToTokenMap(vars);
         return evaluate(expr, t_vars);
     }
 
-    TokenMap ExprEvaluator::jsonToTokenMap(const nlohmann::json& j)
+    TokenMap ExprEvaluator::jsonToTokenMap(const json& j)
     {
         cparse::TokenMap map;
 

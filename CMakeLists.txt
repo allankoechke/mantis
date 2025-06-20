@@ -18,8 +18,14 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+
+# Add main executable
 add_executable(mantisapp
         src/main.cpp
+)
+
+# Add library
+add_library(mantis
         include/mantis/mantis.h
         src/app/app.cpp
         include/mantis/app/app.h
@@ -27,7 +33,7 @@ add_executable(mantisapp
         include/mantis/core/database.h
         src/core/models/models.cpp
         include/mantis/core/models/models.h
-        include/mantis/utils.h
+        include/mantis/utils/utils.h
         src/core/logging.cpp
         include/mantis/core/logging.h
         src/core/router.cpp
@@ -81,17 +87,22 @@ add_subdirectory(3rdParty/spdlog)
 include(cmake/add-json.cmake)
 include(cmake/add-soci.cmake)
 
-# Add cpp-jwt library
-#set(CPP_JWT_BUILD_EXAMPLES OFF)
-#set(CPP_JWT_BUILD_TESTS OFF)
 add_subdirectory(3rdParty/l8w8jwt)
 
 # Add the cparse module for expr evaluation
 include(cmake/cparse.cmake)
 
+# Add to CMakeLists.txt
+option(MANTIS_BUILD_TESTS "Build tests" ON)
+
+if(MANTIS_BUILD_TESTS)
+    enable_testing()
+    add_subdirectory(tests)
+endif()
+
 # Link to libs
-target_link_libraries(mantisapp
-    PRIVATE
+target_link_libraries(mantis
+    PUBLIC
         httplib::httplib
         spdlog::spdlog
         l8w8jwt
@@ -99,11 +110,16 @@ target_link_libraries(mantisapp
 )
 
 # Include directories
-target_include_directories(mantisapp
-    PRIVATE
+target_include_directories(mantis
+        PUBLIC
+        ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/argparse/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse
+)
+
+target_link_libraries(mantisapp
+        PRIVATE mantis
 )

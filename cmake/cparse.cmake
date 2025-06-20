@@ -22,28 +22,3 @@ target_include_directories(cparse PUBLIC
 if(CMAKE_SYSTEM_NAME STREQUAL "Linux")
     target_link_options(cparse PRIVATE -O1)
 endif()
-
-# Optional: Build test executable
-#option(BUILD_TESTS "Build test executable" OFF)
-#if(BUILD_TESTS)
-#    add_executable(test-shunting-yard
-#            ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/test-shunting-yard.cpp
-#            ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/catch.cpp
-#            ${CORE_SOURCES}
-#            ${BUILTIN_SOURCES}
-#    )
-#
-#    target_compile_definitions(test-shunting-yard PRIVATE DEBUG)
-#    target_compile_options(test-shunting-yard PRIVATE -g)
-#endif()
-
-## Installation
-#install(TARGETS cparse
-#        ARCHIVE DESTINATION lib
-#        LIBRARY DESTINATION lib
-#        RUNTIME DESTINATION bin
-#)
-#
-## Install headers
-#file(GLOB HEADERS "*.h")
-#install(FILES ${HEADERS} DESTINATION include/cparse)

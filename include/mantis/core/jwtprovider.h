@@ -12,6 +12,8 @@
 #include "l8w8jwt/claim.h"
 #include <cstring>
 
+#include "logging.h"
+
 namespace mantis
 {
     using json = nlohmann::json;
@@ -27,6 +29,14 @@ namespace mantis
                 res["error"] = "The claims expect 'id' and 'table' params.";
                 return res;
             }
+
+            // DO NOT REMOVE `id_str` and/or `table_str`, else, extracting json values
+            // directly in the `id`/`table` var assignment below will yield garbage and crash
+            // the token encode/decode segment below.
+            auto id_str = claims_params.at("id").get<std::string>();
+            auto table_str = claims_params.at("table").get<std::string>();
+            const auto id = const_cast<char*>(id_str.c_str());
+            const auto table = const_cast<char*>(table_str.c_str());
 
             char* jwt = nullptr;
             size_t jwt_length = 0;
@@ -49,10 +59,7 @@ namespace mantis
             // Create additional payload claims for 'id' and 'table'
             l8w8jwt_claim additional_claims[2];
 
-            const auto id = const_cast<char*>(claims_params.value("id", "").c_str());
-            const auto table = const_cast<char*>(claims_params.value("table", "").c_str());
-
-            std::cout << id << " : " << table << std::endl;
+            std::cout << "Dump: " << id << " : " << table << std::endl;
 
             additional_claims[0] = {
                 .key = const_cast<char*>("id"),

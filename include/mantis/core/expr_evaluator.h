@@ -6,12 +6,9 @@
 #define EXPR_EVALUATOR_H
 
 #include <string>
-#include <nlohmann/json.hpp>
-
-// #define STATIC_CPARSE_STARTUP
 #include <shunting-yard.h>
 #include <containers.h>
-
+#include <nlohmann/json.hpp>
 
 namespace mantis
 {
@@ -24,11 +21,11 @@ namespace mantis
     {
         ExprEvaluator();
 
-        auto evaluate(const std::string& expr, const cparse::TokenMap& vars) -> bool;
+        auto evaluate(const std::string& expr, const TokenMap& vars) -> bool;
 
-        auto evaluate(const std::string& expr, const nlohmann::json& vars) -> bool;
+        auto evaluate(const std::string& expr, const json& vars) -> bool;
 
-        auto jsonToTokenMap(const nlohmann::json& j) -> TokenMap;
+        auto jsonToTokenMap(const json& j) -> TokenMap;
     };
 } // mantis
 
