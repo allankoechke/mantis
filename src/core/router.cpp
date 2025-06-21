@@ -19,7 +19,7 @@ mantis::Router::Router()
 
     m_adminTable = std::make_shared<TableUnit>(admin.to_json());
     m_tableRoutes = std::make_shared<SysTablesUnit>("__tables",
-          TableUnit::generateTableId("__tables"), "base");
+                                                    TableUnit::generateTableId("__tables"), "base");
 
     // Override the route display name to easier names. This means that,
     // instead of `<root>/__admins` -> <root>/admins
@@ -51,7 +51,7 @@ bool mantis::Router::listen() const
 {
     try
     {
-        return  MantisApp::instance().http().listen( MantisApp::instance().host(),  MantisApp::instance().port());
+        return MantisApp::instance().http().listen(MantisApp::instance().host(), MantisApp::instance().port());
     }
     catch (const std::exception& e)
     {
@@ -67,7 +67,7 @@ bool mantis::Router::listen() const
 
 void mantis::Router::close()
 {
-     MantisApp::instance().http().close();
+    MantisApp::instance().http().close();
     m_routes.clear();
 }
 
@@ -82,11 +82,209 @@ void mantis::Router::restart()
     // }
 }
 
+json mantis::Router::addRoute(const std::string& table)
+{
+    Log::debug("{}", __func__);
+
+    if (trim(table).empty())
+    {
+        json res;
+        res["success"] = false;
+        res["error"] = "Table name can't be empty";
+        return res;
+    }
+
+    try
+    {
+        const auto sql = MantisApp::instance().db().session();
+
+        soci::row row;
+        const std::string query = "SELECT id, name, type, schema, has_api FROM __tables WHERE name = :name";
+        *sql << query, soci::use(table), soci::into(row);
+
+        if (!sql->got_data())
+        {
+            json res;
+            res["success"] = false;
+            res["error"] = "No table found with the name " + table;
+            return res;
+        }
+
+        const auto id = row.get<std::string>("id");
+        const auto name = row.get<std::string>("name");
+        const auto type = row.get<std::string>("type");
+        const auto hasApi = row.get<bool>("has_api");
+
+        // If `hasApi` is set, schema is valid, then, add API endpoints
+        if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty()))
+        {
+            // We need to persist this instance, else it'll be cleaned up causing a crash
+            const auto tableUnit = std::make_shared<TableUnit>(schema);
+            tableUnit->setTableName(name);
+            tableUnit->setTableId(id);
+
+            if (!tableUnit->setupRoutes())
+                return false;
+
+            m_routes.push_back(tableUnit);
+        }
+    }
+    catch (const std::exception& e)
+    {
+        json res;
+        res["success"] = false;
+        res["error"] = e.what();
+        return res;
+    }
+
+    json res;
+    res["success"] = true;
+    res["error"] = "";
+    return res;
+}
+
+json mantis::Router::updateRoute(const json& table_data)
+{
+    Log::debug("{}", __func__);
+
+    json res;
+    res["success"] = false;
+    res["error"] = "";
+
+    if (table_data.is_null() || table_data.empty())
+    {
+        res["error"] = "Table data can't be empty!";
+        return res;
+    }
+
+    if (!table_data.contains("name") || table_data["name"].is_null() || table_data["name"].empty())
+    {
+        res["error"] = "Table name can't be null/empty!";
+        return res;
+    }
+
+    if (!table_data.contains("old_name") || table_data["old_name"].is_null() || table_data["old_name"].empty())
+    {
+        res["error"] = "Table old name can't be null/empty!";
+        return res;
+    }
+
+    if (!table_data.contains("old_type") || table_data["old_type"].is_null() || table_data["old_type"].empty())
+    {
+        res["error"] = "Table type is required!";
+        return res;
+    }
+
+    const auto table_name = table_data.at("name").get<std::string>();
+    const auto table_old_name = table_data.at("old_name").get<std::string>();
+    const auto table_type = table_data.at("old_type").get<std::string>();
+
+    // Let's find and remove existing object
+    const auto it = std::find_if(m_routes.begin(), m_routes.end(), [&](const auto& route)
+    {
+        return route->tableName() == table_name;
+    });
+
+    if (it == m_routes.end())
+    {
+        res["error"] = "TableUnit not found!";
+        return res;
+    }
+
+    // Also, check if we have defined some routes for this one ...
+    const auto basePath = "/api/v1/" + table_old_name;
+    MantisApp::instance().http().routeRegistry().remove("GET", basePath);
+    MantisApp::instance().http().routeRegistry().remove("GET", basePath + "/:id");
+
+    if (table_type != "view")
+    {
+        MantisApp::instance().http().routeRegistry().remove("POST", basePath);
+        MantisApp::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
+        MantisApp::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
+    }
+
+    if (table_type == "auth")
+    {
+        MantisApp::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
+    }
+
+    // Remove tableUnit instance for the instance
+    m_routes.erase(it);
+
+    return addRoute(table_name);
+}
+
+json mantis::Router::removeRoute(const json& table_data)
+{
+    Log::debug("{}", __func__);
+
+    json res;
+    res["success"] = false;
+    res["error"] = "";
+
+    if (table_data.is_null() || table_data.empty())
+    {
+        res["error"] = "Table data can't be empty!";
+        return res;
+    }
+
+    if (!table_data.contains("name") || table_data["name"].is_null() || table_data["name"].empty())
+    {
+        res["error"] = "Table name can't be null/empty!";
+        return res;
+    }
+
+    if (!table_data.contains("type") || table_data["type"].is_null() || table_data["type"].empty())
+    {
+        res["error"] = "Table type is required!";
+        return res;
+    }
+
+    const auto table_name = table_data.at("name").get<std::string>();
+    const auto table_type = table_data.at("type").get<std::string>();
+
+    // Let's find and remove existing object
+    const auto it = std::find_if(m_routes.begin(), m_routes.end(), [&](const auto& route)
+    {
+        return route->tableName() == table_name;
+    });
+
+    if (it == m_routes.end())
+    {
+        res["error"] = "TableUnit not found!";
+        return res;
+    }
+
+    // Also, check if we have defined some routes for this one ...
+
+    const auto basePath = "/api/v1/" + table_name;
+    MantisApp::instance().http().routeRegistry().remove("GET", basePath);
+    MantisApp::instance().http().routeRegistry().remove("GET", basePath + "/:id");
+
+    if (table_type != "view")
+    {
+        MantisApp::instance().http().routeRegistry().remove("POST", basePath);
+        MantisApp::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
+        MantisApp::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
+    }
+
+    if (table_type == "auth")
+    {
+        MantisApp::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
+    }
+
+    // Remove tableUnit instance for the instance
+    m_routes.erase(it);
+
+    res["success"] = true;
+    return res;
+}
+
 bool mantis::Router::generateTableCrudApis()
 {
     Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
 
-    const auto sql =  MantisApp::instance().db().session();
+    const auto sql = MantisApp::instance().db().session();
 
     // id created updated schema has_api
     const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
@@ -137,7 +335,7 @@ bool mantis::Router::generateAdminCrudApis() const
         }
 
         // Setup Admin Dashboard
-         MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
+        MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
             Log::debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
 

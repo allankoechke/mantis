@@ -75,7 +75,7 @@ namespace mantis
                       const std::vector<Middleware>& middlewares);
 
         const RouteHandler* find(const std::string& method, const std::string& path) const;
-        // TODO const RouteHandler* remove(const std::string& method, const std::string& path);
+        json remove(const std::string& method, const std::string& path);
     };
 
     class HttpUnit
@@ -103,6 +103,8 @@ namespace mantis
         void close();
 
         static Context& context();
+
+        RouteRegistry& routeRegistry();
 
     private:
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);

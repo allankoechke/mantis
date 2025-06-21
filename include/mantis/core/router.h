@@ -3,9 +3,12 @@
 
 #include <memory>
 #include <vector>
+#include <nlohmann/json.hpp>
 
 namespace mantis
 {
+    using json = nlohmann::json;
+
     class TableUnit;
     class SysTablesUnit;
 
@@ -20,6 +23,12 @@ namespace mantis
         bool listen() const;
         void close();
         void restart();
+
+        // Manage routes
+        [[nodiscard]]
+        json addRoute(const std::string& table);
+        json updateRoute(const json& table_data = json::object());
+        json removeRoute(const json& table_data = json::object());
 
     private:
         bool generateTableCrudApis();
