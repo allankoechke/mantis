@@ -17,7 +17,6 @@ namespace mantis
 
     class Validator
     {
-    private:
         std::unordered_map<std::string, json> m_validators;
 
     public:
@@ -114,9 +113,14 @@ namespace mantis
         // Convenience constructor
         Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false, json opts = json::object());
 
-        [[nodiscard]] json to_json() const;
-        [[nodiscard]] soci::db_type toSociType() const;
-        [[nodiscard]] static soci::db_type toSociType(const FieldType& f_type);
+        [[nodiscard]]
+        json to_json() const;
+
+        [[nodiscard]]
+        soci::db_type toSociType() const;
+
+        [[nodiscard]]
+        static soci::db_type toSociType(const FieldType& f_type);
     };
 
     // Represents a generic table in the system
@@ -136,21 +140,21 @@ namespace mantis
         Rule updateRule;
         Rule deleteRule;
 
-        // Pointer to main app instance,
-        // for access to get database session
-        MantisApp* m_app;
+        // Constructor
+        Table();
 
-        explicit Table(MantisApp* app);
+        [[nodiscard]]
+        virtual json to_json() const;
 
-        [[nodiscard]] virtual json to_json() const;
-        [[nodiscard]] virtual std::string to_sql() const;
+        [[nodiscard]]
+        virtual std::string to_sql() const;
     };
 
     // Specific model for Base table (user-defined)
     struct BaseTable : Table {
         bool enableSync = true;
 
-        explicit BaseTable(MantisApp* app);
+        BaseTable();
     };
 
     // Specific model for Auth table
@@ -161,7 +165,7 @@ namespace mantis
         bool enableSync = true;
 
         // Member Functions
-        explicit AuthTable(MantisApp* app);
+        AuthTable();
         ~AuthTable() override = default;
     };
 
@@ -170,20 +174,20 @@ namespace mantis
         std::string sourceSQL;
         bool enableSync = false;
 
-        explicit ViewTable(MantisApp* app);
+        ViewTable();
     };
 
     struct SystemTable final : BaseTable {
         bool enableSync = true;
 
-        explicit SystemTable(MantisApp* app);
+        SystemTable();
         ~SystemTable() override = default;
     };
 
     struct AdminTable final : AuthTable {
         bool enableSync = true;
 
-        explicit AdminTable(MantisApp* app);
+        AdminTable();
     };
 }
 

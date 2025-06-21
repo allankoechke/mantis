@@ -54,9 +54,9 @@ size_t mantis::RouteKeyHash::operator()(const RouteKey& k) const
 }
 
 void mantis::RouteRegistry::add(const std::string& method,
-                                     const std::string& path,
-                                     RouteHandlerFunc handler,
-                                     const std::vector<Middleware>& middlewares)
+                                const std::string& path,
+                                RouteHandlerFunc handler,
+                                const std::vector<Middleware>& middlewares)
 {
     routes[{method, path}] = {middlewares, handler};
 }
@@ -65,6 +65,26 @@ const mantis::RouteHandler* mantis::RouteRegistry::find(const std::string& metho
 {
     const auto it = routes.find({method, path});
     return it != routes.end() ? &it->second : nullptr;
+}
+
+mantis::json mantis::RouteRegistry::remove(const std::string& method, const std::string& path)
+{
+    json res;
+    res["error"] = "";
+
+    const auto it = routes.find({method, path});
+    if (it == routes.end())
+    {
+        // We didn't find that route, return error
+        res["error"] = "Route for " + method + " " + path + " not found!";
+        Log::warn("Route for {} {} not found!", method, path);
+        return res;
+    }
+
+    // Remove item found at the iterator
+    routes.erase(it);
+    Log::info("Route for {} {} erased!", method, path);
+    return res;
 }
 
 mantis::HttpUnit::HttpUnit()
@@ -85,28 +105,41 @@ mantis::HttpUnit::HttpUnit()
         const auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             end_time - req.start_time_).count();
 
-        Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms", req.version, req.method, req.path, res.status,
-                     duration_ms);
+        if (res.status < 400)
+        {
+            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
+                      req.version, req.method, req.path, res.status, duration_ms);
+        }
+        else
+        {
+            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\tData: {}",
+                      req.version, req.method, req.path, res.status, duration_ms, res.body);
+        }
     });
 
     // Set Error Handler
     server.set_error_handler([]([[maybe_unused]] const Request& req, Response& res)
     {
-        if (res.status == 404)
+        if (res.body.empty())
         {
             json response;
-            response["status"] = 404;
-            response["message"] = "Resource Not Found";
+            response["status"] = res.status;
             response["data"] = json::object();
 
-            res.status = 404;
+            if (res.status == 404)
+                response["error"] = "Resource not found!";
+            else if (res.status >= 500)
+                response["error"] = "Internal server error, try again later!";
+            else
+                response["error"] = "Something went wrong here!";
+
             res.set_content(response.dump(), "application/json");
         }
     });
 }
 
 void mantis::HttpUnit::Get(const std::string& path, RouteHandlerFunc handler,
-                             std::initializer_list<Middleware> middlewares)
+                           std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -115,7 +148,7 @@ void mantis::HttpUnit::Get(const std::string& path, RouteHandlerFunc handler,
 }
 
 void mantis::HttpUnit::Post(const std::string& path, RouteHandlerFunc handler,
-                              std::initializer_list<Middleware> middlewares)
+                            std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -124,7 +157,7 @@ void mantis::HttpUnit::Post(const std::string& path, RouteHandlerFunc handler,
 }
 
 void mantis::HttpUnit::Patch(const std::string& path, RouteHandlerFunc handler,
-                               std::initializer_list<Middleware> middlewares)
+                             std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -133,7 +166,7 @@ void mantis::HttpUnit::Patch(const std::string& path, RouteHandlerFunc handler,
 }
 
 void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
-                                std::initializer_list<Middleware> middlewares)
+                              std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -146,7 +179,7 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
     std::cout << std::endl;
     std::string endpoint = host + ":" + std::to_string(port);
     Log::info("Starting Servers: \n\t API Endpoints: http://{}/api/v1/ \n\t Admin Dashboard: http://{}/admin",
-        endpoint, endpoint);
+              endpoint, endpoint);
 
     if (!server.listen(host, port))
     {
@@ -169,6 +202,11 @@ mantis::Context& mantis::HttpUnit::context()
     return current_context;
 }
 
+mantis::RouteRegistry& mantis::HttpUnit::routeRegistry()
+{
+    return registry;
+}
+
 void mantis::HttpUnit::route(
     MethodBinder bind_method,
     const std::string& method,
@@ -186,7 +224,7 @@ void mantis::HttpUnit::route(
         {
             json response;
             response["status"] = 404;
-            response["message"] = "Resource Not Found";
+            response["route"] = "Route not found!";
             response["data"] = json::object();
 
             res.status = 404;

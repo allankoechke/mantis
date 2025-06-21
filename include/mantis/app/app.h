@@ -6,6 +6,7 @@
 #define APP_H
 
 #include <string>
+#include <mutex>
 #include <filesystem>
 #include <argparse/argparse.hpp>
 #include "../core/expr_evaluator.h"
@@ -19,10 +20,10 @@
 #endif
 
 
-namespace fs = std::filesystem;
-
 namespace mantis
 {
+    namespace fs = std::filesystem;
+
     class DatabaseUnit;
     class HttpUnit;
     class LoggingUnit;
@@ -43,29 +44,40 @@ namespace mantis
         explicit MantisApp(int argc = 0, char** argv = nullptr);
         ~MantisApp();
 
+        void init();
+        static MantisApp& instance();
+
+        [[nodiscard]]
         int run() const;
         void close() const;
         static int quit(const int& exitCode = 0, const std::string& reason = "Something went wrong!");
 
+        [[nodiscard]]
         int port() const;
         void setPort(const int& port);
 
+        [[nodiscard]]
         int poolSize() const;
         void setPoolSize(const int& pool_size);
 
+        [[nodiscard]]
         std::string host() const;
         void setHost(const std::string& host);
 
+        [[nodiscard]]
         std::string publicDir() const;
         void setPublicDir(const std::string& dir);
 
+        [[nodiscard]]
         std::string dataDir() const;
         void setDataDir(const std::string& dir);
 
+        [[nodiscard]]
         DbType dbType() const;
         void setDbType(const DbType& dbType);
 
         static std::string jwtSecretKey();
+        void ensureInitialized(const char* caller) const;
 
         [[nodiscard]] DatabaseUnit& db() const;
         [[nodiscard]] LoggingUnit& log() const;
@@ -76,11 +88,31 @@ namespace mantis
         [[nodiscard]] ExprEvaluator& evaluator() const;
 
     private:
-        void parseArgs(int argc, char** argv);
-        void initialize();
-        [[nodiscard]] bool ensureDirsAreCreated() const;
+        // Points to externally constructed instance (no ownership)
+        static std::unique_ptr<MantisApp> s_instance;
+        static std::mutex s_mutex;
 
+        // Disable copying and moving
+        MantisApp(const MantisApp&) = delete;
+        MantisApp& operator=(const MantisApp&) = delete;
+        MantisApp(MantisApp&&) = delete;
+        MantisApp& operator=(MantisApp&&) = delete;
+
+        // Private members
+        void parseArgs();
+        void init_units();
+
+        [[nodiscard]]
+        bool ensureDirsAreCreated() const;
         static std::string getUserValueSecurely(const std::string& prompt);
+
+        // Store commandline args passed in, to be used in
+        // the init phase.
+        int m_argc;
+        char** m_argv;
+
+        // Hold state if the instance has be initialized already!
+        bool initialized = false;
 
         std::string m_publicDir;
         std::string m_dataDir;

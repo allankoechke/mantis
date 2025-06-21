@@ -63,7 +63,7 @@ namespace mantis
 
     class DatabaseUnit {
     public:
-        explicit DatabaseUnit(MantisApp* app);
+        DatabaseUnit();
 
         // Initialize the connection pool & connect to specific database
         bool connect(DbType backend, const std::string& conn_str);
@@ -83,7 +83,6 @@ namespace mantis
         static std::string tmToISODate(const std::tm& t);
 
     private:
-        MantisApp* m_app;
         std::unique_ptr<soci::connection_pool> m_connPool;
     };
 

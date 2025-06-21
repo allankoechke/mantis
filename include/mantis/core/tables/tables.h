@@ -11,7 +11,7 @@
 #include "../models/models.h"
 #include "../http.h"
 #include "../crud/crud.h"
-#include "../jwtprovider.h"
+#include "../jwt.h"
 #include "../../app/app.h"
 
 namespace mantis
@@ -38,14 +38,12 @@ namespace mantis
     class TableUnit : public CrudInterface<json>
     {
     public:
-        explicit TableUnit(MantisApp* app,
-                           std::string tableName,
+        explicit TableUnit(std::string tableName,
                            std::string tableId,
                            std::string tableType = "base");
-        explicit TableUnit(MantisApp* app,
-                           const json& schema = json::object());
+        explicit TableUnit(const json& schema = json::object());
 
-        virtual ~TableUnit() = default;
+        virtual ~TableUnit() override = default;
 
         // CRUD endpoints handlers
         virtual void fetchRecord(const Request& req, Response& res, Context& ctx);
@@ -120,7 +118,6 @@ namespace mantis
         json checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const;
 
     protected:
-        std::unique_ptr<MantisApp> m_app;
         std::string m_tableName;
         std::string m_tableId;
         std::string m_tableType;

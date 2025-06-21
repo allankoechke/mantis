@@ -6,6 +6,7 @@
 
 int main(const int argc, char* argv[])
 {
-    const mantis::MantisApp app(argc, argv);
+    mantis::MantisApp app(argc, argv);
+    app.init();
     return app.run();
 }

@@ -57,12 +57,12 @@ namespace mantis
             const auto password = body.value("password", "");
 
             // Find user with an email passed in ....
-            const auto sql = m_app->db().session();
+            const auto sql =  MantisApp::instance().db().session();
 
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
             *sql << query, soci::use(email), soci::into(r);
-            Log::trace("Executed Query: {}", query);
+            // Log::trace("Executed Query: {}", query);
 
             if (!sql->got_data())
             {
@@ -128,15 +128,18 @@ namespace mantis
                 return;
             }
 
-            response["status"] = 404;
-            response["data"] = json::object();
-            response["error"] = "No user found matching given email/password combination.";
+            else
+            {
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
+                res.status = 404;
+                res.set_content(response.dump(), "application/json");
 
-            Log::debug("No user found for given email/password combination.");
-            return;
+                Log::debug("No user found for given email/password combination.");
+                return;
+            }
         }
         catch (std::exception& e)
         {
@@ -164,7 +167,7 @@ namespace mantis
 
     void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
     {
-        [[maybe_unused]] auto sql = m_app->db().session();
+        [[maybe_unused]] auto sql =  MantisApp::instance().db().session();
 
         Log::trace("Resetting password on record, endpoint {}", req.path);
         res.status = 200;
@@ -269,7 +272,7 @@ namespace mantis
             // the session context, queried by:
             //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
             //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
-            auto sql = m_app->db().session();
+            auto sql =  MantisApp::instance().db().session();
             soci::row r;
             std::string query = "SELECT * FROM " + _table + " WHERE id = :id LIMIT 1";
             *sql << query, soci::use(_id), soci::into(r);
@@ -318,8 +321,8 @@ namespace mantis
 
         // Add `auth` and `request` details to the `TokenMap` var stack for use in
         // expression evaluation. First, convert the `json` to `TokenMap`.
-        vars["auth"] = m_app->evaluator().jsonToTokenMap(auth);
-        vars["req"] = m_app->evaluator().jsonToTokenMap(request);
+        vars["auth"] =  MantisApp::instance().evaluator().jsonToTokenMap(auth);
+        vars["req"] =  MantisApp::instance().evaluator().jsonToTokenMap(request);
 
         // If the rule is empty, enforce admin login
         if (rule.empty())
@@ -348,8 +351,8 @@ namespace mantis
 
         // If expression evaluation returns true, lets return allowing execution
         // continuation. Else, we'll craft an error response.
-        if (m_app->evaluator().evaluate(rule, vars))
-            return REQUEST_PENDING; // Proceed to next mware
+        if ( MantisApp::instance().evaluator().evaluate(rule, vars))
+            return REQUEST_PENDING; // Proceed to next middleware
 
         // Evaluation yielded false, return generic access denied error
         json response;

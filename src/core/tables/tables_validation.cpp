@@ -295,7 +295,7 @@ namespace mantis
             if (!field["validator"].is_null())
             {
                 auto pattern = field["validator"].get<std::string>();
-                if (const auto opt = m_app->validators().find(pattern);
+                if (const auto opt =  MantisApp::instance().validators().find(pattern);
                     opt.has_value() && type == "string")
                 {
                     // Since we have a regex string, lets validate it and return if it fails ...

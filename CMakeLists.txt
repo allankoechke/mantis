@@ -41,7 +41,8 @@ add_library(mantis
         src/core/http.cpp
         include/mantis/core/http.h
         include/mantis/core/crud/crud.h
-        include/mantis/core/jwtprovider.h
+        include/mantis/core/jwt.h
+        src/core/jwt.cpp
 
         # All table operations
         include/mantis/core/tables/tables.h
@@ -59,7 +60,6 @@ add_library(mantis
 
         src/core/expr_evaluator.cpp
         include/mantis/core/expr_evaluator.h
-        include/mantis/app/pch.hpp
 )
 
 # Add httplib

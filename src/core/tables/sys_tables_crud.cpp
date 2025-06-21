@@ -12,6 +12,8 @@
 #include "../../../include/mantis/utils/utils.h"
 
 #include <soci/soci.h>
+
+#include "mantis/core/router.h"
 #include "private/soci-mktime.h"
 
 
@@ -55,7 +57,7 @@ namespace mantis
             std::tm* created_tm = std::localtime(&t);
 
             // Database session & transaction instance
-            auto sql = m_app->db().session();
+            auto sql =  MantisApp::instance().db().session();
             soci::transaction tr(*sql);
 
             std::string schema_str, table_ddl;
@@ -97,7 +99,7 @@ namespace mantis
 
             if (type == "auth")
             {
-                AuthTable auth(m_app.get());
+                AuthTable auth;
                 auth.id = id;
                 auth.name = name;
                 auth.system = false;
@@ -120,7 +122,7 @@ namespace mantis
             }
             else if (type == "view")
             {
-                ViewTable view(m_app.get());
+                ViewTable view;
                 view.id = id;
                 view.name = name;
                 view.system = false;
@@ -144,7 +146,7 @@ namespace mantis
             }
             else
             {
-                BaseTable base(m_app.get());
+                BaseTable base;
                 base.id = id;
                 base.name = name;
                 base.system = false;
@@ -194,6 +196,14 @@ namespace mantis
                 obj["updated"] = DatabaseUnit::tmToISODate(*created_tm);
 
                 result["data"] = obj;
+
+                // Add created table to the routes
+                if (auto res = MantisApp::instance().router().addRoute(name);
+                    !res.value("success", false))
+                {
+                    Log::warn("Restart server to get new route changes! {}",
+                        res.value("error", ""));
+                }
             }
             catch (const soci::soci_error& e)
             {
@@ -226,7 +236,7 @@ namespace mantis
 
     std::optional<json> SysTablesUnit::read(const std::string& id, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
 
         soci::row r;
         *sql << "SELECT has_api, name, type, schema FROM __tables WHERE id = :id", soci::use(id), soci::into(r);
@@ -253,7 +263,7 @@ namespace mantis
 
     json SysTablesUnit::update(const std::string& id, const json& entity, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
         json response;
         response["data"] = json::object();
@@ -278,6 +288,10 @@ namespace mantis
             auto t_schema = rw.get<json>(3);
             auto t_has_api = rw.get<bool>(4);
             std::vector<json> t_fields = t_schema.value("fields", json::array());
+
+            // Just hold this name for later
+            const auto old_name = t_name;
+            const auto old_type = t_type;
 
             // For now, we don't support changing types
             if (entity.contains("type") && t_type != entity["type"].get<std::string>())
@@ -603,6 +617,25 @@ namespace mantis
 
                 response["data"] = record;
             }
+
+            // Only trigger routes to be reloaded if table name changes.
+            if (t_name != old_name)
+            {
+                // Update route for this table
+                const json obj {
+                    {"new_name", t_name},
+                    {"old_name", old_name},
+                    {"old_type", old_type}
+                };
+
+                Log::trace("Update With: {}", obj.dump());
+                if (auto res = MantisApp::instance().router().updateRoute(obj);
+                    !res.value("success", false))
+                {
+                    Log::warn("Restart server to get new route changes! {}",
+                        res.value("error", ""));
+                }
+            }
         }
         catch (std::exception& e)
         {
@@ -617,14 +650,15 @@ namespace mantis
 
     bool SysTablesUnit::remove(const std::string& id, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         json response;
 
         // Check if item exists of given id
-        std::string name;
-        *sql << "SELECT name FROM __tables WHERE id = :id", soci::use(id), soci::into(name);
+        std::string name, type;
+        *sql << "SELECT name, type FROM __tables WHERE id = :id",
+        soci::use(id), soci::into(name), soci::into(type);
 
         if (!sql->got_data())
         {
@@ -637,14 +671,21 @@ namespace mantis
 
         tr.commit();
 
-        // TODO reload routes
+        // Update route for this table
+        const json obj {{"name", name}, {"type", type}};
+        if (const auto res = MantisApp::instance().router().removeRoute(obj);
+            !res.value("success", false))
+        {
+            Log::warn("Restart server to get new route changes! {}",
+                res.value("error", ""));
+        }
 
         return true;
     }
 
     std::vector<json> SysTablesUnit::list(const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
         nlohmann::json response = nlohmann::json::array();
 
@@ -675,7 +716,7 @@ namespace mantis
         try
         {
             int count;
-            const auto sql = m_app->db().session();
+            const auto sql =  MantisApp::instance().db().session();
             const std::string query = "SELECT COUNT(id) FROM " + tableName + " WHERE id = :id";
             *sql << query, soci::use(id), soci::into(count);
             return sql->got_data();

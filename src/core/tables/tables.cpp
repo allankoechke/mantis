@@ -9,12 +9,10 @@
 namespace mantis
 {
     TableUnit::TableUnit(
-        MantisApp* app,
         std::string tableName,
         std::string tableId,
         std::string tableType)
-        : m_app(app),
-          m_tableName(std::move(tableName)),
+        : m_tableName(std::move(tableName)),
           m_tableId(std::move(tableId)),
           m_tableType(std::move(tableType)),
           m_listRule(Rule{}),
@@ -22,10 +20,8 @@ namespace mantis
           m_updateRule(Rule{}), m_deleteRule(Rule{}) {}
 
     TableUnit::TableUnit(
-        MantisApp* app,
         const json& schema)
-        : m_app(app),
-          m_listRule(Rule{}),
+        : m_listRule(Rule{}),
           m_getRule(Rule{}),
           m_addRule(Rule{}),
           m_updateRule(Rule{}),

@@ -20,7 +20,7 @@
 
 // CRUD and JWT
 #include "core/crud/crud.h"
-#include "core/jwtprovider.h"
+#include "core/jwt.h"
 
 // Models and data structures
 #include "core/models/models.h"
