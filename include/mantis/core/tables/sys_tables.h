@@ -7,14 +7,15 @@
 
 #include "tables.h"
 
+
 namespace mantis {
-    class MantisApp;
+#define DUMP_RESPONSE() Log::trace("DUMP_RESPONSE: {}", response.dump())
+
     class TablesCrud;
 
 class SysTablesUnit final : public TableUnit {
     public:
-    SysTablesUnit(MantisApp* app,
-              const std::string& tableName,
+    SysTablesUnit(const std::string& tableName,
               const std::string& tableId,
               const std::string& tableType = "auth");
     ~SysTablesUnit() override = default;

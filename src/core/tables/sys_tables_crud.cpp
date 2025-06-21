@@ -55,7 +55,7 @@ namespace mantis
             std::tm* created_tm = std::localtime(&t);
 
             // Database session & transaction instance
-            auto sql = m_app->db().session();
+            auto sql =  MantisApp::instance().db().session();
             soci::transaction tr(*sql);
 
             std::string schema_str, table_ddl;
@@ -97,7 +97,7 @@ namespace mantis
 
             if (type == "auth")
             {
-                AuthTable auth(m_app.get());
+                AuthTable auth;
                 auth.id = id;
                 auth.name = name;
                 auth.system = false;
@@ -120,7 +120,7 @@ namespace mantis
             }
             else if (type == "view")
             {
-                ViewTable view(m_app.get());
+                ViewTable view;
                 view.id = id;
                 view.name = name;
                 view.system = false;
@@ -144,7 +144,7 @@ namespace mantis
             }
             else
             {
-                BaseTable base(m_app.get());
+                BaseTable base;
                 base.id = id;
                 base.name = name;
                 base.system = false;
@@ -226,7 +226,7 @@ namespace mantis
 
     std::optional<json> SysTablesUnit::read(const std::string& id, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
 
         soci::row r;
         *sql << "SELECT has_api, name, type, schema FROM __tables WHERE id = :id", soci::use(id), soci::into(r);
@@ -253,7 +253,7 @@ namespace mantis
 
     json SysTablesUnit::update(const std::string& id, const json& entity, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
         json response;
         response["data"] = json::object();
@@ -617,7 +617,7 @@ namespace mantis
 
     bool SysTablesUnit::remove(const std::string& id, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         json response;
@@ -644,7 +644,7 @@ namespace mantis
 
     std::vector<json> SysTablesUnit::list(const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
         nlohmann::json response = nlohmann::json::array();
 
@@ -675,7 +675,7 @@ namespace mantis
         try
         {
             int count;
-            const auto sql = m_app->db().session();
+            const auto sql =  MantisApp::instance().db().session();
             const std::string query = "SELECT COUNT(id) FROM " + tableName + " WHERE id = :id";
             *sql << query, soci::use(id), soci::into(count);
             return sql->got_data();

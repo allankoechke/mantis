@@ -212,7 +212,7 @@ soci::db_type mantis::Field::toSociType(const FieldType& f_type)
     return soci::db_string;
 }
 
-mantis::Table::Table(MantisApp* app): m_app(app) {}
+mantis::Table::Table() {}
 
 json mantis::Table::to_json() const
 {
@@ -238,7 +238,7 @@ json mantis::Table::to_json() const
 std::string mantis::Table::to_sql() const
 {
     // Get DB Session
-    const auto sql = m_app->db().session();
+    const auto sql = MantisApp::instance().db().session();
 
     std::ostringstream ddl;
     ddl << "CREATE TABLE IF NOT EXISTS " << name << " (";
@@ -264,7 +264,7 @@ std::string mantis::Table::to_sql() const
     return ddl.str();
 }
 
-mantis::BaseTable::BaseTable(MantisApp* app): Table(app)
+mantis::BaseTable::BaseTable()
 {
     type = TableType::Base;
     fields = {
@@ -274,7 +274,7 @@ mantis::BaseTable::BaseTable(MantisApp* app): Table(app)
     };
 }
 
-mantis::AuthTable::AuthTable(MantisApp* app): Table(app)
+mantis::AuthTable::AuthTable()
 {
     type = TableType::Auth;
     fields = {
@@ -290,12 +290,12 @@ mantis::AuthTable::AuthTable(MantisApp* app): Table(app)
     };
 }
 
-mantis::ViewTable::ViewTable(MantisApp* app): Table(app)
+mantis::ViewTable::ViewTable()
 {
     type = TableType::View;
 }
 
-mantis::SystemTable::SystemTable(MantisApp* app): BaseTable(app)
+mantis::SystemTable::SystemTable()
 {
     system = true;
     type = TableType::Base;
@@ -306,7 +306,7 @@ mantis::SystemTable::SystemTable(MantisApp* app): BaseTable(app)
     };
 }
 
-mantis::AdminTable::AdminTable(MantisApp* app): AuthTable(app)
+mantis::AdminTable::AdminTable()
 {
     system = true;
     type = TableType::Auth;

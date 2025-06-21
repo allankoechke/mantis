@@ -18,7 +18,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql = m_app->db().session();
+        auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -279,7 +279,7 @@ namespace mantis
 
     std::optional<json> TableUnit::read(const std::string& id, const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         soci::row r;
         *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
 
@@ -301,7 +301,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql = m_app->db().session();
+        auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -557,7 +557,7 @@ namespace mantis
     bool TableUnit::remove(const std::string& id, const json& opts)
     {
         // TODO ensure views dont delete items
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
@@ -583,7 +583,7 @@ namespace mantis
 
     std::vector<json> TableUnit::list(const json& opts)
     {
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT * FROM " + tableName());
         nlohmann::json response = nlohmann::json::array();
 

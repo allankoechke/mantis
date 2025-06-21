@@ -20,7 +20,7 @@ namespace mantis
         {
             // Fetch All Records
             Log::debug("Adding GET Request for table '{}'", basePath);
-            m_app->http().Get(
+             MantisApp::instance().http().Get(
                 basePath,
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
@@ -40,7 +40,7 @@ namespace mantis
 
             // Fetch Single Record
             Log::debug("Adding GET/1 Request for table '{}'", basePath);
-            m_app->http().Get(
+             MantisApp::instance().http().Get(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
@@ -63,7 +63,7 @@ namespace mantis
             {
                 // Add Record
                 Log::debug("Adding POST Request for table '{}'", basePath);
-                m_app->http().Post(
+                 MantisApp::instance().http().Post(
                     basePath, [this](const Request& req, Response& res, Context& ctx)-> void
                     {
                         createRecord(req, res, ctx);
@@ -82,7 +82,7 @@ namespace mantis
 
                 // Update Record
                 Log::debug("Adding PATCH Request for table '{}'", basePath);
-                m_app->http().Patch(
+                 MantisApp::instance().http().Patch(
                     basePath + "/:id",
                     [this](const Request& req, Response& res, Context& ctx)-> void
                     {
@@ -102,7 +102,7 @@ namespace mantis
 
                 // Delete Record
                 Log::debug("Adding DELETE Request for table '{}'", basePath);
-                m_app->http().Delete(
+                 MantisApp::instance().http().Delete(
                     basePath + "/:id",
                     [this](const Request& req, Response& res, Context& ctx)-> void
                     {
@@ -126,7 +126,7 @@ namespace mantis
             {
                 // Add Record
                 Log::debug("Adding POST Request for table '{}/auth-with-password'", basePath);
-                m_app->http().Post(
+                 MantisApp::instance().http().Post(
                     basePath + "/auth-with-password",
                     [this](const Request& req, Response& res, Context& ctx) -> void
                     {

@@ -10,33 +10,33 @@
 
 #include <soci/sqlite3/soci-sqlite3.h>
 
-mantis::DatabaseUnit::DatabaseUnit(MantisApp* app)
-    : m_app(app), m_connPool(nullptr) {}
+mantis::DatabaseUnit::DatabaseUnit()
+    : m_connPool(nullptr) {}
 
 bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn_str) {
     // If pool size is invalid, just return
-    if (m_app->poolSize() <= 0)
+    if ( MantisApp::instance().poolSize() <= 0)
         throw std::runtime_error("Session pool size must be greater than 0");
 
     // All databases apart from SQLite should pass in a connection string
-    if (m_app->dbType() != DbType::SQLITE && conn_str.empty())
+    if ( MantisApp::instance().dbType() != DbType::SQLITE && conn_str.empty())
         throw std::runtime_error("Connection string for database is required!");
 
     try
     {
         // Create connection pool instance
-        m_connPool = std::make_unique<soci::connection_pool>(m_app->poolSize());
+        m_connPool = std::make_unique<soci::connection_pool>( MantisApp::instance().poolSize());
 
         // Populate the pools with db connections
-        for (int i = 0; i < m_app->poolSize(); ++i)
+        for (int i = 0; i <  MantisApp::instance().poolSize(); ++i)
         {
-            switch(m_app->dbType())
+            switch( MantisApp::instance().dbType())
             {
             case DbType::SQLITE:
                 {
                     // For SQLite, lets explicitly define location and name of the database
                     // we intend to use within the `dataDir`
-                    auto sqlite_str = "db=" + joinPaths(m_app->dataDir(), "mantis.db").string();
+                    auto sqlite_str = "db=" + joinPaths( MantisApp::instance().dataDir(), "mantis.db").string();
                     soci::session& sql = m_connPool->at(i);
                     sql.open(soci::sqlite3, sqlite_str);
                     sql.set_logger(new MantisLoggerImpl());     // Set custom query logger
@@ -84,13 +84,13 @@ void mantis::DatabaseUnit::migrate() {
         const auto sql = session();
         soci::transaction tr{*sql};
 
-        AdminTable admin(m_app);
+        AdminTable admin;
         admin.name = "__admins";
         *sql << admin.to_sql();
         Log::trace("Generated Admin Table SQL:  {}", admin.to_sql());
         Log::trace("Generated Admin Table JSON: {}", admin.to_json().dump());
 
-        SystemTable tables(m_app);
+        SystemTable tables;
         tables.name = "__tables";
         tables.fields.push_back(Field("name", FieldType::STRING, true, false, true));
         tables.fields.push_back(Field("type", FieldType::STRING, true, false, true));

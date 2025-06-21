@@ -85,21 +85,33 @@ mantis::HttpUnit::HttpUnit()
         const auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
             end_time - req.start_time_).count();
 
-        Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms", req.version, req.method, req.path, res.status,
-                     duration_ms);
+        if (res.status < 400) {
+            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
+                req.version, req.method, req.path, res.status, duration_ms);
+        }
+        else
+        {
+            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\tData: {}",
+                req.version, req.method, req.path, res.status, duration_ms, res.body);
+        }
     });
 
     // Set Error Handler
     server.set_error_handler([]([[maybe_unused]] const Request& req, Response& res)
     {
-        if (res.status == 404)
+        if (res.body.empty())
         {
             json response;
-            response["status"] = 404;
-            response["message"] = "Resource Not Found";
+            response["status"] = res.status;
             response["data"] = json::object();
 
-            res.status = 404;
+            if (res.status == 404)
+                response["error"] = "Resource not found!";
+            else if (res.status >= 500)
+                response["error"] = "Internal server error, try again later!";
+            else
+                response["error"] = "Something went wrong here!";
+
             res.set_content(response.dump(), "application/json");
         }
     });
@@ -186,7 +198,7 @@ void mantis::HttpUnit::route(
         {
             json response;
             response["status"] = 404;
-            response["message"] = "Resource Not Found";
+            response["route"] = "Route not found!";
             response["data"] = json::object();
 
             res.status = 404;

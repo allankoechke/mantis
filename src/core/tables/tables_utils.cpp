@@ -27,7 +27,7 @@ namespace mantis
         json res{{"error", ""}, {"data", json::object()}};
 
         // Get a session object
-        const auto sql = m_app->db().session();
+        const auto sql =  MantisApp::instance().db().session();
 
         try
         {
@@ -224,7 +224,7 @@ namespace mantis
         try
         {
             int count;
-            const auto sql = m_app->db().session();
+            const auto sql =  MantisApp::instance().db().session();
             *sql << "SELECT COUNT(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1",
                 soci::use(id), soci::into(count);
             return count > 0;

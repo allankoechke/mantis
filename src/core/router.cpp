@@ -9,17 +9,16 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
-mantis::Router::Router(MantisApp* app)
-    : m_app(app)
+mantis::Router::Router()
 {
     // Create admin table object, we'll use it to get JSON rep for use in
     // the TableUnit construction. Similar to what we do when creating routes.
-    AdminTable admin(m_app);
+    AdminTable admin;
     admin.name = "__admins";
     admin.id = TableUnit::generateTableId("__admins");
 
-    m_adminTable = std::make_shared<TableUnit>(m_app, admin.to_json());
-    m_tableRoutes = std::make_shared<SysTablesUnit>(m_app, "__tables",
+    m_adminTable = std::make_shared<TableUnit>(admin.to_json());
+    m_tableRoutes = std::make_shared<SysTablesUnit>("__tables",
           TableUnit::generateTableId("__tables"), "base");
 
     // Override the route display name to easier names. This means that,
@@ -52,7 +51,7 @@ bool mantis::Router::listen() const
 {
     try
     {
-        return m_app->http().listen(m_app->host(), m_app->port());
+        return  MantisApp::instance().http().listen( MantisApp::instance().host(),  MantisApp::instance().port());
     }
     catch (const std::exception& e)
     {
@@ -68,7 +67,7 @@ bool mantis::Router::listen() const
 
 void mantis::Router::close()
 {
-    m_app->http().close();
+     MantisApp::instance().http().close();
     m_routes.clear();
 }
 
@@ -87,7 +86,7 @@ bool mantis::Router::generateTableCrudApis()
 {
     Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
 
-    const auto sql = m_app->db().session();
+    const auto sql =  MantisApp::instance().db().session();
 
     // id created updated schema has_api
     const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
@@ -103,7 +102,7 @@ bool mantis::Router::generateTableCrudApis()
         if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty()))
         {
             // We need to persist this instance, else it'll be cleaned up causing a crash
-            const auto tableUnit = std::make_shared<TableUnit>(m_app, schema);
+            const auto tableUnit = std::make_shared<TableUnit>(schema);
             tableUnit->setTableName(name);
             tableUnit->setTableId(id);
 
@@ -138,7 +137,7 @@ bool mantis::Router::generateAdminCrudApis() const
         }
 
         // Setup Admin Dashboard
-        m_app->http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
+         MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
             Log::debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
 

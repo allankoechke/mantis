@@ -2,7 +2,7 @@
 // Created by allan on 18/06/2025.
 //
 #include <gtest/gtest.h>
-#include "mantis/core/jwtprovider.h"
+#include "mantis/core/jwt.h"
 #include <nlohmann/json.hpp>
 
 TEST(JWTTest, CreateValidToken) {

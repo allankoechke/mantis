@@ -3,7 +3,6 @@
 //
 
 #include "../../../include/mantis/core/tables/sys_tables.h"
-#include "../../../include/mantis/core/crud/crud.h"
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/utils/utils.h"
@@ -11,12 +10,12 @@
 
 namespace mantis
 {
-    SysTablesUnit::SysTablesUnit(MantisApp* app,
-                                 const std::string& tableName,
+    SysTablesUnit::SysTablesUnit(const std::string& tableName,
                                  const std::string& tableId,
                                  const std::string& tableType)
-        : TableUnit(app, tableName, tableId, tableType)
-    { }
+        : TableUnit(tableName, tableId, tableType)
+    {
+    }
 
     bool SysTablesUnit::setupRoutes()
     {
@@ -29,7 +28,7 @@ namespace mantis
         {
             // Fetch All Records
             Log::debug("Adding GET Request for table '{}'", m_tableName);
-            m_app->http().Get(
+            MantisApp::instance().http().Get(
                 basePath,
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
@@ -49,7 +48,7 @@ namespace mantis
 
             // Fetch Single Record
             Log::debug("Adding GET/1 Request for table '{}'", m_tableName);
-            m_app->http().Get(
+            MantisApp::instance().http().Get(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
@@ -69,7 +68,7 @@ namespace mantis
 
             // Add Record
             Log::debug("Adding POST Request for table '{}'", m_tableName);
-            m_app->http().Post(
+            MantisApp::instance().http().Post(
                 basePath, [this](const Request& req, Response& res, Context& ctx)-> void
                 {
                     createRecord(req, res, ctx);
@@ -88,7 +87,7 @@ namespace mantis
 
             // Update Record
             Log::debug("Adding PATCH Request for table '{}'", m_tableName);
-            m_app->http().Patch(
+            MantisApp::instance().http().Patch(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
@@ -108,7 +107,7 @@ namespace mantis
 
             // Delete Record
             Log::debug("Adding DELETE Request for table '{}'", m_tableName);
-            m_app->http().Delete(
+            MantisApp::instance().http().Delete(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
                 {
@@ -128,7 +127,7 @@ namespace mantis
 
             // Add Record
             Log::debug("Adding POST Request for table '{}/auth-with-password'", m_routeName);
-            m_app->http().Post(
+            MantisApp::instance().http().Post(
                 basePath + "/auth-with-password",
                 [this](const Request& req, Response& res, Context& ctx) -> void
                 {
@@ -379,7 +378,7 @@ namespace mantis
 
         // Restart server to pickup new changes ...
         // TODO maybe bury these behind a flag? That way we dont restart server randomly ...
-        m_app->router().restart();
+        MantisApp::instance().router().restart();
     }
 
     void SysTablesUnit::updateRecord(const Request& req, Response& res, Context& ctx)
@@ -430,7 +429,7 @@ namespace mantis
             res.set_content(response.dump(), "application/json");
             return;
         }
-        
+
         // Try creating the record, if it checkMinValueFuncs, return the error
         auto respObj = update(id, body, json::object());
         if (const auto err = respObj.value("error", ""); !err.empty())
@@ -501,14 +500,14 @@ namespace mantis
             return;
         }
 
-        Log::debug("Table deletion successful");
+        Log::trace("Table deletion successful");
 
         res.set_content("", "application/json");
         res.status = 204;
 
         // Restart server to pickup new changes ...
         // TODO maybe bury these behind a flag? That way we dont restart server randomly ...
-        m_app->router().restart();
+        MantisApp::instance().router().restart();
     }
 
     void SysTablesUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
@@ -560,12 +559,11 @@ namespace mantis
         try
         {
             // Find user with an email passed in ....
-            const auto sql = m_app->db().session();
+            const auto sql = MantisApp::instance().db().session();
 
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
             *sql << query, soci::use(email), soci::into(r);
-            Log::trace("Executed Query: {}", query);
 
             if (!sql->got_data())
             {
@@ -686,11 +684,14 @@ namespace mantis
 
             res.status = 403;
             res.set_content(response.dump(), "application/json");
+
+            DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
         // Expand logged user if token is present
         const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
+        Log::trace("RESP: {}", resp.dump());
         if (!resp.value("verified", false) || !resp.value("error", "").empty())
         {
             json response;
@@ -700,6 +701,7 @@ namespace mantis
 
             res.status = 403;
             res.set_content(response.dump(), "application/json");
+            DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
@@ -707,6 +709,7 @@ namespace mantis
         // return an error
         const auto _id = resp.value("id", "");
         const auto _table = resp.value("table", "");
+        Log::trace("After Auth: id = {}, table = {}", _id, _table);
 
         if (_id.empty() || _table.empty())
         {
@@ -717,6 +720,7 @@ namespace mantis
 
             res.status = 403;
             res.set_content(resp.dump(), "application/json");
+            DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
@@ -725,7 +729,7 @@ namespace mantis
         // the session context, queried by:
         //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
         //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
-        auto sql = m_app->db().session();
+        auto sql = MantisApp::instance().db().session();
         soci::row r;
         std::string query = "SELECT * FROM __admins WHERE id = :id LIMIT 1";
         *sql << query, soci::use(_id), soci::into(r);
@@ -740,6 +744,8 @@ namespace mantis
 
             res.status = 404;
             res.set_content(resp.dump(), "application/json");
+
+            DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
@@ -763,9 +769,11 @@ namespace mantis
         ctx.set("auth", auth);
 
         const auto table_name = auth.value("table", "");
+        Log::trace("Auth table is: {}", table_name);
         // Check if user is logged in as Admin
         if (table_name == "__admins")
         {
+            Log::trace("Logged in as Admin!");
             // If logged in as admin, grant access
             // Admins get unconditional data access
             return REQUEST_PENDING;
@@ -779,6 +787,7 @@ namespace mantis
 
         res.status = 403;
         res.set_content(response.dump(), "application/json");
+        DUMP_RESPONSE();
         return REQUEST_HANDLED;
     }
 } // mantis
