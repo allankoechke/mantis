@@ -618,19 +618,23 @@ namespace mantis
                 response["data"] = record;
             }
 
-            // Update route for this table
-            const json obj {
-                {"new_name", t_name},
-                {"old_name", old_name},
-                {"old_type", old_type}
-            };
-
-            Log::trace("Update With: {}", obj.dump());
-            if (auto res = MantisApp::instance().router().updateRoute(obj);
-                !res.value("success", false))
+            // Only trigger routes to be reloaded if table name changes.
+            if (t_name != old_name)
             {
-                Log::warn("Restart server to get new route changes! {}",
-                    res.value("error", ""));
+                // Update route for this table
+                const json obj {
+                    {"new_name", t_name},
+                    {"old_name", old_name},
+                    {"old_type", old_type}
+                };
+
+                Log::trace("Update With: {}", obj.dump());
+                if (auto res = MantisApp::instance().router().updateRoute(obj);
+                    !res.value("success", false))
+                {
+                    Log::warn("Restart server to get new route changes! {}",
+                        res.value("error", ""));
+                }
             }
         }
         catch (std::exception& e)
