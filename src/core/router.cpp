@@ -157,9 +157,9 @@ json mantis::Router::updateRoute(const json& table_data)
         return res;
     }
 
-    if (!table_data.contains("name") || table_data["name"].is_null() || table_data["name"].empty())
+    if (!table_data.contains("new_name") || table_data["new_name"].is_null() || table_data["new_name"].empty())
     {
-        res["error"] = "Table name can't be null/empty!";
+        res["error"] = "Table new name can't be null/empty!";
         return res;
     }
 
@@ -175,19 +175,19 @@ json mantis::Router::updateRoute(const json& table_data)
         return res;
     }
 
-    const auto table_name = table_data.at("name").get<std::string>();
+    const auto table_name = table_data.at("new_name").get<std::string>();
     const auto table_old_name = table_data.at("old_name").get<std::string>();
     const auto table_type = table_data.at("old_type").get<std::string>();
 
     // Let's find and remove existing object
     const auto it = std::find_if(m_routes.begin(), m_routes.end(), [&](const auto& route)
     {
-        return route->tableName() == table_name;
+        return route->tableName() == table_old_name;
     });
 
     if (it == m_routes.end())
     {
-        res["error"] = "TableUnit not found!";
+        res["error"] = "TableUnit for " +table_old_name+ " not found!";
         return res;
     }
 

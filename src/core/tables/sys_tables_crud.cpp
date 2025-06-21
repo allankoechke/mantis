@@ -620,10 +620,12 @@ namespace mantis
 
             // Update route for this table
             const json obj {
-                {"name", t_name},
+                {"new_name", t_name},
                 {"old_name", old_name},
                 {"old_type", old_type}
             };
+
+            Log::trace("Update With: {}", obj.dump());
             if (auto res = MantisApp::instance().router().updateRoute(obj);
                 !res.value("success", false))
             {

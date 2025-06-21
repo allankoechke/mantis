@@ -5,9 +5,6 @@
 #include "../../include/mantis/mantis.h"
 #include <builtin_features.h>
 
-#define TRACE(num) \
-    std::cout << "[LOG] (" << __func__ << ") value: " << (num) << std::endl;
-
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
 
@@ -27,15 +24,12 @@ namespace mantis
             throw std::runtime_error("MantisApp already instantiated, use MantisApp::instance() instead!");
 
         s_instance.reset(this);
-        std::cout << "MantisApp initialized\n";
 
         // Initialize Default Features in cparse
         cparse::cparse_init();
-        std::cout << "Cparse Init\n";
 
         // Enable Multi Sinks
         Log::init();
-        std::cout << "Log Init\n";
     }
 
     MantisApp::~MantisApp()
@@ -58,17 +52,13 @@ namespace mantis
         // Set initial public directory
         auto dir = dirFromPath("./public");
         setPublicDir(dir);
-        std::cout << "Public Dirs Init\n";
 
         // Set initial data directory
         dir = dirFromPath("./data");
         setDataDir(dir);
-        std::cout << "Data Dir Init\n";
 
-        init_units();
-        std::cout << "Init\n";
-        parseArgs();
-        std::cout << "Args Init\n";
+        init_units();   // Initialize Units
+        parseArgs();    // Parse args & start units
     }
 
     MantisApp& MantisApp::instance()
@@ -83,7 +73,6 @@ namespace mantis
     {
         MANTIS_REQUIRE_INIT();
 
-        TRACE(1)
         // Main program parser with global arguments
         argparse::ArgumentParser program("mantisapp");
         program.add_argument("--database", "-d")
@@ -100,7 +89,6 @@ namespace mantis
                .help("<dir> Static files directory (default: ./public).");
         program.add_argument("--dev").flag();
 
-        TRACE(2)
         // Serve subcommand
         argparse::ArgumentParser serve_command("serve");
         serve_command.add_argument("--port", "-p")
@@ -112,7 +100,6 @@ namespace mantis
                      .default_value("0.0.0.0")
                      .help("<host> Server Host (default: 0.0.0.0)");
 
-        TRACE(3)
         // Admins subcommand with nested subcommands
         argparse::ArgumentParser admins_command("admins");
         // Create mutually exclusive group for --add and --rm
@@ -124,7 +111,6 @@ namespace mantis
              .nargs(1)
              .help("<email/id> Remove existing admin user.");
 
-        TRACE(4)
         // Migrations subcommand with nested subcommands
         argparse::ArgumentParser migrations_command("migrate");
         admins_command.add_argument("--up")
@@ -134,7 +120,6 @@ namespace mantis
                       .nargs(1)
                       .help(".");
 
-        TRACE(5)
         // Migrations subcommand with nested subcommands
         argparse::ArgumentParser sync_command("sync");
 
@@ -144,15 +129,12 @@ namespace mantis
         program.add_subparser(migrations_command);
         program.add_subparser(sync_command);
 
-        TRACE(6)
         try
         {
             program.parse_args(m_argc, m_argv);
-            TRACE(6.1)
         }
         catch (const std::exception& err)
         {
-            TRACE(6.2)
             std::cerr << err.what() << std::endl;
             std::stringstream ss;
             ss << program;
@@ -166,7 +148,6 @@ namespace mantis
         const auto dataDir = program.present<std::string>("--dataDir").value_or("./data");
         const auto pubDir = program.present<std::string>("--publicDir").value_or("./public");
 
-        TRACE(7)
         // Set trace mode if flag is set
         if (program.get<bool>("--dev"))
         {
@@ -174,7 +155,6 @@ namespace mantis
             Log::setLogLevel(LogLevel::TRACE);
         }
 
-        TRACE(8)
         // TODO validate directory paths
         const auto pub_dir = dirFromPath(pubDir);
         setPublicDir(pub_dir);
@@ -190,7 +170,6 @@ namespace mantis
 
         auto x = MantisApp::instance().poolSize();
 
-        TRACE(9)
         // Initialize database connection & Migration
         m_database->connect(m_dbType, m_connString);
         m_database->migrate();
@@ -201,22 +180,18 @@ namespace mantis
             quit(-1, "Database opening failed!");
         }
 
-        TRACE(10)
         // Check which commands were used
         if (program.is_subcommand_used("serve"))
         {
-            TRACE(11)
             const auto host = serve_command.get<std::string>("--host");
             const auto port = serve_command.get<int>("--port");
 
             setHost(host);
             setPort(port);
-            std::cout << "- " << host << ":" << port << std::endl;
             m_toStartServer = true;
         }
         else if (program.is_subcommand_used("admins"))
         {
-            TRACE(12)
             const auto admin_user = admins_command.present<std::vector<std::string>>("--add")
                                                   .value_or(std::vector<std::string>{});
 
@@ -271,7 +246,6 @@ namespace mantis
 
             else if (admins_command.is_used("--rm"))
             {
-                TRACE(13)
                 const auto admin_email_or_id = admins_command.present<std::string>("--rm")
                                                              .value_or("");
                 if (trim(admin_email_or_id).length() < 5)
@@ -316,7 +290,6 @@ namespace mantis
         {
             // Do sync actions
         }
-        TRACE(14)
     }
 
     void MantisApp::init_units()
