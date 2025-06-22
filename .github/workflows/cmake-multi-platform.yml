@@ -45,6 +45,14 @@ jobs:
       if: matrix.os == 'ubuntu-latest'
       run: sudo apt-get update && sudo apt-get install -y libzstd-dev
 
+    - name: Install Doxygen (Ubuntu)
+      if: matrix.os == 'ubuntu-latest'
+      run: sudo apt-get install -y doxygen graphviz
+
+    - name: Install Doxygen (Windows)
+      if: matrix.os == 'windows-latest'
+      run: choco install doxygen.install graphviz -y
+
     - name: Set reusable strings
       id: strings
       shell: bash
@@ -61,14 +69,6 @@ jobs:
 
     - name: Build
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
-
-    - name: Install Doxygen (Ubuntu)
-      if: matrix.os == 'ubuntu-latest'
-      run: sudo apt-get install -y doxygen graphviz
-
-    - name: Install Doxygen (Windows)
-      if: matrix.os == 'windows-latest'
-      run: choco install doxygen.install graphviz -y
 
     - name: Generate Doxygen Docs
       run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --target doc
