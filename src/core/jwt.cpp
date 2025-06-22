@@ -48,7 +48,7 @@ namespace mantis
         // Create additional payload claims for 'id' and 'table'
         l8w8jwt_claim additional_claims[2];
 
-        Log::debug("Dump: id = '{}', table = '{}'", id, table);
+        // Log::debug("Dump: id = '{}', table = '{}'", id, table);
 
         additional_claims[0] = {
             .key = const_cast<char*>("id"),

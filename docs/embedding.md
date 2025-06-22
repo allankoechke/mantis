@@ -15,7 +15,7 @@ Mantis is designed as a lightweight C++ library that can be embedded directly in
 
 ## 📦 Integration Options
 
-### 1. **As a Static or Shared Library**
+### **As a Static or Shared Library**
 Link the compiled `libmantis.a` or `libmantis.so` into your CMake project:
 
 ```cmake
@@ -23,43 +23,18 @@ add_subdirectory(mantis)
 target_link_libraries(your_app PRIVATE mantis)
 ```
 
-### 2. **Header-only Modules**
-For lighter setups, core components like schema parsing or basic table handling may be available as header-only utilities.
-
 ---
 
 ## 🧱 Minimal Example
 
 ```cpp
-#include <mantis/api/server.hpp>
-#include <mantis/core/config.hpp>
+#include "../include/mantis/app/app.h"
 
-int main(int argc, char** argv) {
-    mantis::Config config = mantis::Config::load("config.json");
-
-    mantis::Server server(config);
-    server.start(); // Starts HTTP server with auto API and static file support
-
-    return 0;
-}
-```
-
----
-
-## ⚙️ Configuration
-
-The config file supports options like:
-
-```json
+int main(const int argc, char* argv[])
 {
-  "mode": "client", // or "server"
-  "database": "data.db",
-  "port": 8080,
-  "static_dir": "./public",
-  "auth": {
-    "enable": true,
-    "jwt_secret": "your-secret-key"
-  }
+    mantis::MantisApp app(argc, argv);
+    app.init();
+    return app.run();
 }
 ```
 
@@ -82,7 +57,7 @@ your-app/
 Use tools like `curl` or Postman to test your APIs:
 
 ```bash
-curl http://localhost:8080/api/users
+curl http://localhost:7070/api/users
 ```
 
 In Qt, you can use `QNetworkAccessManager` to consume the local REST APIs.
@@ -92,7 +67,7 @@ In Qt, you can use `QNetworkAccessManager` to consume the local REST APIs.
 ## 🛠️ Advanced: Use Mantis as a Submodule
 
 ```bash
-git submodule add https://github.com/yourusername/mantis.git
+git submodule add https://github.com/allankoechke/mantis.git
 git submodule update --init --recursive
 ```
 
@@ -103,8 +78,6 @@ Then link and include as part of your build system.
 ## 📌 Notes
 
 - Mantis APIs respect all access rules and auth even in embedded mode.
-- You can override route handlers or middleware for custom behavior.
-- Sync engine can be enabled/disabled based on config.
 
 ---
 

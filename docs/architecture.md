@@ -53,12 +53,12 @@ Mantis is a modular, pluggable Backend-as-a-Service (BaaS) framework written in 
 - Optional: MySQL/PostgreSQL (via plugin or dynamic linking)
 
 ### 2. **API Router**
-- Powered by Crow (header-only HTTP server)
+- Powered by http-lib (HTTP server)
 - Auto-generates REST endpoints for tables/views
 - Supports middleware chaining (e.g., for auth, logging)
 
 ### 3. **Authentication Module**
-- Supports JWT or session-based login
+- Supports JWT
 - Tied to access control and middleware
 - Token generation and validation integrated into middleware
 
@@ -70,16 +70,14 @@ Mantis is a modular, pluggable Backend-as-a-Service (BaaS) framework written in 
 ### 5. **Sync Engine**
 - Supports client/server sync topology
 - Uses WebSocket for real-time (future) or HTTP polling
-- Tracks sync status via internal `__sync_log` tables
 
 ### 6. **Static File Server**
 - Optional serving of static files (e.g., web UI or assets)
 - Configurable static root folder
 
 ### 7. **System Tables**
-- `__tables`, `__columns` — tracks schema
-- `__users`, `__sessions`, `__rules` — auth and access
-- `__sync_log`, `__sync_state` — sync metadata
+- `__tables`  — tracks schema
+- `__admins` — Admin auth and access
 
 ---
 
@@ -99,7 +97,7 @@ Mantis is a modular, pluggable Backend-as-a-Service (BaaS) framework written in 
 - Use exposed headers and initialization APIs
 
 ### 🚀 Standalone Binary
-- Run `mantisd --config config.json`
+- Run `mantisapp serve`
 - Works with Docker, systemd, or embedded startup
 
 ---
@@ -120,7 +118,6 @@ mantis/
 
 ## 📌 Extensibility Ideas
 
-- Lua scripting support for request customization
 - Live schema migration tool (CLI command)
 - Admin dashboard (served from static folder or separate frontend)
 

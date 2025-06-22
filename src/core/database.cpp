@@ -9,6 +9,7 @@
 #include "../../include/mantis/core/models/models.h"
 
 #include <soci/sqlite3/soci-sqlite3.h>
+#include <private/soci-mktime.h>
 
 mantis::DatabaseUnit::DatabaseUnit()
     : m_connPool(nullptr) {}
@@ -87,8 +88,8 @@ void mantis::DatabaseUnit::migrate() {
         AdminTable admin;
         admin.name = "__admins";
         *sql << admin.to_sql();
-        Log::trace("Generated Admin Table SQL:  {}", admin.to_sql());
-        Log::trace("Generated Admin Table JSON: {}", admin.to_json().dump());
+        // Log::trace("Generated Admin Table SQL:  {}", admin.to_sql());
+        // Log::trace("Generated Admin Table JSON: {}", admin.to_json().dump());
 
         SystemTable tables;
         tables.name = "__tables";
@@ -98,8 +99,8 @@ void mantis::DatabaseUnit::migrate() {
         tables.fields.push_back(Field("has_api", FieldType::UINT8, true, false, true));
         *sql << tables.to_sql();
 
-        Log::debug("Generated Sys Tables SQL:  {}", tables.to_sql());
-        Log::debug("Generated Sys Tables JSON: {}", tables.to_json().dump());
+        // Log::debug("Generated Sys Tables SQL:  {}", tables.to_sql());
+        // Log::debug("Generated Sys Tables JSON: {}", tables.to_json().dump());
 
         // Commit transaction
         tr.commit();

@@ -4,6 +4,7 @@
 
 #include "../../include/mantis/mantis.h"
 #include <builtin_features.h>
+#include <mantis/app/config.hpp>
 
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
@@ -30,6 +31,8 @@ namespace mantis
 
         // Enable Multi Sinks
         Log::init();
+
+        Log::info("MantisApp v{}", appVersion());
     }
 
     MantisApp::~MantisApp()
@@ -74,7 +77,7 @@ namespace mantis
         MANTIS_REQUIRE_INIT();
 
         // Main program parser with global arguments
-        argparse::ArgumentParser program("mantisapp");
+        argparse::ArgumentParser program("mantisapp", appVersion());
         program.add_argument("--database", "-d")
                .nargs(1)
                .help("<type> Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE)");
@@ -309,10 +312,6 @@ namespace mantis
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
     {
-        // Do some cleanup if need be ...
-        // m_db->CloseIfOpened();
-        // m_svr->CloseIfOpened();
-
         if (exitCode != 0)
             Log::critical("Exiting Application with Code = {}", exitCode);
         else
@@ -412,6 +411,26 @@ namespace mantis
             throw std::runtime_error("MantisApp::init() must be called before using this method");
             throw std::runtime_error("MantisApp::init() must be called before using this method");
         }
+    }
+
+    std::string MantisApp::appVersion()
+    {
+        return getVersionString();
+    }
+
+    int MantisApp::appMinorVersion()
+    {
+        return MANTIS_VERSION_MINOR;
+    }
+
+    int MantisApp::appMajorVersion()
+    {
+        return MANTIS_VERSION_MAJOR;
+    }
+
+    int MantisApp::appPatchVersion()
+    {
+        return MANTIS_VERSION_PATCH;
     }
 
     DbType MantisApp::dbType() const
