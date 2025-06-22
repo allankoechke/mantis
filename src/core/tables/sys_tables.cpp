@@ -579,25 +579,10 @@ namespace mantis
                 return;
             }
 
-            Log::trace("Checking for password match ...");
-
             // Extract user password value
             const auto db_password = r.get<std::string>("password");
-            auto tokens = splitString(db_password, ":");
-            if (tokens.size() < 2) // Check that splitting yield two parts ...
-            {
-                response["status"] = 404;
-                response["data"] = json::object();
-                response["error"] = "No user found matching given email/password combination.";
-
-                res.status = 404;
-                res.set_content(response.dump(), "application/json");
-
-                Log::critical("Could not split database password");
-                return;
-            }
-
-            if (tokens[0] == std::to_string(std::hash<std::string>{}(password + tokens[1])))
+            const auto resp = verifyPassword(password, db_password);
+            if (resp.value("verified", false))
             {
                 // Create JWT Token and return to the user ...
                 auto user = parseDbRowToJson(r);
@@ -630,7 +615,7 @@ namespace mantis
 
                 res.status = 200;
                 res.set_content(response.dump(), "application/json");
-                Log::info("Login Successful, user: {}", response.dump());
+                // Log::info("Login Successful, user: {}", response.dump());
                 return;
             }
 
@@ -641,8 +626,8 @@ namespace mantis
             res.status = 404;
             res.set_content(response.dump(), "application/json");
 
-            Log::debug("No user found for given email/password combination.");
-            return;
+            Log::warn("No user found for given email/password combination. Reason: {}",
+                    resp.value("error", ""));
         }
         catch (std::exception& e)
         {

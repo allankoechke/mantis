@@ -94,16 +94,21 @@ namespace mantis
                 // For password types, let's hash them before binding to DB
                 else if (field_name == "password")
                 {
-                    // TODO MOVE THIS SEGMENT TO A STRONG CRYPTOGRAPHIC ENGINE
-                    // Maybe Argon | PBKDF2 | etc.
-
-                    // Create SALT, append to the
-                    const auto salt = generateShortId(); // Create SALT key
+                    // Extract password value and hash it
                     std::string pswd = entity.value(field_name, "");
-                    const auto n_pswd = std::to_string(std::hash<std::string>{}(pswd + salt));
+                    auto res = hashPassword(pswd);
+                    if (!res.value("error", "").empty())
+                    {
+                        // Something went wrong while hashing password
+                        Log::critical("Failed to hash user password. Reason: {}", res.value("error", ""));
+                        result["error"] = res.value("error", "");
+                        result["data"] = json::object();
+                        result["status"] = 500;
+                        return result;
+                    }
 
                     // Add the hashed password to the soci::vals
-                    auto value = std::make_shared<std::string>(n_pswd + ":" + salt);
+                    auto value = std::make_shared<std::string>(res.at("hash").get<std::string>());
                     bound_values.push_back(value);
                     soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);
@@ -375,16 +380,21 @@ namespace mantis
                 // For password types, let's hash them before binding to DB
                 else if (field_name == "password")
                 {
-                    // TODO MOVE THIS SEGMENT TO A STRONG CRYPTOGRAPHIC ENGINE
-                    // Maybe Argon | PBKDF2 | etc.
-
-                    // Create SALT, append to the
-                    const auto salt = generateShortId(); // Create SALT key
+                    // Extract password value and hash it
                     std::string pswd = entity.value(field_name, "");
-                    const auto n_pswd = std::to_string(std::hash<std::string>{}(pswd + salt));
+                    auto res = hashPassword(pswd);
+                    if (!res.value("error", "").empty())
+                    {
+                        // Something went wrong while hashing password
+                        Log::critical("Failed to hash user password. Reason: {}", res.value("error", ""));
+                        result["error"] = res.value("error", "");
+                        result["data"] = json::object();
+                        result["status"] = 500;
+                        return result;
+                    }
 
                     // Add the hashed password to the soci::vals
-                    auto value = std::make_shared<std::string>(n_pswd + ":" + salt);
+                    auto value = std::make_shared<std::string>(res.at("hash").get<std::string>());
                     bound_values.push_back(value);
                     soci::indicator ind = soci::i_ok;;
                     vals.set(field_name, *value, ind);

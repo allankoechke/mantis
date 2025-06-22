@@ -6,96 +6,36 @@
 #define MANTIS_UTILS_H
 
 #include <string>
-#include <algorithm>
 #include <filesystem>
-#include "../core/logging.h"
-#include <chrono>
 #include <random>
-#include <sstream>
-#include <iomanip>
+
+#include "../core/logging.h"
 
 namespace mantis
 {
     namespace fs = std::filesystem;
 
-    inline void toLowerCase(std::string& str)
-    {
-        std::transform(str.begin(), str.end(), str.begin(),
-                       [](const unsigned char c) { return std::tolower(c); });
-    }
+    // ----------------------------------------------------------------- //
+    // PATH UTILS
+    // ----------------------------------------------------------------- //
+    fs::path joinPaths(const std::string& path1, const std::string& path2);
 
-    inline void toUpperCase(std::string& str)
-    {
-        std::transform(str.begin(), str.end(), str.begin(),
-                       [](const unsigned char c) { return std::toupper(c); });
-    }
+    fs::path resolvePath(const std::string& input_path);
 
-    inline fs::path joinPaths(const std::string& path1, const std::string& path2)
-    {
-        fs::path result = fs::path(path1) / fs::path(path2);
-        return result;
-    }
+    bool createDirs(const fs::path& path);
 
-    inline fs::path resolvePath(const std::string& input_path)
-    {
-        fs::path path(input_path);
+    std::string dirFromPath(const std::string& path);
 
-        if (!path.is_absolute())
-        {
-            // Resolve relative to app binary
-            path = fs::absolute(path);
-        }
+    // ----------------------------------------------------------------- //
+    // STRING UTILS
+    // ----------------------------------------------------------------- //
+    void toLowerCase(std::string& str);
 
-        return path;
-    }
+    void toUpperCase(std::string& str);
 
-    inline bool createDirs(const fs::path& path)
-    {
-        try
-        {
-            if (!fs::exists(path))
-            {
-                fs::create_directories(path); // creates all missing parent directories too
-            }
+    std::string trim(const std::string& s);
 
-            return true;
-        }
-        catch (const fs::filesystem_error& e)
-        {
-            Log::critical("Filesystem error while creating directory '{}', reason: {}",
-                          path.string(), e.what());
-            return false;
-        }
-    }
-
-    inline std::string dirFromPath(const std::string& path)
-    {
-        if (const auto dir = resolvePath(path); createDirs(dir))
-            return dir.string();
-
-        return "";
-    }
-
-    inline std::string trim(const std::string& s)
-    {
-        auto start = std::ranges::find_if_not(s, ::isspace);
-        auto end = std::find_if_not(s.rbegin(), s.rend(), ::isspace).base();
-        return (start < end) ? std::string(start, end) : "";
-    }
-
-    inline std::optional<json> tryParseJsonStr(const std::string& json_str)
-    {
-        try
-        {
-            auto res = json::parse(json_str);
-            return res;
-        }
-        catch (const std::exception& e)
-        {
-            Log::critical("JSON parse error: {}", e.what());
-            return std::nullopt;
-        }
-    }
+    std::optional<json> tryParseJsonStr(const std::string& json_str);
 
     /*
     * First part = milliseconds since epoch
@@ -104,49 +44,14 @@ namespace mantis
      *
      * Sample Output: 17171692041233276
      */
-    inline std::string generateTimeBasedId() // 17171692041233276
-    {
-        // Get current time since epoch in milliseconds
-        using namespace std::chrono;
-        auto now = system_clock::now();
-        auto millis = duration_cast<milliseconds>(now.time_since_epoch()).count();
-
-        // Generate 4-digit random suffix
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<> dis(0, 9999);
-
-        std::ostringstream oss;
-        oss << millis << std::setw(4) << std::setfill('0') << dis(gen);
-        return oss.str();
-    }
+    std::string generateTimeBasedId();
 
     /*
     * Sample Output: 20250531T221944517N3J
     * ISO-formatted time + milliseconds + short random suffix
     * Human-readable and sortable
     */
-    inline std::string generateReadableTimeId()
-    {
-        using namespace std::chrono;
-        const auto now = system_clock::now();
-        const auto tt = system_clock::to_time_t(now);
-        const auto ms = duration_cast<milliseconds>(now.time_since_epoch()) % 1000;
-
-        const std::tm tm = *std::localtime(&tt);
-        std::ostringstream oss;
-        oss << std::put_time(&tm, "%Y%m%dT%H%M%S");
-        oss << std::setw(3) << std::setfill('0') << ms.count();
-
-        // Append 3-character random suffix
-        static constexpr char charset[] = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-        std::mt19937 gen(std::random_device{}());
-        std::uniform_int_distribution<> dis(0, 35);
-        for (int i = 0; i < 3; ++i)
-            oss << charset[dis(gen)];
-
-        return oss.str();
-    }
+    std::string generateReadableTimeId();
 
     /*
      * Sample Output: Fz8xYc6a7LQw
@@ -170,25 +75,26 @@ namespace mantis
         return id;
     }
 
-    inline std::vector<std::string> splitString(const std::string& input, const std::string& delimiter) {
-        std::vector<std::string> tokens;
-        size_t start = 0;
-        size_t end = 0;
-
-        while ((end = input.find(delimiter, start)) != std::string::npos) {
-            tokens.push_back(input.substr(start, end - start));
-            start = end + delimiter.length();
-        }
-
-        tokens.push_back(input.substr(start)); // last token
-        return tokens;
-    }
+    std::vector<std::string> splitString(const std::string& input, const std::string& delimiter);
 
     inline std::string getEnvOrDefault(const std::string& key, const std::string& defaultValue)
     {
         const char* value = std::getenv(key.c_str());
         return value ? std::string(value) : defaultValue;
     }
+
+
+    // ----------------------------------------------------------------- //
+    // AUTH UTILS
+    // ----------------------------------------------------------------- //
+    std::string bcryptBase64Encode(const unsigned char* data, size_t len);
+
+    std::string generateSalt(int cost = 12);
+
+    json hashPassword(const std::string& password);
+
+    json verifyPassword(const std::string& password, const std::string& stored_hash);
+
 }
 
 #endif // MANTIS_UTILS_H

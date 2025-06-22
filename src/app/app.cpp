@@ -168,7 +168,7 @@ namespace mantis
         else if (db == "psql") setDbType(DbType::PSQL);
         else quit(-1, "Backend Database '" + db + "' is unknown!");
 
-        auto x = MantisApp::instance().poolSize();
+        [[maybe_unused]] auto x = MantisApp::instance().poolSize();
 
         // Initialize database connection & Migration
         m_database->connect(m_dbType, m_connString);
