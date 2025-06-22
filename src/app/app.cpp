@@ -32,7 +32,7 @@ namespace mantis
         // Enable Multi Sinks
         Log::init();
 
-        Log::info("MantisApp v{}", appVersion());
+        Log::info("mantis v{}", appVersion());
     }
 
     MantisApp::~MantisApp()

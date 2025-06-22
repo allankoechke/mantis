@@ -8,6 +8,7 @@ set(CORE_SOURCES
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/functions.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/containers.cpp
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/builtin-features.cpp
+        ../3rdParty/cparse/builtin_features.h
 )
 
 # Create static library
