@@ -2,7 +2,6 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/AnyOption" vcs="" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt" vcs="Git" />
@@ -18,5 +17,7 @@
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/spdlog" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/build/_deps/googletest-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tests/cmake-build-debug/_deps/googletest-src" vcs="Git" />
   </component>
 </project>

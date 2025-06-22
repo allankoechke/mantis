@@ -78,6 +78,25 @@ namespace mantis
         return oss.str();
     }
 
+    std::string generateShortId(const size_t length)
+    {
+        static constexpr char charset[] =
+            "0123456789"
+            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+            "abcdefghijklmnopqrstuvwxyz";
+
+        std::random_device rd;
+        std::mt19937 gen(rd());
+        std::uniform_int_distribution<size_t> dis(0, sizeof(charset) - 2);
+
+        std::string id;
+        id.reserve(length);
+        for (size_t i = 0; i < length; ++i)
+            id += charset[dis(gen)];
+
+        return id;
+    }
+
     std::vector<std::string> splitString(const std::string& input, const std::string& delimiter)
     {
         std::vector<std::string> tokens;
@@ -92,5 +111,11 @@ namespace mantis
 
         tokens.push_back(input.substr(start)); // last token
         return tokens;
+    }
+
+    std::string getEnvOrDefault(const std::string& key, const std::string& defaultValue)
+    {
+        const char* value = std::getenv(key.c_str());
+        return value ? std::string(value) : defaultValue;
     }
 }

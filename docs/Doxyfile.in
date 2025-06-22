@@ -1,0 +1,13 @@
+PROJECT_NAME           = @PROJECT_NAME@
+OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs
+INPUT                  = @PROJECT_SOURCE_DIR@/include @PROJECT_SOURCE_DIR@/src
+RECURSIVE              = YES
+EXTRACT_ALL            = YES
+GENERATE_LATEX         = NO
+GENERATE_HTML          = YES
+HAVE_DOT               = YES
+DOT_GRAPH_MAX_NODES    = 100
+CALL_GRAPH             = YES
+CALLER_GRAPH           = YES
+QUIET                  = YES
+MARKDOWN_SUPPORT       = YES
