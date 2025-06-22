@@ -77,7 +77,7 @@ namespace mantis
         MANTIS_REQUIRE_INIT();
 
         // Main program parser with global arguments
-        argparse::ArgumentParser program("mantisapp");
+        argparse::ArgumentParser program("mantisapp", appVersion());
         program.add_argument("--database", "-d")
                .nargs(1)
                .help("<type> Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE)");
