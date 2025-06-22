@@ -33,7 +33,6 @@ add_library(mantis
         include/mantis/core/database.h
         src/core/models/models.cpp
         include/mantis/core/models/models.h
-        include/mantis/utils/utils.h
         src/core/logging.cpp
         include/mantis/core/logging.h
         src/core/router.cpp
@@ -58,8 +57,15 @@ add_library(mantis
         src/core/tables/sys_tables.cpp
         src/core/tables/sys_tables_crud.cpp
 
+        # Expression evaluator
         src/core/expr_evaluator.cpp
         include/mantis/core/expr_evaluator.h
+
+        # Utilities
+        include/mantis/utils/utils.h
+        src/utils/auth_utils.cpp
+        src/utils/string_utils.cpp
+        src/utils/path_utils.cpp
 )
 
 # Add httplib
@@ -92,6 +98,9 @@ add_subdirectory(3rdParty/l8w8jwt)
 # Add the cparse module for expr evaluation
 include(cmake/cparse.cmake)
 
+# Add bcrypt to the project
+include(cmake/add-bcrypt.cmake)
+
 # Add to CMakeLists.txt
 option(MANTIS_BUILD_TESTS "Build tests" ON)
 
@@ -117,9 +126,15 @@ target_include_directories(mantis
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/argparse/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/lib/mbedtls/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse
 )
 
 target_link_libraries(mantisapp
         PRIVATE mantis
 )
+
+# In your main CMakeLists.txt, after add_subdirectory(3rdParty/l8w8jwt)
+if(WIN32)
+    target_link_libraries(mantis PRIVATE bcrypt)
+endif()

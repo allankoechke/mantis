@@ -13,3 +13,6 @@
 [submodule "3rdParty/l8w8jwt"]
 	path = 3rdParty/l8w8jwt
 	url = https://github.com/GlitchedPolygons/l8w8jwt.git
+[submodule "3rdParty/libbcrypt"]
+	path = 3rdParty/libbcrypt
+	url = https://github.com/allankoechke/libbcrypt.git
