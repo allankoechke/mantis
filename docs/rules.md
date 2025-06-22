@@ -1,0 +1,244 @@
+
+# API Access Rules in Mantis
+
+This document explains how to write and configure API access rules in Mantis using expression-based access control powered by the [**cparse**](https://github.com/VinGarcia/cparse) library.
+
+## Overview
+
+Mantis uses expression-based access control to secure API endpoints. Each table can define five types of access rules that are evaluated using the cparse expression evaluator.
+
+## Rule Types
+
+Every table supports five distinct access rule types:
+
+| Rule Type | HTTP Method | Purpose |
+|-----------|-------------|---------|
+| `listRule` | `GET /api/v1/{table}` | Controls who can list all records |
+| `getRule` | `GET /api/v1/{table}/:id` | Controls who can view individual records |
+| `addRule` | `POST /api/v1/{table}` | Controls who can create new records |
+| `updateRule` | `PATCH /api/v1/{table}/:id` | Controls who can modify existing records |
+| `deleteRule` | `DELETE /api/v1/{table}/:id` | Controls who can delete records | 
+
+## Expression Context Variables
+
+When evaluating access rules, Mantis provides two main variable contexts:
+
+### Authentication Context (`auth.*`)
+
+Contains information about the authenticated user:
+
+```javascript
+auth.id        // User's unique identifier
+auth.table     // Table the user authenticated against (e.g., "users", "__admins")
+auth.email     // User's email address
+auth.name      // User's display name
+// ... other user fields from the auth table
+```
+
+This information is queried on the fly, if user is not found, these fields will be `None`.
+
+### Request Context (`request.*`)
+
+Contains data from the current HTTP request body:
+
+```javascript
+request.title      // Field from request JSON body
+request.user_id    // Field from request JSON body
+// ... any other fields in the request
+```
+
+## cparse Expression Evaluation
+
+Mantis uses the **cparse** library for expression evaluation. The `ExprEvaluator` class converts JSON data to cparse `TokenMap` format and evaluates boolean expressions.
+
+### Supported Operators
+
+cparse supports standard comparison and logical operators:
+
+- **Comparison**: `==`, `!=`, `<`, `<=`, `>`, `>=`
+- **Logical**: `&&` (AND), `||` (OR), `!` (NOT)
+- **Grouping**: `()` for precedence
+
+## Rule Examples
+
+### Basic Authentication Rules
+
+```javascript
+// Only authenticated users can access
+auth.id != ""
+
+// Only users from specific table can access
+auth.table == "users"
+
+// Only admins can access
+auth.table == "__admins"
+```
+
+### Ownership-Based Rules
+
+```javascript
+// Users can only access their own records
+auth.id == request.user_id
+
+// Users can only modify records they created
+auth.id == request.created_by
+```
+
+### Role-Based Rules
+
+```javascript
+// Only admins or the record owner
+auth.table == "__admins" || auth.id == request.user_id
+
+// Only premium users
+auth.subscription_type == "premium"
+```
+
+### Complex Conditional Rules
+
+```javascript
+// Users can edit their own posts, or admins can edit any post
+(auth.table == "users" && auth.id == request.author_id) || auth.table == "__admins"
+
+// Only allow updates during business hours (if you have a time field)
+auth.table == "__admins" || (request.status != "published" && auth.id == request.author_id)
+```
+
+## Setting Rules via API
+
+### During Table Creation
+
+```json
+{
+  "name": "posts",
+  "type": "base",
+  "listRule": "auth.table == 'users'",
+  "getRule": "auth.id == request.author_id || auth.table == '__admins'",
+  "addRule": "auth.table == 'users'",
+  "updateRule": "auth.id == request.author_id",
+  "deleteRule": "auth.table == '__admins'",
+  "fields": [
+    {"name": "title", "type": "string", "required": true},
+    {"name": "author_id", "type": "string", "required": true}
+  ]
+}
+```
+
+### Updating Existing Table Rules
+
+```json
+{
+  "listRule": "auth.table == 'users' && auth.verified == true",
+  "getRule": "auth.id == request.author_id || auth.role == 'moderator'"
+}
+```
+
+## Default Behavior
+
+### Empty Rules
+When a rule is empty or not specified, Mantis requires admin authentication:
+
+```javascript
+// Empty rule defaults to:
+auth.table == "__admins"
+```
+
+### System Tables
+System tables (like `__tables` and `__admins`) always require admin access regardless of configured rules.
+
+### System Tables
+If you need a rule to make an endpoint public, there are many ways around, but a simple way is setting rule as `True`.
+- `listRule = True` -> Evaluator evaluates always to true hence public access.
+- Setting it to `False` is similar to admin only access.
+
+## Testing Access Rules
+
+You can test your access rules using the integration test patterns:
+
+Example test setup:
+```cpp
+// Create table with specific rules
+const nlohmann::json table_schema = {
+    {"name", "test_permissions"},
+    {"type", "base"},
+    {"listRule", "auth.table == 'users'"},
+    {"getRule", "auth.id == request.user_id"},
+    {"addRule", "auth.table == 'users'"},
+    {"updateRule", "auth.id == request.user_id"},
+    {"deleteRule", "auth.table == '__admins'"}
+};
+```
+
+## Best Practices
+
+### 1. Start Restrictive
+Begin with strict rules and gradually relax them as needed:
+```javascript
+// Start with admin-only
+auth.table == "__admins"
+
+// Then allow specific users
+auth.table == "__admins" || auth.id == request.owner_id
+```
+
+### 2. Use Consistent Field Names
+Establish consistent naming conventions for ownership fields:
+```javascript
+// Good: consistent naming
+auth.id == request.user_id
+auth.id == request.owner_id
+auth.id == request.created_by
+
+// Avoid: inconsistent naming across tables
+```
+
+### 3. Test Edge Cases
+Always test your rules with different user types and scenarios:
+- Unauthenticated users
+- Users from different tables
+- Admin users
+- Record owners vs. non-owners
+
+
+## Troubleshooting
+
+### Rule Evaluation Errors
+If a rule fails to evaluate, check the logs for cparse errors. Common issues:
+- Typos in field names
+- Missing parentheses for complex expressions
+- Incorrect operator usage
+
+### Access Denied Issues
+When debugging access denied errors:
+1. Verify the user is properly authenticated
+2. Check that required fields exist in the auth context
+3. Test the rule expression with known values
+4. Ensure the rule matches the HTTP method being used
+
+## Advanced Usage
+
+### Custom Field Validation
+Combine access rules with field validation for comprehensive security:
+```json
+{
+  "addRule": "auth.table == 'users' && auth.verified == true",
+  "fields": [
+    {
+      "name": "status", 
+      "type": "string",
+      "validator": "^(draft|published)$"
+    }
+  ]
+}
+```
+
+### Multi-Table Relationships
+For tables with relationships, use consistent field naming:
+```javascript
+// Comments table referencing posts
+auth.table == "users" && (auth.id == request.author_id || auth.id == request.post_author_id)
+```
+
+---
+
+For more information about the expression evaluation system, see the [cparse library documentation](https://github.com/VinGarcia/cparse).

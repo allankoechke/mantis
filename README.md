@@ -35,11 +35,11 @@
 | 🧱 System metadata tables         | ✅ Completed    |
 | 🔁 Client/server sync modes       | ⬜ Planned      |
 | 🔄 WebSocket sync support         | ⬜ Planned      |
-| 🧩 Middleware support             | 🟡 In Progress |
+| 🧩 Middleware support             | ✅ Completed |
 | 💾 Static file serving            | ⬜ Planned      |
 | 🚀 Docker-ready deployment        | ⬜ Planned      |
-| 🧪 Unit + integration tests       | ⬜ Planned      |
-| 📘 CLI + embeddable modes         | 🟡 In Progress |
+| 🧪 Unit + integration tests       | 🟡 In Progress     |
+| 📘 CLI + embeddable modes         | ✅ Completed |
 
 ---
 
@@ -47,7 +47,6 @@
 
 - **Language**: C++
 - **Database**: SQLite (default), MySQL/PSQL (planned)
-- **HTTP Server**: [httplib-cpp](https://github.com/allankoechke/httplib)
 - **Build System**: CMake
 - **Packaging**: Docker + CLI
 - **Sync**: WebSocket / REST delta sync (planned)
@@ -61,17 +60,22 @@ git clone --recurse-submodules https://github.com/yourusername/mantis.git
 cd mantis
 cmake -B build
 cmake --build build
-./build/mantis-ctl -p 7070 -h 0.0.0.0 --serve
+./build/mantisapp serve
 ````
 
 You can also embed Mantis as a library in your own C++ project:
 
 ```cpp
-#include <mantis/core/database.hpp>
-#include <mantis/api/server.hpp>
-// Initialize and run
-```
+#include <mantis/app/app.h>
 
+int main(const int argc, char* argv[])
+{
+    mantis::MantisApp app(argc, argv);
+    app.init();
+    return app.run();
+}
+```
+Check /exammples for a sample
 ---
 
 ## 📁 Project Structure
@@ -100,10 +104,15 @@ mantis/
 
 ##  Project Dependencies
 
-* [httplib-cpp]()
-* [soci - SQL lib]()
-* [spdlog]()
-* [AnyOption - CMD parser]()
+* HTTP Server: [httplib-cpp](https://github.com/yhirose/cpp-httplib)
+* Database Layer: [SOCI - SQL lib](https://github.com/SOCI/soci)
+* ogging Layer: [spdlog](https://github.com/gabime/spdlog)
+* Commandline Args: [Argparse](https://github.com/p-ranav/argparse)
+* JWT: [l8w8tjwt](https://github.com/GlitchedPolygons/l8w8jwt)
+* Password Hashing: [libbcrypt](https://github.com/rg3/libbcrypt)
+* JSON: [nlohmann::json](https://github.com/nlohmann/json)
+
+All these dependencies are included in the project as source files or as git submodules under [3rdParty/](./3rdParty/) directory.
 
 ---
 

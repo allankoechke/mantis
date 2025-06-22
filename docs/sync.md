@@ -1,5 +1,5 @@
 
-# Mantis Sync Engine Design
+# Mantis Sync Engine Design (NOT IMPLEMENTED YET!)
 
 The Mantis sync engine is designed to support offline-first applications that require robust and efficient synchronization between local nodes (clients) and remote nodes (servers). This document outlines how the sync system works, how it is configured, and how conflicts are handled.
 
