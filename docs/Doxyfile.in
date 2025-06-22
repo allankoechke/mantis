@@ -11,3 +11,4 @@ CALL_GRAPH             = YES
 CALLER_GRAPH           = YES
 QUIET                  = YES
 MARKDOWN_SUPPORT       = YES
+PROJECT_NUMBER         = @PROJECT_VERSION@

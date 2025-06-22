@@ -4,6 +4,7 @@
 
 #include "../../include/mantis/mantis.h"
 #include <builtin_features.h>
+#include <mantis/app/config.hpp>
 
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
@@ -30,6 +31,8 @@ namespace mantis
 
         // Enable Multi Sinks
         Log::init();
+
+        Log::info("MantisApp v{}", appVersion());
     }
 
     MantisApp::~MantisApp()
@@ -408,6 +411,26 @@ namespace mantis
             throw std::runtime_error("MantisApp::init() must be called before using this method");
             throw std::runtime_error("MantisApp::init() must be called before using this method");
         }
+    }
+
+    std::string MantisApp::appVersion()
+    {
+        return getVersionString();
+    }
+
+    int MantisApp::appMinorVersion()
+    {
+        return MANTIS_VERSION_MINOR;
+    }
+
+    int MantisApp::appMajorVersion()
+    {
+        return MANTIS_VERSION_MAJOR;
+    }
+
+    int MantisApp::appPatchVersion()
+    {
+        return MANTIS_VERSION_PATCH;
     }
 
     DbType MantisApp::dbType() const

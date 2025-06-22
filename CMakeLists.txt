@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.30)
-project(mantisapp)
+project(mantisapp VERSION 0.1.2)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -18,6 +18,10 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
+        ${CMAKE_CURRENT_BINARY_DIR}/include/mantis/app/config.hpp
+)
 
 # Add main executable
 add_executable(mantisapp
@@ -68,6 +72,7 @@ add_library(mantis
         src/utils/path_utils.cpp
 
         include/mantis/core/private-impl/soci_custom_types.hpp
+        include/mantis/app/config.hpp.in
 )
 
 # Add httplib
@@ -130,6 +135,7 @@ target_include_directories(mantis
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/lib/mbedtls/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse
+        ${CMAKE_BINARY_DIR}/include
 )
 
 target_link_libraries(mantisapp
@@ -153,3 +159,23 @@ add_custom_target(doc
     WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
     COMMENT "Generating API documentation with Doxygen"
     VERBATIM)
+
+# Inject semantic versioning
+# Try to get the current Git commit hash
+execute_process(
+        COMMAND git rev-parse --short HEAD
+        WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+        OUTPUT_VARIABLE GIT_COMMIT_HASH
+        OUTPUT_STRIP_TRAILING_WHITESPACE
+        ERROR_QUIET
+)
+
+# Suffix for pre-release or metadata (e.g., "-dev", "+gabcdef")
+set(MANTIS_VERSION_SUFFIX "-dev+g${GIT_COMMIT_HASH}")
+set(MANTIS_GIT_COMMIT "${GIT_COMMIT_HASH}")
+
+# Fallback if not in a Git repo
+if(NOT GIT_COMMIT_HASH)
+    set(MANTIS_VERSION_SUFFIX "")
+    set(MANTIS_GIT_COMMIT "unknown")
+endif()

@@ -182,6 +182,18 @@ namespace mantis
          */
         void ensureInitialized(const char* caller) const;
 
+        /**
+         * Fetch the application version
+         * @return Application version
+         */
+        static std::string appVersion();
+        /// Fetch the major version
+        static int appMinorVersion();
+        /// Fetch the minor version
+        static int appMajorVersion();
+        /// Fetch the patch version
+        static int appPatchVersion();
+
         /// Get the database unit object
         [[nodiscard]] DatabaseUnit& db() const;
         /// Get the logging unit object
