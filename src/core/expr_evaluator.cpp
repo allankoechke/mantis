@@ -8,11 +8,6 @@
 
 namespace mantis
 {
-    ExprEvaluator::ExprEvaluator()
-    {
-        // cparse_startup();
-    }
-
     bool ExprEvaluator::evaluate(const std::string& expr, const TokenMap& vars)
     {
         try
