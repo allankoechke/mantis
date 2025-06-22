@@ -309,10 +309,6 @@ namespace mantis
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
     {
-        // Do some cleanup if need be ...
-        // m_db->CloseIfOpened();
-        // m_svr->CloseIfOpened();
-
         if (exitCode != 0)
             Log::critical("Exiting Application with Code = {}", exitCode);
         else

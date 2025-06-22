@@ -66,6 +66,8 @@ add_library(mantis
         src/utils/auth_utils.cpp
         src/utils/string_utils.cpp
         src/utils/path_utils.cpp
+
+        include/mantis/core/private-impl/soci_custom_types.hpp
 )
 
 # Add httplib
