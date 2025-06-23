@@ -78,11 +78,13 @@ add_library(mantis
 # Add httplib
 # Build static lib for httplib
 set(HTTPLIB_COMPILE OFF CACHE BOOL "")
-set(HTTPLIB_REQUIRE_ZSTD ON CACHE BOOL "")
-
 if(NOT WIN32)
-    find_package ( ZSTD REQUIRED )
-    add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
+    set(HTTPLIB_REQUIRE_ZSTD TRUE)
+    include(cmake/FindZSTD.cmake)
+    find_package(zstd REQUIRED)
+    if(zstd_FOUND)
+        add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
+    endif()
 endif ()
 
 add_subdirectory(3rdParty/httplib-cpp)
