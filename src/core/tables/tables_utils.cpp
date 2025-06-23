@@ -152,56 +152,6 @@ namespace mantis
         return j;
     }
 
-    TableValue TableUnit::getTypedValue(const json& row, const std::string& colName, const std::string& type)
-    {
-        if (!row.contains(colName) || row[colName].is_null())
-            return std::monostate{};
-
-        const json& value = row[colName];
-
-        try
-        {
-            if (type == "double")
-                return value.get<double>();
-            if (type == "bool")
-                return value.get<bool>();
-            if (type == "int8")
-                return static_cast<int8_t>(value.get<int>());
-            if (type == "uint8")
-                return static_cast<uint8_t>(value.get<int>());
-            if (type == "int16")
-                return static_cast<int16_t>(value.get<int>());
-            if (type == "uint16")
-                return static_cast<uint16_t>(value.get<int>());
-            if (type == "int32")
-                return value.get<int32_t>();
-            if (type == "uint32")
-                return value.get<uint32_t>();
-            if (type == "int64")
-                return value.get<int64_t>();
-            if (type == "uint64")
-                return value.get<uint64_t>();
-            if (type == "json")
-                return value;
-            if (type == "date")
-            {
-                std::tm tm{};
-                std::istringstream ss(value.get<std::string>());
-                ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
-                return tm;
-            }
-
-            // TODO Add BLOB and XML support here as well, this as is may throw an error
-
-            // Unknown type, fallback to string
-            return value.get<std::string>();
-        }
-        catch (const std::exception&)
-        {
-            return std::monostate{}; // or throw if preferred
-        }
-    }
-
     std::string TableUnit::generateTableId(const std::string& tablename)
     {
         return "mt_" + std::to_string(std::hash<std::string>{}(tablename));
