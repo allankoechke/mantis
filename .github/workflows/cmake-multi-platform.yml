@@ -45,14 +45,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libzstd-dev
 
-      - name: Install Doxygen (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install -y doxygen graphviz
-
-      - name: Install Doxygen (Windows)
-        if: matrix.os == 'windows-latest'
-        run: choco install doxygen.install graphviz -y
-
       - name: Set reusable strings
         id: strings
         shell: bash
@@ -70,16 +62,43 @@ jobs:
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-      - name: Generate Doxygen Docs
-        run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --target doc
-
-      - name: Upload Doxygen Docs
-        if: always()
-        uses: actions/upload-artifact@v4
-        with:
-          name: doxygen-docs-${{ matrix.os }}-${{ matrix.c_compiler }}
-          path: ${{ steps.strings.outputs.build-output-dir }}/docs/html
-
       - name: Test
         working-directory: ${{ steps.strings.outputs.build-output-dir }}
         run: ctest --build-config ${{ matrix.build_type }}
+
+  upload-docs:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Install Doxygen and Graphviz
+        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
+
+      - name: Configure CMake
+        run: cmake -B build -S .
+
+      - name: Build Doxygen Docs
+        run: cmake --build build --target doc
+
+      - name: Clone GitHub Wiki
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git clone https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.wiki.git wiki
+
+      - name: Copy docs to Wiki and push
+        run: |
+          rm -rf wiki/*
+          cp -r build/docs/html/* wiki/
+          cd wiki
+          git add .
+          git commit -m "Update Doxygen docs from CI"
+          git push
