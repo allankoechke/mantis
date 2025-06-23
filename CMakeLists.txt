@@ -4,7 +4,7 @@ project(mantisapp VERSION 0.1.2)
 set(CMAKE_CXX_STANDARD 20)
 
 # Flag for building deps as shared/static libs
-option(MANTIS_SHARED_DEPS "Build mantis dependencies as shared libs" ON)
+option(MANTIS_SHARED_DEPS "Build mantis dependencies as shared libs" OFF)
 if(MANTIS_SHARED_DEPS)
     # Optional: choose static/shared globally
     set(BUILD_SHARED_LIBS ON)
@@ -76,13 +76,17 @@ add_library(mantis
 )
 
 # Add httplib
-if(MANTIS_SHARED_DEPS)
-    # Build Shared lib for httplib
-    set(HTTPLIB_COMPILE ON CACHE BOOL "")
-else ()
-    # Build static lib for httplib
-    set(HTTPLIB_COMPILE OFF CACHE BOOL "")
+# Build static lib for httplib
+set(HTTPLIB_COMPILE OFF CACHE BOOL "")
+if(NOT WIN32)
+    set(HTTPLIB_REQUIRE_ZSTD TRUE)
+    include(cmake/FindZSTD.cmake)
+    find_package(zstd REQUIRED)
+    if(zstd_FOUND)
+        add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
+    endif()
 endif ()
+
 add_subdirectory(3rdParty/httplib-cpp)
 
 # Add spdlog

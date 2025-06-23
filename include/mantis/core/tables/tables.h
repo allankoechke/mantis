@@ -18,19 +18,19 @@ namespace mantis
 {
     using json = nlohmann::json;
 
-    using TableValue = std::variant<
-        std::monostate,
-        std::string,
-        double,
-        std::tm,
-        int8_t, uint8_t,
-        int16_t, uint16_t,
-        int32_t, uint32_t,
-        int64_t, uint64_t,
-        bool,
-        json,
-        BLOB
-    >;
+    // using TableValue = std::variant<
+    //     std::monostate,
+    //     std::string,
+    //     double,
+    //     std::tm,
+    //     int8_t, uint8_t,
+    //     int16_t, uint16_t,
+    //     int32_t, uint32_t,
+    //     int64_t, uint64_t,
+    //     bool,
+    //     json,
+    //     BLOB
+    // >;
 
     /**
      *
@@ -112,7 +112,6 @@ namespace mantis
         json parseDbRowToJson(const soci::row& row) const;
         std::optional<json> validateRequestBody(const json& body) const;
         std::optional<json> validateUpdateRequestBody(const json& body) const;
-        static TableValue getTypedValue(const json& row, const std::string& colName, const std::string& type);
         bool recordExists(const std::string& id) const;
         std::optional<json> findFieldByKey(const std::string& key) const;
         json checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const;

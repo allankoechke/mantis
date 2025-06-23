@@ -56,11 +56,11 @@
 ## 🚀 Getting Started
 
 ```bash
-git clone --recurse-submodules https://github.com/yourusername/mantis.git
+git clone --recurse-submodules https://github.com/allankoechke/mantis.git
 cd mantis
 cmake -B build
 cmake --build build
-./build/mantisapp serve
+./build/mantisapp serve -p 5000
 ````
 
 You can also embed Mantis as a library in your own C++ project:
