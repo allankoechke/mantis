@@ -35,6 +35,10 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libzstd-dev
 
+      - name: Install Doxygen (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y doxygen graphviz
+
       - name: Set reusable strings
         id: strings
         shell: bash
@@ -66,9 +70,6 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 1
-
-      - name: Install Doxygen and Graphviz
-        run: sudo apt-get update && sudo apt-get install -y doxygen graphviz
 
       - name: Configure CMake
         run: cmake -B build -S .
