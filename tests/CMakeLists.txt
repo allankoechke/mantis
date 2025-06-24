@@ -69,4 +69,4 @@ endif()
 
 # Register tests with CTest
 include(GoogleTest)
-gtest_discover_tests(mantis_tests)
+add_test(NAME all_mantis_tests COMMAND mantis_tests)

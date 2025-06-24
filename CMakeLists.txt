@@ -4,13 +4,13 @@ project(mantisapp VERSION 0.1.2)
 set(CMAKE_CXX_STANDARD 20)
 
 # Flag for building deps as shared/static libs
-option(MANTIS_SHARED_DEPS "Build mantis dependencies as shared libs" OFF)
+set(MANTIS_SHARED_DEPS FALSE)
 if(MANTIS_SHARED_DEPS)
     # Optional: choose static/shared globally
-    set(BUILD_SHARED_LIBS ON)
+    set(BUILD_SHARED_LIBS TRUE)
 else ()
     # Optional: choose static/shared globally
-    set(BUILD_SHARED_LIBS OFF)
+    set(BUILD_SHARED_LIBS FALSE)
 endif ()
 
 # Set output directories to match SOCI's
@@ -28,8 +28,14 @@ add_executable(mantisapp
         src/main.cpp
 )
 
+if(CMAKE_BUILD_TYPE STREQUAL "Release")
+    set(MANTIS_LIB_TYPE STATIC)
+else()
+    set(MANTIS_LIB_TYPE SHARED)
+endif()
+
 # Add library
-add_library(mantis
+add_library(mantis ${MANTIS_LIB_TYPE}
         include/mantis/mantis.h
         src/app/app.cpp
         include/mantis/app/app.h

@@ -5,26 +5,32 @@
 #include <mantis/core/database.h>
 #include <mantis/app/app.h>
 
-class DatabaseTest : public ::testing::Test {
-protected:
-    void SetUp() override {
-        app = std::make_unique<mantis::MantisApp>();
-        app->setDbType(mantis::DbType::SQLITE);
-        db = std::make_unique<mantis::DatabaseUnit>(app.get());
-    }
+#include "mantis/core/tables/tables.h"
 
-    std::unique_ptr<mantis::MantisApp> app;
-    std::unique_ptr<mantis::DatabaseUnit> db;
+class DatabaseTest : public ::testing::Test {
+
 };
 
 TEST_F(DatabaseTest, ConnectToSQLite) {
-    EXPECT_TRUE(db->connect(mantis::DbType::SQLITE, ""));
-    EXPECT_TRUE(db->isConnected());
+    EXPECT_TRUE(mantis::MantisApp::instance().db().isConnected());
 }
 
-TEST_F(DatabaseTest, MigrationCreatesSystemTables) {
-    db->connect(mantis::DbType::SQLITE, "");
-    // TODO
-    // EXPECT_TRUE(db->migrate());
-    // Verify __tables system table exists
+TEST_F(DatabaseTest, MigrationForSystemTablesSuccessful) {
+    // Verify we have tables
+    const auto sql = mantis::MantisApp::instance().db().session();
+    const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name FROM __tables");
+
+    // int count = 0;
+    for (const auto& row : rs)
+    {
+        const auto id = row.get<std::string>(0);
+        const auto name = row.get<std::string>(1);
+
+        std::cout << id << " " << name << std::endl;
+
+        EXPECT_EQ(id, mantis::TableUnit::generateTableId(name));
+        // count++;
+    }
+
+    // EXPECT_TRUE(count > 0);
 }

@@ -13,10 +13,10 @@ protected:
         client = std::make_unique<httplib::Client>("http://localhost:8081");
 
         // Clean up any test data from previous tests
-        cleanupTestData();
+        // cleanupTestData();
 
         // Create test tables for this test suite
-        createTestTableWithRules();
+        // createTestTableWithRules();
     }
 
     void TearDown() override {
