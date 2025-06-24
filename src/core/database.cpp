@@ -73,7 +73,18 @@ bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn
     return false;
 }
 
-void mantis::DatabaseUnit::migrate() {
+void mantis::DatabaseUnit::disconnect() const
+{
+    // Close all sessions in the pool
+    for (std::size_t i = 0; i < MantisApp::instance().poolSize(); ++i) {
+        if (soci::session& sess = m_connPool->at(i); sess.is_connected()) {  // Check if session is connected
+            sess.close();
+        }
+    }
+}
+
+void mantis::DatabaseUnit::migrate() const
+{
     // Create system tables as follows:
     // __tables for managing user tables & schema
     // __admins for managing system admin users

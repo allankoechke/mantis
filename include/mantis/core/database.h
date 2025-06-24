@@ -37,9 +37,14 @@ namespace mantis
         bool connect(DbType backend, const std::string& conn_str);
 
         /**
+         * @brief CLose all database connections and destroy connection pools.
+         */
+        void disconnect() const;
+
+        /**
          * @brief Run database migrations, creates the default system tables.
          */
-        void migrate();
+        void migrate() const;
 
         /**
          * @brief Get access to a session from the pool
