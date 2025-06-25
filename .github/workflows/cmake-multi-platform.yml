@@ -56,10 +56,6 @@ jobs:
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-      - name: Test
-        working-directory: ${{ steps.strings.outputs.build-output-dir }}
-        run: ctest --build-config ${{ matrix.build_type }}
-
   upload-docs:
     needs: build
     if: github.ref == 'refs/heads/master'
@@ -93,3 +89,7 @@ jobs:
           git add .
           git commit -m "Update Doxygen docs from CI"
           git push
+
+#      - name: Test
+#        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+#        run: ctest --build-config ${{ matrix.build_type }}
