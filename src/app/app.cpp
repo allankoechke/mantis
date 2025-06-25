@@ -18,13 +18,20 @@ namespace mantis
 
     // -------------------------------------------------------------------------------- //
     MantisApp::MantisApp(const int argc, char** argv)
-        : m_argc(argc), m_argv(argv), m_dbType(DbType::SQLITE)
+        : m_dbType(DbType::SQLITE)
     {
         std::lock_guard<std::mutex> lock(s_mutex);
         if (s_instance)
             throw std::runtime_error("MantisApp already instantiated, use MantisApp::instance() instead!");
 
         s_instance.reset(this);
+
+        // Store cmd args into our member vector
+        m_cmdArgs.reserve(argc);
+        for (int i = 0; i < argc; ++i) {
+            m_cmdArgs.emplace_back(argv[i]);  // copy each string over
+        }
+
 
         // Initialize Default Features in cparse
         cparse::cparse_init();
@@ -134,7 +141,15 @@ namespace mantis
 
         try
         {
-            program.parse_args(m_argc, m_argv);
+            // Create a vector of `const char*` pointing to the owned `std::string`s
+            std::vector<const char*> argv;
+            argv.reserve(m_cmdArgs.size());
+            for (const auto& arg : m_cmdArgs) {
+                argv.push_back(arg.c_str());
+            }
+
+            // Parse safely — strings are now owned by `m_cmdArgs`
+            program.parse_args(static_cast<int>(argv.size()), argv.data());
         }
         catch (const std::exception& err)
         {
@@ -301,8 +316,8 @@ namespace mantis
             quit(-1, "Failed to create database directories!");
 
         // Create instance objects
-        m_exprEval = std::make_unique<ExprEvaluator>();
         m_logger = std::make_unique<LoggingUnit>();
+        m_exprEval = std::make_unique<ExprEvaluator>();
         m_database = std::make_unique<DatabaseUnit>();
         m_http = std::make_unique<HttpUnit>();
         m_opts = std::make_unique<argparse::ArgumentParser>();

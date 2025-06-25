@@ -119,7 +119,7 @@ include(cmake/cparse.cmake)
 include(cmake/add-bcrypt.cmake)
 
 # Add to CMakeLists.txt
-option(MANTIS_BUILD_TESTS "Build tests" ON)
+option(MANTIS_BUILD_TESTS "Build tests" OFF)
 
 if(MANTIS_BUILD_TESTS)
     enable_testing()

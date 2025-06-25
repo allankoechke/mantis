@@ -75,8 +75,10 @@ bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn
 
 void mantis::DatabaseUnit::disconnect() const
 {
+    // Pool size cast
+    const auto pool_size = static_cast<size_t>(MantisApp::instance().poolSize());
     // Close all sessions in the pool
-    for (std::size_t i = 0; i < MantisApp::instance().poolSize(); ++i) {
+    for (std::size_t i = 0; i < pool_size; ++i) {
         if (soci::session& sess = m_connPool->at(i); sess.is_connected()) {  // Check if session is connected
             sess.close();
         }

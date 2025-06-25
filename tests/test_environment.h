@@ -65,7 +65,7 @@ public:
         TestDatabase::cleanupTestDb();
     }
 
-    static mantis::MantisApp* GetApp() { return global_app.get(); }
+    static mantis::MantisApp& GetApp() { return *global_app; }
 
 private:
     static std::unique_ptr<mantis::MantisApp> global_app;
