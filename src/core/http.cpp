@@ -97,6 +97,20 @@ mantis::HttpUnit::HttpUnit()
         return httplib::Server::HandlerResponse::Unhandled;
     });
 
+    // Add CORS headers to all responses
+    server.set_post_routing_handler([](const auto& req, auto& res) {
+        res.set_header("Access-Control-Allow-Origin", "*");
+        res.set_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
+        res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
+        res.set_header("Access-Control-Max-Age", "86400");
+    });
+
+    // Handle preflight OPTIONS requests
+    server.Options(".*", [](const auto& req, auto& res) {
+        // Headers are already set by post_routing_handler
+        res.status = 200;
+    });
+
     // Set Global Logger
     server.set_logger([](const Request& req, const Response& res)
     {

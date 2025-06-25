@@ -225,13 +225,19 @@ namespace mantis
         void init_units();  ///> Initialize application units
 
         [[nodiscard]]
-        bool ensureDirsAreCreated() const;
+        bool ensureDirsAreCreated() const; /// Ensures we created all required directories
+        /**
+         * @brief Get user input value, especially for password inputs or any secure value
+         *
+         * // TODO change to a proper input library
+         *
+         * @param prompt The message prompt to the user
+         * @return Entered user input as a string, cast accordingly!
+         */
         static std::string getUserValueSecurely(const std::string& prompt);
 
-        // Store commandline args passed in, to be used in
-        // the init phase.
-        int m_argc;
-        char** m_argv;
+        // Store commandline args passed in, to be used in the init phase.
+        std::vector<std::string> m_cmdArgs;
 
         // Hold state if the instance has be initialized already!
         bool initialized = false;
