@@ -9,6 +9,8 @@
 #include <nlohmann/json.hpp>
 using json = nlohmann::json;
 
+#define __file__ "core/router.cpp"
+
 mantis::Router::Router()
 {
     // Create admin table object, we'll use it to get JSON rep for use in
@@ -145,7 +147,7 @@ json mantis::Router::addRoute(const std::string& table)
 
 json mantis::Router::updateRoute(const json& table_data)
 {
-    Log::debug("{}", __func__);
+    TRACE_CLASS_METHOD()
 
     json res;
     res["success"] = false;
@@ -214,6 +216,36 @@ json mantis::Router::updateRoute(const json& table_data)
     return addRoute(table_name);
 }
 
+mantis::json mantis::Router::updateRouteCache(const json& table_data)
+{
+    TRACE_CLASS_METHOD()
+
+    json res;
+    res["success"] = false;
+    res["error"] = "";
+
+    // Get table name
+    const auto table_name = table_data.at("name").get<std::string>();
+
+    // Let's find and remove existing object
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
+    {
+        return route->tableName() == table_name;
+    });
+
+    if (it == m_routes.end())
+    {
+        res["error"] = "TableUnit for " +table_name+ " not found!";
+        return res;
+    }
+
+    // Update cached data & rules using the schema
+    (*it)->fromJson(table_data);
+
+    res["success"] = true;
+    return res;
+}
+
 json mantis::Router::removeRoute(const json& table_data)
 {
     Log::debug("{}", __func__);
@@ -244,7 +276,7 @@ json mantis::Router::removeRoute(const json& table_data)
     const auto table_type = table_data.at("type").get<std::string>();
 
     // Let's find and remove existing object
-    const auto it = std::find_if(m_routes.begin(), m_routes.end(), [&](const auto& route)
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
     {
         return route->tableName() == table_name;
     });

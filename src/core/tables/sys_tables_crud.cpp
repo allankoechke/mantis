@@ -617,9 +617,6 @@ namespace mantis
                 record["updated"] = r.get<std::string>(6);
 
                 response["data"] = record;
-
-                // Let's update our local cache with the new information
-                fromJson(r.get<json>(3)); // Pass in our schema to update all fields
             }
 
             // Only trigger routes to be reloaded if table name changes.
@@ -638,6 +635,19 @@ namespace mantis
                 {
                     Log::warn("Restart server to get new route changes! {}",
                         res.value("error", ""));
+                }
+            } else
+            {
+                if (sql->got_data())
+                {
+                    // We have data
+                    const auto j = r.get<json>(3); // Store updated schema
+                    if (auto res = MantisApp::instance().router().updateRouteCache(j);
+                    !res.value("success", false))
+                    {
+                        Log::warn("Restart server to update table changes! {}",
+                            res.value("error", ""));
+                    }
                 }
             }
         }

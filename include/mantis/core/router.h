@@ -47,16 +47,24 @@ namespace mantis
         /// @param table Table name
         /// @return JSON object having `success` and `error` values.
         json addRoute(const std::string& table);
+
         /// Update existing route, probably due to a change in table name and/or table type
         /// @param table_data Contains the changes, that is, `old_type`, `old_name` and `new_name` matching the old
         /// table name and type together with the new table name. The new table type will be fetched from the db.
         /// @return JSON object having `success` and `error` values.
         json updateRoute(const json& table_data = json::object());
+
+        /// Update existing route internal data, probably due to a change in table internal metadata
+        /// @param table_data Contains the new table schema
+        /// @return JSON object having `success` and `error` values.
+        json updateRouteCache(const json& table_data = json::object());
+
         /// Remove existing route(s), maybe due to deletion of a table.
         /// @param table_data must have the deleted table's `name` and `type`.
         /// @return JSON object having `success` and `error` values.
         json removeRoute(const json& table_data = json::object());
 
+        const std::string __class_name__ = "mantis::Router";
     private:
         bool generateTableCrudApis();
         bool generateAdminCrudApis() const;
