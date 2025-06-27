@@ -7,6 +7,8 @@
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
 
+#define __file__ "core/tables/tables_validation.cpp"
+
 namespace mantis
 {
     std::optional<json> TableUnit::validateRequestBody(const json& body) const

@@ -11,6 +11,8 @@
 #include <soci/sqlite3/soci-sqlite3.h>
 #include <private/soci-mktime.h>
 
+#define __file__ "core/tables/sys_tables.cpp"
+
 mantis::DatabaseUnit::DatabaseUnit()
     : m_connPool(nullptr) {}
 

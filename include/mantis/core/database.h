@@ -14,6 +14,7 @@
 #include "../app/app.h"
 #include "logging.h"
 
+// #define __file__ "core/tables/database.h"
 
 namespace mantis
 {
@@ -71,6 +72,7 @@ namespace mantis
          */
         static std::string tmToISODate(const std::tm& t);
 
+        const std::string __class_name__ = "mantis::DatabaseUnit";
     private:
         std::unique_ptr<soci::connection_pool> m_connPool;
     };

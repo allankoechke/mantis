@@ -11,6 +11,8 @@
 #include <containers.h>
 #include <nlohmann/json.hpp>
 
+// #define __file__ "core/expr_evaluator.h"
+
 namespace mantis
 {
     using cparse::TokenMap;
@@ -50,6 +52,8 @@ namespace mantis
          * @return TokenMap equivalent of the JSON Object
          */
         auto jsonToTokenMap(const json& j) -> TokenMap;
+
+        const std::string __class_name__ = "mantis::ExprEvaluator";
     };
 } // mantis
 

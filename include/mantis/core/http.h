@@ -21,7 +21,7 @@
 
 #define REQUEST_HANDLED false
 #define REQUEST_PENDING true
-
+// #define __file__ "core/http.h"
 
 namespace mantis
 {
@@ -56,8 +56,10 @@ namespace mantis
     class Context
     {
         std::unordered_map<std::string, std::any> data;
+        std::string __class_name__ = "mantis::Context";
 
     public:
+        Context() = default;
         /**
          * @brief Convenience method for dumping context data for debugging.
          */
@@ -86,7 +88,7 @@ namespace mantis
         template <typename T>
         std::optional<T*> get(const std::string& key)
         {
-            auto it = data.find(key);
+            const auto it = data.find(key);
             if (it != data.end()) return std::any_cast<T>(&it->second);
             return std::nullopt;
         }
@@ -173,6 +175,8 @@ namespace mantis
          * @return JSON Error object, error value contains data if operation fails.
          */
         json remove(const std::string& method, const std::string& path);
+
+        const std::string __class_name__ = "mantis::RouteRegistry";
     };
 
     /**
@@ -224,6 +228,8 @@ namespace mantis
          * @return Ref to the underlying route registry object.
          */
         RouteRegistry& routeRegistry();
+
+        const std::string _class_ = "mantis::HttpUnit";
 
     private:
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);

@@ -6,6 +6,8 @@
 
 #include <chrono>
 
+#define __file__ "core/http.cpp"
+
 thread_local mantis::Context mantis::HttpUnit::current_context;
 
 void mantis::Context::dump()
@@ -231,7 +233,7 @@ void mantis::HttpUnit::route(
     registry.add(method, path, handler, {middlewares});
     bind_method(path, [this, method, path](const httplib::Request& req, httplib::Response& res)
     {
-        current_context = Context();
+        current_context = Context{};
 
         const auto* route = registry.find(method, path);
         if (!route)

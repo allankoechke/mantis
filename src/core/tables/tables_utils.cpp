@@ -7,6 +7,8 @@
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
 
+#define __file__ "core/tables/tables_utils.cpp"
+
 namespace mantis
 {
     std::optional<json> TableUnit::findFieldByKey(const std::string& key) const

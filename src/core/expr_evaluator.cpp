@@ -6,6 +6,8 @@
 
 #include "../../include/mantis/core/logging.h"
 
+#define __file__ "core/evaluator.cpp"
+
 namespace mantis
 {
     bool ExprEvaluator::evaluate(const std::string& expr, const TokenMap& vars)

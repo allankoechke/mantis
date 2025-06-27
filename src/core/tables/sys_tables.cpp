@@ -8,6 +8,8 @@
 #include "../../../include/mantis/utils/utils.h"
 #include "../../../include/mantis/core/router.h"
 
+#define __file__ "core/tables/sys_tables.cpp"
+
 namespace mantis
 {
     SysTablesUnit::SysTablesUnit(const std::string& tableName,

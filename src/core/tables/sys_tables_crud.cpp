@@ -16,6 +16,7 @@
 #include "mantis/core/router.h"
 #include "private/soci-mktime.h"
 
+#define __file__ "core/tables/sys_tables_crud.cpp"
 
 namespace mantis
 {
@@ -616,6 +617,9 @@ namespace mantis
                 record["updated"] = r.get<std::string>(6);
 
                 response["data"] = record;
+
+                // Let's update our local cache with the new information
+                fromJson(r.get<json>(3)); // Pass in our schema to update all fields
             }
 
             // Only trigger routes to be reloaded if table name changes.
@@ -686,7 +690,7 @@ namespace mantis
     std::vector<json> SysTablesUnit::list(const json& opts)
     {
         const auto sql =  MantisApp::instance().db().session();
-        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
+        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api, created, updated FROM __tables");
         nlohmann::json response = nlohmann::json::array();
 
         for (const auto& row : rs)
@@ -696,6 +700,8 @@ namespace mantis
             const auto type = row.get<std::string>(2);
             const auto schema_json = row.get<json>(3);
             const auto has_api = row.get<bool>(4);
+            const auto created = row.get<std::string>(5);
+            const auto updated = row.get<std::string>(6);
 
             json tb;
             tb["id"] = id;
@@ -703,6 +709,8 @@ namespace mantis
             tb["type"] = type;
             tb["has_api"] = has_api;
             tb["schema"] = schema_json;
+            tb["created"] = created;
+            tb["updated"] = updated;
 
             response.push_back(tb);
         }
