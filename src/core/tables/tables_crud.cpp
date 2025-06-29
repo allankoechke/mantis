@@ -64,7 +64,6 @@ namespace mantis
 
             // Create the SQL Query
             std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES (" + placeholders + ")";
-            Log::trace("SQL Query: {}", sql_query);
 
             // Prepare statement
             soci::statement st = sql->prepare << sql_query;
@@ -247,6 +246,8 @@ namespace mantis
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
             auto added_row = parseDbRowToJson(r);
+
+            Log::trace("Added record: {}", added_row.dump());
 
             // Remove user password from the response
             if (tableType() == "auth") added_row.erase("password");

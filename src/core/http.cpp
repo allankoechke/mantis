@@ -240,7 +240,7 @@ void mantis::HttpUnit::route(
         {
             json response;
             response["status"] = 404;
-            response["route"] = "Route not found!";
+            response["error"] = std::format("{} {} Route Not Found", method, path);
             response["data"] = json::object();
 
             res.status = 404;

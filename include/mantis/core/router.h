@@ -38,7 +38,7 @@ namespace mantis
         void close();
 
         /// Restart the HTTP server
-        void restart();
+        // void restart();
 
         // Manage routes
         [[nodiscard]]
@@ -68,7 +68,6 @@ namespace mantis
     private:
         bool generateTableCrudApis();
         bool generateAdminCrudApis() const;
-        bool attachUserRoutes() const;
 
         std::shared_ptr<TableUnit> m_adminTable;
         std::shared_ptr<SysTablesUnit> m_tableRoutes;

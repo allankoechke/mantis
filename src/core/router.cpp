@@ -35,10 +35,6 @@ bool mantis::Router::initialize()
     if (!generateTableCrudApis())
         return false;
 
-
-    // if (!attachUserRoutes())
-    //     return false;
-
     // Add Admin Route as the last, should override
     // any existing route
     if (!generateAdminCrudApis())
@@ -53,6 +49,8 @@ bool mantis::Router::listen() const
 {
     try
     {
+        // Quick hack to mute `This method can be made static` warning on CLion
+        [[maybe_unused]] auto s = m_routes.size();
         return MantisApp::instance().http().listen(MantisApp::instance().host(), MantisApp::instance().port());
     }
     catch (const std::exception& e)
@@ -73,20 +71,9 @@ void mantis::Router::close()
     m_routes.clear();
 }
 
-void mantis::Router::restart()
-{
-    // close();
-    // initialize();
-    // if (!listen())
-    // {
-    //     Log::critical("Failed to restart server");
-    //     MantisApp::quit(-1);
-    // }
-}
-
 json mantis::Router::addRoute(const std::string& table)
 {
-    Log::debug("{}", __func__);
+    TRACE_CLASS_METHOD()
 
     if (trim(table).empty())
     {
@@ -386,15 +373,6 @@ bool mantis::Router::generateAdminCrudApis() const
         Log::critical("Error creating admin routes: ", e.what());
         return false;
     }
-
-    return true;
-}
-
-bool mantis::Router::attachUserRoutes() const
-{
-    // Log::debug("Mantis::ServerMgr::AttachUserRoutes");
-    // Just to
-    // [[maybe_unused]] auto ctx = m_app->http().context();
 
     return true;
 }

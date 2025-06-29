@@ -69,8 +69,6 @@ namespace mantis
             const auto colName = row.get_properties(i).get_name();
             const auto colType = getColTypeFromName(colName, m_fields);
 
-            // Log::trace("Col: {}, Type: {}, Indicator? {}", colName, colType, std::vector<std::string>{"io_ok", "io_null", "io_truncated"}[row.get_indicator(i)]);
-
             if (colType == "xml" || colType == "string")
             {
                 j[colName] = row.get<std::string>(i, "");
@@ -87,7 +85,7 @@ namespace mantis
                     auto ts = DatabaseUnit::tmToISODate(t);
                     j[colName] = ts;
                 }
-                else if(row.get_properties(i).get_db_type() == soci::db_date)
+                else
                 {
                     try
                     {

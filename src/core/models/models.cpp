@@ -84,6 +84,7 @@ std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldNa
     if (fieldName == "blob")    return FieldType::BLOB;
     if (fieldName == "json")    return FieldType::JSON;
     if (fieldName == "bool")    return FieldType::BOOL;
+    if (fieldName == "file")    return FieldType::STRING;
     return std::nullopt;
 }
 
@@ -108,6 +109,17 @@ bool mantis::fieldExists(const TableType& type, const std::string& fieldName)
         }
     default: return false;
     }
+}
+
+bool mantis::isValidFieldType(const std::string& fieldType)
+{
+    // Valid field types for our backend
+    std::vector<std::string> fieldTypes{"xml", "string", "double", "date",
+        "int8", "uint8","int16", "uint16", "int32", "uint32", "int64", "uint64",
+        "blob", "json", "bool", "file"};
+
+    const auto it = std::ranges::find(fieldTypes, fieldType);
+    return it != fieldTypes.end();
 }
 
 mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys, json opts)
@@ -211,8 +223,6 @@ soci::db_type mantis::Field::toSociType(const FieldType& f_type)
     if (f_type == FieldType::BOOL) return soci::db_int8;
     return soci::db_string;
 }
-
-mantis::Table::Table() {}
 
 json mantis::Table::to_json() const
 {

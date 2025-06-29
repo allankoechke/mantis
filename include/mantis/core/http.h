@@ -21,7 +21,6 @@
 
 #define REQUEST_HANDLED false
 #define REQUEST_PENDING true
-// #define __file__ "core/http.h"
 
 namespace mantis
 {
