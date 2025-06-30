@@ -224,8 +224,8 @@ namespace mantis
         MantisApp& operator=(MantisApp&&) = delete;
 
         // Private members
-        void parseArgs();   ///> Parse command-line arguments
-        void init_units();  ///> Initialize application units
+        void parseArgs(); ///> Parse command-line arguments
+        void init_units(); ///> Initialize application units
 
         [[nodiscard]]
         bool ensureDirsAreCreated() const; /// Ensures we created all required directories

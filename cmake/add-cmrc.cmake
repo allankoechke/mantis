@@ -4,7 +4,8 @@ include(ExternalProject)
 set(MANTIS_ADMIN_DOWNLOAD_URL "https://github.com/allankoechke/mantis-admin/releases/download/${MANTIS_ADMIN_VERSION}/mantis-admin-static.zip")
 set(MANTIS_ADMIN_BASE_DIR "${CMAKE_BINARY_DIR}/3rdParty/mantis-admin/${MANTIS_ADMIN_VERSION}")
 set(MANTIS_ADMIN_ZIP_PATH "${MANTIS_ADMIN_BASE_DIR}/admin-build.zip")   # Admin ZIP file
-set(MANTIS_ADMIN_EXTRACT_DIR "${MANTIS_ADMIN_BASE_DIR}/out")            # Admin UNZIP dir
+set(MANTIS_ADMIN_EXTRACT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qrc")            # Admin UNZIP dir
+
 
 # Step 1: Download the zip
 file(DOWNLOAD
@@ -46,9 +47,9 @@ endif()
 # Step 3: Use cmrc to embed the files
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cmrc)
 
-file(GLOB_RECURSE REACT_FILES_ LIST_DIRECTORIES false "${MANTIS_ADMIN_EXTRACT_DIR}/*")
-message(STATUS "React files to embed: ${REACT_FILES_}")
+file(GLOB_RECURSE REACT_FILES LIST_DIRECTORIES false "${MANTIS_ADMIN_EXTRACT_DIR}/*")
+message(STATUS "React files to embed: ${REACT_FILES}")
 
-cmrc_add_resource_library(mantis-rc ALIAS mantis::rc NAMESPACE mantis ${ANTIS_ADMIN_EXTRACT_DIR} ${REACT_FILES_})
-target_link_libraries(mantis PRIVATE mantis::rc)
+cmrc_add_resource_library(mantis-rc NAMESPACE mantis ${REACT_FILES})
+target_link_libraries(mantis PRIVATE mantis-rc)
 target_compile_definitions(mantis PRIVATE CMRC_ENABLE)

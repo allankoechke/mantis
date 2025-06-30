@@ -377,105 +377,55 @@ bool mantis::Router::generateAdminCrudApis() const
             return "application/octet-stream";
         };
 
-        // Add mount point for Next.js static assets
-        // MantisApp::instance().http().server().set_mount_point("/_next", "B:\\Repos\\cpp-projects\\mantis-admin\\out\\_next");
-        // MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
-        // {
-        //     auto fs = cmrc::mantis::get_filesystem();
-        //     fs.
-        //     res.set_file_content("B:\\Repos\\cpp-projects\\mantis-admin\\out\\index.html");
-        // });
+        auto fs = cmrc::mantis::get_filesystem();
+        MantisApp::instance().http().Get(
+            R"(/admin(.*))",
+            [&fs, getMimeType](const Request& req, Response& res, Context ctx)
+            {
+                try
+                {
+                    std::string path = req.matches[1];
+                    Log::trace("Match 1: {}", path);
 
-        // Handle only /admin paths with embedded resources
-        MantisApp::instance().http().server().set_file_request_handler([](const httplib::Request &req, httplib::Response &res) {
-            // Only handle requests starting with /admin
-            if (!req.path.starts_with("/admin")) {
-                return; // Let default mount point handler take over
-            }
+                    // Normalize the path
+                    if (path.empty() || path == "/")
+                    {
+                        path = "/qrc/index.html";
+                    }
+                    else
+                    {
+                        path = std::format("/qrc{}", path);
+                    }
 
-            auto fs = cmrc::mantis::get_filesystem();
-            fs.open("");
+                    if (!fs.exists(path))
+                    {
+                        // fallback to index.html for React routes
+                        path = "/qrc/index.html";
+                    }
 
-            // Remove /admin prefix to get resource path
-            std::string resource_path = req.path.substr(6); // Remove "/admin"
-            if (resource_path.empty() || resource_path == "/") {
-                resource_path = "/index.html";
-            }
+                    try
+                    {
+                        res.status = 200;
+                        const auto file = fs.open(path);
+                        const auto mime = getMimeType(path);
+                        res.set_content(file.begin(), file.size(), mime.c_str());
+                    }
+                    catch (const std::exception& e)
+                    {
+                        Log::critical("Error processing request [1]: {}", e.what());
+                        res.status = 404;
 
-            if (fs.exists(resource_path)) {
-                auto file = fs.open(resource_path);
-                std::string content(file.begin(), file.end());
-
-                // Determine MIME type from file extension
-                std::string mime_type = "application/octet-stream";
-                auto dot_pos = resource_path.find_last_of('.');
-                if (dot_pos != std::string::npos) {
-                    std::string ext = resource_path.substr(dot_pos + 1);
-                    // Use cpp-httplib's built-in MIME type detection logic here
-                    // or implement your own mapping
+                        const auto file = fs.open("/qrc/404.html");
+                        const auto mime = getMimeType("404.html");
+                        res.set_content(file.begin(), file.size(), mime);
+                    }
                 }
-
-                res.set_content(content, mime_type);
-                return;
-            }
-
-            // File not found in embedded resources
-            res.status = 404;
-        });
-
-        // R"(/admin(.*))"
-        // auto fs = cmrc::mantis::get_filesystem();
-        // MantisApp::instance().http().Get(
-        //     "/admin",
-        //     [&fs, getMimeType](const Request& req, Response& res, Context ctx)
-        //     {
-        //         try
-        //         {
-        //             Log::trace("Path: {}", req.path);
-        //             std::string path = req.matches[1];
-        //             Log::trace("Match 1: {}", path);
-        //
-        //             // Normalize the path
-        //             if (path.empty() || path == "/")
-        //             {
-        //                 path = "index.html";
-        //             }
-        //             else
-        //             {
-        //                 path = path.substr(1); // strip leading '/'
-        //             }
-        //
-        //             if (!fs.exists(path))
-        //             {
-        //                 // fallback to index.html for React routes
-        //                 path = "index.html";
-        //             }
-        //
-        //             try
-        //             {
-        //                 res.status = 200;
-        //                 const auto file = fs.open("/admin/index.html");
-        //                 const auto mime = getMimeType("index.html");
-        //                 res.set_content(file.begin(), file.size(), mime.c_str());
-        //             }
-        //             catch (const std::exception& e)
-        //             {
-        //                 Log::critical("Error processing request [1]: {}", e.what());
-        //
-        //                 res.status = 404;
-        //                 // res.set_content("Not Found", "text/plain");
-        //
-        //                 const auto file = fs.open("/admin/404.html");
-        //                 const auto mime = getMimeType("404.html");
-        //                 res.set_content(file.begin(), file.size(), mime);
-        //             }
-        //         }
-        //         catch (const std::exception& e)
-        //         {
-        //             res.status = 500;
-        //             Log::critical("Error processing request [2]: {}", e.what());
-        //         }
-        //     });
+                catch (const std::exception& e)
+                {
+                    res.status = 500;
+                    Log::critical("Error processing request [2]: {}", e.what());
+                }
+            });
     }
 
     catch (const std::exception& e)

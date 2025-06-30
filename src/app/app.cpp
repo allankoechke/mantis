@@ -11,6 +11,7 @@
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
 
+
 namespace mantis
 {
     // -------------------------------------------------------------------------------- //
