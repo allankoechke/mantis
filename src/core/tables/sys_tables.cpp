@@ -8,6 +8,8 @@
 #include "../../../include/mantis/utils/utils.h"
 #include "../../../include/mantis/core/router.h"
 
+#define __file__ "core/tables/sys_tables.cpp"
+
 namespace mantis
 {
     SysTablesUnit::SysTablesUnit(const std::string& tableName,
@@ -331,9 +333,19 @@ namespace mantis
                         return false;
                     }
 
-                    // TODO check if it's a valid field type ...
-                    if (const auto field_type = trim(field.value("type", ""));
-                        field_type.empty())
+                    const auto field_type = trim(field.value("type", ""));
+                    if (field_type.empty())
+                    {
+                        response["status"] = 400;
+                        response["error"] = "Field type '" + field_type + "' for '" + name +
+                            "' is empty!";
+                        response["data"] = json::object();
+
+                        res.status = 400;
+                        res.set_content(response.dump(), "application/json");
+                        return false;
+                    }
+                    if (!isValidFieldType(field_type))
                     {
                         response["status"] = 400;
                         response["error"] = "Field type '" + field_type + "' for '" + name +
@@ -375,10 +387,6 @@ namespace mantis
 
         res.status = 201;
         res.set_content(response.dump(), "application/json");
-
-        // Restart server to pickup new changes ...
-        // TODO maybe bury these behind a flag? That way we dont restart server randomly ...
-        MantisApp::instance().router().restart();
     }
 
     void SysTablesUnit::updateRecord(const Request& req, Response& res, Context& ctx)
@@ -500,14 +508,8 @@ namespace mantis
             return;
         }
 
-        Log::trace("Table deletion successful");
-
         res.set_content("", "application/json");
         res.status = 204;
-
-        // Restart server to pickup new changes ...
-        // TODO maybe bury these behind a flag? That way we dont restart server randomly ...
-        MantisApp::instance().router().restart();
     }
 
     void SysTablesUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)

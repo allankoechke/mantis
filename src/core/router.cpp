@@ -7,7 +7,11 @@
 #include "../../include/mantis/core/tables/sys_tables.h"
 
 #include <nlohmann/json.hpp>
+
+#include "mantis/core/settings.h"
 using json = nlohmann::json;
+
+#define __file__ "core/router.cpp"
 
 mantis::Router::Router()
 {
@@ -33,10 +37,6 @@ bool mantis::Router::initialize()
     if (!generateTableCrudApis())
         return false;
 
-
-    // if (!attachUserRoutes())
-    //     return false;
-
     // Add Admin Route as the last, should override
     // any existing route
     if (!generateAdminCrudApis())
@@ -51,6 +51,8 @@ bool mantis::Router::listen() const
 {
     try
     {
+        // Quick hack to mute `This method can be made static` warning on CLion
+        [[maybe_unused]] auto s = m_routes.size();
         return MantisApp::instance().http().listen(MantisApp::instance().host(), MantisApp::instance().port());
     }
     catch (const std::exception& e)
@@ -71,20 +73,9 @@ void mantis::Router::close()
     m_routes.clear();
 }
 
-void mantis::Router::restart()
-{
-    // close();
-    // initialize();
-    // if (!listen())
-    // {
-    //     Log::critical("Failed to restart server");
-    //     MantisApp::quit(-1);
-    // }
-}
-
 json mantis::Router::addRoute(const std::string& table)
 {
-    Log::debug("{}", __func__);
+    TRACE_CLASS_METHOD()
 
     if (trim(table).empty())
     {
@@ -145,7 +136,7 @@ json mantis::Router::addRoute(const std::string& table)
 
 json mantis::Router::updateRoute(const json& table_data)
 {
-    Log::debug("{}", __func__);
+    TRACE_CLASS_METHOD()
 
     json res;
     res["success"] = false;
@@ -214,6 +205,36 @@ json mantis::Router::updateRoute(const json& table_data)
     return addRoute(table_name);
 }
 
+mantis::json mantis::Router::updateRouteCache(const json& table_data)
+{
+    TRACE_CLASS_METHOD()
+
+    json res;
+    res["success"] = false;
+    res["error"] = "";
+
+    // Get table name
+    const auto table_name = table_data.at("name").get<std::string>();
+
+    // Let's find and remove existing object
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
+    {
+        return route->tableName() == table_name;
+    });
+
+    if (it == m_routes.end())
+    {
+        res["error"] = "TableUnit for " +table_name+ " not found!";
+        return res;
+    }
+
+    // Update cached data & rules using the schema
+    (*it)->fromJson(table_data);
+
+    res["success"] = true;
+    return res;
+}
+
 json mantis::Router::removeRoute(const json& table_data)
 {
     Log::debug("{}", __func__);
@@ -244,7 +265,7 @@ json mantis::Router::removeRoute(const json& table_data)
     const auto table_type = table_data.at("type").get<std::string>();
 
     // Let's find and remove existing object
-    const auto it = std::find_if(m_routes.begin(), m_routes.end(), [&](const auto& route)
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
     {
         return route->tableName() == table_name;
     });
@@ -334,19 +355,21 @@ bool mantis::Router::generateAdminCrudApis() const
             return false;
         }
 
+        if (!MantisApp::instance().settings().setupRoutes())
+        {
+            Log::critical("Failed to setup settings routes");
+            return false;
+        }
+
         // Setup Admin Dashboard
+        MantisApp::instance().http().server().set_mount_point("/admin", "B:\\Repos\\cpp-projects\\mantis-admin\\out");
+        // Add mount point for Next.js static assets
+        // MantisApp::instance().http().server().set_mount_point("/_next", "B:\\Repos\\cpp-projects\\mantis-admin\\out\\_next");
         MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
-            Log::debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
-
-            // Response Object
-            json response;
-            res.status = 200;
-            response["status"] = 200;
-
-            response["data"] = "{}";
-            res.set_content(response, "application/json");
-        }, {});
+            auto basePath = "B:\\Repos\\cpp-projects\\mantis-admin\\out";
+            res.set_file_content("B:\\Repos\\cpp-projects\\mantis-admin\\out\\index.html");
+        });
     }
 
     catch (const std::exception& e)
@@ -354,15 +377,6 @@ bool mantis::Router::generateAdminCrudApis() const
         Log::critical("Error creating admin routes: ", e.what());
         return false;
     }
-
-    return true;
-}
-
-bool mantis::Router::attachUserRoutes() const
-{
-    // Log::debug("Mantis::ServerMgr::AttachUserRoutes");
-    // Just to
-    // [[maybe_unused]] auto ctx = m_app->http().context();
 
     return true;
 }

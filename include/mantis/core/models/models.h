@@ -90,6 +90,8 @@ namespace mantis
 
     bool fieldExists(const TableType& type, const std::string& fieldName);
 
+    bool isValidFieldType(const std::string& fieldType);
+
     // Access rule expression
     typedef std::string Rule;
 
@@ -141,7 +143,7 @@ namespace mantis
         Rule deleteRule;
 
         // Constructor
-        Table();
+        Table() = default;
 
         [[nodiscard]]
         virtual json to_json() const;

@@ -7,6 +7,8 @@
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
 
+#define __file__ "core/tables/tables_auth.cpp"
+
 namespace mantis
 {
     void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
@@ -283,9 +285,12 @@ namespace mantis
 
         try
         {
-            // Parse request body and add it to the request TokenMap
-            auto request = json::parse(req.body);
-            reqMap["body"] = MantisApp::instance().evaluator().jsonToTokenMap(request);
+            if (req.method == "POST" && !req.body.empty())
+            {
+                // Parse request body and add it to the request TokenMap
+                auto request = json::parse(req.body);
+                reqMap["body"] = MantisApp::instance().evaluator().jsonToTokenMap(request);
+            }
         }
         catch (...)
         {

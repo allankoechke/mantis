@@ -7,11 +7,14 @@
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
 
+#define __file__ "core/tables/tables_crud.cpp"
+
 namespace mantis
 {
     json TableUnit::create(const json& entity, const json& opts)
     {
-        Log::trace("TableMgr::create");
+        TRACE_CLASS_METHOD()
+
         json result;
         result["data"] = json::object();
         result["status"] = 201;
@@ -61,7 +64,6 @@ namespace mantis
 
             // Create the SQL Query
             std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES (" + placeholders + ")";
-            Log::trace("SQL Query: {}", sql_query);
 
             // Prepare statement
             soci::statement st = sql->prepare << sql_query;
@@ -243,10 +245,15 @@ namespace mantis
             // Query back the created record and send it back to the client
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
-            const auto addedRow = parseDbRowToJson(r);
+            auto added_row = parseDbRowToJson(r);
+
+            Log::trace("Added record: {}", added_row.dump());
+
+            // Remove user password from the response
+            if (tableType() == "auth") added_row.erase("password");
 
             result["error"] = "";
-            result["data"] = addedRow;
+            result["data"] = added_row;
             result["status"] = 201;
 
             return result;
@@ -284,21 +291,30 @@ namespace mantis
 
     std::optional<json> TableUnit::read(const std::string& id, const json& opts)
     {
+        TRACE_CLASS_METHOD()
+
+        // Get a soci::session from the pool
         const auto sql =  MantisApp::instance().db().session();
-        soci::row r;
+
+        soci::row r; // To hold read data
         *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
 
-        if (!sql->got_data())
-        {
-            return std::nullopt;
-        }
+        // If no data was found, return a nullopt
+        if (!sql->got_data()) return std::nullopt;
 
-        return parseDbRowToJson(r);
+        // Parse returned record to JSON
+        auto record = parseDbRowToJson(r);
+
+        // Remove user password from the response
+        if (tableType() == "auth") record.erase("password");
+
+        // Return the record
+        return record;
     }
 
     json TableUnit::update(const std::string& id, const json& entity, const json& opts)
     {
-        Log::trace("TableMgr::Update");
+        TRACE_CLASS_METHOD()
 
         json result;
         result["data"] = json::object();
@@ -347,7 +363,7 @@ namespace mantis
 
             // Add Updated field as an extra field for updates ...
             columns += columns.empty() ? ("updated = :updated") : (", updated = :updated");
-            updateFields.push_back("updated");
+            updateFields.emplace_back("updated");
 
             // Create the SQL Query
             std::string sql_query = "UPDATE " + m_tableName + " SET " + columns + " WHERE id = :id";
@@ -533,7 +549,10 @@ namespace mantis
             // Query back the created record and send it back to the client
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
-            const auto record = parseDbRowToJson(r);
+            auto record = parseDbRowToJson(r);
+
+            // Redact passwords
+            if ( tableType() == "auth") record.erase("password");
 
             result["error"] = "";
             result["data"] = record;
@@ -566,7 +585,10 @@ namespace mantis
 
     bool TableUnit::remove(const std::string& id, const json& opts)
     {
-        // TODO ensure views dont delete items
+        TRACE_CLASS_METHOD()
+        // Views should not reach here
+        if (tableType() == "view") return false;
+
         const auto sql =  MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
@@ -585,22 +607,25 @@ namespace mantis
         Log::trace("SQL Query: {}", sql->get_query());
 
         tr.commit();
-
-        // TODO reload routes
-
         return true;
     }
 
     std::vector<json> TableUnit::list(const json& opts)
     {
+        TRACE_CLASS_METHOD()
         const auto sql =  MantisApp::instance().db().session();
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT * FROM " + tableName());
         nlohmann::json response = nlohmann::json::array();
 
         for (const auto& row : rs)
         {
-            auto rowJson = parseDbRowToJson(row);
-            response.push_back(rowJson);
+            auto row_json = parseDbRowToJson(row);
+            if (tableType() == "auth")
+            {
+                // Remove password fields from the response data
+                row_json.erase("password");
+            }
+            response.push_back(row_json);
         }
 
         return response;

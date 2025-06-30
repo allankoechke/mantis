@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.2)
+project(mantisapp VERSION 0.1.3)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -31,7 +31,9 @@ add_executable(mantisapp
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(MANTIS_LIB_TYPE STATIC)
 else()
-    set(MANTIS_LIB_TYPE SHARED)
+    set(MANTIS_LIB_TYPE SHARED
+            src/core/settings.cpp
+            include/mantis/core/settings.h )
 endif()
 
 # Add library

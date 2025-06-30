@@ -18,22 +18,14 @@ namespace mantis
 {
     using json = nlohmann::json;
 
-    // using TableValue = std::variant<
-    //     std::monostate,
-    //     std::string,
-    //     double,
-    //     std::tm,
-    //     int8_t, uint8_t,
-    //     int16_t, uint16_t,
-    //     int32_t, uint32_t,
-    //     int64_t, uint64_t,
-    //     bool,
-    //     json,
-    //     BLOB
-    // >;
-
     /**
+     * @brief Class to model the behaviour of a table in database.
      *
+     * This will encompass:
+     * - Routing for the table
+     * - CRUD for the API endpoints
+     * - Helper functions (parsing table data, validation, etc.)
+     * - etc.
      */
     class TableUnit : public CrudInterface<json>
     {
@@ -116,6 +108,7 @@ namespace mantis
         std::optional<json> findFieldByKey(const std::string& key) const;
         json checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const;
 
+        const std::string __class_name__ = "TableUnit";
     protected:
         std::string m_tableName;
         std::string m_tableId;

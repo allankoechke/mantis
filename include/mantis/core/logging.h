@@ -77,4 +77,7 @@ namespace mantis
     using Log = LoggingUnit;
 }
 
+#define TRACE_CLASS_METHOD() Log::trace("Enter > {} {}::{}()", __file__, __class_name__, __func__);
+#define TRACE_METHOD Log::trace("Enter > {} {}()", __file__, __func__);
+
 #endif //MANTIS_LOGGER_H
