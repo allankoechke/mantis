@@ -338,6 +338,17 @@ namespace mantis
                     {
                         response["status"] = 400;
                         response["error"] = "Field type '" + field_type + "' for '" + name +
+                            "' is empty!";
+                        response["data"] = json::object();
+
+                        res.status = 400;
+                        res.set_content(response.dump(), "application/json");
+                        return false;
+                    }
+                    if (!isValidFieldType(field_type))
+                    {
+                        response["status"] = 400;
+                        response["error"] = "Field type '" + field_type + "' for '" + name +
                             "' is not a valid type";
                         response["data"] = json::object();
 
@@ -345,7 +356,6 @@ namespace mantis
                         res.set_content(response.dump(), "application/json");
                         return false;
                     }
-                    if ()
                 }
             }
 

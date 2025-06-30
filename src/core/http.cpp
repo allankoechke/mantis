@@ -92,7 +92,7 @@ mantis::json mantis::RouteRegistry::remove(const std::string& method, const std:
 mantis::HttpUnit::HttpUnit()
 {
     // Let's fix timing initialization, set the start time to current time
-    server.set_pre_routing_handler([](const httplib::Request& req, httplib::Response& res)
+    svr.set_pre_routing_handler([](const httplib::Request& req, httplib::Response& res)
     {
         auto& mutable_req = const_cast<httplib::Request&>(req);
         mutable_req.start_time_ = std::chrono::steady_clock::now(); // Set the start time
@@ -100,7 +100,7 @@ mantis::HttpUnit::HttpUnit()
     });
 
     // Add CORS headers to all responses
-    server.set_post_routing_handler([](const auto& req, auto& res) {
+    svr.set_post_routing_handler([](const auto& req, auto& res) {
         res.set_header("Access-Control-Allow-Origin", "*");
         res.set_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
         res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -108,13 +108,13 @@ mantis::HttpUnit::HttpUnit()
     });
 
     // Handle preflight OPTIONS requests
-    server.Options(".*", [](const auto& req, auto& res) {
+    svr.Options(".*", [](const auto& req, auto& res) {
         // Headers are already set by post_routing_handler
         res.status = 200;
     });
 
     // Set Global Logger
-    server.set_logger([](const Request& req, const Response& res)
+    svr.set_logger([](const Request& req, const Response& res)
     {
         // Calculate execution time (if start_time was set)
         const auto end_time = std::chrono::steady_clock::now();
@@ -134,7 +134,7 @@ mantis::HttpUnit::HttpUnit()
     });
 
     // Set Error Handler
-    server.set_error_handler([]([[maybe_unused]] const Request& req, Response& res)
+    svr.set_error_handler([]([[maybe_unused]] const Request& req, Response& res)
     {
         if (res.body.empty())
         {
@@ -159,7 +159,7 @@ void mantis::HttpUnit::Get(const std::string& path, RouteHandlerFunc handler,
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
-        server.Get(p, std::move(h));
+        svr.Get(p, std::move(h));
     }, "GET", path, handler, middlewares);
 }
 
@@ -168,7 +168,7 @@ void mantis::HttpUnit::Post(const std::string& path, RouteHandlerFunc handler,
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
-        server.Post(p, std::move(h));
+        svr.Post(p, std::move(h));
     }, "POST", path, handler, middlewares);
 }
 
@@ -177,7 +177,7 @@ void mantis::HttpUnit::Patch(const std::string& path, RouteHandlerFunc handler,
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
-        server.Patch(p, std::move(h));
+        svr.Patch(p, std::move(h));
     }, "PATCH", path, handler, middlewares);
 }
 
@@ -186,7 +186,7 @@ void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
-        server.Delete(p, std::move(h));
+        svr.Delete(p, std::move(h));
     }, "DELETE", path, handler, middlewares);
 }
 
@@ -197,7 +197,7 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
     Log::info("Starting Servers: \n\t API Endpoints: http://{}/api/v1/ \n\t Admin Dashboard: http://{}/admin",
               endpoint, endpoint);
 
-    if (!server.listen(host, port))
+    if (!svr.listen(host, port))
     {
         Log::critical("Error: Failed to bind to {}:{}", host, port);
         return false;
@@ -209,8 +209,8 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 void mantis::HttpUnit::close()
 {
     Log::trace("Stopping Server, if its running ...");
-    if (server.is_running())
-        server.stop();
+    if (svr.is_running())
+        svr.stop();
 }
 
 mantis::Context& mantis::HttpUnit::context()
@@ -221,6 +221,11 @@ mantis::Context& mantis::HttpUnit::context()
 mantis::RouteRegistry& mantis::HttpUnit::routeRegistry()
 {
     return registry;
+}
+
+httplib::Server& mantis::HttpUnit::server()
+{
+    return svr;
 }
 
 void mantis::HttpUnit::route(

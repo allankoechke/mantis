@@ -8,6 +8,9 @@
 #include <l8w8jwt/claim.h>
 #include <cstring>
 
+#include "mantis/app/app.h"
+#include "mantis/core/settings.h"
+
 namespace mantis
 {
     json JWT::createJWTToken(const json& claims_params, const std::string& secretKey)
@@ -27,6 +30,12 @@ namespace mantis
         const auto id = const_cast<char*>(id_str.c_str());
         const auto table = const_cast<char*>(table_str.c_str());
 
+        // Give access token based on login type, `admin` or `user`
+        const auto& config = MantisApp::instance().settings().configs();
+        const int expiry_t = table_str == "__admins"
+                                 ? config.value("adminSessionTimeout", 1 * 60 * 60) // admins
+                                 : config.value("sessionTimeout", 24 * 60 * 60);    // users
+
         char* jwt = nullptr;
         size_t jwt_length = 0;
 
@@ -37,9 +46,9 @@ namespace mantis
         // Set algorithm (using HS256 for simplicity)
         params.alg = L8W8JWT_ALG_HS256;
 
-        // Set expiration to 24 hours from now (86400 seconds)
+        // Set expiration based on user
         params.iat = l8w8jwt_time(nullptr);
-        params.exp = l8w8jwt_time(nullptr) + 86400;
+        params.exp = l8w8jwt_time(nullptr) + expiry_t;
 
         // Set secret key
         params.secret_key = (unsigned char*)secretKey.c_str();

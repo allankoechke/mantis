@@ -51,6 +51,9 @@ namespace mantis
      * std::optional key = ctx.get<std::string>("key");
      * if(key.has_value()) { .... }
      * @endcode
+     *
+     * Additionally, we have a @see get_or() method that takes in a key and a default value if the key is missing. This
+     * unlike @see get() method, returns a `T&` instead of `T*` depending on the usage needs.
      */
     class Context
     {
@@ -90,6 +93,24 @@ namespace mantis
             const auto it = data.find(key);
             if (it != data.end()) return std::any_cast<T>(&it->second);
             return std::nullopt;
+        }
+
+        /**
+         * @brief Get context value given the key.
+         *
+         * @tparam T Value data type
+         * @param key Value key
+         * @param default_value Default value if key is missing
+         * @return Value or default value
+         */
+        template <typename T>
+        T& get_or(const std::string& key, T default_value)
+        {
+            if (const auto it = data.find(key); it == data.end())
+            {
+                data[key] = std::move(default_value);
+            }
+            return std::any_cast<T&>(data.at(key));
         }
     };
 
@@ -132,8 +153,8 @@ namespace mantis
      */
     struct RouteHandler
     {
-        std::vector<Middleware> middlewares;    ///> List of @see Middlewares for a route.
-        RouteHandlerFunc handler;               ///> Handler function for a route
+        std::vector<Middleware> middlewares; ///> List of @see Middlewares for a route.
+        RouteHandlerFunc handler; ///> Handler function for a route
     };
 
     /**
@@ -228,6 +249,8 @@ namespace mantis
          */
         RouteRegistry& routeRegistry();
 
+        httplib::Server& server();
+
         const std::string _class_ = "mantis::HttpUnit";
 
     private:
@@ -235,12 +258,12 @@ namespace mantis
         using MethodBinder = std::function<void(const std::string&, httplib::Server::Handler)>;
 
         void route(MethodBinder bind_method,
-                      const std::string& method,
-                      const std::string& path,
-                      RouteHandlerFunc handler,
-                      std::initializer_list<Middleware> middlewares);
+                   const std::string& method,
+                   const std::string& path,
+                   RouteHandlerFunc handler,
+                   std::initializer_list<Middleware> middlewares);
 
-        httplib::Server server;
+        httplib::Server svr;
         RouteRegistry registry;
         thread_local static Context current_context;
     };

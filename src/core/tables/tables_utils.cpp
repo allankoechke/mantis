@@ -135,7 +135,7 @@ namespace mantis
                 // TODO ? How do we handle BLOB?
                 j[colName] = row.get<std::string>(i);
             }
-            else if (colType == "json")
+            else if (colType == "json" || colType == "list")
             {
                 j[colName] = row.get<json>(i);
             }

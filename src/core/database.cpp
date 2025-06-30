@@ -11,45 +11,50 @@
 #include <soci/sqlite3/soci-sqlite3.h>
 #include <private/soci-mktime.h>
 
+#include "mantis/core/settings.h"
+
 #define __file__ "core/tables/sys_tables.cpp"
 
 mantis::DatabaseUnit::DatabaseUnit()
-    : m_connPool(nullptr) {}
+    : m_connPool(nullptr)
+{
+}
 
-bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn_str) {
+bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn_str)
+{
     // If pool size is invalid, just return
-    if ( MantisApp::instance().poolSize() <= 0)
+    if (MantisApp::instance().poolSize() <= 0)
         throw std::runtime_error("Session pool size must be greater than 0");
 
     // All databases apart from SQLite should pass in a connection string
-    if ( MantisApp::instance().dbType() != DbType::SQLITE && conn_str.empty())
+    if (MantisApp::instance().dbType() != DbType::SQLITE && conn_str.empty())
         throw std::runtime_error("Connection string for database is required!");
 
     try
     {
         // Create connection pool instance
-        m_connPool = std::make_unique<soci::connection_pool>( MantisApp::instance().poolSize());
+        m_connPool = std::make_unique<soci::connection_pool>(MantisApp::instance().poolSize());
 
         // Populate the pools with db connections
-        for (int i = 0; i <  MantisApp::instance().poolSize(); ++i)
+        for (int i = 0; i < MantisApp::instance().poolSize(); ++i)
         {
-            switch( MantisApp::instance().dbType())
+            switch (MantisApp::instance().dbType())
             {
             case DbType::SQLITE:
                 {
                     // For SQLite, lets explicitly define location and name of the database
                     // we intend to use within the `dataDir`
-                    auto sqlite_str = "db=" + joinPaths( MantisApp::instance().dataDir(), "mantis.db").string();
+                    auto sqlite_str = "db=" + joinPaths(MantisApp::instance().dataDir(), "mantis.db").string();
                     soci::session& sql = m_connPool->at(i);
                     sql.open(soci::sqlite3, sqlite_str);
-                    sql.set_logger(new MantisLoggerImpl());     // Set custom query logger
+                    sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
                     break;
                 }
 
-                // For other DB types
-                // Connect to the database URL, no checks here,
-                // make your damn checks to ensure the URL is VALID!
-                // TODO maybe add checks?
+            // For other DB types
+            // Connect to the database URL, no checks here,
+            // make your damn checks to ensure the URL is VALID!
+            // TODO maybe add checks?
 
             default:
                 Log::warn("Database Connection for '{}' Not Implemented Yet!", conn_str);
@@ -80,8 +85,11 @@ void mantis::DatabaseUnit::disconnect() const
     // Pool size cast
     const auto pool_size = static_cast<size_t>(MantisApp::instance().poolSize());
     // Close all sessions in the pool
-    for (std::size_t i = 0; i < pool_size; ++i) {
-        if (soci::session& sess = m_connPool->at(i); sess.is_connected()) {  // Check if session is connected
+    for (std::size_t i = 0; i < pool_size; ++i)
+    {
+        if (soci::session& sess = m_connPool->at(i); sess.is_connected())
+        {
+            // Check if session is connected
             sess.close();
         }
     }
@@ -103,22 +111,26 @@ void mantis::DatabaseUnit::migrate() const
         AdminTable admin;
         admin.name = "__admins";
         *sql << admin.to_sql();
-        // Log::trace("Generated Admin Table SQL:  {}", admin.to_sql());
-        // Log::trace("Generated Admin Table JSON: {}", admin.to_json().dump());
+        Log::debug("{}", admin.to_json().dump());
 
         SystemTable tables;
         tables.name = "__tables";
-        tables.fields.push_back(Field("name", FieldType::STRING, true, false, true));
-        tables.fields.push_back(Field("type", FieldType::STRING, true, false, true));
-        tables.fields.push_back(Field("schema", FieldType::STRING, true, false, true));
-        tables.fields.push_back(Field("has_api", FieldType::UINT8, true, false, true));
+        tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
+        tables.fields.emplace_back("type", FieldType::STRING, true, false, true);
+        tables.fields.emplace_back("schema", FieldType::STRING, true, false, true);
+        tables.fields.emplace_back("has_api", FieldType::UINT8, true, false, true);
         *sql << tables.to_sql();
 
-        // Log::debug("Generated Sys Tables SQL:  {}", tables.to_sql());
-        // Log::debug("Generated Sys Tables JSON: {}", tables.to_json().dump());
+        SystemTable _sys;
+        _sys.name = "__settings";
+        _sys.fields.emplace_back("value", FieldType::JSON, true, false, true);
+        *sql << _sys.to_sql();
 
         // Commit transaction
         tr.commit();
+
+        // Enforce migration once settings object is created!
+        MantisApp::instance().settings().migrate();
     }
     catch (std::exception& e)
     {
@@ -126,7 +138,8 @@ void mantis::DatabaseUnit::migrate() const
     }
 }
 
-std::shared_ptr<soci::session> mantis::DatabaseUnit::session() const {
+std::shared_ptr<soci::session> mantis::DatabaseUnit::session() const
+{
     return std::make_shared<soci::session>(*m_connPool);
 }
 

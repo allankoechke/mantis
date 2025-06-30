@@ -3,6 +3,7 @@
 //
 
 #include "../../include/mantis/mantis.h"
+#include "../../include/mantis/core/settings.h"
 #include <builtin_features.h>
 #include <mantis/app/config.hpp>
 
@@ -28,8 +29,9 @@ namespace mantis
 
         // Store cmd args into our member vector
         m_cmdArgs.reserve(argc);
-        for (int i = 0; i < argc; ++i) {
-            m_cmdArgs.emplace_back(argv[i]);  // copy each string over
+        for (int i = 0; i < argc; ++i)
+        {
+            m_cmdArgs.emplace_back(argv[i]); // copy each string over
         }
 
 
@@ -67,8 +69,8 @@ namespace mantis
         dir = dirFromPath("./data");
         setDataDir(dir);
 
-        init_units();   // Initialize Units
-        parseArgs();    // Parse args & start units
+        init_units(); // Initialize Units
+        parseArgs(); // Parse args & start units
     }
 
     MantisApp& MantisApp::instance()
@@ -144,7 +146,8 @@ namespace mantis
             // Create a vector of `const char*` pointing to the owned `std::string`s
             std::vector<const char*> argv;
             argv.reserve(m_cmdArgs.size());
-            for (const auto& arg : m_cmdArgs) {
+            for (const auto& arg : m_cmdArgs)
+            {
                 argv.push_back(arg.c_str());
             }
 
@@ -317,11 +320,12 @@ namespace mantis
 
         // Create instance objects
         m_logger = std::make_unique<LoggingUnit>();
-        m_exprEval = std::make_unique<ExprEvaluator>();
-        m_database = std::make_unique<DatabaseUnit>();
-        m_http = std::make_unique<HttpUnit>();
+        m_exprEval = std::make_unique<ExprEvaluator>(); // depends on log()
+        m_database = std::make_unique<DatabaseUnit>();  // depends on log()
+        m_http = std::make_unique<HttpUnit>();          // depends on db()
+        m_router = std::make_unique<Router>();          // depends on db() & http()
+        m_settings = std::make_unique<SettingsUnit>();  // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
-        m_router = std::make_unique<Router>();
         m_validators = std::make_unique<Validator>();
     }
 
@@ -400,6 +404,11 @@ namespace mantis
     {
         MANTIS_REQUIRE_INIT();
         return *m_exprEval;
+    }
+
+    SettingsUnit& MantisApp::settings() const
+    {
+        return *m_settings;
     }
 
     void MantisApp::setDbType(const DbType& dbType)

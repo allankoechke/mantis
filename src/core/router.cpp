@@ -7,6 +7,8 @@
 #include "../../include/mantis/core/tables/sys_tables.h"
 
 #include <nlohmann/json.hpp>
+
+#include "mantis/core/settings.h"
 using json = nlohmann::json;
 
 #define __file__ "core/router.cpp"
@@ -353,19 +355,21 @@ bool mantis::Router::generateAdminCrudApis() const
             return false;
         }
 
+        if (!MantisApp::instance().settings().setupRoutes())
+        {
+            Log::critical("Failed to setup settings routes");
+            return false;
+        }
+
         // Setup Admin Dashboard
+        MantisApp::instance().http().server().set_mount_point("/admin", "B:\\Repos\\cpp-projects\\mantis-admin\\out");
+        // Add mount point for Next.js static assets
+        // MantisApp::instance().http().server().set_mount_point("/_next", "B:\\Repos\\cpp-projects\\mantis-admin\\out\\_next");
         MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
         {
-            Log::debug("ServerMgr::GenerateAdminCrudApis for {}", req.path);
-
-            // Response Object
-            json response;
-            res.status = 200;
-            response["status"] = 200;
-
-            response["data"] = "{}";
-            res.set_content(response, "application/json");
-        }, {});
+            auto basePath = "B:\\Repos\\cpp-projects\\mantis-admin\\out";
+            res.set_file_content("B:\\Repos\\cpp-projects\\mantis-admin\\out\\index.html");
+        });
     }
 
     catch (const std::exception& e)

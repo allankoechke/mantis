@@ -15,6 +15,7 @@
 #include <mutex>
 #include <filesystem>
 #include <argparse/argparse.hpp>
+
 #include "../core/expr_evaluator.h"
 
 // For password management ... // TODO get a proper library
@@ -33,6 +34,7 @@ namespace mantis
     class DatabaseUnit;
     class HttpUnit;
     class LoggingUnit;
+    class SettingsUnit;
     class Router;
     class Validator;
 
@@ -208,6 +210,8 @@ namespace mantis
         [[nodiscard]] Validator& validators() const;
         /// Get the `cparse` expression evaluator unit object instance.
         [[nodiscard]] ExprEvaluator& evaluator() const;
+        /// Get the settings unit object
+        [[nodiscard]] SettingsUnit& settings() const;
 
     private:
         // Points to externally constructed instance (no ownership)
@@ -259,6 +263,7 @@ namespace mantis
         std::unique_ptr<Router> m_router;
         std::unique_ptr<Validator> m_validators;
         std::unique_ptr<ExprEvaluator> m_exprEval;
+        std::unique_ptr<SettingsUnit> m_settings;
     };
 }
 

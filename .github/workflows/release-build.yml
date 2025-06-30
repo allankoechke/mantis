@@ -3,8 +3,11 @@ name: CMake on multiple platforms
 on:
   push:
     branches: [ "master" ]
-  pull_request:
-    branches: [ "master" ]
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
 
 jobs:
   build:
@@ -77,3 +80,47 @@ jobs:
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files:
+            - mantisapp.exe
+            - mantisapp
+
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  upload-docs:
+    needs: build
+    if: github.ref == 'refs/heads/master'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          fetch-depth: 1
+
+      - name: Configure CMake
+        run: cmake -B build -S .
+
+      - name: Build Doxygen Docs
+        run: cmake --build build --target doc
+
+      - name: Clone GitHub Wiki
+        env:
+          TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git config --global user.name "github-actions"
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git clone https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.wiki.git wiki
+
+      - name: Copy docs to Wiki and push
+        run: |
+          rm -rf wiki/*
+          cp -r build/docs/html/* wiki/
+          cd wiki
+          git add .
+          git commit -m "Update Doxygen docs from CI"
+          git push
