@@ -11,6 +11,11 @@
 #include "mantis/core/settings.h"
 using json = nlohmann::json;
 
+#include<cmrc/cmrc.hpp>
+
+// Declare a mantis namespace for the embedded FS
+CMRC_DECLARE(mantis);
+
 #define __file__ "core/router.cpp"
 
 mantis::Router::Router()
@@ -178,7 +183,7 @@ json mantis::Router::updateRoute(const json& table_data)
 
     if (it == m_routes.end())
     {
-        res["error"] = "TableUnit for " +table_old_name+ " not found!";
+        res["error"] = "TableUnit for " + table_old_name + " not found!";
         return res;
     }
 
@@ -224,7 +229,7 @@ mantis::json mantis::Router::updateRouteCache(const json& table_data)
 
     if (it == m_routes.end())
     {
-        res["error"] = "TableUnit for " +table_name+ " not found!";
+        res["error"] = "TableUnit for " + table_name + " not found!";
         return res;
     }
 
@@ -361,15 +366,116 @@ bool mantis::Router::generateAdminCrudApis() const
             return false;
         }
 
-        // Setup Admin Dashboard
-        MantisApp::instance().http().server().set_mount_point("/admin", "B:\\Repos\\cpp-projects\\mantis-admin\\out");
+        auto getMimeType = [this](const std::string& path) -> std::string
+        {
+            if (path.ends_with(".js")) return "application/javascript";
+            if (path.ends_with(".css")) return "text/css";
+            if (path.ends_with(".html")) return "text/html";
+            if (path.ends_with(".json")) return "application/json";
+            if (path.ends_with(".png")) return "image/png";
+            if (path.ends_with(".svg")) return "image/svg+xml";
+            return "application/octet-stream";
+        };
+
         // Add mount point for Next.js static assets
         // MantisApp::instance().http().server().set_mount_point("/_next", "B:\\Repos\\cpp-projects\\mantis-admin\\out\\_next");
-        MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
-        {
-            auto basePath = "B:\\Repos\\cpp-projects\\mantis-admin\\out";
-            res.set_file_content("B:\\Repos\\cpp-projects\\mantis-admin\\out\\index.html");
+        // MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
+        // {
+        //     auto fs = cmrc::mantis::get_filesystem();
+        //     fs.
+        //     res.set_file_content("B:\\Repos\\cpp-projects\\mantis-admin\\out\\index.html");
+        // });
+
+        // Handle only /admin paths with embedded resources
+        MantisApp::instance().http().server().set_file_request_handler([](const httplib::Request &req, httplib::Response &res) {
+            // Only handle requests starting with /admin
+            if (!req.path.starts_with("/admin")) {
+                return; // Let default mount point handler take over
+            }
+
+            auto fs = cmrc::mantis::get_filesystem();
+            fs.open("");
+
+            // Remove /admin prefix to get resource path
+            std::string resource_path = req.path.substr(6); // Remove "/admin"
+            if (resource_path.empty() || resource_path == "/") {
+                resource_path = "/index.html";
+            }
+
+            if (fs.exists(resource_path)) {
+                auto file = fs.open(resource_path);
+                std::string content(file.begin(), file.end());
+
+                // Determine MIME type from file extension
+                std::string mime_type = "application/octet-stream";
+                auto dot_pos = resource_path.find_last_of('.');
+                if (dot_pos != std::string::npos) {
+                    std::string ext = resource_path.substr(dot_pos + 1);
+                    // Use cpp-httplib's built-in MIME type detection logic here
+                    // or implement your own mapping
+                }
+
+                res.set_content(content, mime_type);
+                return;
+            }
+
+            // File not found in embedded resources
+            res.status = 404;
         });
+
+        // R"(/admin(.*))"
+        // auto fs = cmrc::mantis::get_filesystem();
+        // MantisApp::instance().http().Get(
+        //     "/admin",
+        //     [&fs, getMimeType](const Request& req, Response& res, Context ctx)
+        //     {
+        //         try
+        //         {
+        //             Log::trace("Path: {}", req.path);
+        //             std::string path = req.matches[1];
+        //             Log::trace("Match 1: {}", path);
+        //
+        //             // Normalize the path
+        //             if (path.empty() || path == "/")
+        //             {
+        //                 path = "index.html";
+        //             }
+        //             else
+        //             {
+        //                 path = path.substr(1); // strip leading '/'
+        //             }
+        //
+        //             if (!fs.exists(path))
+        //             {
+        //                 // fallback to index.html for React routes
+        //                 path = "index.html";
+        //             }
+        //
+        //             try
+        //             {
+        //                 res.status = 200;
+        //                 const auto file = fs.open("/admin/index.html");
+        //                 const auto mime = getMimeType("index.html");
+        //                 res.set_content(file.begin(), file.size(), mime.c_str());
+        //             }
+        //             catch (const std::exception& e)
+        //             {
+        //                 Log::critical("Error processing request [1]: {}", e.what());
+        //
+        //                 res.status = 404;
+        //                 // res.set_content("Not Found", "text/plain");
+        //
+        //                 const auto file = fs.open("/admin/404.html");
+        //                 const auto mime = getMimeType("404.html");
+        //                 res.set_content(file.begin(), file.size(), mime);
+        //             }
+        //         }
+        //         catch (const std::exception& e)
+        //         {
+        //             res.status = 500;
+        //             Log::critical("Error processing request [2]: {}", e.what());
+        //         }
+        //     });
     }
 
     catch (const std::exception& e)

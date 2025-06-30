@@ -26,7 +26,6 @@
 #include <unistd.h>
 #endif
 
-
 namespace mantis
 {
     namespace fs = std::filesystem;

@@ -6,6 +6,7 @@
 #include "../../include/mantis/core/settings.h"
 #include <builtin_features.h>
 #include <mantis/app/config.hpp>
+#include <cmrc/cmrc.hpp>
 
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
