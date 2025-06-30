@@ -34,3 +34,6 @@
 # CMake Build Directory
 build/
 cmake-build-*/
+
+# asset files
+qrc/

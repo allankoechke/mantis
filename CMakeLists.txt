@@ -17,6 +17,7 @@ endif ()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(MANTIS_ADMIN_VERSION v0.1.4)    # Mantis Admin dashboard version to embed
 
 configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
@@ -119,6 +120,9 @@ include(cmake/cparse.cmake)
 
 # Add bcrypt to the project
 include(cmake/add-bcrypt.cmake)
+
+# Add CMRC for bundling assets
+include ( cmake/add-cmrc.cmake )
 
 # Add to CMakeLists.txt
 option(MANTIS_BUILD_TESTS "Build tests" OFF)

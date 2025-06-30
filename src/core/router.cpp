@@ -11,6 +11,11 @@
 #include "mantis/core/settings.h"
 using json = nlohmann::json;
 
+#include<cmrc/cmrc.hpp>
+
+// Declare a mantis namespace for the embedded FS
+CMRC_DECLARE(mantis);
+
 #define __file__ "core/router.cpp"
 
 mantis::Router::Router()
@@ -178,7 +183,7 @@ json mantis::Router::updateRoute(const json& table_data)
 
     if (it == m_routes.end())
     {
-        res["error"] = "TableUnit for " +table_old_name+ " not found!";
+        res["error"] = "TableUnit for " + table_old_name + " not found!";
         return res;
     }
 
@@ -224,7 +229,7 @@ mantis::json mantis::Router::updateRouteCache(const json& table_data)
 
     if (it == m_routes.end())
     {
-        res["error"] = "TableUnit for " +table_name+ " not found!";
+        res["error"] = "TableUnit for " + table_name + " not found!";
         return res;
     }
 
@@ -361,15 +366,66 @@ bool mantis::Router::generateAdminCrudApis() const
             return false;
         }
 
-        // Setup Admin Dashboard
-        MantisApp::instance().http().server().set_mount_point("/admin", "B:\\Repos\\cpp-projects\\mantis-admin\\out");
-        // Add mount point for Next.js static assets
-        // MantisApp::instance().http().server().set_mount_point("/_next", "B:\\Repos\\cpp-projects\\mantis-admin\\out\\_next");
-        MantisApp::instance().http().Get("/admin", [=](const Request& req, Response& res, Context ctx)
+        auto getMimeType = [this](const std::string& path) -> std::string
         {
-            auto basePath = "B:\\Repos\\cpp-projects\\mantis-admin\\out";
-            res.set_file_content("B:\\Repos\\cpp-projects\\mantis-admin\\out\\index.html");
-        });
+            if (path.ends_with(".js")) return "application/javascript";
+            if (path.ends_with(".css")) return "text/css";
+            if (path.ends_with(".html")) return "text/html";
+            if (path.ends_with(".json")) return "application/json";
+            if (path.ends_with(".png")) return "image/png";
+            if (path.ends_with(".svg")) return "image/svg+xml";
+            return "application/octet-stream";
+        };
+
+        auto fs = cmrc::mantis::get_filesystem();
+        MantisApp::instance().http().Get(
+            R"(/admin(.*))",
+            [&fs, getMimeType](const Request& req, Response& res, Context ctx)
+            {
+                try
+                {
+                    std::string path = req.matches[1];
+                    Log::trace("Match 1: {}", path);
+
+                    // Normalize the path
+                    if (path.empty() || path == "/")
+                    {
+                        path = "/qrc/index.html";
+                    }
+                    else
+                    {
+                        path = std::format("/qrc{}", path);
+                    }
+
+                    if (!fs.exists(path))
+                    {
+                        // fallback to index.html for React routes
+                        path = "/qrc/index.html";
+                    }
+
+                    try
+                    {
+                        res.status = 200;
+                        const auto file = fs.open(path);
+                        const auto mime = getMimeType(path);
+                        res.set_content(file.begin(), file.size(), mime.c_str());
+                    }
+                    catch (const std::exception& e)
+                    {
+                        Log::critical("Error processing request [1]: {}", e.what());
+                        res.status = 404;
+
+                        const auto file = fs.open("/qrc/404.html");
+                        const auto mime = getMimeType("404.html");
+                        res.set_content(file.begin(), file.size(), mime);
+                    }
+                }
+                catch (const std::exception& e)
+                {
+                    res.status = 500;
+                    Log::critical("Error processing request [2]: {}", e.what());
+                }
+            });
     }
 
     catch (const std::exception& e)
