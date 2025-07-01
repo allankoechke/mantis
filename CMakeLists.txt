@@ -35,9 +35,7 @@ add_executable(mantisapp
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
     set(MANTIS_LIB_TYPE STATIC)
 else()
-    set(MANTIS_LIB_TYPE SHARED
-            src/core/settings.cpp
-            include/mantis/core/settings.h )
+    set(MANTIS_LIB_TYPE SHARED)
 endif()
 
 # Add library
@@ -85,6 +83,9 @@ add_library(mantis ${MANTIS_LIB_TYPE}
 
         include/mantis/core/private-impl/soci_custom_types.hpp
         include/mantis/app/config.hpp.in
+
+        src/core/settings.cpp
+        include/mantis/core/settings.h
 )
 
 # Add httplib
