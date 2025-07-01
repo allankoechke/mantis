@@ -48,9 +48,11 @@ endif()
 # Step 3: Use cmrc to embed the files
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cmrc)
 
-file(GLOB_RECURSE REACT_FILES LIST_DIRECTORIES false "${MANTIS_ADMIN_EXTRACT_DIR}/*")
-message(STATUS "React files to embed: ${REACT_FILES}")
+# Collect all admin dashboard static files
+file(GLOB_RECURSE ADMIN_STATIC_FILES LIST_DIRECTORIES false "${MANTIS_ADMIN_EXTRACT_DIR}/*")
+# Collect any asset files
+file(GLOB_RECURSE MANTIS_ASSET_FILES LIST_DIRECTORIES false "${CMAKE_CURRENT_SOURCE_DIR}/assets/*")
 
-cmrc_add_resource_library(mantis-rc NAMESPACE mantis ${REACT_FILES})
+cmrc_add_resource_library(mantis-rc NAMESPACE mantis ${ADMIN_STATIC_FILES} ${MANTIS_ASSET_FILES})
 target_link_libraries(mantis PRIVATE mantis-rc)
 target_compile_definitions(mantis PRIVATE CMRC_ENABLE)
