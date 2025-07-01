@@ -4,8 +4,9 @@ include(ExternalProject)
 set(MANTIS_ADMIN_DOWNLOAD_URL "https://github.com/allankoechke/mantis-admin/releases/download/${MANTIS_ADMIN_VERSION}/mantis-admin-static.zip")
 set(MANTIS_ADMIN_BASE_DIR "${CMAKE_BINARY_DIR}/3rdParty/mantis-admin/${MANTIS_ADMIN_VERSION}")
 set(MANTIS_ADMIN_ZIP_PATH "${MANTIS_ADMIN_BASE_DIR}/admin-build.zip")   # Admin ZIP file
-set(MANTIS_ADMIN_EXTRACT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qrc")            # Admin UNZIP dir
+set(MANTIS_ADMIN_EXTRACT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/qrc")         # Admin UNZIP dir
 
+file(REMOVE_RECURSE ${MANTIS_ADMIN_EXTRACT_DIR})
 
 # Step 1: Download the zip
 file(DOWNLOAD
@@ -13,7 +14,7 @@ file(DOWNLOAD
         ${MANTIS_ADMIN_ZIP_PATH}
         SHOW_PROGRESS
         STATUS DOWNLOAD_STATUS
-        EXPECTED_HASH SHA256=123aaca425c139155fcc8b9f7468a6fff6cb2b14e6c2d889fd7a9878cd29a3ac
+        EXPECTED_HASH SHA256=${MANTIS_ADMIN_HASH}
 )
 
 list(GET DOWNLOAD_STATUS 0 DOWNLOAD_RESULT)

@@ -6,6 +6,7 @@
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/core/tables/sys_tables.h"
 
+#include <format>
 #include <nlohmann/json.hpp>
 
 #include "mantis/core/settings.h"
@@ -176,7 +177,7 @@ json mantis::Router::updateRoute(const json& table_data)
     const auto table_type = table_data.at("old_type").get<std::string>();
 
     // Let's find and remove existing object
-    const auto it = std::find_if(m_routes.begin(), m_routes.end(), [&](const auto& route)
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
     {
         return route->tableName() == table_old_name;
     });

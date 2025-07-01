@@ -17,7 +17,10 @@ endif ()
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(MANTIS_ADMIN_VERSION v0.1.4)    # Mantis Admin dashboard version to embed
+
+# Mantis Admin Dashboard Fetch Flags
+set(MANTIS_ADMIN_VERSION v0.1.5)    # Mantis Admin dashboard version to embed
+set(MANTIS_ADMIN_HASH 1adccd9d1f16c2d51a6319b143e85188aef98d42983f6070d0b019f436467b97)
 
 configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
@@ -146,11 +149,11 @@ target_include_directories(mantis
         PUBLIC
         ${CMAKE_CURRENT_SOURCE_DIR}/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/argparse/include
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/argparse/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
         ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/lib/mbedtls/include
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse
         ${CMAKE_BINARY_DIR}/include
 )
 

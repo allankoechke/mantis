@@ -514,7 +514,7 @@ namespace mantis
 
     void SysTablesUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
     {
-        Log::trace("Auth on record, endpoint {}", req.path);
+        TRACE_CLASS_METHOD()
 
         json body, response;
         try { body = json::parse(req.body); }
@@ -532,8 +532,8 @@ namespace mantis
         }
 
         // Get email & password values
-        const auto email = body.value("email", "");
-        const auto password = body.value("password", "");
+        const auto email = (body.contains("email") && body["email"].is_null()) ? body.value("email", "") : "";
+        const auto password = (body.contains("password") && body["password"].is_null()) ? body.value("password", "") : "";
 
         // We expect, the user email and password to be passed in
         if (email.length() < 5)
@@ -563,6 +563,7 @@ namespace mantis
             // Find user with an email passed in ....
             const auto sql = MantisApp::instance().db().session();
 
+            Log::trace("Admin: U: {}, P: {}", email, password);
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
             *sql << query, soci::use(email), soci::into(r);
@@ -629,7 +630,7 @@ namespace mantis
             res.set_content(response.dump(), "application/json");
 
             Log::warn("No user found for given email/password combination. Reason: {}",
-                    resp.value("error", ""));
+                      resp.value("error", ""));
         }
         catch (std::exception& e)
         {

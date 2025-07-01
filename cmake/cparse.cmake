@@ -3,12 +3,12 @@ set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall -pedantic -Wmissing-field-initiali
 
 # Core source files
 set(CORE_SOURCES
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/shunting-yard.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/packToken.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/functions.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/containers.cpp
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse/builtin-features.cpp
-        ../3rdParty/cparse/builtin_features.h
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse/shunting-yard.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse/packToken.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse/functions.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse/containers.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse/builtin-features.cpp
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse/builtin_features.h
 )
 
 # Create static library
@@ -16,7 +16,7 @@ add_library(cparse STATIC ${CORE_SOURCES})
 
 # Include directories
 target_include_directories(cparse PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/cparse
+        ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse
 )
 
 # Platform-specific optimizations
