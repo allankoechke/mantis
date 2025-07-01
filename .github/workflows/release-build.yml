@@ -45,7 +45,7 @@ jobs:
       - name: Install MinGW
         if: matrix.os == 'windows-latest'
         run: |
-          choco install mingw --no-progress
+          choco install mingw --version=13.2.0 --no-progress
 
       - name: Add MinGW to PATH
         if: matrix.os == 'windows-latest'
