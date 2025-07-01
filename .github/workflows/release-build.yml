@@ -81,13 +81,29 @@ jobs:
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: ubuntu-latest-mantisapp
+          path: ./artifacts
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: windows-latest-mantisapp
+          path: ./artifacts
+
+      - name: Show artifact contents
+        run: ls -R ./artifacts
+
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          files:
-            - mantisapp.exe
-            - mantisapp
-
+          files: ./artifacts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
@@ -118,9 +134,14 @@ jobs:
 
       - name: Copy docs to Wiki and push
         run: |
-          rm -rf wiki/*
+          find wiki -mindepth 1 -not -name '.git' -exec rm -rf {} +
           cp -r build/docs/html/* wiki/
+          touch wiki/.nojekyll
           cd wiki
-          git add .
-          git commit -m "Update Doxygen docs from CI"
-          git push
+          if [ -n "$(git status --porcelain)" ]; then
+            git add .
+            git commit -m "Update Doxygen docs from CI"
+            git push
+          else
+            echo "No changes to commit"
+          fi

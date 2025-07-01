@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.3)
+project(mantisapp VERSION 0.1.4)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -26,7 +26,7 @@ configure_file(
 
 # Add main executable
 add_executable(mantisapp
-        src/main.cpp
+        src/mantisapp.cpp
 )
 
 if(CMAKE_BUILD_TYPE STREQUAL "Release")
