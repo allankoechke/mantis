@@ -116,7 +116,6 @@ jobs:
           fetch-depth: 1
 
       - name: Install Doxygen (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get install -y doxygen graphviz
 
       - name: Configure CMake
