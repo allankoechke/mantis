@@ -1,0 +1,16 @@
+<map id="mantis::TableUnit::deleteRecord" name="mantis::TableUnit::deleteRecord">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,183,149,223"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1TableUnit.html#afbed1050a45cf1ff2d1b24d28d04e12d" title=" " alt="" coords="197,151,341,191"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="149,189,183,183,184,188,150,194"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="397,247,550,287"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="150,212,384,250,383,256,149,217"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c" title="Get the database unit object." alt="" coords="389,5,557,31"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="282,149,325,96,355,66,388,41,402,33,405,38,391,46,358,70,329,99,286,153"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="397,55,549,95"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="304,149,388,105,404,98,406,103,390,110,307,153"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174" title="Get access to a session from the pool." alt="" coords="391,119,555,159"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="341,157,377,152,378,157,342,163"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1TableUnit.html#aa1181122430ff57cc1d69bd93bb7f2e5" title=" " alt="" coords="401,183,545,223"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="342,180,388,187,388,193,341,185"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="307,189,390,233,406,240,404,245,388,238,304,194"/>
+</map>

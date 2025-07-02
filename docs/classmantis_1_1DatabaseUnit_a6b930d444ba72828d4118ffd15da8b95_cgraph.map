@@ -1,0 +1,7 @@
+<map id="mantis::DatabaseUnit::disconnect" name="mantis::DatabaseUnit::disconnect">
+<area shape="rect" id="Node000001" title="CLose all database connections and destroy connection pools." alt="" coords="5,37,169,77"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="217,5,369,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="169,42,204,37,204,42,170,47"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a0bed909bb11c21fb92ece716ca17c6c8" title="Retrieve the database pool size value." alt="" coords="217,69,369,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="170,67,204,73,204,78,169,73"/>
+</map>

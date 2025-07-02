@@ -1,0 +1,11 @@
+<map id="mantis::JWT::createJWTToken" name="mantis::JWT::createJWTToken">
+<area shape="rect" id="Node000001" title="Generate a JWT token having some custom claims." alt="" coords="480,45,691,70"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1TableUnit.html#ae445375361e16d089810ea4973dd8278" title=" " alt="" coords="224,5,428,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="468,46,428,41,429,35,469,40"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1SysTablesUnit.html#a49501e4cc70f90cef6d37a517716e0e3" title=" " alt="" coords="220,69,432,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="469,74,433,79,432,74,468,69"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#a36d744738e6485000f0978564e9221f0" title=" " alt="" coords="17,5,161,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="210,28,161,28,161,23,210,23"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447" title=" " alt="" coords="5,69,172,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="206,92,172,92,172,87,206,87"/>
+</map>

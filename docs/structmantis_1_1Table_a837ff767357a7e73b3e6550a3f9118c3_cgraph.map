@@ -1,0 +1,9 @@
+<map id="mantis::Table::to_sql" name="mantis::Table::to_sql">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,63,161,88"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c" title="Get the database unit object." alt="" coords="209,5,377,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="130,60,232,32,234,37,131,65"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="217,55,369,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="162,73,203,73,203,78,162,78"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174" title="Get access to a session from the pool." alt="" coords="211,119,375,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="127,86,215,113,213,118,125,91"/>
+</map>

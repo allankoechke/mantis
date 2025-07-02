@@ -1,0 +1,5 @@
+<map id="mantis::SettingsUnit::migrate" name="mantis::SettingsUnit::migrate">
+<area shape="rect" id="Node000001" title="Initialize migration, create base data for setting fields." alt="" coords="217,5,372,45"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1DatabaseUnit.html#aa8fe8dd2db156175c8313d798ff5e26c" title="Run database migrations, creates the default system tables." alt="" coords="5,5,169,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="203,28,169,28,169,23,203,23"/>
+</map>

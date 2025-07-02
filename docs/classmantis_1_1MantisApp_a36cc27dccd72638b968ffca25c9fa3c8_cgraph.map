@@ -1,0 +1,15 @@
+<map id="mantis::MantisApp::init" name="mantis::MantisApp::init">
+<area shape="rect" id="Node000001" title="Run initialization actions for Mantis, ensuring all objects are initialized properly before use." alt="" coords="5,94,179,119"/>
+<area shape="rect" id="Node000002" href="$namespacemantis.html#ab35751b3a0762476bf6d955eacc1a6c1" title="Returns a created/existing directory from a path." alt="" coords="227,37,380,62"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="139,91,242,63,243,68,140,97"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1MantisApp.html#aa39f3105148ae6918274963b724404f3" title="Update the data directory for MantisApp." alt="" coords="227,87,379,127"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="179,104,214,104,214,109,179,109"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1MantisApp.html#acefabf6f521e7269ba2f9186e0fbffad" title="Update HTTP server static file directory." alt="" coords="227,151,379,191"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="136,117,224,144,223,149,134,122"/>
+<area shape="rect" id="Node000003" href="$namespacemantis.html#a7198d676b24903590c1462d7af4958a7" title="Create directory, given a path." alt="" coords="432,13,575,38"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="380,37,418,33,419,38,381,43"/>
+<area shape="rect" id="Node000005" href="$namespacemantis.html#abe97209493d2bc0086c3678010342477" title=" " alt="" coords="428,62,579,87"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="381,56,414,61,414,66,380,62"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="627,5,780,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="575,23,613,23,613,28,575,28"/>
+</map>

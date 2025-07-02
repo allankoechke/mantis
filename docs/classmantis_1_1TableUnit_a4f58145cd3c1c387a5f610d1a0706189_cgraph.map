@@ -1,0 +1,16 @@
+<map id="mantis::TableUnit::getAuthToken" name="mantis::TableUnit::getAuthToken">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,112,149,152"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1Context.html#a01a68a55163e1cc12b94dadabdc9cb68" title="Convenience method for dumping context data for debugging." alt="" coords="197,41,368,66"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="119,109,196,76,221,68,223,73,198,81,121,114"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1Context.html#acba5e9d0fe8417b71f0e729a59724bc8" title="Store a key&#45;value data in the context." alt="" coords="205,90,360,115"/>
+<area shape="poly" id="edge5_Node000001_Node000005" title=" " alt="" coords="149,119,191,113,192,118,150,124"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="206,140,359,180"/>
+<area shape="poly" id="edge6_Node000001_Node000006" title=" " alt="" coords="150,139,193,145,192,150,149,144"/>
+<area shape="rect" id="Node000007" href="$namespacemantis.html#a842ffce0f72c6aed85cdfa2c1f0615f5" title="Trims leading and trailing whitespaces from a string." alt="" coords="231,205,334,230"/>
+<area shape="poly" id="edge7_Node000001_Node000007" title=" " alt="" coords="115,150,198,190,221,198,220,203,196,194,113,154"/>
+<area shape="poly" id="edge3_Node000002_Node000002" title=" " alt="" coords="249,42,242,32,245,22,259,16,283,14,311,18,323,27,319,31,309,23,283,19,261,21,249,26,247,32,253,39"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e" title=" " alt="" coords="417,5,570,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="368,39,403,35,403,40,368,45"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95" title="Get context value given the key." alt="" coords="416,70,571,95"/>
+<area shape="poly" id="edge4_Node000002_Node000004" title=" " alt="" coords="368,63,403,67,402,73,368,68"/>
+</map>

@@ -1,0 +1,7 @@
+<map id="mantis::MantisApp::setHost" name="mantis::MantisApp::setHost">
+<area shape="rect" id="Node000001" title="Update HTTP Server host address." alt="" coords="5,35,157,75"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e" title=" " alt="" coords="219,5,372,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,42,204,35,205,40,158,47"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a96728241ef9dcff136d0440ff4facf27" title="Retrieve HTTP Server host address. For instance, a host of 127.0.0.1, 0.0.0.0, etc." alt="" coords="205,70,385,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,62,192,66,191,72,157,67"/>
+</map>

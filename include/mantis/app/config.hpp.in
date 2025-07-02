@@ -1,0 +1,36 @@
+//
+// Created by allan on 22/06/2025.
+//
+
+#ifndef CONFIG_HPP_IN_H
+#define CONFIG_HPP_IN_H
+
+#define MANTIS_VERSION_MAJOR @PROJECT_VERSION_MAJOR@
+#define MANTIS_VERSION_MINOR @PROJECT_VERSION_MINOR@
+#define MANTIS_VERSION_PATCH @PROJECT_VERSION_PATCH@
+#define MANTIS_VERSION_SUFFIX "@MANTIS_VERSION_SUFFIX@"
+#define MANTIS_GIT_COMMIT "@MANTIS_GIT_COMMIT@"
+#define MANTIS_VERSION "@PROJECT_VERSION@@MANTIS_VERSION_SUFFIX@"
+
+namespace mantis {
+    inline const char* getVersionString() {
+        return MANTIS_VERSION;
+    }
+
+    inline const char* getGitCommit() {
+        return MANTIS_GIT_COMMIT;
+    }
+
+    inline constexpr std::tuple<int, int, int> getVersionTuple() {
+        return { MANTIS_VERSION_MAJOR, MANTIS_VERSION_MINOR, MANTIS_VERSION_PATCH };
+    }
+
+    inline constexpr bool isVersionAtLeast(int major, int minor, int patch) {
+        return std::tuple(MANTIS_VERSION_MAJOR, MANTIS_VERSION_MINOR, MANTIS_VERSION_PATCH)
+             >= std::tuple(major, minor, patch);
+    }
+} // namespace mantis
+
+
+
+#endif //CONFIG_HPP_IN_H
