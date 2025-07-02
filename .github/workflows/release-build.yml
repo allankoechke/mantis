@@ -124,24 +124,27 @@ jobs:
       - name: Build Doxygen Docs
         run: cmake --build build --target doc
 
-      - name: Clone GitHub Wiki
+      - name: Switch to pages branch and sync docs
         env:
           TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions"
           git config --global user.email "github-actions[bot]@users.noreply.github.com"
-          git clone https://x-access-token:${TOKEN}@github.com/${{ github.repository }}.wiki.git wiki
-
-      - name: Copy docs to Wiki and push
-        run: |
-          find wiki -mindepth 1 -not -name '.git' -exec rm -rf {} +
-          cp -r build/docs/html/* wiki/
-          touch wiki/.nojekyll
-          cd wiki
-          if [ -n "$(git status --porcelain)" ]; then
-            git add .
-            git commit -m "Update Doxygen docs from CI"
-            git push
+  
+          # Fetch and checkout the 'gh-pages' branch (or create if missing)
+          git fetch origin gh-pages || true
+          git switch gh-pages || git checkout --orphan gh-pages
+  
+          # Clean and copy new docs
+          rm -rf docs
+          mkdir -p docs
+          cp -r docs/html/* docs/
+  
+          # Commit and push
+          git add docs
+          if git diff --cached --quiet; then
+            echo "No changes to push"
           else
-            echo "No changes to commit"
+            git commit -m "CI: Update Doxygen Docs"
+            git push origin pages
           fi
