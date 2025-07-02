@@ -83,7 +83,7 @@ jobs:
         with:
           name: ${{ matrix.os }}-mantisapp
           path: |
-            ${{ steps.strings.outputs.build-output-dir }}/mantisapp*
+            ${{ steps.strings.outputs.build-output-dir }}/bin/mantisapp*
 
   release:
     needs: build
@@ -144,5 +144,10 @@ jobs:
   
           # Commit and push
           git add docs
-          git commit -m "CI: Update Doxygen Docs"
-          git push origin gh-pages
+
+          if git diff --cached --quiet; then
+            echo "✅ No changes to commit."
+          else          
+            git commit -m "CI: Update Doxygen Docs"
+            git push origin gh-pages
+          fi
