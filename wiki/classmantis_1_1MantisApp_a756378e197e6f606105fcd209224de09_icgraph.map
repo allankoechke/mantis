@@ -1,0 +1,7 @@
+<map id="mantis::MantisApp::dbType" name="mantis::MantisApp::dbType">
+<area shape="rect" id="Node000001" title="Retrieves the active database type." alt="" coords="217,37,369,77"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1DatabaseUnit.html#aaf1cf9804c647918f741e3fdaa66986c" title="Initializes the connection pool &amp; connects to specific database." alt="" coords="5,5,169,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="203,46,169,41,170,35,204,41"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a308ad03844c435c4f90e11fe0b54a93f" title=" " alt="" coords="11,69,163,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="204,74,164,80,163,75,203,69"/>
+</map>

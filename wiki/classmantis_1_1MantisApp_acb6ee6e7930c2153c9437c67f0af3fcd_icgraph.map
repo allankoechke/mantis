@@ -1,0 +1,5 @@
+<map id="mantis::MantisApp::run" name="mantis::MantisApp::run">
+<area shape="rect" id="Node000001" title="Start the http server and start listening for requests." alt="" coords="108,5,281,31"/>
+<area shape="rect" id="Node000002" href="$mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title="MantisApp standalone entrypoint." alt="" coords="5,5,60,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="94,21,60,21,60,15,94,15"/>
+</map>

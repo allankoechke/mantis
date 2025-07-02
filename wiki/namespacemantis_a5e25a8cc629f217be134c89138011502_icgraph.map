@@ -1,0 +1,21 @@
+<map id="mantis::getEnvOrDefault" name="mantis::getEnvOrDefault">
+<area shape="rect" id="Node000001" title="Retrieves a value from an environment variable or a default value if the env variable was not set." alt="" coords="680,141,863,166"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a5a0d783c8300af0f042194d6d8e05127" title="Retrieve the JWT secret key." alt="" coords="480,133,632,173"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="666,156,632,156,632,151,666,151"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#ae445375361e16d089810ea4973dd8278" title=" " alt="" coords="224,69,428,109"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="470,132,398,112,399,107,471,127"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1SysTablesUnit.html#a49501e4cc70f90cef6d37a517716e0e3" title=" " alt="" coords="220,197,432,237"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="471,180,399,200,398,195,470,174"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1SettingsUnit.html#aac77b27115fbac384b9b97b344302703" title="Evaluate if request is authenticated and has permission to access this route." alt="" coords="249,133,403,173"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="466,156,403,156,403,151,466,151"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1TableUnit.html#ab43522c4fabe0465c2ee3cadd6b42fa2" title=" " alt="" coords="254,5,398,45"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="522,126,480,92,431,60,397,45,399,41,433,55,483,87,525,122"/>
+<area shape="rect" id="Node000009" href="$classmantis_1_1SysTablesUnit.html#a5542061c3fcb51720df7a935f565b360" title=" " alt="" coords="243,261,409,301"/>
+<area shape="poly" id="edge9_Node000002_Node000009" title=" " alt="" coords="525,185,483,219,433,252,406,264,404,259,431,247,480,215,522,181"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1TableUnit.html#a36d744738e6485000f0978564e9221f0" title=" " alt="" coords="17,37,161,77"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="210,76,160,70,161,64,211,71"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447" title=" " alt="" coords="5,229,172,269"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="207,236,172,241,172,236,206,231"/>
+<area shape="poly" id="edge8_Node000008_Node000004" title=" " alt="" coords="241,39,161,50,160,45,240,34"/>
+<area shape="poly" id="edge10_Node000009_Node000006" title=" " alt="" coords="229,271,172,263,172,258,229,266"/>
+</map>

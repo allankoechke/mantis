@@ -1,0 +1,7 @@
+<map id="mantis::RouteRegistry::remove" name="mantis::RouteRegistry::remove">
+<area shape="rect" id="Node000001" title="Remove find and remove existing route + path pair from the registry." alt="" coords="268,23,435,63"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1Router.html#aacf3407728ed641e0c3493848992e65c" title=" " alt="" coords="5,5,220,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="254,36,220,32,220,27,254,30"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1Router.html#a6fb0dd6f291415d3472fb7ab46d5101f" title=" " alt="" coords="8,55,217,80"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="254,56,218,59,217,54,254,50"/>
+</map>

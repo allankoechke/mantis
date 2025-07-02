@@ -1,0 +1,15 @@
+<map id="mantis::TableUnit::validateUpdateRequestBody" name="mantis::TableUnit::validateUpdateRequestBody">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,151,213,191"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f" title=" " alt="" coords="261,5,427,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="127,149,183,96,220,67,260,41,277,33,279,38,263,46,223,71,187,100,131,153"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#aeb0e1101b9c2be401432e8b641076eea" title=" " alt="" coords="272,55,416,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="156,149,260,105,277,98,279,103,262,110,158,154"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="268,119,420,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="213,155,254,149,255,154,214,160"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="267,183,421,223"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="214,183,254,188,253,194,213,188"/>
+<area shape="rect" id="Node000006" href="$namespacemantis.html#a842ffce0f72c6aed85cdfa2c1f0615f5" title="Trims leading and trailing whitespaces from a string." alt="" coords="293,248,395,273"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="156,189,262,233,287,241,285,246,260,238,154,194"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1MantisApp.html#a9a945a51d82e62bb503860105882a9d4" title="Get the validators unit object instance in MantisApp." alt="" coords="268,298,420,338"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="135,189,191,235,263,282,277,290,274,295,260,287,188,239,132,193"/>
+</map>

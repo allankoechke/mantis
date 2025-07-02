@@ -1,0 +1,17 @@
+<map id="mantis::Router::removeRoute" name="mantis::Router::removeRoute">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,127,220,153"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e" title=" " alt="" coords="305,5,458,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="133,125,192,91,267,55,291,46,293,51,269,60,194,96,136,130"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#ab2f169ca51fc37f5a54d198af6d6f825" title="Get the http unit object." alt="" coords="292,70,471,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="172,125,307,96,308,101,174,130"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="305,120,457,160"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="220,137,291,137,291,143,220,143"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1RouteRegistry.html#a4c2c3eec885b15d3f2e3ea2cf7182916" title="Remove find and remove existing route + path pair from the registry." alt="" coords="298,184,465,224"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="168,150,285,178,284,184,167,155"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1HttpUnit.html#aa0f67227f09877e15d0d1cd37c28cf6e" title="Fetch the underlying route registry, check." alt="" coords="268,249,495,274"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="132,151,191,192,229,214,269,234,295,243,293,248,267,238,226,219,188,196,129,155"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1LoggingUnit.html#abd9aa4c3e40a7dcbd93b5db5b3487cd9" title=" " alt="" coords="543,152,696,192"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="465,190,529,181,529,187,465,195"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1LoggingUnit.html#a00f06c6e94c353207186f6fc33268e61" title=" " alt="" coords="543,216,696,256"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="465,213,529,221,529,227,465,218"/>
+</map>

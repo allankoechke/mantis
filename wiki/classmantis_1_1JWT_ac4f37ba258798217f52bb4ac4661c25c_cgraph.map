@@ -1,0 +1,9 @@
+<map id="mantis::JWT::createJWTToken" name="mantis::JWT::createJWTToken">
+<area shape="rect" id="Node000001" title="Generate a JWT token having some custom claims." alt="" coords="5,77,216,102"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1SettingsUnit.html#aa85cc84001581c051dc114f4a35115e1" title="Get the current config data instance." alt="" coords="264,5,419,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,74,255,46,256,52,158,79"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="265,69,417,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="217,87,252,87,252,92,217,92"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#a6e757b060c96db07da310f659aed8cee" title="Get the settings unit object." alt="" coords="265,133,417,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="158,100,256,127,255,132,157,105"/>
+</map>

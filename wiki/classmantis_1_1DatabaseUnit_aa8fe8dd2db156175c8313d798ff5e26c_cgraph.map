@@ -1,0 +1,23 @@
+<map id="mantis::DatabaseUnit::migrate" name="mantis::DatabaseUnit::migrate">
+<area shape="rect" id="Node000001" title="Run database migrations, creates the default system tables." alt="" coords="5,113,169,153"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="219,5,372,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="124,111,216,62,240,49,243,54,219,66,127,115"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="429,59,581,99"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="169,114,217,105,415,83,416,88,218,111,170,119"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1SettingsUnit.html#a1f81caa793192b9656e436a74e5448cd" title="Initialize migration, create base data for setting fields." alt="" coords="218,171,373,211"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="161,151,210,164,209,170,160,156"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1MantisApp.html#a6e757b060c96db07da310f659aed8cee" title="Get the settings unit object." alt="" coords="219,235,371,275"/>
+<area shape="poly" id="edge8_Node000001_Node000008" title=" " alt="" coords="116,151,163,185,219,220,231,226,228,231,216,225,160,190,113,156"/>
+<area shape="rect" id="Node000009" href="$structmantis_1_1Table.html#a837ff767357a7e73b3e6550a3f9118c3" title=" " alt="" coords="217,121,373,146"/>
+<area shape="poly" id="edge9_Node000001_Node000009" title=" " alt="" coords="170,131,203,131,203,136,170,136"/>
+<area shape="poly" id="edge5_Node000004_Node000003" title=" " alt="" coords="349,168,372,155,386,143,395,132,405,121,420,108,430,102,433,107,423,113,409,124,399,136,390,147,375,160,351,173"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c" title="Get the database unit object." alt="" coords="421,123,589,149"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="372,168,442,150,443,155,373,173"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174" title="Get access to a session from the pool." alt="" coords="423,173,587,213"/>
+<area shape="poly" id="edge6_Node000004_Node000006" title=" " alt="" coords="373,189,410,189,410,195,373,194"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="429,237,582,277"/>
+<area shape="poly" id="edge7_Node000004_Node000007" title=" " alt="" coords="360,208,429,230,427,236,358,213"/>
+<area shape="poly" id="edge11_Node000009_Node000003" title=" " alt="" coords="344,118,415,99,417,104,345,123"/>
+<area shape="poly" id="edge10_Node000009_Node000005" title=" " alt="" coords="374,132,408,132,407,137,374,137"/>
+<area shape="poly" id="edge12_Node000009_Node000006" title=" " alt="" coords="341,143,423,167,421,172,340,149"/>
+</map>
