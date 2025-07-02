@@ -72,10 +72,15 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: >
           cmake -B ${{ steps.strings.outputs.build-output-dir }}
-          -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
-          -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
+          -DCMAKE_CXX_COMPILER="C:\ProgramData\mingw64\mingw64\bin\g++.exe"
+          -DCMAKE_C_COMPILER="C:\ProgramData\mingw64\mingw64\bin\gcc.exe"
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -S ${{ github.workspace }}
+
+      - name: Check chosen compiler
+        run: |
+          gcc --version
+          g++ --version
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
