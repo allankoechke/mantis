@@ -138,7 +138,7 @@ jobs:
           # Clean and copy new docs
           rm -rf docs
           mkdir -p docs
-          cp -r docs/html/* docs/
+          cp -r build/docs/html/* docs/
   
           # Commit and push
           git add docs
