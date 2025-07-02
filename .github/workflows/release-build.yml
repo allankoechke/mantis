@@ -17,13 +17,10 @@ jobs:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-latest]
         build_type: [Release]
         c_compiler: [gcc]
         include:
-          - os: windows-latest
-            c_compiler: gcc
-            cpp_compiler: g++
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
@@ -37,10 +34,6 @@ jobs:
       - name: Install dependencies on Ubuntu
         if: matrix.os == 'ubuntu-latest'
         run: sudo apt-get update && sudo apt-get install -y libzstd-dev
-
-      - name: Install Doxygen (Ubuntu)
-        if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get install -y doxygen graphviz
 
       - name: Install MinGW
         if: matrix.os == 'windows-latest'
@@ -121,6 +114,10 @@ jobs:
         with:
           submodules: recursive
           fetch-depth: 1
+
+      - name: Install Doxygen (Ubuntu)
+        if: matrix.os == 'ubuntu-latest'
+        run: sudo apt-get install -y doxygen graphviz
 
       - name: Configure CMake
         run: cmake -B build -S .
