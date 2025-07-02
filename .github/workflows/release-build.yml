@@ -81,17 +81,12 @@ jobs:
   release:
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/v')
+    # if: startsWith(github.ref, 'refs/tags/v')
 
     steps:
       - uses: actions/download-artifact@v4
         with:
           name: ubuntu-latest-mantisapp
-          path: ./artifacts
-
-      - uses: actions/download-artifact@v4
-        with:
-          name: windows-latest-mantisapp
           path: ./artifacts
 
       - name: Show artifact contents
@@ -105,7 +100,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   upload-docs:
-    needs: build
+    # needs: build
     if: github.ref == 'refs/heads/master'
     runs-on: ubuntu-latest
 
@@ -142,9 +137,5 @@ jobs:
   
           # Commit and push
           git add docs
-          if git diff --cached --quiet; then
-            echo "No changes to push"
-          else
-            git commit -m "CI: Update Doxygen Docs"
-            git push origin pages
-          fi
+          git commit -m "CI: Update Doxygen Docs"
+          git push origin pages
