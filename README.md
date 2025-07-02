@@ -28,7 +28,7 @@
 
 | Feature                          | Status         |
 |----------------------------------|----------------|
-| ✅ Modular C++ core library       | 🟡 In Progress |
+| ✅ Modular C++ core library       | ✅ Completed  |
 | 🧩 Pluggable database interface   | 🟡 In Progress |
 | 🔐 Authentication (JWT/session)  | ✅ Completed    |
 | 📄 Auto API generation from schema | ✅ Completed    |
@@ -36,7 +36,7 @@
 | 🔁 Client/server sync modes       | ⬜ Planned      |
 | 🔄 WebSocket sync support         | ⬜ Planned      |
 | 🧩 Middleware support             | ✅ Completed |
-| 💾 Static file serving            | ⬜ Planned      |
+| 💾 Static file serving            | ✅ Completed      |
 | 🚀 Docker-ready deployment        | ⬜ Planned      |
 | 🧪 Unit + integration tests       | 🟡 In Progress     |
 | 📘 CLI + embeddable modes         | ✅ Completed |
@@ -50,6 +50,8 @@
 - **Build System**: CMake
 - **Packaging**: Docker + CLI
 - **Sync**: WebSocket / REST delta sync (planned)
+
+> NOTE: On windows, we use `mingw` not `MSVC` due to some feature incompatibility. For `mingw`, it requires at least `v13` with support for `std::format`.
 
 ---
 
@@ -76,6 +78,7 @@ int main(const int argc, char* argv[])
 }
 ```
 Check /exammples for a sample
+
 ---
 
 ## 📁 Project Structure
@@ -99,6 +102,8 @@ mantis/
 * [Embedding Guide](docs/embedding.md)
 * [Sync Engine Design](docs/sync.md)
 * [API Reference](docs/api.md)
+
+For API Docs: Check [here](). COMING SOON!!
 
 ---
 
