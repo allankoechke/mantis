@@ -19,8 +19,9 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 
 # Mantis Admin Dashboard Fetch Flags
-set(MANTIS_ADMIN_VERSION v0.1.5)    # Mantis Admin dashboard version to embed
-set(MANTIS_ADMIN_HASH 1adccd9d1f16c2d51a6319b143e85188aef98d42983f6070d0b019f436467b97)
+# Mantis Admin dashboard version to embed
+set(MANTIS_ADMIN_VERSION v0.1.6)
+set(MANTIS_ADMIN_HASH 39a78d95a49f768ebb6f72453cc3c2726ce2c6f602669105e833920644f38f7a)
 
 configure_file(
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
