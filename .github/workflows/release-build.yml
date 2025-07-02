@@ -138,4 +138,4 @@ jobs:
           # Commit and push
           git add docs
           git commit -m "CI: Update Doxygen Docs"
-          git push origin pages
+          git push origin gh-pages
