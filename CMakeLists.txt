@@ -1,17 +1,7 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.5)
+project(mantisapp VERSION 0.1.6)
 
 set(CMAKE_CXX_STANDARD 20)
-
-# Flag for building deps as shared/static libs
-set(MANTIS_SHARED_DEPS FALSE)
-if(MANTIS_SHARED_DEPS)
-    # Optional: choose static/shared globally
-    set(BUILD_SHARED_LIBS TRUE)
-else ()
-    # Optional: choose static/shared globally
-    set(BUILD_SHARED_LIBS FALSE)
-endif ()
 
 # Set output directories to match SOCI's
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
@@ -28,16 +18,22 @@ configure_file(
         ${CMAKE_CURRENT_BINARY_DIR}/include/mantis/app/config.hpp
 )
 
+# Flag for building deps as shared/static libs
+set(MANTIS_SHARED_DEPS FALSE)
+if(MANTIS_SHARED_DEPS)
+    set(BUILD_SHARED_LIBS TRUE)
+    set(MANTIS_LIB_TYPE SHARED)
+    message ( "-- Building Mantis dynamic libs" )
+else ()
+    set(BUILD_SHARED_LIBS FALSE)
+    set(MANTIS_LIB_TYPE STATIC)
+    message ( "-- Building Mantis static libs" )
+endif ()
+
 # Add main executable
 add_executable(mantisapp
         src/mantisapp.cpp
 )
-
-if(CMAKE_BUILD_TYPE STREQUAL "Release")
-    set(MANTIS_LIB_TYPE STATIC)
-else()
-    set(MANTIS_LIB_TYPE SHARED)
-endif()
 
 # Add library
 add_library(mantis ${MANTIS_LIB_TYPE}

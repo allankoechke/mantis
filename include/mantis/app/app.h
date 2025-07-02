@@ -212,6 +212,14 @@ namespace mantis
         /// Get the settings unit object
         [[nodiscard]] SettingsUnit& settings() const;
 
+        /**
+         * @brief Launch browser with the admin dashboard page. If all goes well, the default
+         * OS browser should open (if not opened) with the admin dashboard URL.
+         *
+         * > Added in v0.1.6
+         */
+        void openBrowserOnStart() const;
+
     private:
         // Points to externally constructed instance (no ownership)
         static std::unique_ptr<MantisApp> s_instance;

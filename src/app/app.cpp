@@ -7,7 +7,11 @@
 #include <builtin_features.h>
 #include <mantis/app/config.hpp>
 #include <cmrc/cmrc.hpp>
+#include <format>
 
+/**
+ * @brief Enforce `MantisApp` initialization before invoking member functions
+ */
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
 
@@ -411,6 +415,25 @@ namespace mantis
     SettingsUnit& MantisApp::settings() const
     {
         return *m_settings;
+    }
+
+    void MantisApp::openBrowserOnStart() const
+    {
+        std::string url = std::format("http://localhost:{}/admin", m_port);
+
+#ifdef _WIN32
+        std::string command = "start " + url;
+#elif __APPLE__
+            std::string command = "open " + url;
+#elif __linux__
+            std::string command = "xdg-open " + url;
+#else
+#error Unsupported platform
+#endif
+
+        if (int result = std::system(command.c_str()); result != 0) {
+            Log::info("Could not open browser: {} > {}", command, result);
+        }
     }
 
     void MantisApp::setDbType(const DbType& dbType)

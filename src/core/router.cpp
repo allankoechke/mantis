@@ -378,13 +378,13 @@ bool mantis::Router::generateAdminCrudApis() const
             return "application/octet-stream";
         };
 
-        auto fs = cmrc::mantis::get_filesystem();
         MantisApp::instance().http().Get(
             R"(/admin(.*))",
-            [&fs, getMimeType](const Request& req, Response& res, Context ctx)
+            [getMimeType](const Request& req, Response& res, [[maybe_unused]] Context ctx)
             {
                 try
                 {
+                    const auto fs = cmrc::mantis::get_filesystem();
                     std::string path = req.matches[1];
                     Log::trace("Match 1: {}", path);
 
@@ -392,14 +392,18 @@ bool mantis::Router::generateAdminCrudApis() const
                     if (path.empty() || path == "/")
                     {
                         path = "/qrc/index.html";
+                        Log::trace("/qrc/index.html");
                     }
                     else
                     {
                         path = std::format("/qrc{}", path);
+                        Log::trace("{}", path);
                     }
 
                     if (!fs.exists(path))
                     {
+                        Log::trace("{} path does not exists", path);
+
                         // fallback to index.html for React routes
                         path = "/qrc/index.html";
                     }
@@ -409,7 +413,8 @@ bool mantis::Router::generateAdminCrudApis() const
                         res.status = 200;
                         const auto file = fs.open(path);
                         const auto mime = getMimeType(path);
-                        res.set_content(file.begin(), file.size(), mime.c_str());
+                        Log::trace("File: {}, size: {}, mime: {}", path, file.size(), mime);
+                        res.set_content(file.begin(), file.size(), mime);
                     }
                     catch (const std::exception& e)
                     {

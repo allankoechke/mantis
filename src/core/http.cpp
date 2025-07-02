@@ -3,8 +3,10 @@
 //
 #include "../../include/mantis/core/http.h"
 #include "../../include/mantis/core/logging.h"
+#include "../../include/mantis/app/app.h"
 
 #include <chrono>
+#include <thread>
 
 #define __file__ "core/http.cpp"
 
@@ -100,7 +102,8 @@ mantis::HttpUnit::HttpUnit()
     });
 
     // Add CORS headers to all responses
-    svr.set_post_routing_handler([](const auto& req, auto& res) {
+    svr.set_post_routing_handler([](const auto& req, auto& res)
+    {
         res.set_header("Access-Control-Allow-Origin", "*");
         res.set_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
         res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
@@ -108,7 +111,8 @@ mantis::HttpUnit::HttpUnit()
     });
 
     // Handle preflight OPTIONS requests
-    svr.Options(".*", [](const auto& req, auto& res) {
+    svr.Options(".*", [](const auto& req, auto& res)
+    {
         // Headers are already set by post_routing_handler
         res.status = 200;
     });
@@ -193,16 +197,36 @@ void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
 bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 {
     std::cout << std::endl;
-    std::string endpoint = host + ":" + std::to_string(port);
-    Log::info("Starting Servers: \n\t API Endpoints: http://{}/api/v1/ \n\t Admin Dashboard: http://{}/admin",
-              endpoint, endpoint);
+
+    // Check if server can bind to port before launching
+    if (!svr.is_valid())
+    {
+        Log::critical("Server is not valid. Maybe port is in use or permissions issue.\n");
+        return false;
+    }
+
+    // Launch logging/browser in separate thread after listen starts
+    std::thread notifier([&]()
+    {
+        // Wait a little for the server to be fully ready
+        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::string endpoint = host + ":" + std::to_string(port);
+        Log::info("Starting Servers: \n\t API Endpoints: http://{}/api/v1/ \n\t Admin Dashboard: http://{}/admin",
+                  endpoint, endpoint);
+
+        MantisApp::instance().openBrowserOnStart();
+
+        std::cout << std::endl;
+    });
 
     if (!svr.listen(host, port))
     {
         Log::critical("Error: Failed to bind to {}:{}", host, port);
+        notifier.join();
         return false;
     }
 
+    notifier.join();
     return true;
 }
 
