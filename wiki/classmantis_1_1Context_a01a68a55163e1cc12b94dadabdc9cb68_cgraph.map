@@ -1,8 +1,0 @@
-<map id="mantis::Context::dump" name="mantis::Context::dump">
-<area shape="rect" id="Node000001" title="Convenience method for dumping context data for debugging." alt="" coords="5,42,176,67"/>
-<area shape="poly" id="edge2_Node000001_Node000001" title=" " alt="" coords="56,44,49,34,53,24,67,18,91,15,120,19,132,28,128,32,118,24,91,21,68,23,56,27,54,33,60,40"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e" title=" " alt="" coords="225,5,378,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="176,40,211,35,211,41,176,45"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95" title="Get context value given the key." alt="" coords="224,70,379,95"/>
-<area shape="poly" id="edge3_Node000001_Node000003" title=" " alt="" coords="176,63,211,68,210,73,176,69"/>
-</map>

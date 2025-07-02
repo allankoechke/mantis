@@ -1,9 +1,0 @@
-<map id="mantis::MantisApp::close" name="mantis::MantisApp::close">
-<area shape="rect" id="Node000001" title="Close the application." alt="" coords="5,31,157,71"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1HttpUnit.html#a2750f753bad8a6fcdb1eb89fc88ab9ce" title="Close the HTTP server connection." alt="" coords="209,13,381,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,39,195,35,195,40,158,44"/>
-<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#ab2f169ca51fc37f5a54d198af6d6f825" title="Get the http unit object." alt="" coords="205,62,384,87"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="158,57,192,60,191,66,157,62"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="432,5,585,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="381,23,418,23,418,28,381,28"/>
-</map>

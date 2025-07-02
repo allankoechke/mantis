@@ -1,7 +1,0 @@
-<map id="mantis::MantisApp::quit" name="mantis::MantisApp::quit">
-<area shape="rect" id="Node000001" title="Quit the running application immediately." alt="" coords="5,45,183,70"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="231,5,384,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,42,217,36,218,41,180,47"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1LoggingUnit.html#abd9aa4c3e40a7dcbd93b5db5b3487cd9" title=" " alt="" coords="231,69,384,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="180,67,218,73,217,78,179,73"/>
-</map>

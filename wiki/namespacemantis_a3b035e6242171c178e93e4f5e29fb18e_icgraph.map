@@ -1,5 +1,0 @@
-<map id="mantis::joinPaths" name="mantis::joinPaths">
-<area shape="rect" id="Node000001" title="&lt; Use shorthand fs to refer to the std::filesystem" alt="" coords="217,13,352,38"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1DatabaseUnit.html#aaf1cf9804c647918f741e3fdaa66986c" title="Initializes the connection pool &amp; connects to specific database." alt="" coords="5,5,169,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="203,28,170,28,170,23,203,23"/>
-</map>

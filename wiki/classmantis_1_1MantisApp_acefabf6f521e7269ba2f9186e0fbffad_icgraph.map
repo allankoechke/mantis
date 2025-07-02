@@ -1,7 +1,0 @@
-<map id="mantis::MantisApp::setPublicDir" name="mantis::MantisApp::setPublicDir">
-<area shape="rect" id="Node000001" title="Update HTTP server static file directory." alt="" coords="329,5,481,45"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a36cc27dccd72638b968ffca25c9fa3c8" title="Run initialization actions for Mantis, ensuring all objects are initialized properly before use." alt="" coords="108,13,281,38"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="315,28,282,28,282,23,315,23"/>
-<area shape="rect" id="Node000003" href="$mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title="MantisApp standalone entrypoint." alt="" coords="5,13,60,38"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="94,28,60,28,60,23,94,23"/>
-</map>

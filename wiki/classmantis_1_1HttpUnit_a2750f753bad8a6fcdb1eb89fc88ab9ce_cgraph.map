@@ -1,5 +1,0 @@
-<map id="mantis::HttpUnit::close" name="mantis::HttpUnit::close">
-<area shape="rect" id="Node000001" title="Close the HTTP server connection." alt="" coords="5,13,177,38"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="225,5,379,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="178,23,212,23,212,28,178,28"/>
-</map>

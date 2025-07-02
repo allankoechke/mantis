@@ -1,7 +1,0 @@
-<map id="mantis::MantisApp::setPort" name="mantis::MantisApp::setPort">
-<area shape="rect" id="Node000001" title="Set a new port value for HTTP server." alt="" coords="5,35,157,75"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e" title=" " alt="" coords="218,5,371,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="157,42,204,35,205,40,158,47"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#ac72b0c02c8d627414a26639f77311190" title="Retrieve HTTP Listening port." alt="" coords="205,70,384,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,62,192,67,191,72,157,67"/>
-</map>

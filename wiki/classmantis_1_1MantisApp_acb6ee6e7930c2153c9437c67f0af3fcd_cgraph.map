@@ -1,9 +1,0 @@
-<map id="mantis::MantisApp::run" name="mantis::MantisApp::run">
-<area shape="rect" id="Node000001" title="Start the http server and start listening for requests." alt="" coords="5,45,179,70"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#ab39effc30bd0f450d04e5ac1ff0f1a2d" title="Quit the running application immediately." alt="" coords="227,45,404,70"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="179,55,213,55,213,60,179,60"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="452,5,605,45"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="400,42,438,36,439,41,401,47"/>
-<area shape="rect" id="Node000004" href="$classmantis_1_1LoggingUnit.html#abd9aa4c3e40a7dcbd93b5db5b3487cd9" title=" " alt="" coords="452,69,605,109"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="401,67,439,73,438,78,400,73"/>
-</map>

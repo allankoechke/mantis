@@ -1,9 +1,0 @@
-<map id="mantis::MantisApp::MantisApp" name="mantis::MantisApp::MantisApp">
-<area shape="rect" id="Node000001" title="MantisApp constructor, creates a singleton instance if one is not created yet." alt="" coords="5,69,157,109"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a2e30d8bb66607cdd1d4a1f6a475ea560" title=" " alt="" coords="206,5,358,45"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="144,67,205,47,207,52,146,72"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1LoggingUnit.html#abd9aa4c3e40a7dcbd93b5db5b3487cd9" title=" " alt="" coords="205,69,359,109"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="158,87,191,87,191,92,158,92"/>
-<area shape="rect" id="Node000004" href="$classmantis_1_1LoggingUnit.html#a9c5ddc8832347cbb6241716320802cc2" title=" " alt="" coords="205,133,359,173"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="146,107,207,127,205,132,144,112"/>
-</map>
