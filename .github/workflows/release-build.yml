@@ -78,6 +78,13 @@ jobs:
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.os }}-mantisapp
+          path: |
+            ${{ steps.strings.outputs.build-output-dir }}/mantisapp*
+
   release:
     needs: build
     runs-on: ubuntu-latest
