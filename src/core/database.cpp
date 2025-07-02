@@ -7,20 +7,16 @@
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/utils/utils.h"
 #include "../../include/mantis/core/models/models.h"
+#include "../../include/mantis/core/settings.h"
 
 #include <soci/sqlite3/soci-sqlite3.h>
 #include <private/soci-mktime.h>
 
-#include "mantis/core/settings.h"
-
 #define __file__ "core/tables/sys_tables.cpp"
 
-mantis::DatabaseUnit::DatabaseUnit()
-    : m_connPool(nullptr)
-{
-}
+mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr) {}
 
-bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn_str)
+bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const std::string& conn_str)
 {
     // If pool size is invalid, just return
     if (MantisApp::instance().poolSize() <= 0)
@@ -50,6 +46,9 @@ bool mantis::DatabaseUnit::connect(const DbType backend, const std::string& conn
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
                     break;
                 }
+            case DbType::PSQL:
+            case DbType::MYSQL:
+                Log::warn("Database Connection for '{}' Not Implemented Yet!", conn_str);
 
             // For other DB types
             // Connect to the database URL, no checks here,
@@ -100,19 +99,19 @@ void mantis::DatabaseUnit::migrate() const
     // Create system tables as follows:
     // __tables for managing user tables & schema
     // __admins for managing system admin users
-    // __logs * optional for logs
-    // Any other?
+    // __settings for managing settings in a key - value fashion
 
     try
     {
         const auto sql = session();
         soci::transaction tr{*sql};
 
+        // Create admin table, for managing and auth for admin accounts
         AdminTable admin;
         admin.name = "__admins";
         *sql << admin.to_sql();
-        Log::debug("{}", admin.to_json().dump());
 
+        // Create and manage other db tables, keeping track of access rules, schema, etc!
         SystemTable tables;
         tables.name = "__tables";
         tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
@@ -121,12 +120,13 @@ void mantis::DatabaseUnit::migrate() const
         tables.fields.emplace_back("has_api", FieldType::UINT8, true, false, true);
         *sql << tables.to_sql();
 
+        // A Key - Value settings store, where the key is hashed as the table id
         SystemTable _sys;
         _sys.name = "__settings";
         _sys.fields.emplace_back("value", FieldType::JSON, true, false, true);
         *sql << _sys.to_sql();
 
-        // Commit transaction
+        // Commit changes
         tr.commit();
 
         // Enforce migration once settings object is created!
