@@ -1,0 +1,31 @@
+<map id="mantis::LoggingUnit::info" name="mantis::LoggingUnit::info">
+<area shape="rect" id="Node000001" title=" " alt="" coords="631,176,784,216"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1TableUnit.html#ae445375361e16d089810ea4973dd8278" title=" " alt="" coords="375,5,579,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="684,166,640,111,612,84,581,60,559,48,561,43,584,55,616,80,644,108,688,163"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1SysTablesUnit.html#a49501e4cc70f90cef6d37a517716e0e3" title=" " alt="" coords="371,69,583,109"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="664,170,625,146,582,124,551,112,553,107,584,119,628,141,667,166"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1HttpUnit.html#ad5b46a4d36a45188503b125e8b8fdae3" title=" " alt="" coords="380,134,573,159"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="616,179,536,162,537,157,618,174"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1HttpUnit.html#ab79d396b33678132ce0747d9b39ba4ab" title="Bind to a port and start listening for requests." alt="" coords="389,183,564,209"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="616,199,564,199,564,193,616,193"/>
+<area shape="rect" id="Node000009" href="$classmantis_1_1MantisApp.html#a0ee2b66430665169653ab2b7ac7018c1" title="MantisApp constructor, creates a singleton instance if one is not created yet." alt="" coords="401,233,553,273"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="618,221,553,237,552,232,616,216"/>
+<area shape="rect" id="Node000010" href="$classmantis_1_1MantisApp.html#ab39effc30bd0f450d04e5ac1ff0f1a2d" title="Quit the running application immediately." alt="" coords="388,298,565,323"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="675,227,633,259,584,288,548,300,547,295,582,283,630,255,672,223"/>
+<area shape="rect" id="Node000013" href="$classmantis_1_1RouteRegistry.html#a4c2c3eec885b15d3f2e3ea2cf7182916" title="Remove find and remove existing route + path pair from the registry." alt="" coords="393,348,560,388"/>
+<area shape="poly" id="edge12_Node000001_Node000013" title=" " alt="" coords="688,229,645,285,616,314,584,338,561,350,559,345,581,334,613,310,641,281,684,226"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#a36d744738e6485000f0978564e9221f0" title=" " alt="" coords="143,5,287,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="361,28,288,28,288,23,361,23"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447" title=" " alt="" coords="132,69,299,109"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="357,92,299,92,299,87,357,87"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1Router.html#a627210bde0472bf54daffca2e77a72ee" title=" " alt="" coords="134,183,297,209"/>
+<area shape="poly" id="edge7_Node000007_Node000008" title=" " alt="" coords="376,199,297,199,297,193,376,193"/>
+<area shape="rect" id="Node000011" href="$classmantis_1_1MantisApp.html#acb6ee6e7930c2153c9437c67f0af3fcd" title="Start the http server and start listening for requests." alt="" coords="129,298,302,323"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="374,313,302,313,302,308,374,308"/>
+<area shape="rect" id="Node000012" href="$mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e" title="MantisApp standalone entrypoint." alt="" coords="5,298,60,323"/>
+<area shape="poly" id="edge11_Node000011_Node000012" title=" " alt="" coords="115,313,60,313,60,308,115,308"/>
+<area shape="rect" id="Node000014" href="$classmantis_1_1Router.html#aacf3407728ed641e0c3493848992e65c" title=" " alt="" coords="108,351,323,377"/>
+<area shape="poly" id="edge13_Node000013_Node000014" title=" " alt="" coords="379,369,323,368,323,363,379,364"/>
+<area shape="rect" id="Node000015" href="$classmantis_1_1Router.html#a6fb0dd6f291415d3472fb7ab46d5101f" title=" " alt="" coords="111,401,320,426"/>
+<area shape="poly" id="edge14_Node000013_Node000015" title=" " alt="" coords="380,387,290,403,289,398,380,382"/>
+</map>

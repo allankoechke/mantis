@@ -1,0 +1,9 @@
+<map id="mantis::generateShortId" name="mantis::generateShortId">
+<area shape="rect" id="Node000001" title="Generates a short UUID." alt="" coords="581,13,760,38"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1TableUnit.html#ab7a0c964a61314eed6fefb3f1643c4a6" title=" " alt="" coords="389,5,533,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="568,28,534,28,534,23,568,23"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#ac9c2007eba41cd45ac453c575786a308" title=" " alt="" coords="197,5,341,45"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="375,28,341,28,341,23,375,23"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1TableUnit.html#a36d744738e6485000f0978564e9221f0" title=" " alt="" coords="5,5,149,45"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="183,28,149,28,149,23,183,23"/>
+</map>

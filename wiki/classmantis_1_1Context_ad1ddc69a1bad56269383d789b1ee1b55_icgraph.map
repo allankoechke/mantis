@@ -1,0 +1,5 @@
+<map id="mantis::Context::get_or" name="mantis::Context::get_or">
+<area shape="rect" id="Node000001" title="Get context value given the key." alt="" coords="208,13,383,38"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1SettingsUnit.html#aac77b27115fbac384b9b97b344302703" title="Evaluate if request is authenticated and has permission to access this route." alt="" coords="5,5,160,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="194,28,160,28,160,23,194,23"/>
+</map>

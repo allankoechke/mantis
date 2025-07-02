@@ -1,0 +1,100 @@
+<map id="mantis::MantisApp::instance" name="mantis::MantisApp::instance">
+<area shape="rect" id="Node000001" title="Retrieve existing application instance." alt="" coords="957,802,1109,842"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1Router.html#ad5d799c151f8b21c14c60394981a486b" title="Restart the HTTP server." alt="" coords="708,5,896,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="1029,789,1022,633,1003,412,988,298,967,195,940,110,925,77,907,52,881,33,884,29,911,48,929,74,945,108,972,194,993,298,1009,411,1027,632,1034,788"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#ae445375361e16d089810ea4973dd8278" title=" " alt="" coords="439,627,643,667"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="1015,791,997,760,973,726,943,695,908,670,876,656,843,645,774,633,706,631,643,634,643,629,706,625,775,628,844,640,878,651,911,665,947,690,977,723,1002,757,1019,788"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1TableUnit.html#a36d744738e6485000f0978564e9221f0" title=" " alt="" coords="17,290,161,330"/>
+<area shape="poly" id="edge48_Node000001_Node000004" title=" " alt="" coords="1019,790,1003,752,980,707,948,665,908,631,880,618,847,609,764,599,667,597,563,599,460,601,363,598,280,586,246,576,219,562,190,537,165,508,144,477,127,443,104,379,91,331,96,329,109,378,132,441,149,474,169,505,193,534,221,557,248,571,281,581,363,593,460,595,563,593,667,591,764,593,848,603,882,613,911,626,952,661,984,705,1008,749,1024,788"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1SysTablesUnit.html#a49501e4cc70f90cef6d37a517716e0e3" title=" " alt="" coords="435,709,647,749"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="975,799,909,777,842,762,773,751,647,737,647,732,774,746,843,757,910,771,977,794"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447" title=" " alt="" coords="5,798,172,838"/>
+<area shape="poly" id="edge49_Node000001_Node000006" title=" " alt="" coords="990,852,952,870,910,885,843,896,760,904,565,911,369,904,286,896,219,885,165,865,119,840,122,836,167,860,221,879,287,891,370,899,565,905,759,899,843,891,909,879,950,865,988,847"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1TableUnit.html#a3b2ebb2c7d806d4da156ded6bd8473ba" title=" " alt="" coords="719,1161,885,1201"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="1032,856,1022,919,1001,998,985,1039,966,1080,941,1117,911,1151,887,1167,884,1162,908,1147,937,1114,961,1077,981,1037,996,996,1017,917,1026,855"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1Router.html#a20db9dc50c4965184b71c7d020a6c391" title=" " alt="" coords="722,1225,882,1251"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="1035,856,1029,930,1011,1027,996,1078,974,1128,947,1174,911,1215,884,1231,881,1227,908,1211,942,1171,970,1125,991,1076,1006,1026,1024,930,1029,856"/>
+<area shape="rect" id="Node000009" href="$classmantis_1_1DatabaseUnit.html#aaf1cf9804c647918f741e3fdaa66986c" title="Initializes the connection pool &amp; connects to specific database." alt="" coords="720,1275,884,1315"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="1036,856,1032,938,1026,991,1016,1048,1001,1106,979,1164,949,1218,911,1265,886,1283,883,1278,908,1261,945,1215,974,1161,996,1105,1011,1047,1021,990,1027,938,1030,856"/>
+<area shape="rect" id="Node000010" href="$classmantis_1_1SysTablesUnit.html#a6e5f704389f7e785b587731cf27ae957" title=" " alt="" coords="457,945,624,985"/>
+<area shape="poly" id="edge9_Node000001_Node000010" title=" " alt="" coords="1008,855,965,894,939,913,910,928,837,952,761,966,688,972,624,972,624,967,688,966,761,960,836,947,908,924,936,909,962,890,1004,851"/>
+<area shape="rect" id="Node000012" href="$classmantis_1_1TableUnit.html#ab7a0c964a61314eed6fefb3f1643c4a6" title=" " alt="" coords="469,257,613,297"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="1028,789,1018,666,997,501,981,418,961,344,937,285,923,263,908,247,870,224,828,212,784,209,738,212,694,221,652,232,584,259,582,254,651,227,693,215,738,207,784,203,829,207,872,219,911,243,927,259,941,282,966,342,986,417,1002,500,1023,666,1033,788"/>
+<area shape="rect" id="Node000014" href="$classmantis_1_1JWT.html#ac4f37ba258798217f52bb4ac4661c25c" title="Generate a JWT token having some custom claims." alt="" coords="697,679,907,704"/>
+<area shape="poly" id="edge15_Node000001_Node000014" title=" " alt="" coords="1000,794,958,759,908,726,859,707,861,702,911,721,962,754,1004,790"/>
+<area shape="rect" id="Node000015" href="$classmantis_1_1DatabaseUnit.html#a6b930d444ba72828d4118ffd15da8b95" title="CLose all database connections and destroy connection pools." alt="" coords="720,1339,884,1379"/>
+<area shape="poly" id="edge18_Node000001_Node000015" title=" " alt="" coords="1031,856,1016,963,991,1104,975,1175,956,1240,935,1293,911,1329,886,1347,883,1343,907,1325,930,1290,951,1238,970,1174,986,1103,1011,963,1025,856"/>
+<area shape="rect" id="Node000016" href="$classmantis_1_1SettingsUnit.html#aac77b27115fbac384b9b97b344302703" title="Evaluate if request is authenticated and has permission to access this route." alt="" coords="725,1403,879,1443"/>
+<area shape="poly" id="edge19_Node000001_Node000016" title=" " alt="" coords="1032,856,1019,975,996,1136,980,1217,960,1290,938,1351,911,1393,897,1405,881,1414,879,1409,894,1401,907,1390,933,1349,955,1289,974,1215,990,1135,1014,975,1027,856"/>
+<area shape="rect" id="Node000017" href="$classmantis_1_1TableUnit.html#ab43522c4fabe0465c2ee3cadd6b42fa2" title=" " alt="" coords="231,51,375,91"/>
+<area shape="poly" id="edge20_Node000001_Node000017" title=" " alt="" coords="1029,789,1024,638,1007,427,991,321,970,224,943,146,926,117,908,96,891,85,869,75,813,61,744,53,667,50,508,55,376,66,375,61,508,50,667,45,744,48,814,56,871,70,893,80,911,92,930,114,947,144,975,223,997,320,1012,427,1029,638,1034,788"/>
+<area shape="rect" id="Node000018" href="$classmantis_1_1SysTablesUnit.html#a5542061c3fcb51720df7a935f565b360" title=" " alt="" coords="220,766,387,806"/>
+<area shape="poly" id="edge22_Node000001_Node000018" title=" " alt="" coords="943,820,387,793,387,787,944,815"/>
+<area shape="rect" id="Node000019" href="$classmantis_1_1TableUnit.html#a0bd0bc213913ddcc6cc32ed903ca9ff7" title=" " alt="" coords="720,107,884,132"/>
+<area shape="poly" id="edge24_Node000001_Node000019" title=" " alt="" coords="1028,789,1019,649,999,455,983,357,963,267,938,194,923,166,908,145,883,129,885,125,911,141,928,163,943,192,968,266,989,356,1004,455,1025,649,1033,788"/>
+<area shape="rect" id="Node000021" href="$classmantis_1_1Router.html#a627210bde0472bf54daffca2e77a72ee" title=" " alt="" coords="721,1468,883,1493"/>
+<area shape="poly" id="edge27_Node000001_Node000021" title=" " alt="" coords="1033,856,1023,988,1001,1168,985,1259,965,1342,941,1410,927,1437,911,1457,885,1474,882,1470,908,1453,922,1434,936,1408,960,1341,980,1258,996,1167,1017,987,1027,856"/>
+<area shape="rect" id="Node000022" href="$classmantis_1_1SettingsUnit.html#a1f81caa793192b9656e436a74e5448cd" title="Initialize migration, create base data for setting fields." alt="" coords="725,1097,879,1137"/>
+<area shape="poly" id="edge28_Node000001_Node000022" title=" " alt="" coords="1027,856,1013,905,990,965,956,1026,935,1055,911,1080,881,1099,878,1095,908,1076,931,1051,952,1023,985,963,1008,903,1022,854"/>
+<area shape="rect" id="Node000023" href="$classmantis_1_1DatabaseUnit.html#aa8fe8dd2db156175c8313d798ff5e26c" title="Run database migrations, creates the default system tables." alt="" coords="459,1039,623,1079"/>
+<area shape="poly" id="edge30_Node000001_Node000023" title=" " alt="" coords="1026,856,1011,899,988,949,955,997,934,1019,911,1036,877,1054,840,1067,764,1081,689,1083,623,1077,623,1072,689,1077,763,1076,839,1062,874,1049,908,1032,931,1015,951,994,983,946,1006,897,1021,854"/>
+<area shape="rect" id="Node000024" href="$classmantis_1_1SysTablesUnit.html#a42f328c43657ed0b074325d2dc77c67e" title=" " alt="" coords="719,830,885,870"/>
+<area shape="poly" id="edge31_Node000001_Node000024" title=" " alt="" coords="944,835,886,843,885,837,943,830"/>
+<area shape="rect" id="Node000026" href="$classmantis_1_1TableUnit.html#add4b33276a78deef8109909a33dd2b0f" title=" " alt="" coords="715,156,889,181"/>
+<area shape="poly" id="edge34_Node000001_Node000026" title=" " alt="" coords="1027,788,1016,660,994,484,978,395,958,314,935,247,921,222,907,203,880,184,883,179,911,199,926,219,940,245,963,312,983,394,999,483,1021,659,1032,788"/>
+<area shape="rect" id="Node000028" href="$classmantis_1_1TableUnit.html#a9ffe17bae45626e32b4c622632c48496" title=" " alt="" coords="730,257,874,297"/>
+<area shape="poly" id="edge37_Node000001_Node000028" title=" " alt="" coords="1026,788,1011,680,987,537,971,465,952,400,931,347,907,310,892,298,873,289,875,284,895,294,911,307,935,344,957,398,976,464,992,536,1017,679,1031,788"/>
+<area shape="rect" id="Node000031" href="$classmantis_1_1TableUnit.html#afbed1050a45cf1ff2d1b24d28d04e12d" title=" " alt="" coords="730,513,874,553"/>
+<area shape="poly" id="edge43_Node000001_Node000031" title=" " alt="" coords="1022,789,1007,742,984,684,951,625,931,597,908,573,873,552,876,548,911,569,935,594,956,622,989,681,1012,740,1027,788"/>
+<area shape="rect" id="Node000033" href="$classmantis_1_1Router.html#aacf3407728ed641e0c3493848992e65c" title=" " alt="" coords="695,1517,909,1543"/>
+<area shape="poly" id="edge46_Node000001_Node000033" title=" " alt="" coords="1033,856,1025,997,1005,1192,989,1292,969,1382,943,1457,928,1486,911,1508,897,1519,894,1515,907,1504,923,1483,938,1455,963,1381,984,1291,999,1192,1020,996,1028,856"/>
+<area shape="rect" id="Node000034" href="$classmantis_1_1TableUnit.html#ae5c0792f7bae011487b700e0e971f5da" title=" " alt="" coords="730,1567,874,1607"/>
+<area shape="poly" id="edge47_Node000001_Node000034" title=" " alt="" coords="1034,856,1026,1005,1006,1214,990,1322,970,1420,944,1501,928,1533,911,1557,895,1571,875,1580,873,1575,892,1566,907,1554,924,1530,939,1499,965,1419,985,1321,1001,1214,1020,1004,1028,855"/>
+<area shape="rect" id="Node000035" href="$structmantis_1_1Table.html#a837ff767357a7e73b3e6550a3f9118c3" title=" " alt="" coords="724,996,880,1021"/>
+<area shape="poly" id="edge50_Node000001_Node000035" title=" " alt="" coords="1017,856,974,918,945,951,911,979,869,998,867,994,908,974,941,947,970,915,1012,853"/>
+<area shape="rect" id="Node000036" href="$classmantis_1_1SysTablesUnit.html#ae99aa2fe743f9a57d99ed451f93edce6" title=" " alt="" coords="719,449,885,489"/>
+<area shape="poly" id="edge53_Node000001_Node000036" title=" " alt="" coords="1026,789,1016,728,995,650,980,610,960,571,936,535,908,503,884,487,887,483,911,499,941,531,965,568,985,608,1000,649,1021,726,1031,788"/>
+<area shape="rect" id="Node000037" href="$classmantis_1_1TableUnit.html#a3bae0ee69c4c82ad91553015195fc603" title=" " alt="" coords="730,321,874,361"/>
+<area shape="poly" id="edge55_Node000001_Node000037" title=" " alt="" coords="1030,788,1028,705,1022,652,1012,594,997,535,975,477,945,422,907,375,892,362,873,354,876,349,895,358,911,371,950,420,980,475,1002,533,1017,593,1027,651,1033,705,1036,788"/>
+<area shape="rect" id="Node000038" href="$classmantis_1_1Router.html#a6fb0dd6f291415d3472fb7ab46d5101f" title=" " alt="" coords="697,1632,907,1657"/>
+<area shape="poly" id="edge57_Node000001_Node000038" title=" " alt="" coords="1034,856,1029,1017,1012,1246,996,1364,975,1472,947,1560,930,1595,911,1621,895,1634,892,1630,907,1617,926,1592,942,1558,970,1470,991,1363,1006,1246,1024,1016,1029,855"/>
+<area shape="rect" id="Node000039" href="$classmantis_1_1TableUnit.html#ae8be97f3a152fe4035cd92e897b79aee" title=" " alt="" coords="698,385,906,425"/>
+<area shape="poly" id="edge58_Node000001_Node000039" title=" " alt="" coords="1029,789,1022,716,1004,622,988,573,968,524,941,479,907,439,892,427,895,423,911,435,945,475,972,522,993,571,1009,621,1027,716,1034,788"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="425,663,373,661,319,654,266,638,218,611,186,581,159,545,137,505,121,465,99,388,89,331,95,330,104,386,126,463,142,503,163,542,190,577,222,607,268,633,320,648,374,656,425,657"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="421,730,322,737,271,745,221,757,169,776,124,800,121,795,166,772,219,751,270,740,322,732,421,725"/>
+<area shape="rect" id="Node000011" href="$classmantis_1_1SysTablesUnit.html#a7c3857cdad9c3a8ffad8d55768ee7014" title=" " alt="" coords="220,945,387,985"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="444,967,387,967,387,962,444,962"/>
+<area shape="poly" id="edge11_Node000011_Node000006" title=" " alt="" coords="240,941,219,928,157,883,109,840,113,836,161,879,221,924,243,936"/>
+<area shape="rect" id="Node000013" href="$classmantis_1_1TableUnit.html#ac9c2007eba41cd45ac453c575786a308" title=" " alt="" coords="231,259,375,299"/>
+<area shape="poly" id="edge13_Node000012_Node000013" title=" " alt="" coords="455,280,376,281,375,276,455,275"/>
+<area shape="poly" id="edge14_Node000013_Node000004" title=" " alt="" coords="218,294,161,302,161,297,217,289"/>
+<area shape="poly" id="edge16_Node000014_Node000003" title=" " alt="" coords="712,679,642,667,643,662,713,674"/>
+<area shape="poly" id="edge17_Node000014_Node000005" title=" " alt="" coords="699,709,647,716,646,711,699,703"/>
+<area shape="poly" id="edge21_Node000017_Node000004" title=" " alt="" coords="234,100,222,109,179,154,144,205,118,253,100,291,96,289,113,251,140,202,175,151,218,105,231,96"/>
+<area shape="poly" id="edge23_Node000018_Node000006" title=" " alt="" coords="206,803,173,808,172,803,205,798"/>
+<area shape="rect" id="Node000020" href="$classmantis_1_1TableUnit.html#a2624ca0751f301f39d21565d8be8aac9" title=" " alt="" coords="231,119,375,159"/>
+<area shape="poly" id="edge25_Node000019_Node000020" title=" " alt="" coords="706,126,375,139,375,134,706,120"/>
+<area shape="poly" id="edge26_Node000020_Node000004" title=" " alt="" coords="243,168,222,182,188,209,156,238,108,292,104,288,153,235,184,205,218,177,241,163"/>
+<area shape="poly" id="edge29_Node000022_Node000023" title=" " alt="" coords="711,1099,622,1080,624,1075,712,1094"/>
+<area shape="rect" id="Node000025" href="$classmantis_1_1SysTablesUnit.html#aa02f76fc6fc17df78cda579c1107f6a7" title=" " alt="" coords="220,830,387,870"/>
+<area shape="poly" id="edge32_Node000024_Node000025" title=" " alt="" coords="704,853,387,853,387,847,704,847"/>
+<area shape="poly" id="edge33_Node000025_Node000006" title=" " alt="" coords="205,838,172,833,173,828,206,833"/>
+<area shape="rect" id="Node000027" href="$classmantis_1_1TableUnit.html#aa435e6503111c6c7cf345294809ea34e" title=" " alt="" coords="231,191,375,231"/>
+<area shape="poly" id="edge35_Node000026_Node000027" title=" " alt="" coords="702,180,376,208,375,203,701,175"/>
+<area shape="poly" id="edge36_Node000027_Node000004" title=" " alt="" coords="244,239,221,250,132,292,130,287,219,245,242,235"/>
+<area shape="poly" id="edge38_Node000028_Node000012" title=" " alt="" coords="716,279,613,279,613,274,716,274"/>
+<area shape="rect" id="Node000029" href="$classmantis_1_1TableUnit.html#a0c07fe46634151fd542b24e70bd7fe45" title=" " alt="" coords="469,321,613,361"/>
+<area shape="poly" id="edge39_Node000028_Node000029" title=" " alt="" coords="718,300,614,326,612,320,716,295"/>
+<area shape="rect" id="Node000030" href="$classmantis_1_1SysTablesUnit.html#a58413de918fe26668a81326512474167" title=" " alt="" coords="457,449,624,489"/>
+<area shape="poly" id="edge41_Node000028_Node000030" title=" " alt="" coords="719,299,696,311,680,325,671,340,662,356,649,374,607,416,568,450,565,446,603,412,645,371,658,353,666,337,676,322,693,306,716,294"/>
+<area shape="poly" id="edge40_Node000029_Node000004" title=" " alt="" coords="455,338,161,318,161,312,455,332"/>
+<area shape="poly" id="edge42_Node000030_Node000006" title=" " alt="" coords="443,455,389,452,330,456,273,470,246,482,222,497,187,529,160,568,138,610,122,654,102,737,94,798,89,797,96,736,117,652,133,608,155,565,183,526,218,493,244,477,271,465,329,451,389,447,444,449"/>
+<area shape="rect" id="Node000032" href="$classmantis_1_1TableUnit.html#a9dc6e429a2012ec9371333bb118710f9" title=" " alt="" coords="231,507,375,547"/>
+<area shape="poly" id="edge44_Node000031_Node000032" title=" " alt="" coords="716,534,376,531,376,525,716,529"/>
+<area shape="poly" id="edge45_Node000032_Node000004" title=" " alt="" coords="271,499,108,332,111,328,275,495"/>
+<area shape="poly" id="edge51_Node000035_Node000010" title=" " alt="" coords="712,996,624,981,625,976,713,991"/>
+<area shape="poly" id="edge52_Node000035_Node000023" title=" " alt="" coords="723,1027,624,1046,622,1041,722,1021"/>
+<area shape="poly" id="edge54_Node000036_Node000030" title=" " alt="" coords="705,471,624,471,624,466,705,466"/>
+<area shape="poly" id="edge56_Node000037_Node000029" title=" " alt="" coords="716,343,613,343,613,338,716,338"/>
+<area shape="poly" id="edge59_Node000039_Node000029" title=" " alt="" coords="706,384,612,361,613,356,707,379"/>
+</map>

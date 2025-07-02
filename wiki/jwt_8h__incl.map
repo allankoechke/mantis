@@ -1,0 +1,15 @@
+<map id="/home/runner/work/mantis/mantis/include/mantis/core/jwt.h" name="/home/runner/work/mantis/mantis/include/mantis/core/jwt.h">
+<area shape="rect" id="Node000001" title="Handles JSON Web Token (JWT) creation and verification." alt="" coords="71,5,266,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="13,108,71,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="131,62,72,102,69,98,128,58"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="95,108,242,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="171,60,171,94,166,94,166,60"/>
+<area shape="rect" id="Node000004" href="$logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="266,108,349,133"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="212,58,278,98,276,103,210,62"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="5,181,193,236"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="280,136,176,179,174,174,278,131"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="218,189,397,229"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="310,134,310,175,305,175,305,134"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="421,181,580,236"/>
+<area shape="poly" id="edge6_Node000004_Node000007" title=" " alt="" coords="334,131,430,173,428,178,332,136"/>
+</map>

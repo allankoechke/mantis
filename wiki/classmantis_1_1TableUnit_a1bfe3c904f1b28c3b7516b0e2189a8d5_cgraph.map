@@ -1,0 +1,11 @@
+<map id="mantis::TableUnit::parseDbRowToJson" name="mantis::TableUnit::parseDbRowToJson">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,69,151,109"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="205,5,359,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="142,67,204,47,205,52,143,72"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1TableUnit.html#a35dbd1927d78373e5e6b1e99131638d9" title=" " alt="" coords="199,69,365,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="151,87,185,87,185,92,151,92"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1DatabaseUnit.html#ab7ff272cd61b8ced0603b9bc7d3b8633" title="Convert c++ std::tm date/time value to ISO formatted string." alt="" coords="200,133,364,173"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="143,107,205,127,204,132,142,112"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1TableUnit.html#a6947d323372e453f19fefed4a0830c2a" title=" " alt="" coords="413,69,557,109"/>
+<area shape="poly" id="edge3_Node000003_Node000004" title=" " alt="" coords="366,87,400,87,400,92,366,92"/>
+</map>

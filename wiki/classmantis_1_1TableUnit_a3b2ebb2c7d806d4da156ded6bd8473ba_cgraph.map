@@ -1,0 +1,19 @@
+<map id="mantis::TableUnit::checkValueInColumns" name="mantis::TableUnit::checkValueInColumns">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,87,171,127"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c" title="Get the database unit object." alt="" coords="219,5,387,31"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="125,85,218,41,241,32,243,37,220,46,127,90"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="227,55,379,95"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="170,92,213,86,214,91,171,98"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1TableUnit.html#a1bfe3c904f1b28c3b7516b0e2189a8d5" title=" " alt="" coords="230,119,375,159"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="171,117,217,124,216,129,170,122"/>
+<area shape="rect" id="Node000009" href="$classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174" title="Get access to a session from the pool." alt="" coords="221,183,385,223"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="129,125,220,169,236,176,234,181,218,174,127,130"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="441,55,595,95"/>
+<area shape="poly" id="edge4_Node000004_Node000005" title=" " alt="" coords="370,117,436,97,438,102,371,122"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1TableUnit.html#a35dbd1927d78373e5e6b1e99131638d9" title=" " alt="" coords="435,119,601,159"/>
+<area shape="poly" id="edge5_Node000004_Node000006" title=" " alt="" coords="375,137,421,137,421,142,375,142"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1DatabaseUnit.html#ab7ff272cd61b8ced0603b9bc7d3b8633" title="Convert c++ std::tm date/time value to ISO formatted string." alt="" coords="436,183,600,223"/>
+<area shape="poly" id="edge7_Node000004_Node000008" title=" " alt="" coords="371,157,438,177,436,182,370,162"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1TableUnit.html#a6947d323372e453f19fefed4a0830c2a" title=" " alt="" coords="649,119,793,159"/>
+<area shape="poly" id="edge6_Node000006_Node000007" title=" " alt="" coords="602,137,636,137,636,142,602,142"/>
+</map>

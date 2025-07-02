@@ -1,0 +1,15 @@
+<map id="mantis::DatabaseUnit::connect" name="mantis::DatabaseUnit::connect">
+<area shape="rect" id="Node000001" title="Initializes the connection pool &amp; connects to specific database." alt="" coords="5,163,169,203"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="217,5,371,45"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="103,161,151,109,182,81,216,55,225,49,228,54,219,60,185,85,155,113,107,164"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a756378e197e6f606105fcd209224de09" title="Retrieves the active database type." alt="" coords="218,69,370,109"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="128,160,216,119,231,112,233,117,218,124,131,165"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="218,133,370,173"/>
+<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="169,168,204,163,205,169,170,174"/>
+<area shape="rect" id="Node000005" href="$namespacemantis.html#a3b035e6242171c178e93e4f5e29fb18e" title="&lt; Use shorthand fs to refer to the std::filesystem" alt="" coords="227,198,361,223"/>
+<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="170,191,213,197,212,202,170,196"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1MantisApp.html#a0bed909bb11c21fb92ece716ca17c6c8" title="Retrieve the database pool size value." alt="" coords="218,248,370,288"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="138,200,233,240,231,245,135,205"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1LoggingUnit.html#a00f06c6e94c353207186f6fc33268e61" title=" " alt="" coords="217,312,371,352"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="108,201,156,248,219,298,229,304,226,308,216,302,152,252,105,205"/>
+</map>

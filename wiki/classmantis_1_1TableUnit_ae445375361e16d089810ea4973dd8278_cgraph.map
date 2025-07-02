@@ -1,0 +1,41 @@
+<map id="mantis::TableUnit::authWithEmailAndPassword" name="mantis::TableUnit::authWithEmailAndPassword">
+<area shape="rect" id="Node000001" title=" " alt="" coords="5,399,209,439"/>
+<area shape="rect" id="Node000002" href="$classmantis_1_1JWT.html#ac4f37ba258798217f52bb4ac4661c25c" title="Generate a JWT token having some custom claims." alt="" coords="257,83,468,109"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="111,398,128,345,156,274,199,199,225,164,256,133,291,111,293,116,259,137,229,167,203,202,161,277,133,347,116,399"/>
+<area shape="rect" id="Node000004" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="531,133,683,173"/>
+<area shape="poly" id="edge9_Node000001_Node000004" title=" " alt="" coords="112,397,128,350,157,289,176,257,199,226,226,199,256,176,287,161,320,149,388,135,456,132,518,136,517,141,456,138,389,141,321,154,289,165,259,181,229,203,203,230,181,260,162,291,133,352,117,399"/>
+<area shape="rect" id="Node000006" href="$classmantis_1_1LoggingUnit.html#a944b3d8897d87127567cbeee81c5a81f" title=" " alt="" coords="531,424,684,464"/>
+<area shape="poly" id="edge5_Node000001_Node000006" title=" " alt="" coords="210,421,517,437,517,442,210,426"/>
+<area shape="rect" id="Node000007" href="$classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c" title="Get the database unit object." alt="" coords="279,255,447,281"/>
+<area shape="poly" id="edge6_Node000001_Node000007" title=" " alt="" coords="125,397,180,344,216,315,256,291,276,283,278,287,259,296,220,319,183,348,129,400"/>
+<area shape="rect" id="Node000008" href="$classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e" title=" " alt="" coords="286,305,439,345"/>
+<area shape="poly" id="edge7_Node000001_Node000008" title=" " alt="" coords="153,396,256,355,279,347,281,352,258,360,155,401"/>
+<area shape="rect" id="Node000009" href="$classmantis_1_1LoggingUnit.html#abd9aa4c3e40a7dcbd93b5db5b3487cd9" title=" " alt="" coords="286,369,439,409"/>
+<area shape="poly" id="edge8_Node000001_Node000009" title=" " alt="" coords="209,404,272,397,272,402,210,410"/>
+<area shape="rect" id="Node000010" href="$classmantis_1_1MantisApp.html#a5a0d783c8300af0f042194d6d8e05127" title="Retrieve the JWT secret key." alt="" coords="287,191,439,231"/>
+<area shape="poly" id="edge10_Node000001_Node000010" title=" " alt="" coords="118,397,171,321,210,278,256,240,272,231,275,236,259,245,214,282,175,324,122,400"/>
+<area shape="rect" id="Node000012" href="$classmantis_1_1TableUnit.html#a1bfe3c904f1b28c3b7516b0e2189a8d5" title=" " alt="" coords="290,484,435,524"/>
+<area shape="poly" id="edge12_Node000001_Node000012" title=" " alt="" coords="169,436,290,477,288,482,167,441"/>
+<area shape="rect" id="Node000016" href="$classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174" title="Get access to a session from the pool." alt="" coords="281,548,445,588"/>
+<area shape="poly" id="edge17_Node000001_Node000016" title=" " alt="" coords="131,437,186,485,221,511,259,534,273,540,271,545,256,538,218,515,183,489,127,441"/>
+<area shape="rect" id="Node000017" href="$classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1" title=" " alt="" coords="286,612,439,652"/>
+<area shape="poly" id="edge18_Node000001_Node000017" title=" " alt="" coords="122,437,143,472,174,515,213,560,259,598,275,607,272,611,256,602,210,564,170,519,139,475,117,440"/>
+<area shape="rect" id="Node000018" href="$namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab" title="Verifies user password if it matches the given hashed password." alt="" coords="276,677,449,702"/>
+<area shape="poly" id="edge19_Node000001_Node000018" title=" " alt="" coords="117,438,135,485,164,546,205,609,230,637,259,662,270,669,267,673,256,666,227,641,201,612,159,548,130,487,112,440"/>
+<area shape="rect" id="Node000019" href="$classmantis_1_1LoggingUnit.html#a00f06c6e94c353207186f6fc33268e61" title=" " alt="" coords="286,727,439,767"/>
+<area shape="poly" id="edge20_Node000001_Node000019" title=" " alt="" coords="116,438,131,493,158,567,177,607,201,645,228,681,259,713,275,723,272,728,256,717,224,685,196,648,173,609,153,569,126,495,110,440"/>
+<area shape="rect" id="Node000003" href="$classmantis_1_1SettingsUnit.html#aa85cc84001581c051dc114f4a35115e1" title="Get the current config data instance." alt="" coords="530,69,685,109"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="468,90,516,89,516,94,468,96"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="418,106,518,130,517,135,417,111"/>
+<area shape="rect" id="Node000005" href="$classmantis_1_1MantisApp.html#a6e757b060c96db07da310f659aed8cee" title="Get the settings unit object." alt="" coords="531,5,683,45"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="407,81,524,47,525,52,409,86"/>
+<area shape="rect" id="Node000011" href="$namespacemantis.html#a5e25a8cc629f217be134c89138011502" title="Retrieves a value from an environment variable or a default value if the env variable was not set." alt="" coords="516,198,699,223"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="439,208,502,208,502,213,439,213"/>
+<area shape="poly" id="edge13_Node000012_Node000006" title=" " alt="" coords="435,484,517,463,518,469,437,489"/>
+<area shape="rect" id="Node000013" href="$classmantis_1_1TableUnit.html#a35dbd1927d78373e5e6b1e99131638d9" title=" " alt="" coords="524,552,691,592"/>
+<area shape="poly" id="edge14_Node000012_Node000013" title=" " alt="" coords="436,521,522,546,521,551,435,527"/>
+<area shape="rect" id="Node000015" href="$classmantis_1_1DatabaseUnit.html#ab7ff272cd61b8ced0603b9bc7d3b8633" title="Convert c++ std::tm date/time value to ISO formatted string." alt="" coords="525,488,689,528"/>
+<area shape="poly" id="edge16_Node000012_Node000015" title=" " alt="" coords="436,503,512,504,512,509,436,508"/>
+<area shape="rect" id="Node000014" href="$classmantis_1_1TableUnit.html#a6947d323372e453f19fefed4a0830c2a" title=" " alt="" coords="747,552,891,592"/>
+<area shape="poly" id="edge15_Node000013_Node000014" title=" " alt="" coords="691,569,733,569,733,575,691,575"/>
+</map>
