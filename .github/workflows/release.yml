@@ -1,4 +1,4 @@
-name: CMake Generate Release on multiple platforms
+name: CMake Multiple Platforms
 
 on:
   push:
@@ -118,8 +118,8 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: ${{ github.event.inputs.tag }}
-          name: Release ${{ github.event.inputs.tag }}
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
           generate_release_notes: true
           files: ./artifacts/*
         env:
@@ -127,7 +127,7 @@ jobs:
 
   upload-docs:
     needs: build
-    if: github.ref == 'refs/heads/master' && startsWith(github.ref, 'refs/tags/v')
+    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ubuntu-latest
 
     steps:
