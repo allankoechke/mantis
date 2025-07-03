@@ -46,7 +46,7 @@ Authorization: Bearer <token>
 
 ### Auth Endpoints
 
-Check above [Rest API Endpoints](#-rest-api-endpoints).
+Check above [Rest API](#-rest-api-endpoints) section above.
 
 ---
 
