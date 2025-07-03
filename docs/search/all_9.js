@@ -1,12 +1,13 @@
 var searchData=
 [
-  ['id_0',['id',['../structmantis_1_1Table.html#ab332977d3d4a1a49a66e3f4039332ea6',1,'mantis::Table']]],
-  ['info_1',['info',['../classmantis_1_1LoggingUnit.html#abd9aa4c3e40a7dcbd93b5db5b3487cd9',1,'mantis::LoggingUnit::info()'],['../namespacemantis.html#ada8131e8cb8fbce16294534a4a808d07a551b723eafd6a31d444fcb2f5920fbd3',1,'mantis::INFO']]],
-  ['init_2',['init',['../classmantis_1_1MantisApp.html#a36cc27dccd72638b968ffca25c9fa3c8',1,'mantis::MantisApp::init()'],['../classmantis_1_1LoggingUnit.html#a9c5ddc8832347cbb6241716320802cc2',1,'mantis::LoggingUnit::init()']]],
-  ['initialize_3',['initialize',['../classmantis_1_1Router.html#af13f6a526fa176b27959ae6d94763239',1,'mantis::Router']]],
-  ['instance_4',['instance',['../classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6',1,'mantis::MantisApp']]],
-  ['isconnected_5',['isConnected',['../classmantis_1_1DatabaseUnit.html#af3180c7795cd7be570c15f2744578b7e',1,'mantis::DatabaseUnit']]],
-  ['issystem_6',['isSystem',['../classmantis_1_1TableUnit.html#ae86379990ccaeeb4c0761b09febe21b9',1,'mantis::TableUnit']]],
-  ['isunique_7',['isUnique',['../structmantis_1_1Field.html#a02189da5f9c72d4d153c504d92ab40fe',1,'mantis::Field']]],
-  ['isvalidfieldtype_8',['isValidFieldType',['../namespacemantis.html#a974593393659a334c67ede9031616a13',1,'mantis']]]
+  ['base_0',['Base',['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4dafa095a1b43effec73955e31e790438de49',1,'mantis']]],
+  ['base_20url_1',['🌐 Base URL',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md2',1,'']]],
+  ['based_20rules_2',['based rules',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md74',1,'Ownership-Based Rules'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md75',1,'Role-Based Rules']]],
+  ['basetable_3',['basetable',['../structmantis_1_1BaseTable.html',1,'mantis::BaseTable'],['../structmantis_1_1BaseTable.html#a893ff2cfa06bec93e5c9155531820172',1,'mantis::BaseTable::BaseTable()']]],
+  ['basic_20authentication_20rules_4',['Basic Authentication Rules',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md73',1,'']]],
+  ['bcryptbase64encode_5',['bcryptBase64Encode',['../namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2',1,'mantis']]],
+  ['behavior_6',['Default Behavior',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md80',1,'']]],
+  ['best_20practices_7',['Best Practices',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md85',1,'']]],
+  ['binary_8',['🚀 Standalone Binary',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md39',1,'']]],
+  ['blockquote_9',['blockquote',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md14',1,'&lt;/blockquote&gt;'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md16',1,'&lt;/blockquote&gt;'],['../index.html#autotoc_md120',1,'&lt;/blockquote&gt;']]]
 ];

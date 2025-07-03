@@ -1,25 +1,10 @@
 var searchData=
 [
-  ['read_0',['read',['../classmantis_1_1CrudInterface.html#a92a7eebedb34edc544074243117835a1',1,'mantis::CrudInterface::read()'],['../classmantis_1_1SysTablesUnit.html#a42f328c43657ed0b074325d2dc77c67e',1,'mantis::SysTablesUnit::read()'],['../classmantis_1_1TableUnit.html#add4b33276a78deef8109909a33dd2b0f',1,'mantis::TableUnit::read(const std::string &amp;id, const json &amp;opts) override']]],
-  ['recordexists_1',['recordExists',['../classmantis_1_1TableUnit.html#a9ffe17bae45626e32b4c622632c48496',1,'mantis::TableUnit']]],
-  ['regexpattern_2',['regexPattern',['../structmantis_1_1Field.html#a74c5d7df7ec33803a34c55a4a0468b23',1,'mantis::Field']]],
-  ['remove_3',['remove',['../classmantis_1_1TableUnit.html#afbed1050a45cf1ff2d1b24d28d04e12d',1,'mantis::TableUnit::remove()'],['../classmantis_1_1SysTablesUnit.html#a5be996dc34735926123ac6042c68b22c',1,'mantis::SysTablesUnit::remove()'],['../classmantis_1_1RouteRegistry.html#a4c2c3eec885b15d3f2e3ea2cf7182916',1,'mantis::RouteRegistry::remove()'],['../classmantis_1_1CrudInterface.html#a2fcf194809d4be0eb7e9d07bccffc21b',1,'mantis::CrudInterface::remove()']]],
-  ['removeroute_4',['removeRoute',['../classmantis_1_1Router.html#aacf3407728ed641e0c3493848992e65c',1,'mantis::Router']]],
-  ['request_5',['Request',['../namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426',1,'mantis']]],
-  ['request_5fhandled_6',['REQUEST_HANDLED',['../http_8h.html#a4f08ea4b1e854e5b01082b2a1ea6ad5e',1,'http.h']]],
-  ['request_5fpending_7',['REQUEST_PENDING',['../http_8h.html#ad5550135843ca34b930f5ceb0584adaa',1,'http.h']]],
-  ['required_8',['required',['../structmantis_1_1Field.html#a7551e5857d125238bc76c99fdf6a57ff',1,'mantis::Field']]],
-  ['resetpassword_9',['resetPassword',['../classmantis_1_1TableUnit.html#ae5c0792f7bae011487b700e0e971f5da',1,'mantis::TableUnit']]],
-  ['resolvepath_10',['resolvePath',['../namespacemantis.html#abe97209493d2bc0086c3678010342477',1,'mantis']]],
-  ['response_11',['Response',['../namespacemantis.html#ab479ce37673306cc47470b59938943fd',1,'mantis']]],
-  ['routehandler_12',['RouteHandler',['../structmantis_1_1RouteHandler.html',1,'mantis']]],
-  ['routehandlerfunc_13',['RouteHandlerFunc',['../namespacemantis.html#a247daee8d62b9b254439fc869380f726',1,'mantis']]],
-  ['routekey_14',['RouteKey',['../namespacemantis.html#afd5355e620b80081a28ab075e5332e37',1,'mantis']]],
-  ['routekeyhash_15',['RouteKeyHash',['../structmantis_1_1RouteKeyHash.html',1,'mantis']]],
-  ['router_16',['router',['../classmantis_1_1Router.html#adb388b798ded52b987c919a4f56fad5b',1,'mantis::Router::Router()'],['../classmantis_1_1MantisApp.html#a19c58dfee147f79319bb8e96065038c8',1,'mantis::MantisApp::router()'],['../classmantis_1_1Router.html',1,'mantis::Router']]],
-  ['router_2ecpp_17',['router.cpp',['../router_8cpp.html',1,'']]],
-  ['router_2eh_18',['router.h',['../router_8h.html',1,'']]],
-  ['routeregistry_19',['routeregistry',['../classmantis_1_1HttpUnit.html#aa0f67227f09877e15d0d1cd37c28cf6e',1,'mantis::HttpUnit::routeRegistry()'],['../classmantis_1_1RouteRegistry.html',1,'mantis::RouteRegistry']]],
-  ['rule_20',['Rule',['../namespacemantis.html#a9757c5736192db171edcecc40863083e',1,'mantis']]],
-  ['run_21',['run',['../classmantis_1_1MantisApp.html#acb6ee6e7930c2153c9437c67f0af3fcd',1,'mantis::MantisApp']]]
+  ['joinpaths_0',['joinPaths',['../namespacemantis.html#a3b035e6242171c178e93e4f5e29fb18e',1,'mantis']]],
+  ['json_1',['json',['../namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3',1,'mantis::json'],['../mantis_8h.html#ab701e3ac61a85b337ec5c1abaad6742d',1,'json:&#160;mantis.h'],['../router_8cpp.html#ab701e3ac61a85b337ec5c1abaad6742d',1,'json:&#160;router.cpp']]],
+  ['jsontotokenmap_2',['jsonToTokenMap',['../structmantis_1_1ExprEvaluator.html#ad223247f0d45bb5d964a09bf10fe8b08',1,'mantis::ExprEvaluator']]],
+  ['jwt_3',['JWT',['../classmantis_1_1JWT.html',1,'mantis']]],
+  ['jwt_2ecpp_4',['jwt.cpp',['../jwt_8cpp.html',1,'']]],
+  ['jwt_2eh_5',['jwt.h',['../jwt_8h.html',1,'']]],
+  ['jwtsecretkey_6',['jwtSecretKey',['../classmantis_1_1MantisApp.html#a5a0d783c8300af0f042194d6d8e05127',1,'mantis::MantisApp']]]
 ];

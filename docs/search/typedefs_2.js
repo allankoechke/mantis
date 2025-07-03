@@ -1,5 +1,5 @@
 var searchData=
 [
-  ['log_0',['Log',['../namespacemantis.html#ae32fb5a6aeb988dd0ab354f811874d86',1,'mantis']]],
-  ['loglevel_1',['LogLevel',['../namespacemantis.html#ac8fcce3e8202c1c2a90a006d99cc9690',1,'mantis']]]
+  ['method_0',['Method',['../namespacemantis.html#a9bc3b7f3cc6ad769ae30df2670712b95',1,'mantis']]],
+  ['middleware_1',['Middleware',['../namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f',1,'mantis']]]
 ];

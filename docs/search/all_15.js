@@ -1,12 +1,10 @@
 var searchData=
 [
-  ['validate_0',['validate',['../classmantis_1_1Validator.html#a7acf0cb2cb7e05c671815227c90de55f',1,'mantis::Validator']]],
-  ['validaterequestbody_1',['validateRequestBody',['../classmantis_1_1TableUnit.html#a21eb2c0cb6f39fa3e64a04b8e9dda567',1,'mantis::TableUnit']]],
-  ['validateupdaterequestbody_2',['validateUpdateRequestBody',['../classmantis_1_1TableUnit.html#ae8be97f3a152fe4035cd92e897b79aee',1,'mantis::TableUnit']]],
-  ['validator_3',['validator',['../classmantis_1_1Validator.html',1,'mantis::Validator'],['../classmantis_1_1Validator.html#ae00a05c4f424bcb45b7664affae83264',1,'mantis::Validator::Validator()'],['../structmantis_1_1Field.html#a7ffed647d94137948f65ddccce18a98f',1,'mantis::Field::validator']]],
-  ['validators_4',['validators',['../classmantis_1_1MantisApp.html#a9a945a51d82e62bb503860105882a9d4',1,'mantis::MantisApp']]],
-  ['verifyjwttoken_5',['verifyJWTToken',['../classmantis_1_1JWT.html#a3726197917638e218df89c79d7a597ad',1,'mantis::JWT']]],
-  ['verifypassword_6',['verifyPassword',['../namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab',1,'mantis']]],
-  ['view_7',['View',['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4dafa4351cfebe4b61d8aa5efa1d020710005',1,'mantis']]],
-  ['viewtable_8',['viewtable',['../structmantis_1_1ViewTable.html',1,'mantis::ViewTable'],['../structmantis_1_1ViewTable.html#ac62545c3c78665c023bcf3ae0c3645ea',1,'mantis::ViewTable::ViewTable()']]]
+  ['openbrowseronstart_0',['openBrowserOnStart',['../classmantis_1_1MantisApp.html#a49b1b62210b2786a9717eafe4d8d8710',1,'mantis::MantisApp']]],
+  ['operator_28_29_1',['operator()',['../structmantis_1_1RouteKeyHash.html#a954efb5a6570445760d5c76e798fdcd1',1,'mantis::RouteKeyHash']]],
+  ['operators_2',['Supported Operators',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md71',1,'']]],
+  ['options_3',['📦 Integration Options',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md50',1,'']]],
+  ['or_20shared_20library_20strong_4',['&lt;strong&gt;As a Static or Shared Library&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md51',1,'']]],
+  ['overview_5',['overview',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md41',1,'📁 File Structure Overview'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md98',1,'🔄 Sync Model Overview'],['../index.html#autotoc_md115',1,'🔧 Overview'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html',1,'Mantis Architecture Overview'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md65',1,'Overview']]],
+  ['ownership_20based_20rules_6',['Ownership-Based Rules',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md74',1,'']]]
 ];

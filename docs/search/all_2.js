@@ -1,7 +1,6 @@
 var searchData=
 [
-  ['base_0',['Base',['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4dafa095a1b43effec73955e31e790438de49',1,'mantis']]],
-  ['base_5ftype_1',['base_type',['../structsoci_1_1type__conversion_3_01bool_01_4.html#a3327ae9eea3f170acedf1644d40c3d8a',1,'soci::type_conversion&lt; bool &gt;::base_type'],['../structsoci_1_1type__conversion_3_01json_01_4.html#aa2168f74912cbbbf1f1f63bd0052d60d',1,'soci::type_conversion&lt; json &gt;::base_type']]],
-  ['basetable_2',['basetable',['../structmantis_1_1BaseTable.html',1,'mantis::BaseTable'],['../structmantis_1_1BaseTable.html#a893ff2cfa06bec93e5c9155531820172',1,'mantis::BaseTable::BaseTable()']]],
-  ['bcryptbase64encode_3',['bcryptBase64Encode',['../namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2',1,'mantis']]]
+  ['3_20strong_20authentication_20module_20strong_0',['3. &lt;strong&gt;Authentication Module&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md29',1,'']]],
+  ['3_20strong_20transport_20layer_20strong_1',['3. &lt;strong&gt;Transport Layer&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md103',1,'']]],
+  ['3_20test_20edge_20cases_2',['3. Test Edge Cases',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md88',1,'']]]
 ];

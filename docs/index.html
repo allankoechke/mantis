@@ -5,7 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=11"/>
 <meta name="generator" content="Doxygen 1.9.8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>mantisapp: Main Page</title>
+<title>Mantis App: Mantis App</title>
 <link href="tabs.css" rel="stylesheet" type="text/css"/>
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="dynsections.js"></script>
@@ -13,6 +13,7 @@
 <script type="text/javascript" src="search/searchdata.js"></script>
 <script type="text/javascript" src="search/search.js"></script>
 <link href="doxygen.css" rel="stylesheet" type="text/css" />
+<link href="doxygen-awesome.css" rel="stylesheet" type="text/css"/>
 </head>
 <body>
 <div id="top"><!-- do not remove this div, it is closed by doxygen! -->
@@ -20,8 +21,9 @@
 <table cellspacing="0" cellpadding="0">
  <tbody>
  <tr id="projectrow">
+  <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">mantisapp<span id="projectnumber">&#160;0.1.4</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.7</span>
    </div>
   </td>
  </tr>
@@ -68,10 +70,138 @@ $(function() {
 </div>
 </div>
 
-<div class="header">
-  <div class="headertitle"><div class="title">mantisapp Documentation</div></div>
+<div><div class="header">
+  <div class="headertitle"><div class="title">Mantis App </div></div>
 </div><!--header-->
 <div class="contents">
+<div class="textblock"><p align="center"><a class="anchor" id="md__2home_2runner_2work_2mantis_2mantis_2README"></a> </p>
+<p><img src="assets/mantis-cover.png" alt="Mantis Cover" width="100%" class="inline"/> </p>
+<h1 align="center">Mantis</h1>
+<p align="center"></p>
+<p><b>A lightweight, pluggable Backend-as-a-Service (BaaS) library built in C++</b><br  />
+ Portable. Embeddable. Syncable. Built for speed and extensibility. </p>
+<h2><a class="anchor" id="autotoc_md115"></a>
+🔧 Overview</h2>
+<p><b>Mantis</b> is a modular, lightweight C++ library designed to power modern backend systems in embedded devices, desktop tools, or standalone server deployments. Inspired by systems like PocketBase and Supabase, Mantis focuses on:</p>
+<ul>
+<li>Minimal runtime footprint</li>
+<li>SQLite as the default local database (with optional MySQL/PSQL support)</li>
+<li>Built-in authentication and access control</li>
+<li>Auto-generated REST APIs</li>
+<li>Pluggable sync layer (client-server)</li>
+<li>Embeddable as a reusable C++ library</li>
+</ul>
+<hr  />
+<h2><a class="anchor" id="autotoc_md117"></a>
+📦 Features</h2>
+<table class="markdownTable">
+<tr class="markdownTableHead">
+<th class="markdownTableHeadNone">Feature   </th><th class="markdownTableHeadNone">Status    </th></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">✅ Modular C++ core library   </td><td class="markdownTableBodyNone">✅ Completed    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">🧩 Pluggable database interface   </td><td class="markdownTableBodyNone">🟡 In Progress    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">🔐 Authentication (JWT/session)   </td><td class="markdownTableBodyNone">✅ Completed    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">📄 Auto API generation from schema   </td><td class="markdownTableBodyNone">✅ Completed    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">🧱 System metadata tables   </td><td class="markdownTableBodyNone">✅ Completed    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">🔁 Client/server sync modes   </td><td class="markdownTableBodyNone">⬜ Planned    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">🔄 WebSocket sync support   </td><td class="markdownTableBodyNone">⬜ Planned    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">🧩 Middleware support   </td><td class="markdownTableBodyNone">✅ Completed    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">💾 Static file serving   </td><td class="markdownTableBodyNone">✅ Completed    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">🚀 Docker-ready deployment   </td><td class="markdownTableBodyNone">⬜ Planned    </td></tr>
+<tr class="markdownTableRowOdd">
+<td class="markdownTableBodyNone">🧪 Unit + integration tests   </td><td class="markdownTableBodyNone">🟡 In Progress    </td></tr>
+<tr class="markdownTableRowEven">
+<td class="markdownTableBodyNone">📘 CLI + embeddable modes   </td><td class="markdownTableBodyNone">✅ Completed   </td></tr>
+</table>
+<hr  />
+<h2><a class="anchor" id="autotoc_md119"></a>
+🛠️ Tech Stack</h2>
+<ul>
+<li><b>Language</b>: C++</li>
+<li><b>Database</b>: SQLite (default), MySQL/PSQL (planned)</li>
+<li><b>Build System</b>: CMake</li>
+<li><b>Packaging</b>: Docker + CLI</li>
+<li><b>Sync</b>: WebSocket / REST delta sync (planned)</li>
+</ul>
+<blockquote class="doxtable">
+<p>&zwj;NOTE: On windows, we use <code>mingw</code> not <code>MSVC</code> due to some feature incompatibility. For <code>mingw</code>, it requires at least <code>v13</code> with support for <code>std::format</code>. </p>
+</blockquote>
+<h2><a class="anchor" id="autotoc_md120"></a>
+&lt;/blockquote&gt;</h2>
+<h2><a class="anchor" id="autotoc_md121"></a>
+🚀 Getting Started</h2>
+<div class="fragment"><div class="line">git clone --recurse-submodules https://github.com/allankoechke/mantis.git</div>
+<div class="line">cd mantis</div>
+<div class="line">cmake -B build</div>
+<div class="line">cmake --build build</div>
+<div class="line">./build/mantisapp serve -p 5000</div>
+</div><!-- fragment --><p>You can also embed Mantis as a library in your own C++ project:</p>
+<div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="app_8h.html">mantis/app/app.h</a>&gt;</span></div>
+<div class="line"> </div>
+<div class="line"><span class="keywordtype">int</span> <a class="code hl_function" href="mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>* argv[])</div>
+<div class="line">{</div>
+<div class="line">    <a class="code hl_class" href="classmantis_1_1MantisApp.html">mantis::MantisApp</a> app(argc, argv);</div>
+<div class="line">    app.init();</div>
+<div class="line">    <span class="keywordflow">return</span> app.run();</div>
+<div class="line">}</div>
+<div class="ttc" id="aapp_8h_html"><div class="ttname"><a href="app_8h.html">app.h</a></div><div class="ttdoc">The main application for mantis.</div></div>
+<div class="ttc" id="aclassmantis_1_1MantisApp_html"><div class="ttname"><a href="classmantis_1_1MantisApp.html">mantis::MantisApp</a></div><div class="ttdoc">Mantis entry point.</div><div class="ttdef"><b>Definition</b> app.h:63</div></div>
+<div class="ttc" id="amantisapp_8cpp_html_a638b85ceffac097c2aa79b76ba8c055e"><div class="ttname"><a href="mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a></div><div class="ttdeci">int main(const int argc, char *argv[])</div><div class="ttdoc">MantisApp standalone entrypoint.</div><div class="ttdef"><b>Definition</b> mantisapp.cpp:16</div></div>
+</div><!-- fragment --><p> Check /exammples for a sample</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md123"></a>
+📁 Project Structure</h2>
+<div class="fragment"><div class="line">mantis/</div>
+<div class="line">├── include/</div>
+<div class="line">│   └── mantis/         # Public API headers</div>
+<div class="line">├── src/                # Internal implementation</div>
+<div class="line">├── examples/           # Embedding examples</div>
+<div class="line">├── tests/              # Unit &amp; integration tests</div>
+<div class="line">├── docker/             # Docker deployment</div>
+<div class="line">└── CMakeLists.txt</div>
+</div><!-- fragment --><hr  />
+<h2><a class="anchor" id="autotoc_md125"></a>
+📚 Documentation</h2>
+<ul>
+<li><a class="el" href="md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html">Architecture Overview</a></li>
+<li><a class="el" href="md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html">Embedding Guide</a></li>
+<li><a class="el" href="md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html">Sync Engine Design</a></li>
+<li><a class="el" href="md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html">API Reference</a></li>
+</ul>
+<p>For API Docs: Check [here](). COMING SOON!!</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md127"></a>
+Project Dependencies</h2>
+<ul>
+<li>HTTP Server: <a href="https://github.com/yhirose/cpp-httplib">httplib-cpp</a></li>
+<li>Database Layer: <a href="https://github.com/SOCI/soci">SOCI - SQL lib</a></li>
+<li>ogging Layer: <a href="https://github.com/gabime/spdlog">spdlog</a></li>
+<li>Commandline Args: <a href="https://github.com/p-ranav/argparse">Argparse</a></li>
+<li>JWT: <a href="https://github.com/GlitchedPolygons/l8w8jwt">l8w8tjwt</a></li>
+<li>Password Hashing: <a href="https://github.com/rg3/libbcrypt">libbcrypt</a></li>
+<li>JSON: <a href="https://github.com/nlohmann/json">nlohmann::json</a></li>
+</ul>
+<p>All these dependencies are included in the project as source files or as git submodules under <a href="./3rdParty/">3rdParty/</a> directory.</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md129"></a>
+🤝 Contributing</h2>
+<p>Contributions are welcome! Please see CONTRIBUTING.md and open an issue or PR.</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md131"></a>
+📜 License</h2>
+<p>MIT License © 2025 Allan K. Koech</p>
+<hr  />
+<p><em>Built with ❤️ using C++, SQLite, and a vision for portability.</em></p>
+</div></div><!-- PageDoc -->
 </div><!-- contents -->
 <!-- start footer part -->
 <hr class="footer"/><address class="footer"><small>

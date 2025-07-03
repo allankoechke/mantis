@@ -1,9 +1,0 @@
-<map id="mantis::SysTablesUnit::read" name="mantis::SysTablesUnit::read">
-<area shape="rect" id="Node000001" title=" " alt="" coords="5,55,172,95"/>
-<area shape="rect" id="Node000002" href="$classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c" title="Get the database unit object." alt="" coords="220,5,388,31"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="164,53,242,32,243,37,165,58"/>
-<area shape="rect" id="Node000003" href="$classmantis_1_1MantisApp.html#a2adab0fbd43cce6fb8a8b946859848b6" title="Retrieve existing application instance." alt="" coords="228,55,380,95"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="172,73,214,73,214,78,172,78"/>
-<area shape="rect" id="Node000004" href="$classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174" title="Get access to a session from the pool." alt="" coords="222,119,386,159"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="157,93,224,113,222,118,156,98"/>
-</map>
