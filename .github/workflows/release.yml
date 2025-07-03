@@ -11,7 +11,6 @@ permissions:
 
 jobs:
   build:
-    if: startsWith(github.ref, 'refs/tags/v')
     runs-on: ${{ matrix.os }}
 
     strategy:
@@ -25,9 +24,11 @@ jobs:
           - os: ubuntu-latest
             c_compiler: gcc
             cpp_compiler: g++
+            platform: linux
           - os: windows-latest
             c_compiler: gcc
             cpp_compiler: g++
+            platform: windows
 
     steps:
       - uses: actions/checkout@v4
@@ -74,20 +75,24 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -S ${{ github.workspace }}
 
-      - name: Check chosen compiler
-        run: |
-          gcc --version
-          g++ --version
-
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-      - name: Upload build artifact
+      - name: Zip the build output
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          mkdir -p dist
+          cd ${{ steps.strings.outputs.build-output-dir }}/bin
+          zip -r zip/mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip mantisapp*
+        shell: bash
+
+      - name: Upload zipped artifact
+        if: startsWith(github.ref, 'refs/tags/v')
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.os }}-mantisapp
+          name: mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip
           path: |
-            ${{ steps.strings.outputs.build-output-dir }}/bin/mantisapp*
+            ${{ steps.strings.outputs.build-output-dir }}/bin/zip/mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip
 
   release:
     needs: build
@@ -97,12 +102,12 @@ jobs:
     steps:
       - uses: actions/download-artifact@v4
         with:
-          name: ubuntu-latest-mantisapp
+          name: mantisapp_${{ github.ref_name }}_linux.zip
           path: ./artifacts
           
       - uses: actions/download-artifact@v4
         with:
-          name: windows-latest-mantisapp
+          name: mantisapp_${{ github.ref_name }}_windows.zip
           path: ./artifacts
 
       - name: Show artifact contents
@@ -111,6 +116,9 @@ jobs:
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v1
         with:
+          tag_name: ${{ github.event.inputs.tag }}
+          name: Release ${{ github.event.inputs.tag }}
+          generate_release_notes: true
           files: ./artifacts/*
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
