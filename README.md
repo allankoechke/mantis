@@ -63,7 +63,7 @@ cd mantis
 cmake -B build
 cmake --build build
 ./build/mantisapp serve -p 5000
-````
+```
 
 You can also embed Mantis as a library in your own C++ project:
 
@@ -98,10 +98,10 @@ mantis/
 
 ## 📚 Documentation
 
-* [Architecture Overview](docs/architecture.md)
-* [Embedding Guide](docs/embedding.md)
-* [Sync Engine Design](docs/sync.md)
-* [API Reference](docs/api.md)
+* [Architecture Overview](doc/architecture.md)
+* [Embedding Guide](doc/embedding.md)
+* [Sync Engine Design](doc/sync.md)
+* [API Reference](doc/api.md)
 
 For API Docs: Check [here](). COMING SOON!!
 
