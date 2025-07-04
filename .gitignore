@@ -37,3 +37,5 @@ cmake-build-*/
 
 # asset files
 qrc/
+docker/data/
+docker/www/

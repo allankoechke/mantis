@@ -1,1 +1,29 @@
-# Coming Soon
+# Dockerizing MantisApp
+There are many benefits of running applications in docker containers or generally, containeralization technologies. As such, `mantisapp` offers docker ready container support, with some limitations.
+
+# Limitations
+Docker support is limited to platform build, as such, provided builds are for `linux-amd64`, if you need `ARM` builds, you will need to build the project from source for now.
+> Other platform support will be added, be sure to check project development for news. For now, we are focussing on building the core functionality till we have a stable base.
+
+# Dockerfile
+The repo provides a ready `Dockerfile` in the /docker container, which ready to go container. To run the container:
+
+```bash
+docker build -t mantisapp .
+docker run -p 7070:80 --rm mantisapp
+```
+
+This will build then start the container, running on local port `7070` and exposed on port `80` within the container. The only catch here is, for every container restart, the dynamic data added is cleared out. To fix this, we need to mount a directory to our docker container.
+
+Of interest, mount a directory to the following:
+- `/mantis/data` for storing database files, logs, assets, etc.
+- `/mantis/public` for any public site static data that should be served
+
+# Docker Compose
+To package all into a simple interface, we can make use of `docker compose` file provided. This adds the file mounting out of the box if needed.
+
+```shell
+docker compose up --build
+```
+
+The command builds the image before running it.

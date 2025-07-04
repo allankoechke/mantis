@@ -1,6 +1,6 @@
 PROJECT_NAME           = Mantis App
 OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs
-INPUT                  = @PROJECT_SOURCE_DIR@/include @PROJECT_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/doc @CMAKE_SOURCE_DIR@/README.md
+INPUT                  = @PROJECT_SOURCE_DIR@/include @PROJECT_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/doc @CMAKE_SOURCE_DIR@/README.md @CMAKE_SOURCE_DIR@/docker/docker.md
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 GENERATE_LATEX         = NO

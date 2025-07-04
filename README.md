@@ -79,6 +79,10 @@ int main(const int argc, char* argv[])
 ```
 Check /exammples for a sample
 
+### Using Docker
+You can also run `mantisapp` in a docker container. Check [using docker](docker/docker.md) docs for more information.  
+
+
 ---
 
 ## 📁 Project Structure
