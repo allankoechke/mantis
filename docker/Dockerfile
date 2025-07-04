@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ARG MANTIS_VERSION=0.1.11-alpha
+ARG MANTIS_VERSION=0.1.12-alpha
 
 ENV DEBIAN_FRONTEND=noninteractive
 
