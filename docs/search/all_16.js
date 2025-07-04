@@ -13,8 +13,8 @@ var searchData=
   ['practices_10',['Best Practices',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md85',1,'']]],
   ['primarykey_11',['primaryKey',['../structmantis_1_1Field.html#ab6dba00405f8bfc3d7b5fbc9ad7cd64c',1,'mantis::Field']]],
   ['principles_12',['📐 Core Principles',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md22',1,'']]],
-  ['project_20dependencies_13',['Project Dependencies',['../index.html#autotoc_md127',1,'']]],
-  ['project_20structure_14',['project structure',['../index.html#autotoc_md123',1,'📁 Project Structure'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md55',1,'📂 Example Project Structure']]],
+  ['project_20dependencies_13',['Project Dependencies',['../index.html#autotoc_md128',1,'']]],
+  ['project_20structure_14',['project structure',['../index.html#autotoc_md124',1,'📁 Project Structure'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md55',1,'📂 Example Project Structure']]],
   ['psql_15',['PSQL',['../namespacemantis.html#a9b66d60c6176ce653dfa970027ec5e23aded8cccbe048f0dd04dd4b3ebccc383d',1,'mantis']]],
   ['publicdir_16',['publicDir',['../classmantis_1_1MantisApp.html#a9df87a395333a5cec95cf759387bc05d',1,'mantis::MantisApp']]]
 ];

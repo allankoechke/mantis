@@ -52,7 +52,7 @@ var searchData=
   ['strong_20sync_20tables_20strong_49',['4. &lt;strong&gt;Sync Tables&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md104',1,'']]],
   ['strong_20system_20tables_20strong_50',['7. &lt;strong&gt;System Tables&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md33',1,'']]],
   ['strong_20transport_20layer_20strong_51',['3. &lt;strong&gt;Transport Layer&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md103',1,'']]],
-  ['structure_52',['structure',['../index.html#autotoc_md123',1,'📁 Project Structure'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md55',1,'📂 Example Project Structure']]],
+  ['structure_52',['structure',['../index.html#autotoc_md124',1,'📁 Project Structure'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md55',1,'📂 Example Project Structure']]],
   ['structure_20overview_53',['📁 File Structure Overview',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md41',1,'']]],
   ['submodule_54',['🛠️ Advanced: Use Mantis as a Submodule',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md59',1,'']]],
   ['summary_55',['summary',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md19',1,'🏁 Summary'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md114',1,'🏁 Summary']]],

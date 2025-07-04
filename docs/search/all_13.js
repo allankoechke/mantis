@@ -21,7 +21,7 @@ var searchData=
   ['mantis_20sync_20engine_20design_20not_20implemented_20yet_18',['Mantis Sync Engine Design (NOT IMPLEMENTED YET!)',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html',1,'']]],
   ['mantis_2eh_19',['mantis.h',['../mantis_8h.html',1,'']]],
   ['mantis_5frequire_5finit_20',['MANTIS_REQUIRE_INIT',['../app_8cpp.html#a09267b1445177521b71b53f6f8bf3b27',1,'app.cpp']]],
-  ['mantisapp_21',['mantisapp',['../classmantis_1_1MantisApp.html',1,'mantis::MantisApp'],['../classmantis_1_1MantisApp.html#a0ee2b66430665169653ab2b7ac7018c1',1,'mantis::MantisApp::MantisApp()']]],
+  ['mantisapp_21',['mantisapp',['../md__2home_2runner_2work_2mantis_2mantis_2docker_2docker.html',1,'Dockerizing MantisApp'],['../classmantis_1_1MantisApp.html#a0ee2b66430665169653ab2b7ac7018c1',1,'mantis::MantisApp::MantisApp()'],['../classmantis_1_1MantisApp.html',1,'mantis::MantisApp']]],
   ['mantisapp_2ecpp_22',['mantisapp.cpp',['../mantisapp_8cpp.html',1,'']]],
   ['mantisloggerimpl_23',['MantisLoggerImpl',['../classmantis_1_1MantisLoggerImpl.html',1,'mantis']]],
   ['maxvalue_24',['maxValue',['../structmantis_1_1Field.html#ad496d0536289284983f1ff5d7329660f',1,'mantis::Field']]],
