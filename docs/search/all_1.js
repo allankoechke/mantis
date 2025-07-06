@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['2_20strong_20api_20router_20strong_0',['2. &lt;strong&gt;API Router&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md28',1,'']]],
-  ['2_20strong_20conflict_20resolution_20strong_1',['2. &lt;strong&gt;Conflict Resolution&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md102',1,'']]],
-  ['2_20use_20consistent_20field_20names_2',['2. Use Consistent Field Names',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md87',1,'']]]
+  ['1_20start_20restrictive_0',['1. Start Restrictive',['../rest_api_rules.html#autotoc_md64',1,'']]],
+  ['1_20strong_20change_20detection_20strong_1',['1. &lt;strong&gt;Change Detection&lt;/strong&gt;',['../sync.html#autotoc_md126',1,'']]],
+  ['1_20strong_20database_20layer_20strong_2',['1. &lt;strong&gt;Database Layer&lt;/strong&gt;',['../architecture.html#autotoc_md81',1,'']]],
+  ['10_2esync_2emd_3',['10.sync.md',['../10_8sync_8md.html',1,'']]]
 ];

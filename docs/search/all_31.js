@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['🗃️_20middlewares_0',['🗃️ Middlewares',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md15',1,'']]],
-  ['🗃️_20system_20tables_20api_1',['🗃️ System Tables API',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md13',1,'']]]
+  ['🔄_20sync_20model_0',['🔄 Sync Model',['../architecture.html#autotoc_md89',1,'']]],
+  ['🔄_20sync_20model_20overview_1',['🔄 Sync Model Overview',['../sync.html#autotoc_md123',1,'']]],
+  ['🔄_20tt_20sync_20tt_20command_20reserved_2',['🔄 &lt;tt&gt;sync&lt;/tt&gt; Command *(Reserved)*',['../cli.html#autotoc_md18',1,'']]]
 ];

@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['📐_20core_20principles_0',['📐 Core Principles',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md22',1,'']]]
+  ['📂_20example_20project_20structure_0',['📂 Example Project Structure',['../embedding.html#autotoc_md108',1,'']]]
 ];

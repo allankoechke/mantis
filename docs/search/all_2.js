@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['3_20strong_20authentication_20module_20strong_0',['3. &lt;strong&gt;Authentication Module&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md29',1,'']]],
-  ['3_20strong_20transport_20layer_20strong_1',['3. &lt;strong&gt;Transport Layer&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md103',1,'']]],
-  ['3_20test_20edge_20cases_2',['3. Test Edge Cases',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md88',1,'']]]
+  ['2_20strong_20api_20router_20strong_0',['2. &lt;strong&gt;API Router&lt;/strong&gt;',['../architecture.html#autotoc_md82',1,'']]],
+  ['2_20strong_20conflict_20resolution_20strong_1',['2. &lt;strong&gt;Conflict Resolution&lt;/strong&gt;',['../sync.html#autotoc_md127',1,'']]],
+  ['2_20use_20consistent_20field_20names_2',['2. Use Consistent Field Names',['../rest_api_rules.html#autotoc_md65',1,'']]]
 ];

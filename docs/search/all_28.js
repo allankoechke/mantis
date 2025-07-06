@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['📄_20rest_20api_20endpoints_0',['📄 REST API Endpoints',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2api.html#autotoc_md4',1,'']]]
+  ['👤_20tt_20admins_20tt_20command_0',['👤 &lt;tt&gt;admins&lt;/tt&gt; Command',['../cli.html#autotoc_md14',1,'']]]
 ];

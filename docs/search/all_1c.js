@@ -1,15 +1,17 @@
 var searchData=
 [
-  ['validate_0',['validate',['../classmantis_1_1Validator.html#a7acf0cb2cb7e05c671815227c90de55f',1,'mantis::Validator']]],
-  ['validaterequestbody_1',['validateRequestBody',['../classmantis_1_1TableUnit.html#a21eb2c0cb6f39fa3e64a04b8e9dda567',1,'mantis::TableUnit']]],
-  ['validateupdaterequestbody_2',['validateUpdateRequestBody',['../classmantis_1_1TableUnit.html#ae8be97f3a152fe4035cd92e897b79aee',1,'mantis::TableUnit']]],
-  ['validation_3',['Custom Field Validation',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md93',1,'']]],
-  ['validator_4',['validator',['../classmantis_1_1Validator.html',1,'mantis::Validator'],['../structmantis_1_1Field.html#a7ffed647d94137948f65ddccce18a98f',1,'mantis::Field::validator'],['../classmantis_1_1Validator.html#ae00a05c4f424bcb45b7664affae83264',1,'mantis::Validator::Validator()']]],
-  ['validators_5',['validators',['../classmantis_1_1MantisApp.html#a9a945a51d82e62bb503860105882a9d4',1,'mantis::MantisApp']]],
-  ['variables_6',['Expression Context Variables',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md67',1,'']]],
-  ['verifyjwttoken_7',['verifyJWTToken',['../classmantis_1_1JWT.html#a3726197917638e218df89c79d7a597ad',1,'mantis::JWT']]],
-  ['verifypassword_8',['verifyPassword',['../namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab',1,'mantis']]],
-  ['via_20api_9',['Setting Rules via API',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md77',1,'']]],
-  ['view_10',['View',['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4dafa4351cfebe4b61d8aa5efa1d020710005',1,'mantis']]],
-  ['viewtable_11',['viewtable',['../structmantis_1_1ViewTable.html',1,'mantis::ViewTable'],['../structmantis_1_1ViewTable.html#ac62545c3c78665c023bcf3ae0c3645ea',1,'mantis::ViewTable::ViewTable()']]]
+  ['up_20mantis_0',['Setting Up Mantis',['../setup.html',1,'']]],
+  ['update_1',['update',['../classmantis_1_1CrudInterface.html#abb3fabb2a6c3d2af19713107952514fd',1,'mantis::CrudInterface::update()'],['../classmantis_1_1SysTablesUnit.html#ae99aa2fe743f9a57d99ed451f93edce6',1,'mantis::SysTablesUnit::update()'],['../classmantis_1_1TableUnit.html#a3bae0ee69c4c82ad91553015195fc603',1,'mantis::TableUnit::update()']]],
+  ['updaterecord_2',['updaterecord',['../classmantis_1_1SysTablesUnit.html#a58413de918fe26668a81326512474167',1,'mantis::SysTablesUnit::updateRecord()'],['../classmantis_1_1TableUnit.html#a0c07fe46634151fd542b24e70bd7fe45',1,'mantis::TableUnit::updateRecord()']]],
+  ['updateroute_3',['updateRoute',['../classmantis_1_1Router.html#a6fb0dd6f291415d3472fb7ab46d5101f',1,'mantis::Router']]],
+  ['updateroutecache_4',['updateRouteCache',['../classmantis_1_1Router.html#a534f4467ac6fe5eaee89bb79391d4ee4',1,'mantis::Router']]],
+  ['updaterule_5',['updaterule',['../classmantis_1_1TableUnit.html#a23a3ee7b0cd72e3522c1ecefd5a2682b',1,'mantis::TableUnit::updateRule()'],['../structmantis_1_1Table.html#aee240c84db4ade76ebc1b39f1937a866',1,'mantis::Table::updateRule']]],
+  ['updating_20existing_20table_20rules_6',['Updating Existing Table Rules',['../rest_api_rules.html#autotoc_md57',1,'']]],
+  ['url_7',['🌐 Base URL',['../rest_api.html#autotoc_md25',1,'']]],
+  ['usage_8',['usage',['../rest_api_rules.html#autotoc_md70',1,'Advanced Usage'],['../cli.html',1,'Command Line Usage']]],
+  ['use_20consistent_20field_20names_9',['2. Use Consistent Field Names',['../rest_api_rules.html#autotoc_md65',1,'']]],
+  ['use_20mantis_20as_20a_20submodule_10',['🛠️ Advanced: Use Mantis as a Submodule',['../embedding.html#autotoc_md112',1,'']]],
+  ['usernamefield_11',['usernameField',['../structmantis_1_1AuthTable.html#a25641f8730af2450b33f41b7543a4a38',1,'mantis::AuthTable']]],
+  ['using_20precompiled_20binaries_12',['⚡️ Using Precompiled Binaries',['../setup.html#autotoc_md2',1,'']]],
+  ['utils_2eh_13',['utils.h',['../utils_8h.html',1,'']]]
 ];

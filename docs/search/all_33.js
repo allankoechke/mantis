@@ -1,5 +1,7 @@
 var searchData=
 [
-  ['🛠️_20advanced_3a_20use_20mantis_20as_20a_20submodule_0',['🛠️ Advanced: Use Mantis as a Submodule',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md59',1,'']]],
-  ['🛠️_20tech_20stack_1',['🛠️ Tech Stack',['../index.html#autotoc_md119',1,'']]]
+  ['🔧_20configuration_20example_0',['🔧 Configuration Example',['../sync.html#autotoc_md135',1,'']]],
+  ['🔧_20overview_1',['🔧 Overview',['../index.html#autotoc_md140',1,'']]],
+  ['🔧_20setup_20steps_3a_2',['🔧 Setup Steps:',['../setup.html#autotoc_md3',1,'']]],
+  ['🔧_20why_20embed_20mantis_3',['🔧 Why Embed Mantis?',['../embedding.html#autotoc_md101',1,'']]]
 ];

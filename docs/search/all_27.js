@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['📂_20example_20project_20structure_0',['📂 Example Project Structure',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md55',1,'']]]
+  ['🏁_20conclusion_0',['🏁 Conclusion',['../architecture.html#autotoc_md99',1,'']]],
+  ['🏁_20summary_1',['🏁 summary',['../rest_api.html#autotoc_md42',1,'🏁 Summary'],['../sync.html#autotoc_md139',1,'🏁 Summary']]]
 ];

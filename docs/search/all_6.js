@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['7_20strong_20system_20tables_20strong_0',['7. &lt;strong&gt;System Tables&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md33',1,'']]]
+  ['6_20strong_20static_20file_20server_20strong_0',['6. &lt;strong&gt;Static File Server&lt;/strong&gt;',['../architecture.html#autotoc_md86',1,'']]]
 ];

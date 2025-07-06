@@ -1,13 +1,18 @@
 var searchData=
 [
-  ['handler_0',['handler',['../structmantis_1_1RouteHandler.html#af0ae9833580d6341beed55ebda6b6eea',1,'mantis::RouteHandler']]],
-  ['has_5fapi_1',['has_api',['../structmantis_1_1Table.html#a1bf99da1d5f5fdd5c9298153b143ff6e',1,'mantis::Table']]],
-  ['hasaccess_2',['hasaccess',['../classmantis_1_1SettingsUnit.html#aac77b27115fbac384b9b97b344302703',1,'mantis::SettingsUnit::hasAccess()'],['../classmantis_1_1SysTablesUnit.html#a5542061c3fcb51720df7a935f565b360',1,'mantis::SysTablesUnit::hasAccess()'],['../classmantis_1_1TableUnit.html#ab43522c4fabe0465c2ee3cadd6b42fa2',1,'mantis::TableUnit::hasAccess()']]],
-  ['hashpassword_3',['hashPassword',['../namespacemantis.html#a23e98d8e10ea45122b69111f3016c2a4',1,'mantis']]],
-  ['high_20level_20architecture_4',['🧱 High-Level Architecture',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md24',1,'']]],
-  ['host_5',['host',['../classmantis_1_1MantisApp.html#a96728241ef9dcff136d0440ff4facf27',1,'mantis::MantisApp']]],
-  ['http_6',['http',['../classmantis_1_1MantisApp.html#ab2f169ca51fc37f5a54d198af6d6f825',1,'mantis::MantisApp']]],
-  ['http_2ecpp_7',['http.cpp',['../http_8cpp.html',1,'']]],
-  ['http_2eh_8',['http.h',['../http_8h.html',1,'']]],
-  ['httpunit_9',['httpunit',['../classmantis_1_1HttpUnit.html',1,'mantis::HttpUnit'],['../classmantis_1_1HttpUnit.html#ad5b46a4d36a45188503b125e8b8fdae3',1,'mantis::HttpUnit::HttpUnit()']]]
+  ['generatereadabletimeid_0',['generateReadableTimeId',['../namespacemantis.html#a3832564f3023e4b1683a1a9392f17bd8',1,'mantis']]],
+  ['generatesalt_1',['generateSalt',['../namespacemantis.html#a73a3aa68eaf070b0dc152df95c6b91ad',1,'mantis']]],
+  ['generateshortid_2',['generateShortId',['../namespacemantis.html#ade1df4c33ed9fad130bdf6df9c2c0ad1',1,'mantis']]],
+  ['generatetableid_3',['generateTableId',['../classmantis_1_1TableUnit.html#a6bb03ba4b80811ed6714179c93cfd71c',1,'mantis::TableUnit']]],
+  ['generatetimebasedid_4',['generateTimeBasedId',['../namespacemantis.html#a2bc2a84280e5b58546a4ddfdeea4a230',1,'mantis']]],
+  ['get_5',['get',['../classmantis_1_1HttpUnit.html#adbbb184a2c23faca1be6fbe01b76eb9a',1,'mantis::HttpUnit::Get()'],['../classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95',1,'mantis::Context::get(const std::string &amp;key)']]],
+  ['get_5for_6',['get_or',['../classmantis_1_1Context.html#ad1ddc69a1bad56269383d789b1ee1b55',1,'mantis::Context']]],
+  ['getauthtoken_7',['getAuthToken',['../classmantis_1_1TableUnit.html#a4f58145cd3c1c387a5f610d1a0706189',1,'mantis::TableUnit']]],
+  ['getcoltypefromname_8',['getColTypeFromName',['../classmantis_1_1TableUnit.html#a35dbd1927d78373e5e6b1e99131638d9',1,'mantis::TableUnit']]],
+  ['getenvordefault_9',['getEnvOrDefault',['../namespacemantis.html#a5e25a8cc629f217be134c89138011502',1,'mantis']]],
+  ['getfieldtype_10',['getFieldType',['../namespacemantis.html#ac05fa29a8d019cec94f168aabb722d7c',1,'mantis']]],
+  ['getrule_11',['getrule',['../structmantis_1_1Table.html#a6ea03a1899ed514dd8b1d88ed65cfbfd',1,'mantis::Table::getRule'],['../classmantis_1_1TableUnit.html#a0a4de85a40a40db6ec06fcfcb92e19cb',1,'mantis::TableUnit::getRule()']]],
+  ['getting_20started_12',['getting started',['../index.html#autotoc_md144',1,'🚀 Getting Started'],['../index.html',1,'Getting Started']]],
+  ['global_20options_13',['⚙️ Global Options',['../cli.html#autotoc_md10',1,'']]],
+  ['guide_14',['REST API Reference Guide',['../rest_api.html',1,'']]]
 ];

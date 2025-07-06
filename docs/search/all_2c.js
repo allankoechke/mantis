@@ -1,4 +1,6 @@
 var searchData=
 [
-  ['📜_20license_0',['📜 License',['../index.html#autotoc_md132',1,'']]]
+  ['📌_20extensibility_20ideas_0',['📌 Extensibility Ideas',['../architecture.html#autotoc_md97',1,'']]],
+  ['📌_20notes_1',['📌 Notes',['../embedding.html#autotoc_md114',1,'']]],
+  ['📌_20sync_20customization_2',['📌 Sync Customization',['../sync.html#autotoc_md137',1,'']]]
 ];

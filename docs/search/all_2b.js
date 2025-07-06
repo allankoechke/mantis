@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['📚_20documentation_0',['📚 Documentation',['../index.html#autotoc_md126',1,'']]]
+  ['📄_20rest_20api_20endpoints_0',['📄 REST API Endpoints',['../rest_api.html#autotoc_md27',1,'']]]
 ];

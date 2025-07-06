@@ -1,10 +1,9 @@
 var searchData=
 [
-  ['openbrowseronstart_0',['openBrowserOnStart',['../classmantis_1_1MantisApp.html#a49b1b62210b2786a9717eafe4d8d8710',1,'mantis::MantisApp']]],
-  ['operator_28_29_1',['operator()',['../structmantis_1_1RouteKeyHash.html#a954efb5a6570445760d5c76e798fdcd1',1,'mantis::RouteKeyHash']]],
-  ['operators_2',['Supported Operators',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md71',1,'']]],
-  ['options_3',['📦 Integration Options',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md50',1,'']]],
-  ['or_20shared_20library_20strong_4',['&lt;strong&gt;As a Static or Shared Library&lt;/strong&gt;',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html#autotoc_md51',1,'']]],
-  ['overview_5',['overview',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html#autotoc_md41',1,'📁 File Structure Overview'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html#autotoc_md98',1,'🔄 Sync Model Overview'],['../index.html#autotoc_md115',1,'🔧 Overview'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2architecture.html',1,'Mantis Architecture Overview'],['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md65',1,'Overview']]],
-  ['ownership_20based_20rules_6',['Ownership-Based Rules',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2rules.html#autotoc_md74',1,'']]]
+  ['name_0',['name',['../structmantis_1_1Field.html#a02a370bbc630172657e1fe0d60401188',1,'mantis::Field::name'],['../structmantis_1_1Table.html#a592ca7b80b7662929819a544a78ca553',1,'mantis::Table::name']]],
+  ['names_1',['2. Use Consistent Field Names',['../rest_api_rules.html#autotoc_md65',1,'']]],
+  ['next_20steps_2',['📚 Next Steps',['../setup.html#autotoc_md6',1,'']]],
+  ['nlohmann_5fjson_5fserialize_5fenum_3',['nlohmann_json_serialize_enum',['../namespacemantis.html#aebd98060d52afb0370fc1ca019811e42',1,'mantis::NLOHMANN_JSON_SERIALIZE_ENUM(TableType, { {TableType::Base, &quot;base&quot;}, {TableType::Auth, &quot;auth&quot;}, {TableType::View, &quot;view&quot;} }) typedef enum class FieldTypeDecl'],['../namespacemantis.html#a2ea5ed89307403a72e775da7cdfde1c0',1,'mantis::NLOHMANN_JSON_SERIALIZE_ENUM(FieldType, { { FieldType::XML, &quot;xml&quot; }, { FieldType::STRING, &quot;string&quot; }, { FieldType::DOUBLE, &quot;double&quot; }, { FieldType::DATE, &quot;date&quot; }, { FieldType::INT8, &quot;int8&quot; }, { FieldType::UINT8, &quot;uint8&quot; }, { FieldType::INT16, &quot;int16&quot; }, { FieldType::UINT16, &quot;uint16&quot; }, { FieldType::INT32, &quot;int32&quot; }, { FieldType::UINT32, &quot;uint32&quot; }, { FieldType::INT64, &quot;int64&quot; }, { FieldType::UINT64, &quot;uint64&quot; }, { FieldType::BLOB, &quot;blob&quot; }, { FieldType::JSON, &quot;json&quot; }, { FieldType::BOOL, &quot;bool&quot; }, }) const std']]],
+  ['not_20implemented_20yet_4',['Mantis Sync Engine Design (NOT IMPLEMENTED YET!)',['../sync.html#autotoc_md121',1,'']]],
+  ['notes_5',['notes',['../embedding.html#autotoc_md114',1,'📌 Notes'],['../cli.html#autotoc_md20',1,'📝 Notes']]]
 ];

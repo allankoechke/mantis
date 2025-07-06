@@ -1,5 +1,6 @@
 var searchData=
 [
-  ['yet_0',['Mantis Sync Engine Design (NOT IMPLEMENTED YET!)',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2sync.html',1,'']]],
-  ['your_20application_1',['Embedding Mantis into Your Application',['../md__2home_2runner_2work_2mantis_2mantis_2doc_2embedding.html',1,'']]]
+  ['setting_20up_20mantis_0',['Setting Up Mantis',['../setup.html',1,'']]],
+  ['started_1',['Getting Started',['../index.html',1,'']]],
+  ['sync_2',['Engine Sync',['../sync.html',1,'']]]
 ];
