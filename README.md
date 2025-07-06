@@ -77,7 +77,7 @@ int main(const int argc, char* argv[])
     return app.run();
 }
 ```
-Check /exammples for a sample
+Check [/examples dir](/examples) for a working sample.
 
 ### Using Docker
 You can also run `mantisapp` in a docker container. Check [using docker](doc/docker.md) docs for more information.  
@@ -102,12 +102,13 @@ mantis/
 
 ## 📚 Documentation
 
-* [Architecture Overview](doc/architecture.md)
-* [Embedding Guide](doc/embedding.md)
-* [Sync Engine Design](doc/sync.md)
-* [API Reference](doc/api.md)
+* [CLI Reference](doc/01.cmd.md)
+* [API Reference](doc/02.api.md)
+* [Architecture Overview](doc/04.architecture.md)
+* [Embedding Guide](doc/05.embedding.md)
+* [Sync Engine Design](doc/10.sync.md)
 
-For API Docs: Check [here](). COMING SOON!!
+For full API Docs, check [here](https://allankoechke.github.io/mantis/).
 
 ---
 

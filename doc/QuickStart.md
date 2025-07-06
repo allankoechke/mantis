@@ -1,5 +1,17 @@
 @mainpage Getting Started
 
+<p align="center">
+  <img src="assets/mantis-cover.png" alt="Mantis Cover" width="100%" />
+</p>
+
+<h1 align="center">Mantis</h1>
+
+<p align="center">
+  <strong>A lightweight, pluggable Backend-as-a-Service (BaaS) library built in C++</strong><br />
+  Portable. Embeddable. Syncable. Built for speed and extensibility.
+</p>
+
+
 ## 🔧 Overview
 
 **Mantis** is a modular, lightweight C++ library designed to power modern backend systems in embedded devices, desktop tools, or standalone server deployments. Inspired by systems like PocketBase and Supabase, Mantis focuses on:
@@ -47,11 +59,26 @@ int main(const int argc, char* argv[])
     return app.run();
 }
 ```
-Check /exammples for a sample
+Check [mantis/examples](https://github.com/allankoechke/mantis/tree/master/examples) for a sample
 
-### Using Docker
-You can also run `mantisapp` in a docker container. Check [using docker](06.docker.md) docs for more information.
+### Admin Dashboard
+Mantis ships with a lightweight admin dashboard available on `<host>:<ip>/admin` and restricted to admin login only. By default, in your setup, you need to create a admin user account using the [CLI](01.cmd.md) command:
 
+```shell
+mantisapp admins --add <email>
+```
+
+With the admin account created, we can then use it to log in to the admin dashboard. The dashboard allows for easy management of:
+- **__CRUD__** on admin accounts
+- **__CRUD__** on system logs [WIP?]
+- **__CRUD__** on database tables (only the tables managed by mantis).
+- **__CRUD__** on records in the tables.
+- Schema & database migration [WIP?]
+
+By default, admin auth tokens expire after an hour, but it's configurable in the settings tab of the dashboard.
+
+![Mantis Admin](mantis-admin.png)
+___admin dashboard snapshot___
 
 ---
 
