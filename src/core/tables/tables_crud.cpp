@@ -9,6 +9,8 @@
 
 #define __file__ "core/tables/tables_crud.cpp"
 
+#include <cmath>
+
 namespace mantis
 {
     json TableUnit::create(const json& entity, const json& opts)
@@ -21,7 +23,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql =  MantisApp::instance().db().session();
+        auto sql = MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -294,7 +296,7 @@ namespace mantis
         TRACE_CLASS_METHOD()
 
         // Get a soci::session from the pool
-        const auto sql =  MantisApp::instance().db().session();
+        const auto sql = MantisApp::instance().db().session();
 
         soci::row r; // To hold read data
         *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
@@ -322,7 +324,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql =  MantisApp::instance().db().session();
+        auto sql = MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -552,7 +554,7 @@ namespace mantis
             auto record = parseDbRowToJson(r);
 
             // Redact passwords
-            if ( tableType() == "auth") record.erase("password");
+            if (tableType() == "auth") record.erase("password");
 
             result["error"] = "";
             result["data"] = record;
@@ -589,7 +591,7 @@ namespace mantis
         // Views should not reach here
         if (tableType() == "view") return false;
 
-        const auto sql =  MantisApp::instance().db().session();
+        const auto sql = MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
@@ -614,7 +616,7 @@ namespace mantis
     {
         TRACE_CLASS_METHOD()
         json response = {{"error", ""}, {"pagination", json::object()}, {"data", json::array()}};
-        const auto sql =  MantisApp::instance().db().session();
+        const auto sql = MantisApp::instance().db().session();
 
         auto pagination = opts.value("pagination", json::object());
         int count = -1;
@@ -636,12 +638,12 @@ namespace mantis
         }
         if (page <= 0)
         {
-            response["error"] = "Page No must be greater than 0";
+            response["error"] = "Page index must be greater than 0";
             return response;
         }
-        const auto offset = (page-1) * perPage;
+        const auto offset = (page - 1) * perPage;
 
-        const auto query =  "SELECT * FROM " + tableName() + " ORDER BY created DESC LIMIT :limit OFFSET :offset";
+        const auto query = "SELECT * FROM " + tableName() + " ORDER BY created DESC LIMIT :limit OFFSET :offset";
         const soci::rowset<soci::row> rs = (sql->prepare << query, soci::use(perPage), soci::use(offset));
         nlohmann::json list = nlohmann::json::array();
 
@@ -656,9 +658,12 @@ namespace mantis
             list.push_back(row_json);
         }
 
+
         // Update pagination data
         pagination.erase("countPages");
-        pagination["pageCount"] = count == -1 ? count : count % perPage == 0 ? count/perPage : count/perPage + 1;
+        pagination["pageCount"] = count == -1
+                                      ? count
+                                      : static_cast<int>(std::ceil(static_cast<double>(count) / perPage));
         pagination["recordCount"] = count;
 
         // Set response data
