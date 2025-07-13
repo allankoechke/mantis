@@ -113,6 +113,17 @@ namespace mantis
     std::optional<json> tryParseJsonStr(const std::string& json_str);
 
     /**
+     * @brief Convert given string value to boolean type.
+     *
+     * By default, we check for true equivalents, anything else will be
+     * considered as a false value.
+     *
+     * @param value String value to convert to bool
+     * @return true or false value
+     */
+    bool strToBool(const std::string& value);
+
+    /**
      * @brief Generate a time base UUID
      *
      * The first part is made up of milliseconds since epoch while the last 4 digits a random component.

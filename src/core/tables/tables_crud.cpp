@@ -610,23 +610,60 @@ namespace mantis
         return true;
     }
 
-    std::vector<json> TableUnit::list(const json& opts)
+    json TableUnit::list_records(const json& opts)
     {
         TRACE_CLASS_METHOD()
+        json response = {{"error", ""}, {"pagination", json::object()}, {"data", json::array()}};
         const auto sql =  MantisApp::instance().db().session();
-        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT * FROM " + tableName());
-        nlohmann::json response = nlohmann::json::array();
+
+        auto pagination = opts.value("pagination", json::object());
+        int count = -1;
+        if (pagination.at("countPages").get<bool>())
+        {
+            // Let's count total records, unless switched off
+            // TODO this assumes all tables have `id`, which should for now
+            *sql << "SELECT COUNT(id) FROM " + tableName(), soci::into(count);
+        }
+
+        // Extract the page number and page size
+        const auto page = pagination.at("pageIndex").get<int>();
+        const auto perPage = pagination.at("perPage").get<int>();
+
+        if (perPage <= 0)
+        {
+            response["error"] = "Page size must be greater than 0";
+            return response;
+        }
+        if (page <= 0)
+        {
+            response["error"] = "Page No must be greater than 0";
+            return response;
+        }
+        const auto offset = (page-1) * perPage;
+
+        const auto query =  "SELECT * FROM " + tableName() + " ORDER BY created DESC LIMIT :limit OFFSET :offset";
+        const soci::rowset<soci::row> rs = (sql->prepare << query, soci::use(perPage), soci::use(offset));
+        nlohmann::json list = nlohmann::json::array();
 
         for (const auto& row : rs)
         {
             auto row_json = parseDbRowToJson(row);
-            if (tableType() == "auth")
+            if (m_tableType == "auth")
             {
                 // Remove password fields from the response data
                 row_json.erase("password");
             }
-            response.push_back(row_json);
+            list.push_back(row_json);
         }
+
+        // Update pagination data
+        pagination.erase("countPages");
+        pagination["pageCount"] = count == -1 ? count : count % perPage == 0 ? count/perPage : count/perPage + 1;
+        pagination["recordCount"] = count;
+
+        // Set response data
+        response["data"] = list;
+        response["pagination"] = pagination;
 
         return response;
     }
