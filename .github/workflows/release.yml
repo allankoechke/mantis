@@ -81,12 +81,23 @@ jobs:
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
       - name: Zip the build output
-        if: startsWith(github.ref, 'refs/tags/v')
+        if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'ubuntu-latest'
         run: |
-          cd ${{ steps.strings.outputs.build-output-dir }}/bin
+          cd ${{ github.workspace }}/build/bin
           mkdir -p zip
           zip -r zip/mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip mantisapp*
         shell: bash
+
+      - name: Zip the build output (Windows)
+        if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'windows-latest'
+        shell: pwsh
+        run: |
+          $BinPath = "${{ steps.strings.outputs.build-output-dir }}\bin"
+          $ZipPath = "$BinPath\zip"
+          $ZipFile = "$ZipPath\mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip"
+
+          New-Item -ItemType Directory -Force -Path $ZipPath | Out-Null
+          Compress-Archive -Path "$BinPath\mantisapp*.exe" -DestinationPath $ZipFile -Force
 
       - name: Upload zipped artifact
         if: startsWith(github.ref, 'refs/tags/v')
@@ -94,7 +105,7 @@ jobs:
         with:
           name: mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip
           path: |
-            ${{ steps.strings.outputs.build-output-dir }}/bin/zip/mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip
+            ${{ github.workspace }}/build/bin/zip/mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip
 
   release:
     needs: build

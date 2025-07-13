@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.9)
+project(mantisapp VERSION 0.1.13)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -205,7 +205,7 @@ if(DOXYGEN_FOUND)
     # Generate the Doxyfile
     set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
     set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-    set(DOXY_MAINPAGE ${CMAKE_SOURCE_DIR}/README.md)
+    set(DOXY_MAINPAGE ${CMAKE_SOURCE_DIR}/doc/QuickStart.md)
     set(DOXYGEN_LOGO ${CMAKE_SOURCE_DIR}/assets/mantis.png)
 
     configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)

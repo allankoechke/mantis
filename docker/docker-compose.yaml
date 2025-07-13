@@ -1,0 +1,12 @@
+services:
+  mantisapp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: mantisapp:latest
+    restart: unless-stopped
+    ports:
+      - "7070:80"
+    volumes:
+      - ./data:/mantis/data
+      - ./www:/mantis/public

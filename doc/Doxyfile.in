@@ -1,6 +1,6 @@
 PROJECT_NAME           = Mantis App
 OUTPUT_DIRECTORY       = @CMAKE_CURRENT_BINARY_DIR@/docs
-INPUT                  = @PROJECT_SOURCE_DIR@/include @PROJECT_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/doc @CMAKE_SOURCE_DIR@/README.md
+INPUT                  = @PROJECT_SOURCE_DIR@/include @PROJECT_SOURCE_DIR@/src @CMAKE_SOURCE_DIR@/doc
 RECURSIVE              = YES
 EXTRACT_ALL            = YES
 GENERATE_LATEX         = NO
@@ -12,7 +12,12 @@ CALLER_GRAPH           = NO
 QUIET                  = YES
 MARKDOWN_SUPPORT       = YES
 PROJECT_NUMBER         = v@PROJECT_VERSION@
-HTML_EXTRA_STYLESHEET  = @AWESOME_CSS_DIR@/doxygen-awesome.css
-USE_MDFILE_AS_MAINPAGE = @DOXY_MAINPAGE@
+USE_MDFILE_AS_MAINPAGE = @CMAKE_SOURCE_DIR@/doc/QuickStart.md
 FILE_PATTERNS          = *.h *.cpp *.md
 PROJECT_LOGO           = @DOXYGEN_LOGO@
+GENERATE_TREEVIEW      = YES # required!
+DISABLE_INDEX          = NO
+FULL_SIDEBAR           = NO
+HTML_EXTRA_STYLESHEET  = @AWESOME_CSS_DIR@/doxygen-awesome.css \
+                        @AWESOME_CSS_DIR@/doxygen-awesome-sidebar-only.css
+HTML_COLORSTYLE        = LIGHT # required with Doxygen >= 1.9.5
