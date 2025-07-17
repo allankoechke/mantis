@@ -36,6 +36,7 @@ namespace mantis
     class SettingsUnit;
     class Router;
     class Validator;
+    class FileUnit;
 
     /**
      * @brief Enum for which database is currently selected
@@ -211,6 +212,8 @@ namespace mantis
         [[nodiscard]] ExprEvaluator& evaluator() const;
         /// Get the settings unit object
         [[nodiscard]] SettingsUnit& settings() const;
+        /// Get the file unit object
+        [[nodiscard]] FileUnit& files() const;
 
         /**
          * @brief Launch browser with the admin dashboard page. If all goes well, the default
@@ -271,6 +274,7 @@ namespace mantis
         std::unique_ptr<Validator> m_validators;
         std::unique_ptr<ExprEvaluator> m_exprEval;
         std::unique_ptr<SettingsUnit> m_settings;
+        std::unique_ptr<FileUnit> m_files;
     };
 }
 
