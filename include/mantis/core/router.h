@@ -66,7 +66,7 @@ namespace mantis
 
         const std::string __class_name__ = "mantis::Router";
     private:
-        bool generateFileServingApi();
+        bool generateFileServingApi() const;
         bool generateTableCrudApis();
         bool generateAdminCrudApis() const;
 

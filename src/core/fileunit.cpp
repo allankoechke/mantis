@@ -27,22 +27,16 @@ namespace mantis
     void FileUnit::renameDir(const std::string& old_name, const std::string& new_name)
     {
         // Rename folder if it exists, else, create it
-        if (const auto old_path = MantisApp::instance().dataDir() + "/" + old_name;
-            fs::exists(old_path))
-            fs::rename(old_path,
-                       MantisApp::instance().dataDir() + "/files/" + new_name);
+        if (const auto old_path = dirPath(old_name); fs::exists(old_path))
+            fs::rename(old_path, dirPath(new_name));
+
         else
             createDir(new_name);
     }
 
     void FileUnit::deleteDir(const std::string& table)
     {
-        fs::remove_all(MantisApp::instance().dataDir() + "/files/" + table);
-    }
-
-    std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
-    {
-        return (fs::path(MantisApp::instance().dataDir()) / table / filename).string();
+        fs::remove_all(dirPath(table));
     }
 
     std::optional<std::string> FileUnit::getFilePath(const std::string& table, const std::string& filename) const
@@ -63,6 +57,16 @@ namespace mantis
         if (!file) return false;
         file.write(reinterpret_cast<const char*>(content.data()), content.size());
         return true;
+    }
+
+    std::string FileUnit::dirPath(const std::string& table) const
+    {
+        return (fs::path(MantisApp::instance().dataDir()) / "files" / table).string();
+    }
+
+    std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
+    {
+        return (fs::path(MantisApp::instance().dataDir()) / "files" / table / filename).string();
     }
 
     bool FileUnit::removeFile(const std::string& table, const std::string& filename) const

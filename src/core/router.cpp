@@ -49,6 +49,9 @@ bool mantis::Router::initialize()
     if (!generateAdminCrudApis())
         return false;
 
+    if (!generateFileServingApi())
+        return false;
+
     // If all was completed with no issues,
     // just return OK!
     return true;
@@ -308,46 +311,56 @@ json mantis::Router::removeRoute(const json& table_data)
     return res;
 }
 
-bool mantis::Router::generateFileServingApi()
+bool mantis::Router::generateFileServingApi() const
 {
-    MantisApp::instance().http().Get(
-        "/api/files/:table/:filename",
-        [](const Request& req, Response& res, [[maybe_unused]] Context& ctx)
-        {
-            const auto table_name = req.path_params.at("table");
-            const auto file_name = req.path_params.at("filename");
-
-            if (table_name.empty() ||file_name.empty())
+    try
+    {
+        MantisApp::instance().http().Get(
+            "/api/files/:table/:filename",
+            [this](const Request& req, Response& res, [[maybe_unused]] Context& ctx)
             {
+                const auto table_name = req.path_params.at("table");
+                const auto file_name = req.path_params.at("filename");
+
+                if (table_name.empty() ||file_name.empty())
+                {
+                    json response;
+                    response["error"] = "Table name and file name are required!";
+                    response["status"] = "400";
+                    response["data"] = json::object();
+
+                    res.status = 400;
+                    res.set_content(response, "application/json");
+                    return;
+                }
+
+                const auto fileMgr = MantisApp::instance().files();
+                if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
+                    path_opt.has_value())
+                {
+                    // Return requested file
+                    res.set_file_content(path_opt.value());
+                    res.status = 200;
+                    return;
+                }
+
                 json response;
-                response["error"] = "Table name and file name are required!";
-                response["status"] = "400";
+                response["error"] = "File not found!";
+                response["status"] = "404";
                 response["data"] = json::object();
 
-                res.status = 400;
+                res.status = 404;
                 res.set_content(response, "application/json");
-                return;
             }
+        );
 
-            const auto fileMgr = MantisApp::instance().files();
-            if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
-                path_opt.has_value())
-            {
-                // Return requested file
-                res.set_file_content(path_opt.value());
-                res.status = 200;
-                return;
-            }
+        return true;
+    } catch (std::exception& e)
+    {
+        Log::critical("Error creating file serving endpoint: {}", e.what());
+    }
 
-            json response;
-            response["error"] = "File not found!";
-            response["status"] = "404";
-            response["data"] = json::object();
-
-            res.status = 404;
-            res.set_content(response, "application/json");
-        }
-    );
+    return false;
 }
 
 bool mantis::Router::generateTableCrudApis()
