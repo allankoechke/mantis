@@ -40,8 +40,8 @@ namespace mantis
         // CRUD endpoints handlers
         virtual void fetchRecord(const Request& req, Response& res, Context& ctx);
         virtual void fetchRecords(const Request& req, Response& res, Context& ctx);
-        virtual void createRecord(const Request& req, Response& res, Context& ctx);
-        virtual void updateRecord(const Request& req, Response& res, Context& ctx);
+        virtual void createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx);
+        virtual void updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx);
         virtual void deleteRecord(const Request& req, Response& res, Context& ctx);
 
         // Auth Routes Handlers

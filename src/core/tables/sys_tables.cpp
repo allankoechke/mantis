@@ -71,9 +71,9 @@ namespace mantis
             // Add Record
             Log::debug("Adding POST Request for table '{}'", m_tableName);
             MantisApp::instance().http().Post(
-                basePath, [this](const Request& req, Response& res, Context& ctx)-> void
+                basePath, [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
                 {
-                    createRecord(req, res, ctx);
+                    createRecord(req, res, reader, ctx);
                 },
                 {
                     [this](const Request& req, Response& res, Context& ctx)-> bool
@@ -91,9 +91,9 @@ namespace mantis
             Log::debug("Adding PATCH Request for table '{}'", m_tableName);
             MantisApp::instance().http().Patch(
                 basePath + "/:id",
-                [this](const Request& req, Response& res, Context& ctx)-> void
+                [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
                 {
-                    updateRecord(req, res, ctx);
+                    updateRecord(req, res, reader, ctx);
                 },
                 {
                     [this](const Request& req, Response& res, Context& ctx)-> bool
@@ -255,7 +255,7 @@ namespace mantis
         }
     }
 
-    void SysTablesUnit::createRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
         json body, response;
 
@@ -389,7 +389,7 @@ namespace mantis
         res.set_content(response.dump(), "application/json");
     }
 
-    void SysTablesUnit::updateRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
         Log::trace("Updating table, endpoint {}", req.path);
 

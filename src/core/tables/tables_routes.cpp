@@ -66,9 +66,9 @@ namespace mantis
                 // Add Record
                 Log::debug("Adding POST Request for table '{}'", basePath);
                  MantisApp::instance().http().Post(
-                    basePath, [this](const Request& req, Response& res, Context& ctx)-> void
+                    basePath, [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
                     {
-                        createRecord(req, res, ctx);
+                        createRecord(req, res, reader, ctx);
                     },
                     {
                         [this](const Request& req, Response& res, Context& ctx)-> bool
@@ -86,9 +86,9 @@ namespace mantis
                 Log::debug("Adding PATCH Request for table '{}'", basePath);
                  MantisApp::instance().http().Patch(
                     basePath + "/:id",
-                    [this](const Request& req, Response& res, Context& ctx)-> void
+                    [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
                     {
-                        updateRecord(req, res, ctx);
+                        updateRecord(req, res, reader, ctx);
                     },
                     {
                         [this](const Request& req, Response& res, Context& ctx)-> bool
@@ -291,7 +291,7 @@ namespace mantis
         }
     }
 
-    void TableUnit::createRecord(const Request& req, Response& res, Context& ctx)
+    void TableUnit::createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
         Log::trace("Creating new record, endpoint {}", req.path);
 
@@ -363,7 +363,7 @@ namespace mantis
         res.set_content(response.dump(), "application/json");
     }
 
-    void TableUnit::updateRecord(const Request& req, Response& res, Context& ctx)
+    void TableUnit::updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
         Log::trace("Updating record, endpoint {}", req.path);
 

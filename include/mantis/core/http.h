@@ -120,11 +120,17 @@ namespace mantis
     ///> Shorthand for httplib::Response
     using Response = httplib::Response;
 
+    ///> Shorthand for httplib::ContentReader
+    using ContentReader = httplib::ContentReader;
+
     ///> Middleware shorthand for the function
     using Middleware = std::function<bool(const Request&, Response&, Context&)>;
 
     ///> Route Handler function shorthand
-    using RouteHandlerFunc = std::function<void(const Request&, Response&, Context&)>;
+    using RouteHandlerFunc = std::function<void(const httplib::Request&, httplib::Response&, Context&)>;
+
+    ///> Route Handler function with content reader shorthand
+    using RouteHandlerFuncWithContentReader = std::function<void(const httplib::Request&, httplib::Response&, const httplib::ContentReader&, Context&)>;
 
     ///> Syntactic sugar for request method which is a std::string
     using Method = std::string;
@@ -154,7 +160,7 @@ namespace mantis
     struct RouteHandler
     {
         std::vector<Middleware> middlewares; ///> List of @see Middlewares for a route.
-        RouteHandlerFunc handler; ///> Handler function for a route
+        std::variant<RouteHandlerFunc, RouteHandlerFuncWithContentReader> handler; ///> Handler function for a route
     };
 
     /**
@@ -177,6 +183,18 @@ namespace mantis
         void add(const std::string& method,
                  const std::string& path,
                  RouteHandlerFunc handler,
+                 const std::vector<Middleware>& middlewares);
+        /**
+         * @brief Add new route to the registry.
+         *
+         * @param method Request method, i.e. GET, POST, PATCH, etc.
+         * @param path Request path.
+         * @param handler Request handler function.
+         * @param middlewares List of @see Middleware to be imposed on this request         *
+         */
+        void add(const std::string& method,
+                 const std::string& path,
+                 RouteHandlerFuncWithContentReader handler,
                  const std::vector<Middleware>& middlewares);
         /**
          * @brief Find a route in the registry matching given method and route.
@@ -212,19 +230,27 @@ namespace mantis
         HttpUnit();
 
         void Get(const std::string& path,
-                 RouteHandlerFunc handler,
+                 const RouteHandlerFunc& handler,
                  std::initializer_list<Middleware> middlewares = {});
 
         void Post(const std::string& path,
-                  RouteHandlerFunc handler,
+                  const RouteHandlerFunc& handler,
+                  std::initializer_list<Middleware> middlewares = {});
+
+        void Post(const std::string& path,
+                  const RouteHandlerFuncWithContentReader& handler,
                   std::initializer_list<Middleware> middlewares = {});
 
         void Patch(const std::string& path,
-                   RouteHandlerFunc handler,
+                   const RouteHandlerFunc& handler,
+                   std::initializer_list<Middleware> middlewares = {});
+
+        void Patch(const std::string& path,
+                   const RouteHandlerFuncWithContentReader& handler,
                    std::initializer_list<Middleware> middlewares = {});
 
         void Delete(const std::string& path,
-                    RouteHandlerFunc handler,
+                    const RouteHandlerFunc& handler,
                     std::initializer_list<Middleware> middlewares = {});
 
         /**
@@ -255,13 +281,24 @@ namespace mantis
 
     private:
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
-        using MethodBinder = std::function<void(const std::string&, httplib::Server::Handler)>;
 
-        void route(MethodBinder bind_method,
+        template <typename HandlerType>
+        using MethodBinder = std::function<void(const std::string&, HandlerType)>;
+
+        void route(const MethodBinder<httplib::Server::Handler>& bind_method,
                    const std::string& method,
                    const std::string& path,
-                   RouteHandlerFunc handler,
+                   const RouteHandlerFunc& handler,
                    std::initializer_list<Middleware> middlewares);
+
+        void route(const MethodBinder<httplib::Server::HandlerWithContentReader>& bind_method,
+                   const std::string& method,
+                   const std::string& path,
+                   const RouteHandlerFuncWithContentReader& handler,
+                   std::initializer_list<Middleware> middlewares);
+
+        template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+        template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
 
         httplib::Server svr;
         RouteRegistry registry;

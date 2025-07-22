@@ -32,8 +32,8 @@ namespace mantis
 
         void fetchRecord(const Request& req, Response& res, Context& ctx) override;
         void fetchRecords(const Request& req, Response& res, Context& ctx) override;
-        void createRecord(const Request& req, Response& res, Context& ctx) override;
-        void updateRecord(const Request& req, Response& res, Context& ctx) override;
+        void createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx) override;
+        void updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx) override;
         void deleteRecord(const Request& req, Response& res, Context& ctx) override;
 
         // Auth Routes Handlers

@@ -65,6 +65,12 @@ void mantis::RouteRegistry::add(const std::string& method,
     routes[{method, path}] = {middlewares, handler};
 }
 
+void mantis::RouteRegistry::add(const std::string& method, const std::string& path,
+                                RouteHandlerFuncWithContentReader handler, const std::vector<Middleware>& middlewares)
+{
+    routes[{method, path}] = {middlewares, handler};
+}
+
 const mantis::RouteHandler* mantis::RouteRegistry::find(const std::string& method, const std::string& path) const
 {
     const auto it = routes.find({method, path});
@@ -158,8 +164,8 @@ mantis::HttpUnit::HttpUnit()
     });
 }
 
-void mantis::HttpUnit::Get(const std::string& path, RouteHandlerFunc handler,
-                           std::initializer_list<Middleware> middlewares)
+void mantis::HttpUnit::Get(const std::string& path, const RouteHandlerFunc& handler,
+                           const std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -167,8 +173,8 @@ void mantis::HttpUnit::Get(const std::string& path, RouteHandlerFunc handler,
     }, "GET", path, handler, middlewares);
 }
 
-void mantis::HttpUnit::Post(const std::string& path, RouteHandlerFunc handler,
-                            std::initializer_list<Middleware> middlewares)
+void mantis::HttpUnit::Post(const std::string& path, const RouteHandlerFunc& handler,
+                            const std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -176,8 +182,17 @@ void mantis::HttpUnit::Post(const std::string& path, RouteHandlerFunc handler,
     }, "POST", path, handler, middlewares);
 }
 
-void mantis::HttpUnit::Patch(const std::string& path, RouteHandlerFunc handler,
-                             std::initializer_list<Middleware> middlewares)
+void mantis::HttpUnit::Post(const std::string& path, const RouteHandlerFuncWithContentReader& handler,
+                            const std::initializer_list<Middleware> middlewares)
+{
+    route([this](const std::string& p, httplib::Server::HandlerWithContentReader h)
+    {
+        svr.Post(p, std::move(h));
+    }, "POST", path, handler, middlewares);
+}
+
+void mantis::HttpUnit::Patch(const std::string& path, const RouteHandlerFunc& handler,
+                             const std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -185,8 +200,17 @@ void mantis::HttpUnit::Patch(const std::string& path, RouteHandlerFunc handler,
     }, "PATCH", path, handler, middlewares);
 }
 
-void mantis::HttpUnit::Delete(const std::string& path, RouteHandlerFunc handler,
-                              std::initializer_list<Middleware> middlewares)
+void mantis::HttpUnit::Patch(const std::string& path, const RouteHandlerFuncWithContentReader& handler,
+                             const std::initializer_list<Middleware> middlewares)
+{
+    route([this](const std::string& p, httplib::Server::HandlerWithContentReader h)
+    {
+        svr.Patch(p, std::move(h));
+    }, "PATCH", path, handler, middlewares);
+}
+
+void mantis::HttpUnit::Delete(const std::string& path, const RouteHandlerFunc& handler,
+                              const std::initializer_list<Middleware> middlewares)
 {
     route([this](const std::string& p, httplib::Server::Handler h)
     {
@@ -253,10 +277,10 @@ httplib::Server& mantis::HttpUnit::server()
 }
 
 void mantis::HttpUnit::route(
-    MethodBinder bind_method,
+    const MethodBinder<httplib::Server::Handler>& bind_method,
     const std::string& method,
     const std::string& path,
-    RouteHandlerFunc handler,
+    const RouteHandlerFunc& handler,
     std::initializer_list<Middleware> middlewares)
 {
     registry.add(method, path, handler, {middlewares});
@@ -282,6 +306,79 @@ void mantis::HttpUnit::route(
             if (!mw(req, res, current_context)) return;
         }
 
-        route->handler(req, res, current_context);
+        // Create empty dummy ContentReader
+        static httplib::ContentReader empty_content_reader(
+            // Empty regular content reader - does nothing
+            [](httplib::ContentReceiver receiver) -> bool
+            {
+                return true; // Just return success without calling receiver
+            },
+            // Empty multipart content reader - does nothing
+            [](httplib::MultipartContentHeader header, httplib::ContentReceiver receiver) -> bool
+            {
+                return true; // Just return success without calling header or receiver
+            }
+        );
+
+        std::visit(
+            overloaded{
+                [&](const RouteHandlerFunc& f)
+                {
+                    f(req, res, current_context);
+                },
+                [&](const RouteHandlerFuncWithContentReader& f)
+                {
+                    f(req, res, empty_content_reader, current_context);
+                }
+            }, route->handler
+        );
     });
+}
+
+void mantis::HttpUnit::route(
+    const MethodBinder<httplib::Server::HandlerWithContentReader>& bind_method,
+    const std::string& method, const std::string& path,
+    const RouteHandlerFuncWithContentReader& handler,
+    std::initializer_list<Middleware> middlewares)
+{
+    registry.add(method, path, handler, {middlewares});
+    bind_method(
+        path,
+        [this, method, path](const httplib::Request& req, httplib::Response& res,
+                             const httplib::ContentReader& content_reader)
+        {
+            current_context = Context{};
+
+            const auto* route = registry.find(method, path);
+            if (!route)
+            {
+                json response;
+                response["status"] = 404;
+                response["error"] = std::format("{} {} Route Not Found", method, path);
+                response["data"] = json::object();
+
+                res.status = 404;
+                res.set_content(response.dump(), "application/json");
+                return;
+            }
+
+            for (const auto& mw : route->middlewares)
+            {
+                if (!mw(req, res, current_context)) return;
+            }
+
+            std::visit(
+                overloaded{
+                    [&](const RouteHandlerFunc& f)
+                    {
+                        f(req, res, current_context);
+                    },
+                    [&](const RouteHandlerFuncWithContentReader& f)
+                    {
+                        f(req, res, content_reader, current_context);
+                    }
+                }, route->handler
+            );
+        }
+    );
 }
