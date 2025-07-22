@@ -96,7 +96,8 @@ namespace mantis
         std::optional<json> read(const std::string& id, const json& opts) override;
         json update(const std::string& id, const json& entity, const json& opts) override;
         bool remove(const std::string& id, const json& opts) override;
-        std::vector<json> list(const json& opts) override;
+        std::vector<json> list(const json& opts) override { return json::array(); }; // Remove
+        json list_records(const json& opts);
 
         // Helper methods
         static std::string generateTableId(const std::string& tablename);

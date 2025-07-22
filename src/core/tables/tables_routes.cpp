@@ -225,12 +225,44 @@ namespace mantis
     {
         Log::trace("Fetching all record from endpoint {}", req.path);
 
+        // Pagination req params
+        json pagination;
+        pagination["perPage"] = 100;// Number of records per page
+        pagination["pageIndex"] = 1;     // Current page, 1-index based
+        pagination["pageCount"] = -1;   // Total pages
+        pagination["recordCount"] = 0;   // Total pages
+        pagination["countPages"] = true;    // Whether to calculate number of pages
+
+        if (req.has_param("perPage"))
+            pagination["perPage"] = std::stoi(req.get_param_value("perPage"));
+
+        if (req.has_param("pageIndex"))
+            pagination["pageIndex"] = std::stoi(req.get_param_value("pageIndex"));
+
+        if (req.has_param("countPages"))
+        {
+            const std::string value = req.get_param_value("countPages");
+            pagination["countPages"] = value.empty() ? true : strToBool(value);
+        }
+
         json response;
         try
         {
-            // TODO do pagination of the data
-            auto resp = list(json::object());
-            response["data"] = resp;
+            json opts;
+            opts["pagination"] = pagination;
+            const auto resp = list_records(opts);
+            if (const auto err = resp.value("error", ""); !err.empty())
+            {
+                response["data"] = json::array();
+                response["status"] = 400;
+                response["error"] = err;
+
+                res.status = 400;
+                res.set_content(response.dump(), "application/json");
+            }
+
+            response["data"] = resp["data"];
+            response["pagination"] = resp["pagination"];
             response["status"] = 200;
             response["error"] = "";
 

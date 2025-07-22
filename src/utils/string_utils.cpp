@@ -20,6 +20,13 @@ namespace mantis
         }
     }
 
+    bool strToBool(const std::string& value)
+    {
+        std::string s = value;
+        std::ranges::transform(s, s.begin(), ::tolower);
+        return (s == "1" || s == "true" || s == "yes" || s == "on");
+    }
+
     void toLowerCase(std::string& str)
     {
         std::ranges::transform(str, str.begin(),

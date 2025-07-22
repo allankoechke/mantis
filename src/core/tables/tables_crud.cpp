@@ -9,6 +9,8 @@
 
 #define __file__ "core/tables/tables_crud.cpp"
 
+#include <cmath>
+
 namespace mantis
 {
     json TableUnit::create(const json& entity, const json& opts)
@@ -21,7 +23,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql =  MantisApp::instance().db().session();
+        auto sql = MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -294,7 +296,7 @@ namespace mantis
         TRACE_CLASS_METHOD()
 
         // Get a soci::session from the pool
-        const auto sql =  MantisApp::instance().db().session();
+        const auto sql = MantisApp::instance().db().session();
 
         soci::row r; // To hold read data
         *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
@@ -322,7 +324,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql =  MantisApp::instance().db().session();
+        auto sql = MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -552,7 +554,7 @@ namespace mantis
             auto record = parseDbRowToJson(r);
 
             // Redact passwords
-            if ( tableType() == "auth") record.erase("password");
+            if (tableType() == "auth") record.erase("password");
 
             result["error"] = "";
             result["data"] = record;
@@ -589,7 +591,7 @@ namespace mantis
         // Views should not reach here
         if (tableType() == "view") return false;
 
-        const auto sql =  MantisApp::instance().db().session();
+        const auto sql = MantisApp::instance().db().session();
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
@@ -610,23 +612,63 @@ namespace mantis
         return true;
     }
 
-    std::vector<json> TableUnit::list(const json& opts)
+    json TableUnit::list_records(const json& opts)
     {
         TRACE_CLASS_METHOD()
-        const auto sql =  MantisApp::instance().db().session();
-        const soci::rowset<soci::row> rs = (sql->prepare << "SELECT * FROM " + tableName());
-        nlohmann::json response = nlohmann::json::array();
+        json response = {{"error", ""}, {"pagination", json::object()}, {"data", json::array()}};
+        const auto sql = MantisApp::instance().db().session();
+
+        auto pagination = opts.value("pagination", json::object());
+        int count = -1;
+        if (pagination.at("countPages").get<bool>())
+        {
+            // Let's count total records, unless switched off
+            // TODO this assumes all tables have `id`, which should for now
+            *sql << "SELECT COUNT(id) FROM " + tableName(), soci::into(count);
+        }
+
+        // Extract the page number and page size
+        const auto page = pagination.at("pageIndex").get<int>();
+        const auto perPage = pagination.at("perPage").get<int>();
+
+        if (perPage <= 0)
+        {
+            response["error"] = "Page size must be greater than 0";
+            return response;
+        }
+        if (page <= 0)
+        {
+            response["error"] = "Page index must be greater than 0";
+            return response;
+        }
+        const auto offset = (page - 1) * perPage;
+
+        const auto query = "SELECT * FROM " + tableName() + " ORDER BY created DESC LIMIT :limit OFFSET :offset";
+        const soci::rowset<soci::row> rs = (sql->prepare << query, soci::use(perPage), soci::use(offset));
+        nlohmann::json list = nlohmann::json::array();
 
         for (const auto& row : rs)
         {
             auto row_json = parseDbRowToJson(row);
-            if (tableType() == "auth")
+            if (m_tableType == "auth")
             {
                 // Remove password fields from the response data
                 row_json.erase("password");
             }
-            response.push_back(row_json);
+            list.push_back(row_json);
         }
+
+
+        // Update pagination data
+        pagination.erase("countPages");
+        pagination["pageCount"] = count == -1
+                                      ? count
+                                      : static_cast<int>(std::ceil(static_cast<double>(count) / perPage));
+        pagination["recordCount"] = count;
+
+        // Set response data
+        response["data"] = list;
+        response["pagination"] = pagination;
 
         return response;
     }

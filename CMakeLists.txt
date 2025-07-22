@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.13)
+project(mantisapp VERSION 0.1.14)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -26,7 +26,9 @@ if(MANTIS_SHARED_DEPS)
     message("-- Building Mantis dynamic libs")
 else()
     set(BUILD_SHARED_LIBS FALSE)
-    set(MANTIS_LIB_TYPE STATIC)
+    set(MANTIS_LIB_TYPE STATIC
+            src/core/fileunit.cpp
+            include/mantis/core/fileunit.h)
     # For static builds, embed libstdgcc and libstdc++ to avoid binary loading fails
     # due to mismatch libstd* libs.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")

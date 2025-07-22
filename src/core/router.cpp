@@ -5,6 +5,7 @@
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/core/tables/sys_tables.h"
+#include "../../include/mantis/core/fileunit.h"
 
 #include <format>
 #include <nlohmann/json.hpp>
@@ -305,6 +306,48 @@ json mantis::Router::removeRoute(const json& table_data)
 
     res["success"] = true;
     return res;
+}
+
+bool mantis::Router::generateFileServingApi()
+{
+    MantisApp::instance().http().Get(
+        "/api/files/:table/:filename",
+        [](const Request& req, Response& res, [[maybe_unused]] Context& ctx)
+        {
+            const auto table_name = req.path_params.at("table");
+            const auto file_name = req.path_params.at("filename");
+
+            if (table_name.empty() ||file_name.empty())
+            {
+                json response;
+                response["error"] = "Table name and file name are required!";
+                response["status"] = "400";
+                response["data"] = json::object();
+
+                res.status = 400;
+                res.set_content(response, "application/json");
+                return;
+            }
+
+            const auto fileMgr = MantisApp::instance().files();
+            if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
+                path_opt.has_value())
+            {
+                // Return requested file
+                res.set_file_content(path_opt.value());
+                res.status = 200;
+                return;
+            }
+
+            json response;
+            response["error"] = "File not found!";
+            response["status"] = "404";
+            response["data"] = json::object();
+
+            res.status = 404;
+            res.set_content(response, "application/json");
+        }
+    );
 }
 
 bool mantis::Router::generateTableCrudApis()

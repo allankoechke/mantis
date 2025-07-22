@@ -9,6 +9,8 @@
 #include <cmrc/cmrc.hpp>
 #include <format>
 
+#include "mantis/core/fileunit.h"
+
 /**
  * @brief Enforce `MantisApp` initialization before invoking member functions
  */
@@ -333,6 +335,7 @@ namespace mantis
         m_settings = std::make_unique<SettingsUnit>();  // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
         m_validators = std::make_unique<Validator>();
+        m_files = std::make_unique<FileUnit>();         // depends on log()
     }
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -414,11 +417,19 @@ namespace mantis
 
     SettingsUnit& MantisApp::settings() const
     {
+        MANTIS_REQUIRE_INIT();
         return *m_settings;
+    }
+
+    FileUnit& MantisApp::files() const
+    {
+        MANTIS_REQUIRE_INIT();
+        return *m_files;
     }
 
     void MantisApp::openBrowserOnStart() const
     {
+        MANTIS_REQUIRE_INIT();
         std::string url = std::format("http://localhost:{}/admin", m_port);
 
 #ifdef _WIN32
