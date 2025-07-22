@@ -42,7 +42,7 @@ namespace mantis
 
     std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
     {
-        return MantisApp::instance().dataDir() + "/files/" + table + "/" + filename;
+        return (fs::path(MantisApp::instance().dataDir()) / table / filename).string();
     }
 
     std::optional<std::string> FileUnit::getFilePath(const std::string& table, const std::string& filename) const
