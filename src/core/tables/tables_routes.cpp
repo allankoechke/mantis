@@ -296,21 +296,92 @@ namespace mantis
         Log::trace("Creating new record, endpoint {}", req.path);
 
         json body, response;
-        try
-        {
-            // Try parsing the request body, may checkMinValueFunc ...
-            body = json::parse(req.body);
-        }
-        catch (const std::exception& e)
-        {
-            // Return 400 BAD REQUEST for any parse errors
-            response["status"] = 400;
-            response["error"] = e.what();
-            response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 400;
-            return;
+                if (req.is_multipart_form_data())
+        {
+            Log::info("Is Multipart Form Data!");
+            // Handle file upload using content receiver pattern
+            httplib::MultipartFormDataItems files;
+
+            reader(
+                [&](const httplib::MultipartFormData& file) -> bool
+                {
+                    files.push_back(file);
+                    return true;
+                },
+                [&](const char* data, const size_t data_length) -> bool
+                {
+                    files.back().content.append(data, data_length);
+                    return true;
+                });
+
+            // Process uploaded files and form fields
+            for (const auto& file : files)
+            {
+                if (!file.filename.empty())
+                {
+                    // This is a file upload
+                    // std::filesystem::create_directories("uploads");
+                    // std::string filepath = "uploads/" + file.filename;
+                    //
+                    // std::ofstream ofs(filepath, std::ios::binary);
+                    // if (ofs.is_open()) {
+                    //     ofs.write(file.content.data(), file.content.size());
+                    //     ofs.close();
+                    //
+                    //     // Add file info to form data
+                    //     form_data[file.name] = {
+                    //         {"filename", file.filename},
+                    //         {"content_type", file.content_type},
+                    //         {"filepath", filepath},
+                    //         {"size", file.content.size()}
+                    //     };
+                    // } else {
+                    //     response["status"] = 500;
+                    //     response["error"] = "Failed to save file: " + file.filename;
+                    //     response["data"] = json::object();
+                    //     res.set_content(response.dump(), "application/json");
+                    //     res.status = 500;
+                    //     return;
+                    // }
+                }
+                else
+                {
+                    // This is a regular form field, treat as JSON data
+                    try
+                    {
+                        body[file.name] = json::parse(file.content);
+                    }
+                    catch (...)
+                    {
+                        // If not valid JSON, store as string
+                        body[file.name] = file.content;
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Handle JSON/regular body
+            std::string body_str;
+            reader([&](const char* data, const size_t data_length) -> bool
+            {
+                body_str.append(data, data_length);
+                return true;
+            });
+
+            // Parse request body to JSON Object, return an error if it fails
+            try { body = json::parse(body_str); }
+            catch (const std::exception& e)
+            {
+                response["status"] = 400;
+                response["error"] = e.what();
+                response["data"] = json::object();
+
+                res.set_content(response.dump(), "application/json");
+                res.status = 400;
+                return;
+            }
         }
 
         // Validate JSON body, return any validation errors encountered

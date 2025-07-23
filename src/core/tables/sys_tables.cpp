@@ -259,16 +259,24 @@ namespace mantis
     {
         json body, response;
 
+        // Handle as JSON/regular body
+        std::string body_str;
+        reader([&](const char* data, const size_t data_length) -> bool
+        {
+            body_str.append(data, data_length);
+            return true;
+        });
+
         // Parse request body to JSON Object, return an error if it fails
-        try { body = json::parse(req.body); }
+        try { body = json::parse(body_str); }
         catch (const std::exception& e)
         {
-            response["status"] = 400;
-            response["error"] = e.what();
+            response["status"] = 500;
+            response["error"] = std::format("Error parsing Table Schema: {}", e.what());
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
-            res.status = 400;
+            res.status = 500;
             return;
         }
 
@@ -409,20 +417,24 @@ namespace mantis
             return;
         }
 
-        try
+        // Handle as JSON/regular body
+        std::string body_str;
+        reader([&](const char* data, const size_t data_length) -> bool
         {
-            // Try parsing the request body, may checkMinValueFunc ...
-            body = json::parse(req.body);
-        }
+            body_str.append(data, data_length);
+            return true;
+        });
+
+        // Parse request body to JSON Object, return an error if it fails
+        try { body = json::parse(body_str); }
         catch (const std::exception& e)
         {
-            // Return 400 BAD REQUEST for any parse errors
-            response["status"] = 400;
-            response["error"] = e.what();
+            response["status"] = 500;
+            response["error"] = std::format("Error parsing table schema: {}", e.what());
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
-            res.status = 400;
+            res.status = 500;
             return;
         }
 
@@ -533,7 +545,9 @@ namespace mantis
 
         // Get email & password values
         const auto email = (body.contains("email") && body["email"].is_null()) ? body.value("email", "") : "";
-        const auto password = (body.contains("password") && body["password"].is_null()) ? body.value("password", "") : "";
+        const auto password = (body.contains("password") && body["password"].is_null())
+                                  ? body.value("password", "")
+                                  : "";
 
         // We expect, the user email and password to be passed in
         if (email.length() < 5)

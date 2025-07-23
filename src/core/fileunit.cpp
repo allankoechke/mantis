@@ -15,17 +15,20 @@ namespace mantis
 {
     namespace fs = std::filesystem;
 
-    void FileUnit::createDir(const std::string& table)
+    void FileUnit::createDir(const std::string& table) const
     {
+        Log::trace("Creating directory: {}", dirPath(table));
+
         if (table.empty()) return;
 
-        if (const auto path = MantisApp::instance().dataDir() + "/files/" + table;
-            !fs::exists(path))
+        if (const auto path = dirPath(table); !fs::exists(path))
             fs::create_directories(path);
     }
 
-    void FileUnit::renameDir(const std::string& old_name, const std::string& new_name)
+    void FileUnit::renameDir(const std::string& old_name, const std::string& new_name) const
     {
+        Log::trace("Renaming folder name from '{}' to '{}'", old_name, new_name);
+
         // Rename folder if it exists, else, create it
         if (const auto old_path = dirPath(old_name); fs::exists(old_path))
             fs::rename(old_path, dirPath(new_name));
@@ -34,8 +37,9 @@ namespace mantis
             createDir(new_name);
     }
 
-    void FileUnit::deleteDir(const std::string& table)
+    void FileUnit::deleteDir(const std::string& table) const
     {
+        Log::trace("Removing {}", dirPath(table));
         fs::remove_all(dirPath(table));
     }
 
@@ -74,6 +78,7 @@ namespace mantis
         try
         {
             const auto path = filePath(table, filename);
+            Log::trace("Removing file at `{}`", path);
 
             // Remove the file, only if it exists
             if (fs::exists(path))

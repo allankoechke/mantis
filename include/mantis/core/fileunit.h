@@ -17,9 +17,9 @@ namespace mantis
     public:
         FileUnit() = default;
 
-        void createDir(const std::string& table);
-        void renameDir(const std::string& old_name, const std::string& new_name);
-        void deleteDir(const std::string& table);
+        void createDir(const std::string& table) const;
+        void renameDir(const std::string& old_name, const std::string& new_name) const;
+        void deleteDir(const std::string& table) const;
 
         bool saveFile(const std::string& table, const std::string& filename,
                       const std::vector<std::uint8_t>& content) const;
