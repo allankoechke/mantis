@@ -7,6 +7,7 @@
 
 #include <chrono>
 #include <thread>
+#include <format>
 
 #define __file__ "core/http.cpp"
 
@@ -230,12 +231,12 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
     }
 
     // Launch logging/browser in separate thread after listen starts
-    std::thread notifier([&]()
+    std::thread notifier([=]()
     {
         // Wait a little for the server to be fully ready
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
-        std::string endpoint = host + ":" + std::to_string(port);
-        Log::info("Starting Servers: \n\t API Endpoints: http://{}/api/v1/ \n\t Admin Dashboard: http://{}/admin",
+        auto endpoint = std::format("{}:{}", host, port);
+        Log::info("Starting Servers: \n\tͰ API Endpoints: http://{}/api/v1/ \n\t˪ Admin Dashboard: http://{}/admin",
                   endpoint, endpoint);
 
         MantisApp::instance().openBrowserOnStart();

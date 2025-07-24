@@ -69,6 +69,8 @@ namespace mantis
             const auto colName = row.get_properties(i).get_name();
             const auto colType = getColTypeFromName(colName, m_fields);
 
+            Log::trace("Parsing: #{} {} of type: {}", i, colName, colType);
+
             if (colType == "xml" || colType == "string")
             {
                 j[colName] = row.get<std::string>(i, "");
@@ -142,6 +144,18 @@ namespace mantis
             else if (colType == "bool")
             {
                 j[colName] = row.get<bool>(i);
+            }
+            else if (colType == "file")
+            {
+                Log::trace("File B4");
+                try
+                {
+                    j[colName] = row.get<std::string>(i);
+                } catch (std::exception& e)
+                {
+                    Log::critical("Could not parse file: {}", e.what());
+                }
+                Log::trace("File AR: {}", row.get<std::string>(i));
             }
             else // Return a string for unknown types // TODO avoid errors
             {

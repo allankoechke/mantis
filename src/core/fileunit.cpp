@@ -63,9 +63,14 @@ namespace mantis
         return true;
     }
 
-    std::string FileUnit::dirPath(const std::string& table) const
+    std::string FileUnit::dirPath(const std::string& table, bool create_if_missing) const
     {
-        return (fs::path(MantisApp::instance().dataDir()) / "files" / table).string();
+        auto path = (fs::path(MantisApp::instance().dataDir()) / "files" / table).string();
+        if (!fs::exists(path) && create_if_missing)
+        {
+            fs::create_directories(path);
+        }
+        return path;
     }
 
     std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
@@ -77,6 +82,12 @@ namespace mantis
     {
         try
         {
+            if (table.empty() || filename.empty())
+            {
+                Log::warn("Table name and filename are required!");
+                return false;
+            }
+
             const auto path = filePath(table, filename);
             Log::trace("Removing file at `{}`", path);
 

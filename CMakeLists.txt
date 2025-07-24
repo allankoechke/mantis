@@ -130,6 +130,13 @@ include(cmake/add-bcrypt.cmake)
 # Add CMRC for bundling assets
 include(cmake/add-cmrc.cmake)
 
+message(CMAKE_BUILD_TYPE)
+if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
+    message("Enabling ASAN")
+    set(ENABLE_ASAN ON)
+endif()
+include(cmake/asan.cmake)
+
 # Add to CMakeLists.txt
 option(MANTIS_BUILD_TESTS "Build tests" OFF)
 
@@ -163,6 +170,9 @@ target_include_directories(mantis
 target_link_libraries(mantisapp
     PRIVATE mantis
 )
+
+enable_asan_for_target(mantis)
+enable_asan_for_target(mantisapp)
 
 # In your main CMakeLists.txt, after add_subdirectory(3rdParty/l8w8jwt)
 if(WIN32)

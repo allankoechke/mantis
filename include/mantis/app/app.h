@@ -225,7 +225,7 @@ namespace mantis
 
     private:
         // Points to externally constructed instance (no ownership)
-        static std::unique_ptr<MantisApp> s_instance;
+        static MantisApp* s_instance;
         static std::mutex s_mutex;
 
         // Disable copying and moving
@@ -265,6 +265,7 @@ namespace mantis
         std::string m_host = "127.0.0.1";
         int m_poolSize = 2;
         bool m_toStartServer = false;
+        bool m_launchAdminPanel = false;
 
         std::unique_ptr<DatabaseUnit> m_database;
         std::unique_ptr<LoggingUnit> m_logger;

@@ -24,7 +24,7 @@ namespace mantis
         bool saveFile(const std::string& table, const std::string& filename,
                       const std::vector<std::uint8_t>& content) const;
 
-        std::string dirPath(const std::string& table) const;
+        std::string dirPath(const std::string& table, bool create_if_missing = false) const;
         std::string filePath(const std::string& table, const std::string& filename) const;
         std::optional<std::string> getFilePath(const std::string& table, const std::string& filename) const;
         bool removeFile(const std::string& table, const std::string& filename) const;
