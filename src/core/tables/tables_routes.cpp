@@ -326,7 +326,7 @@ namespace mantis
                 if (!file.filename.empty())
                 {
                     // Ensure field is of file type
-                    auto it = std::ranges::find_if(m_fields, [&file](const auto& schema_field)
+                    auto it = std::ranges::find_if(m_fields, [&file](const json& schema_field)
                     {
                         // Check whether the schema name matches the file field name
                         return schema_field.at("name").get<std::string>() == file.name;
@@ -335,12 +335,12 @@ namespace mantis
                     // Ensure field being
                     if (it == m_fields.end())
                     {
-                        response["status"] = 404;
-                        response["error"] = std::format("Field {} not in table schema!", file.name);
+                        response["status"] = 400;
+                        response["error"] = std::format("Unknown field `{}` for file type upload!", file.name);
                         response["data"] = json::object();
 
                         res.set_content(response.dump(), "application/json");
-                        res.status = 404;
+                        res.status = 400;
                         return;
                     }
 
@@ -348,7 +348,7 @@ namespace mantis
                     if (!(it->at("type").get<std::string>() == "file" || it->at("type").get<std::string>() == "files"))
                     {
                         response["status"] = 400;
-                        response["error"] = std::format("Field {} is not a `file` or `files` type!", file.name);
+                        response["error"] = std::format("Field `{}` is not of type `file` or `files`!", file.name);
                         response["data"] = json::object();
 
                         res.set_content(response.dump(), "application/json");

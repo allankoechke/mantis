@@ -89,15 +89,7 @@ namespace mantis
                 }
                 else
                 {
-                    try
-                    {
-                        j[colName] = row.get<std::string>(i, "");
-                    }
-                    catch (soci::soci_error& e)
-                    {
-                        j[colName] = "";
-                        Log::critical("TablesUnit::Parse Column Name = {}, Column Type: {} - DB Row Error: {}", colName, colType, e.what());
-                    }
+                    j[colName] = row.get<std::string>(i, "");
                 }
             }
             else if (colType == "int8")
@@ -135,7 +127,7 @@ namespace mantis
             else if (colType == "blob")
             {
                 // TODO ? How do we handle BLOB?
-                j[colName] = row.get<std::string>(i);
+                // j[colName] = row.get<std::string>(i);
             }
             else if (colType == "json" || colType == "list")
             {
@@ -147,19 +139,17 @@ namespace mantis
             }
             else if (colType == "file")
             {
-                Log::trace("File B4");
-                try
-                {
-                    j[colName] = row.get<std::string>(i);
-                } catch (std::exception& e)
-                {
-                    Log::critical("Could not parse file: {}", e.what());
-                }
-                Log::trace("File AR: {}", row.get<std::string>(i));
-            }
-            else // Return a string for unknown types // TODO avoid errors
-            {
                 j[colName] = row.get<std::string>(i);
+            }
+            else if (colType == "files")
+            {
+                // TODO handle lists
+                // j[colName] = row.get<std::string>(i);
+            }
+            else
+            {
+                // Throw an error for unknown types
+                throw std::runtime_error(std::format("Unknown column type `{}` for column `{}`", colType, colName));
             }
         }
 
