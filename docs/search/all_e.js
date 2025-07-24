@@ -10,8 +10,13 @@ var searchData=
   ['fieldtype_7',['FieldType',['../namespacemantis.html#a0f64f5fc9ae235bebf1922956b3a9e26',1,'mantis']]],
   ['file_20server_20strong_8',['6. &lt;strong&gt;Static File Server&lt;/strong&gt;',['../architecture.html#autotoc_md86',1,'']]],
   ['file_20structure_20overview_9',['📁 File Structure Overview',['../architecture.html#autotoc_md95',1,'']]],
-  ['filtering_20query_20parameters_20pending_10',['🎛️ Filtering &amp; Query Parameters [PENDING]',['../rest_api.html#autotoc_md32',1,'']]],
-  ['find_11',['find',['../classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f',1,'mantis::Validator::find()'],['../classmantis_1_1RouteRegistry.html#ab296c9afa8887f22c2628bfd8a2116c3',1,'mantis::RouteRegistry::find()']]],
-  ['findfieldbykey_12',['findFieldByKey',['../classmantis_1_1TableUnit.html#aeb0e1101b9c2be401432e8b641076eea',1,'mantis::TableUnit']]],
-  ['fromjson_13',['fromJson',['../classmantis_1_1TableUnit.html#a6b42ede1de6b44bd8da8d4d4e6be7756',1,'mantis::TableUnit']]]
+  ['filepath_10',['filePath',['../classmantis_1_1FileUnit.html#ae69edd7d6f960c50876d8edac47bad7d',1,'mantis::FileUnit']]],
+  ['files_11',['files',['../classmantis_1_1MantisApp.html#a923417bf8d5bcd592d044b24e765ad18',1,'mantis::MantisApp']]],
+  ['fileunit_12',['fileunit',['../classmantis_1_1FileUnit.html#a7934651499e7321550e3aa286c76e8bf',1,'mantis::FileUnit::FileUnit()'],['../classmantis_1_1FileUnit.html',1,'mantis::FileUnit']]],
+  ['fileunit_2ecpp_13',['fileunit.cpp',['../fileunit_8cpp.html',1,'']]],
+  ['fileunit_2eh_14',['fileunit.h',['../fileunit_8h.html',1,'']]],
+  ['filtering_20query_20parameters_20pending_15',['🎛️ Filtering &amp; Query Parameters [PENDING]',['../rest_api.html#autotoc_md32',1,'']]],
+  ['find_16',['find',['../classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f',1,'mantis::Validator::find()'],['../classmantis_1_1RouteRegistry.html#ab296c9afa8887f22c2628bfd8a2116c3',1,'mantis::RouteRegistry::find()']]],
+  ['findfieldbykey_17',['findFieldByKey',['../classmantis_1_1TableUnit.html#aeb0e1101b9c2be401432e8b641076eea',1,'mantis::TableUnit']]],
+  ['fromjson_18',['fromJson',['../classmantis_1_1TableUnit.html#a6b42ede1de6b44bd8da8d4d4e6be7756',1,'mantis::TableUnit']]]
 ];

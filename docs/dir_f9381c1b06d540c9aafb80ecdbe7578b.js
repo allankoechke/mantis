@@ -5,6 +5,7 @@ var dir_f9381c1b06d540c9aafb80ecdbe7578b =
     [ "tables", "dir_d31b9e352321ccd1325b9e3d78bde331.html", "dir_d31b9e352321ccd1325b9e3d78bde331" ],
     [ "database.h", "database_8h.html", "database_8h" ],
     [ "expr_evaluator.h", "expr__evaluator_8h.html", "expr__evaluator_8h" ],
+    [ "fileunit.h", "fileunit_8h.html", "fileunit_8h" ],
     [ "http.h", "http_8h.html", "http_8h" ],
     [ "jwt.h", "jwt_8h.html", "jwt_8h" ],
     [ "logging.h", "logging_8h.html", "logging_8h" ],

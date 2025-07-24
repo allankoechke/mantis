@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.13</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.15</span>
    </div>
   </td>
  </tr>
@@ -125,6 +125,8 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmantis_1_1Field.html">Field</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html">FileUnit</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1HttpUnit.html">HttpUnit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1JWT.html">JWT</a></td></tr>
@@ -182,18 +184,30 @@ Typedefs</h2></td></tr>
 </blockquote>
  <br /></td></tr>
 <tr class="separator:ab479ce37673306cc47470b59938943fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa50fd85460aaa3bb537133b590bc818" id="r_aaa50fd85460aaa3bb537133b590bc818"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aaa50fd85460aaa3bb537133b590bc818">ContentReader</a> = httplib::ContentReader</td></tr>
+<tr class="memdesc:aaa50fd85460aaa3bb537133b590bc818"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Shorthand for httplib::ContentReader </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:aaa50fd85460aaa3bb537133b590bc818"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6d3d5118a8179c910b59702d812f66f" id="r_ac6d3d5118a8179c910b59702d812f66f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">Middleware</a> = std::function&lt; bool(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a> &amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a> &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
 <tr class="memdesc:ac6d3d5118a8179c910b59702d812f66f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Middleware shorthand for the function </p>
 </blockquote>
  <br /></td></tr>
 <tr class="separator:ac6d3d5118a8179c910b59702d812f66f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a247daee8d62b9b254439fc869380f726" id="r_a247daee8d62b9b254439fc869380f726"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a247daee8d62b9b254439fc869380f726">RouteHandlerFunc</a> = std::function&lt; void(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a> &amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a> &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
-<tr class="memdesc:a247daee8d62b9b254439fc869380f726"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<tr class="memitem:a50b9322f657f315b48e4c64a46b3a1f1" id="r_a50b9322f657f315b48e4c64a46b3a1f1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">RouteHandlerFunc</a> = std::function&lt; void(const httplib::Request &amp;, httplib::Response &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:a50b9322f657f315b48e4c64a46b3a1f1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Route Handler function shorthand </p>
 </blockquote>
  <br /></td></tr>
-<tr class="separator:a247daee8d62b9b254439fc869380f726"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a50b9322f657f315b48e4c64a46b3a1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11862d7f473e670e73f32411830d2ebc" id="r_a11862d7f473e670e73f32411830d2ebc"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">RouteHandlerFuncWithContentReader</a> = std::function&lt; void(const httplib::Request &amp;, httplib::Response &amp;, const httplib::ContentReader &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:a11862d7f473e670e73f32411830d2ebc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Route Handler function with content reader shorthand </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a11862d7f473e670e73f32411830d2ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bc3b7f3cc6ad769ae30df2670712b95" id="r_a9bc3b7f3cc6ad769ae30df2670712b95"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9bc3b7f3cc6ad769ae30df2670712b95">Method</a> = std::string</td></tr>
 <tr class="memdesc:a9bc3b7f3cc6ad769ae30df2670712b95"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Syntactic sugar for request method which is a std::string </p>
@@ -249,8 +263,8 @@ Enumerations</h2></td></tr>
 Functions</h2></td></tr>
 <tr class="memitem:aebd98060d52afb0370fc1ca019811e42" id="r_aebd98060d52afb0370fc1ca019811e42"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aebd98060d52afb0370fc1ca019811e42">NLOHMANN_JSON_SERIALIZE_ENUM</a> (<a class="el" href="namespacemantis.html#ada421b22d5ef647319dbe1f151ca4daf">TableType</a>, { {TableType::Base, &quot;base&quot;}, {TableType::Auth, &quot;auth&quot;}, {TableType::View, &quot;view&quot;} }) typedef enum class FieldTypeDecl</td></tr>
 <tr class="separator:aebd98060d52afb0370fc1ca019811e42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2ea5ed89307403a72e775da7cdfde1c0" id="r_a2ea5ed89307403a72e775da7cdfde1c0"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a2ea5ed89307403a72e775da7cdfde1c0">NLOHMANN_JSON_SERIALIZE_ENUM</a> (<a class="el" href="namespacemantis.html#a0f64f5fc9ae235bebf1922956b3a9e26">FieldType</a>, { { FieldType::XML, &quot;xml&quot; }, { FieldType::STRING, &quot;string&quot; }, { FieldType::DOUBLE, &quot;double&quot; }, { FieldType::DATE, &quot;date&quot; }, { FieldType::INT8, &quot;int8&quot; }, { FieldType::UINT8, &quot;uint8&quot; }, { FieldType::INT16, &quot;int16&quot; }, { FieldType::UINT16, &quot;uint16&quot; }, { FieldType::INT32, &quot;int32&quot; }, { FieldType::UINT32, &quot;uint32&quot; }, { FieldType::INT64, &quot;int64&quot; }, { FieldType::UINT64, &quot;uint64&quot; }, { FieldType::BLOB, &quot;blob&quot; }, { FieldType::JSON, &quot;json&quot; }, { FieldType::BOOL, &quot;bool&quot; }, }) const std</td></tr>
-<tr class="separator:a2ea5ed89307403a72e775da7cdfde1c0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:acb0e6405530d7abc683f19f363afb4f1" id="r_acb0e6405530d7abc683f19f363afb4f1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#acb0e6405530d7abc683f19f363afb4f1">NLOHMANN_JSON_SERIALIZE_ENUM</a> (<a class="el" href="namespacemantis.html#a0f64f5fc9ae235bebf1922956b3a9e26">FieldType</a>, { { FieldType::XML, &quot;xml&quot; }, { FieldType::STRING, &quot;string&quot; }, { FieldType::DOUBLE, &quot;double&quot; }, { FieldType::DATE, &quot;date&quot; }, { FieldType::INT8, &quot;int8&quot; }, { FieldType::UINT8, &quot;uint8&quot; }, { FieldType::INT16, &quot;int16&quot; }, { FieldType::UINT16, &quot;uint16&quot; }, { FieldType::INT32, &quot;int32&quot; }, { FieldType::UINT32, &quot;uint32&quot; }, { FieldType::INT64, &quot;int64&quot; }, { FieldType::UINT64, &quot;uint64&quot; }, { FieldType::BLOB, &quot;blob&quot; }, { FieldType::JSON, &quot;json&quot; }, { FieldType::BOOL, &quot;bool&quot; }, { FieldType::FILE, &quot;file&quot; }, { FieldType::FILES, &quot;files&quot; }, }) const std</td></tr>
+<tr class="separator:acb0e6405530d7abc683f19f363afb4f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac05fa29a8d019cec94f168aabb722d7c" id="r_ac05fa29a8d019cec94f168aabb722d7c"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespacemantis.html#a0f64f5fc9ae235bebf1922956b3a9e26">FieldType</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ac05fa29a8d019cec94f168aabb722d7c">getFieldType</a> (const std::string &amp;fieldName)</td></tr>
 <tr class="separator:ac05fa29a8d019cec94f168aabb722d7c"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a6f31a34926bcde11edb345d6831023ca" id="r_a6f31a34926bcde11edb345d6831023ca"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a6f31a34926bcde11edb345d6831023ca">fieldExists</a> (const <a class="el" href="namespacemantis.html#ada421b22d5ef647319dbe1f151ca4daf">TableType</a> &amp;type, const std::string &amp;fieldName)</td></tr>
@@ -280,6 +294,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a8ecebf53d24d9678f7005d0b4ee8da6d" id="r_a8ecebf53d24d9678f7005d0b4ee8da6d"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a8ecebf53d24d9678f7005d0b4ee8da6d">tryParseJsonStr</a> (const std::string &amp;json_str)</td></tr>
 <tr class="memdesc:a8ecebf53d24d9678f7005d0b4ee8da6d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Attempt to parse a JSON string.  <br /></td></tr>
 <tr class="separator:a8ecebf53d24d9678f7005d0b4ee8da6d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac8290417ff7c03d59488e7c321ff05c7" id="r_ac8290417ff7c03d59488e7c321ff05c7"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ac8290417ff7c03d59488e7c321ff05c7">strToBool</a> (const std::string &amp;value)</td></tr>
+<tr class="memdesc:ac8290417ff7c03d59488e7c321ff05c7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert given string value to boolean type.  <br /></td></tr>
+<tr class="separator:ac8290417ff7c03d59488e7c321ff05c7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2bc2a84280e5b58546a4ddfdeea4a230" id="r_a2bc2a84280e5b58546a4ddfdeea4a230"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a2bc2a84280e5b58546a4ddfdeea4a230">generateTimeBasedId</a> ()</td></tr>
 <tr class="memdesc:a2bc2a84280e5b58546a4ddfdeea4a230"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generate a time base UUID.  <br /></td></tr>
 <tr class="separator:a2bc2a84280e5b58546a4ddfdeea4a230"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -319,6 +336,25 @@ Variables</h2></td></tr>
 <div class="textblock"><p><a class="el" href="router_8h.html">router.h</a> </p>
 <p><a class="el" href="classmantis_1_1Router.html" title="Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.">Router</a> file for higher level route registration and removal * </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
+<a id="aaa50fd85460aaa3bb537133b590bc818" name="aaa50fd85460aaa3bb537133b590bc818"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa50fd85460aaa3bb537133b590bc818">&#9670;&#160;</a></span>ContentReader</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacemantis.html#aaa50fd85460aaa3bb537133b590bc818">mantis::ContentReader</a> = typedef httplib::ContentReader</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><blockquote class="doxtable">
+<p>&zwj;Shorthand for httplib::ContentReader </p>
+</blockquote>
+</p>
+
+</div>
+</div>
 <a id="a0255780f56da02614156f7ef7cd3d3a3" name="a0255780f56da02614156f7ef7cd3d3a3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0255780f56da02614156f7ef7cd3d3a3">&#9670;&#160;</a></span>json</h2>
 
@@ -459,20 +495,39 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a247daee8d62b9b254439fc869380f726" name="a247daee8d62b9b254439fc869380f726"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a247daee8d62b9b254439fc869380f726">&#9670;&#160;</a></span>RouteHandlerFunc</h2>
+<a id="a50b9322f657f315b48e4c64a46b3a1f1" name="a50b9322f657f315b48e4c64a46b3a1f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a50b9322f657f315b48e4c64a46b3a1f1">&#9670;&#160;</a></span>RouteHandlerFunc</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#a247daee8d62b9b254439fc869380f726">mantis::RouteHandlerFunc</a> = typedef std::function&lt;void(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a>&amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a>&amp;, <a class="el" href="classmantis_1_1Context.html">Context</a>&amp;)&gt;</td>
+          <td class="memname">using <a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">mantis::RouteHandlerFunc</a> = typedef std::function&lt;void(const httplib::Request&amp;, httplib::Response&amp;, <a class="el" href="classmantis_1_1Context.html">Context</a>&amp;)&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
 
 <p><blockquote class="doxtable">
 <p>&zwj;Route Handler function shorthand </p>
+</blockquote>
+</p>
+
+</div>
+</div>
+<a id="a11862d7f473e670e73f32411830d2ebc" name="a11862d7f473e670e73f32411830d2ebc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a11862d7f473e670e73f32411830d2ebc">&#9670;&#160;</a></span>RouteHandlerFuncWithContentReader</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">mantis::RouteHandlerFuncWithContentReader</a> = typedef std::function&lt;void(const httplib::Request&amp;, httplib::Response&amp;, const httplib::ContentReader&amp;, <a class="el" href="classmantis_1_1Context.html">Context</a>&amp;)&gt;</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><blockquote class="doxtable">
+<p>&zwj;Route Handler function with content reader shorthand </p>
 </blockquote>
 </p>
 
@@ -1003,8 +1058,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a2ea5ed89307403a72e775da7cdfde1c0" name="a2ea5ed89307403a72e775da7cdfde1c0"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2ea5ed89307403a72e775da7cdfde1c0">&#9670;&#160;</a></span>NLOHMANN_JSON_SERIALIZE_ENUM() <span class="overload">[1/2]</span></h2>
+<a id="acb0e6405530d7abc683f19f363afb4f1" name="acb0e6405530d7abc683f19f363afb4f1"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#acb0e6405530d7abc683f19f363afb4f1">&#9670;&#160;</a></span>NLOHMANN_JSON_SERIALIZE_ENUM() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1018,7 +1073,7 @@ Variables</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype">{ { FieldType::XML, &quot;xml&quot; }, { FieldType::STRING, &quot;string&quot; }, { FieldType::DOUBLE, &quot;double&quot; }, { FieldType::DATE, &quot;date&quot; }, { FieldType::INT8, &quot;int8&quot; }, { FieldType::UINT8, &quot;uint8&quot; }, { FieldType::INT16, &quot;int16&quot; }, { FieldType::UINT16, &quot;uint16&quot; }, { FieldType::INT32, &quot;int32&quot; }, { FieldType::UINT32, &quot;uint32&quot; }, { FieldType::INT64, &quot;int64&quot; }, { FieldType::UINT64, &quot;uint64&quot; }, { FieldType::BLOB, &quot;blob&quot; }, { FieldType::JSON, &quot;json&quot; }, { FieldType::BOOL, &quot;bool&quot; }, }&#160;</td>
+          <td class="paramtype">{ { FieldType::XML, &quot;xml&quot; }, { FieldType::STRING, &quot;string&quot; }, { FieldType::DOUBLE, &quot;double&quot; }, { FieldType::DATE, &quot;date&quot; }, { FieldType::INT8, &quot;int8&quot; }, { FieldType::UINT8, &quot;uint8&quot; }, { FieldType::INT16, &quot;int16&quot; }, { FieldType::UINT16, &quot;uint16&quot; }, { FieldType::INT32, &quot;int32&quot; }, { FieldType::UINT32, &quot;uint32&quot; }, { FieldType::INT64, &quot;int64&quot; }, { FieldType::UINT64, &quot;uint64&quot; }, { FieldType::BLOB, &quot;blob&quot; }, { FieldType::JSON, &quot;json&quot; }, { FieldType::BOOL, &quot;bool&quot; }, { FieldType::FILE, &quot;file&quot; }, { FieldType::FILES, &quot;files&quot; }, }&#160;</td>
           <td class="paramname">&#160;</td>
         </tr>
         <tr>
@@ -1124,8 +1179,36 @@ Variables</h2></td></tr>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> parts = <a class="code hl_function" href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">splitString</a>(<span class="stringliteral">&quot;Hello, John!&quot;</span>, <span class="stringliteral">&quot;,&quot;</span>);</div>
 <div class="line">std::cout &lt;&lt; parts.size() &lt;&lt; std::endl;</div>
 <div class="line"><span class="comment">// &gt; Should be a vector of two strings `Hello` and ` World`</span></div>
-<div class="ttc" id="anamespacemantis_html_afb33333e17a1823a3d22b074c7bd6a6e"><div class="ttname"><a href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">mantis::splitString</a></div><div class="ttdeci">std::vector&lt; std::string &gt; splitString(const std::string &amp;input, const std::string &amp;delimiter)</div><div class="ttdoc">Split given string based on given delimiter.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:100</div></div>
+<div class="ttc" id="anamespacemantis_html_afb33333e17a1823a3d22b074c7bd6a6e"><div class="ttname"><a href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">mantis::splitString</a></div><div class="ttdeci">std::vector&lt; std::string &gt; splitString(const std::string &amp;input, const std::string &amp;delimiter)</div><div class="ttdoc">Split given string based on given delimiter.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:107</div></div>
 </div><!-- fragment --> 
+</div>
+</div>
+<a id="ac8290417ff7c03d59488e7c321ff05c7" name="ac8290417ff7c03d59488e7c321ff05c7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac8290417ff7c03d59488e7c321ff05c7">&#9670;&#160;</a></span>strToBool()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">bool mantis::strToBool </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert given string value to boolean type. </p>
+<p>By default, we check for true equivalents, anything else will be considered as a false value.</p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">value</td><td>String value to convert to bool </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>true or false value </dd></dl>
+
 </div>
 </div>
 <a id="acbd04202feeade10ac601e3bc4d00feb" name="acbd04202feeade10ac601e3bc4d00feb"></a>

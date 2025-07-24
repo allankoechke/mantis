@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['add_0',['add',['../classmantis_1_1RouteRegistry.html#a96e231cf5873f8623c0c151aa7d15e06',1,'mantis::RouteRegistry']]],
+  ['add_0',['add',['../classmantis_1_1RouteRegistry.html#a96e231cf5873f8623c0c151aa7d15e06',1,'mantis::RouteRegistry::add(const std::string &amp;method, const std::string &amp;path, RouteHandlerFunc handler, const std::vector&lt; Middleware &gt; &amp;middlewares)'],['../classmantis_1_1RouteRegistry.html#a0e3b559b8167bcdda1a13a9ad0a09967',1,'mantis::RouteRegistry::add(const std::string &amp;method, const std::string &amp;path, RouteHandlerFuncWithContentReader handler, const std::vector&lt; Middleware &gt; &amp;middlewares)']]],
   ['addroute_1',['addRoute',['../classmantis_1_1Router.html#ad5d799c151f8b21c14c60394981a486b',1,'mantis::Router']]],
   ['addrule_2',['addRule',['../classmantis_1_1TableUnit.html#a12bfe98febac9396247cc1ec7b48a117',1,'mantis::TableUnit']]],
   ['admintable_3',['AdminTable',['../structmantis_1_1AdminTable.html#a34bb24436257500a345dbb7c85ab6a24',1,'mantis::AdminTable']]],

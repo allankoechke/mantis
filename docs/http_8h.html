@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.13</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.15</span>
    </div>
   </td>
  </tr>
@@ -229,18 +229,30 @@ Typedefs</h2></td></tr>
 </blockquote>
  <br /></td></tr>
 <tr class="separator:ab479ce37673306cc47470b59938943fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa50fd85460aaa3bb537133b590bc818" id="r_aaa50fd85460aaa3bb537133b590bc818"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aaa50fd85460aaa3bb537133b590bc818">mantis::ContentReader</a> = httplib::ContentReader</td></tr>
+<tr class="memdesc:aaa50fd85460aaa3bb537133b590bc818"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Shorthand for httplib::ContentReader </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:aaa50fd85460aaa3bb537133b590bc818"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac6d3d5118a8179c910b59702d812f66f" id="r_ac6d3d5118a8179c910b59702d812f66f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">mantis::Middleware</a> = std::function&lt; bool(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a> &amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a> &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
 <tr class="memdesc:ac6d3d5118a8179c910b59702d812f66f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Middleware shorthand for the function </p>
 </blockquote>
  <br /></td></tr>
 <tr class="separator:ac6d3d5118a8179c910b59702d812f66f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a247daee8d62b9b254439fc869380f726" id="r_a247daee8d62b9b254439fc869380f726"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a247daee8d62b9b254439fc869380f726">mantis::RouteHandlerFunc</a> = std::function&lt; void(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a> &amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a> &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
-<tr class="memdesc:a247daee8d62b9b254439fc869380f726"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<tr class="memitem:a50b9322f657f315b48e4c64a46b3a1f1" id="r_a50b9322f657f315b48e4c64a46b3a1f1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">mantis::RouteHandlerFunc</a> = std::function&lt; void(const httplib::Request &amp;, httplib::Response &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:a50b9322f657f315b48e4c64a46b3a1f1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Route Handler function shorthand </p>
 </blockquote>
  <br /></td></tr>
-<tr class="separator:a247daee8d62b9b254439fc869380f726"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:a50b9322f657f315b48e4c64a46b3a1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a11862d7f473e670e73f32411830d2ebc" id="r_a11862d7f473e670e73f32411830d2ebc"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">mantis::RouteHandlerFuncWithContentReader</a> = std::function&lt; void(const httplib::Request &amp;, httplib::Response &amp;, const httplib::ContentReader &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:a11862d7f473e670e73f32411830d2ebc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Route Handler function with content reader shorthand </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a11862d7f473e670e73f32411830d2ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bc3b7f3cc6ad769ae30df2670712b95" id="r_a9bc3b7f3cc6ad769ae30df2670712b95"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9bc3b7f3cc6ad769ae30df2670712b95">mantis::Method</a> = std::string</td></tr>
 <tr class="memdesc:a9bc3b7f3cc6ad769ae30df2670712b95"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Syntactic sugar for request method which is a std::string </p>

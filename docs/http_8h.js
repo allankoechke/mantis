@@ -7,11 +7,13 @@ var http_8h =
     [ "mantis::HttpUnit", "classmantis_1_1HttpUnit.html", "classmantis_1_1HttpUnit" ],
     [ "REQUEST_HANDLED", "http_8h.html#a4f08ea4b1e854e5b01082b2a1ea6ad5e", null ],
     [ "REQUEST_PENDING", "http_8h.html#ad5550135843ca34b930f5ceb0584adaa", null ],
+    [ "ContentReader", "http_8h.html#aaa50fd85460aaa3bb537133b590bc818", null ],
     [ "Method", "http_8h.html#a9bc3b7f3cc6ad769ae30df2670712b95", null ],
     [ "Middleware", "http_8h.html#ac6d3d5118a8179c910b59702d812f66f", null ],
     [ "Path", "http_8h.html#a6ea8191e3f856be57a61519cf9a36c2a", null ],
     [ "Request", "http_8h.html#ac1bd0141aa9c3099361994a0671e0426", null ],
     [ "Response", "http_8h.html#ab479ce37673306cc47470b59938943fd", null ],
-    [ "RouteHandlerFunc", "http_8h.html#a247daee8d62b9b254439fc869380f726", null ],
+    [ "RouteHandlerFunc", "http_8h.html#a50b9322f657f315b48e4c64a46b3a1f1", null ],
+    [ "RouteHandlerFuncWithContentReader", "http_8h.html#a11862d7f473e670e73f32411830d2ebc", null ],
     [ "RouteKey", "http_8h.html#afd5355e620b80081a28ab075e5332e37", null ]
 ];

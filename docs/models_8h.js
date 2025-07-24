@@ -18,7 +18,7 @@ var models_8h =
     [ "fieldExists", "models_8h.html#a6f31a34926bcde11edb345d6831023ca", null ],
     [ "getFieldType", "models_8h.html#ac05fa29a8d019cec94f168aabb722d7c", null ],
     [ "isValidFieldType", "models_8h.html#a974593393659a334c67ede9031616a13", null ],
-    [ "NLOHMANN_JSON_SERIALIZE_ENUM", "models_8h.html#a2ea5ed89307403a72e775da7cdfde1c0", null ],
+    [ "NLOHMANN_JSON_SERIALIZE_ENUM", "models_8h.html#acb0e6405530d7abc683f19f363afb4f1", null ],
     [ "NLOHMANN_JSON_SERIALIZE_ENUM", "models_8h.html#aebd98060d52afb0370fc1ca019811e42", null ],
     [ "authFields", "models_8h.html#ae8dcbb097cdc416930dd35769b16a066", null ],
     [ "FieldType", "models_8h.html#a0f64f5fc9ae235bebf1922956b3a9e26", null ]

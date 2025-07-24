@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.13</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.15</span>
    </div>
   </td>
  </tr>
@@ -104,9 +104,12 @@ $(document).ready(function(){initNavTree('classmantis_1_1RouteRegistry.html','')
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
-<tr class="memitem:a96e231cf5873f8623c0c151aa7d15e06" id="r_a96e231cf5873f8623c0c151aa7d15e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1RouteRegistry.html#a96e231cf5873f8623c0c151aa7d15e06">add</a> (const std::string &amp;method, const std::string &amp;path, <a class="el" href="namespacemantis.html#a247daee8d62b9b254439fc869380f726">RouteHandlerFunc</a> handler, const std::vector&lt; <a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">Middleware</a> &gt; &amp;middlewares)</td></tr>
+<tr class="memitem:a96e231cf5873f8623c0c151aa7d15e06" id="r_a96e231cf5873f8623c0c151aa7d15e06"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1RouteRegistry.html#a96e231cf5873f8623c0c151aa7d15e06">add</a> (const std::string &amp;method, const std::string &amp;path, <a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">RouteHandlerFunc</a> handler, const std::vector&lt; <a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">Middleware</a> &gt; &amp;middlewares)</td></tr>
 <tr class="memdesc:a96e231cf5873f8623c0c151aa7d15e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add new route to the registry.  <br /></td></tr>
 <tr class="separator:a96e231cf5873f8623c0c151aa7d15e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a0e3b559b8167bcdda1a13a9ad0a09967" id="r_a0e3b559b8167bcdda1a13a9ad0a09967"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1RouteRegistry.html#a0e3b559b8167bcdda1a13a9ad0a09967">add</a> (const std::string &amp;method, const std::string &amp;path, <a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">RouteHandlerFuncWithContentReader</a> handler, const std::vector&lt; <a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">Middleware</a> &gt; &amp;middlewares)</td></tr>
+<tr class="memdesc:a0e3b559b8167bcdda1a13a9ad0a09967"><td class="mdescLeft">&#160;</td><td class="mdescRight">Add new route to the registry.  <br /></td></tr>
+<tr class="separator:a0e3b559b8167bcdda1a13a9ad0a09967"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab296c9afa8887f22c2628bfd8a2116c3" id="r_ab296c9afa8887f22c2628bfd8a2116c3"><td class="memItemLeft" align="right" valign="top">const <a class="el" href="structmantis_1_1RouteHandler.html">RouteHandler</a> *&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1RouteRegistry.html#ab296c9afa8887f22c2628bfd8a2116c3">find</a> (const std::string &amp;method, const std::string &amp;path) const</td></tr>
 <tr class="memdesc:ab296c9afa8887f22c2628bfd8a2116c3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Find a route in the registry matching given method and route.  <br /></td></tr>
 <tr class="separator:ab296c9afa8887f22c2628bfd8a2116c3"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -123,7 +126,7 @@ Public Attributes</h2></td></tr>
 <div class="textblock"><p>Class to manage route registration, removal and dynamic checks on request. </p>
 </div><h2 class="groupheader">Member Function Documentation</h2>
 <a id="a96e231cf5873f8623c0c151aa7d15e06" name="a96e231cf5873f8623c0c151aa7d15e06"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96e231cf5873f8623c0c151aa7d15e06">&#9670;&#160;</a></span>add()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a96e231cf5873f8623c0c151aa7d15e06">&#9670;&#160;</a></span>add() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -143,7 +146,59 @@ Public Attributes</h2></td></tr>
         <tr>
           <td class="paramkey"></td>
           <td></td>
-          <td class="paramtype"><a class="el" href="namespacemantis.html#a247daee8d62b9b254439fc869380f726">RouteHandlerFunc</a>&#160;</td>
+          <td class="paramtype"><a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">RouteHandlerFunc</a>&#160;</td>
+          <td class="paramname"><em>handler</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">Middleware</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>middlewares</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Add new route to the registry. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">method</td><td>Request method, i.e. GET, POST, PATCH, etc. </td></tr>
+    <tr><td class="paramname">path</td><td>Request path. </td></tr>
+    <tr><td class="paramname">handler</td><td>Request handler function. </td></tr>
+    <tr><td class="paramname">middlewares</td><td>List of </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f" title="‍Middleware shorthand for the function">Middleware</a> to be imposed on this request * </dd></dl>
+
+</div>
+</div>
+<a id="a0e3b559b8167bcdda1a13a9ad0a09967" name="a0e3b559b8167bcdda1a13a9ad0a09967"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a0e3b559b8167bcdda1a13a9ad0a09967">&#9670;&#160;</a></span>add() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mantis::RouteRegistry::add </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>method</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>path</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">RouteHandlerFuncWithContentReader</a>&#160;</td>
           <td class="paramname"><em>handler</em>, </td>
         </tr>
         <tr>
