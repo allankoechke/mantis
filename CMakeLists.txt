@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.14)
+project(mantisapp VERSION 0.1.15)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -135,6 +135,9 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
     if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
         message("Enabling ASAN")
         set(ENABLE_ASAN ON)
+        
+        enable_asan_for_target(mantis)
+        enable_asan_for_target(mantisapp)
     endif()
 endif()
 include(cmake/asan.cmake)
@@ -172,9 +175,6 @@ target_include_directories(mantis
 target_link_libraries(mantisapp
     PRIVATE mantis
 )
-
-enable_asan_for_target(mantis)
-enable_asan_for_target(mantisapp)
 
 # In your main CMakeLists.txt, after add_subdirectory(3rdParty/l8w8jwt)
 if(WIN32)
