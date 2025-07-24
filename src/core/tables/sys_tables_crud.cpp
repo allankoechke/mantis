@@ -13,6 +13,7 @@
 
 #include <soci/soci.h>
 
+#include "mantis/core/fileunit.h"
 #include "mantis/core/router.h"
 #include "private/soci-mktime.h"
 
@@ -197,6 +198,9 @@ namespace mantis
                 obj["updated"] = DatabaseUnit::tmToISODate(*created_tm);
 
                 result["data"] = obj;
+
+                // Create files directory
+                MantisApp::instance().files().createDir(name);
 
                 // Add created table to the routes
                 if (auto res = MantisApp::instance().router().addRoute(name);
@@ -654,6 +658,9 @@ namespace mantis
             // Only trigger routes to be reloaded if table name changes.
             if (t_name != old_name)
             {
+                // Update file table folder name
+                MantisApp::instance().files().renameDir(old_name, t_name);
+
                 // Update route for this table
                 const json obj{
                     {"new_name", t_name},
@@ -717,6 +724,9 @@ namespace mantis
         *sql << "DROP TABLE IF EXISTS " + name;
 
         tr.commit();
+
+        // Delete files directory
+        MantisApp::instance().files().deleteDir(name);
 
         // Update route for this table
         const json obj{{"name", name}, {"type", type}};

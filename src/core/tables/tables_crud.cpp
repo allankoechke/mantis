@@ -11,6 +11,8 @@
 
 #include <cmath>
 
+#include "mantis/core/fileunit.h"
+
 namespace mantis
 {
     json TableUnit::create(const json& entity, const json& opts)
@@ -53,7 +55,7 @@ namespace mantis
 
             // Create default time values
             std::time_t current_t = time(nullptr);
-            std::tm* created_tm = std::localtime(&current_t);
+            std::tm created_tm = *std::localtime(&current_t);
             std::string columns, placeholders;
 
             // Create the field cols and value cols as concatenated strings
@@ -64,14 +66,15 @@ namespace mantis
                 placeholders += placeholders.empty() ? (":" + field_name) : (", :" + field_name);
             }
 
+            Log::trace("Table Data: {}", entity.dump());
+
             // Create the SQL Query
             std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES (" + placeholders + ")";
 
             // Prepare statement
-            soci::statement st = sql->prepare << sql_query;
+            // soci::statement st = sql->prepare << sql_query;
 
             // Store all bound values to ensure lifetime
-            std::vector<std::shared_ptr<void>> bound_values;
             soci::values vals;
 
             // Bind parameters dynamically
@@ -81,26 +84,21 @@ namespace mantis
 
                 if (field_name == "id")
                 {
-                    auto value = std::make_shared<std::string>(id.c_str());
-                    bound_values.push_back(value);
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, *value, ind);
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, id, ind);
                 }
 
                 else if (field_name == "created" || field_name == "updated")
                 {
-                    auto value = std::make_shared<std::tm>(*created_tm);
-                    bound_values.push_back(value);
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, *value, ind);
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, created_tm, ind);
                 }
 
                 // For password types, let's hash them before binding to DB
                 else if (field_name == "password")
                 {
                     // Extract password value and hash it
-                    std::string pswd = entity.value(field_name, "");
-                    auto res = hashPassword(pswd);
+                    auto res = hashPassword(entity.value(field_name, ""));
                     if (!res.value("error", "").empty())
                     {
                         // Something went wrong while hashing password
@@ -112,29 +110,23 @@ namespace mantis
                     }
 
                     // Add the hashed password to the soci::vals
-                    auto value = std::make_shared<std::string>(res.at("hash").get<std::string>());
-                    bound_values.push_back(value);
                     soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, *value, ind);
+                    vals.set(field_name, res.at("hash").get<std::string>(), ind);
                 }
 
                 else
                 {
-                    if (const auto field_type = field.at("type").get<std::string>();
-                        field_type == "xml" || field_type == "string")
+                    const auto field_type = field.at("type").get<std::string>();
+                    if (field_type == "xml" || field_type == "string" || field_type == "file")
                     {
-                        auto value = std::make_shared<std::string>(entity.value(field_name, ""));
-                        bound_values.push_back(value);
                         soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        vals.set(field_name, entity.value(field_name, ""), ind);
                     }
 
                     else if (field_type == "double")
                     {
-                        auto value = std::make_shared<double>(entity.value(field_name, 0.0));
-                        bound_values.push_back(value);
                         soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        vals.set(field_name, entity.value(field_name, 0.0), ind);
                     }
 
                     else if (field_type == "date")
@@ -144,104 +136,87 @@ namespace mantis
                         std::istringstream ss(entity.value(field_name, ""));
                         ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
 
-                        auto value = std::make_shared<std::tm>(tm);
-                        bound_values.push_back(value);
                         soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        vals.set(field_name, tm, ind);
                     }
 
                     else if (field_type == "int8")
                     {
-                        auto value = std::make_shared<int8_t>(static_cast<int8_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<int8_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "uint8")
                     {
-                        auto value = std::make_shared<uint8_t>(static_cast<uint8_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<uint8_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "int16")
                     {
-                        auto value = std::make_shared<int16_t>(static_cast<int16_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<int16_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "uint16")
                     {
-                        auto value = std::make_shared<uint16_t>(static_cast<uint16_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<uint16_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "int32")
                     {
-                        auto value = std::make_shared<int32_t>(static_cast<int32_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<int32_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "uint32")
                     {
-                        auto value = std::make_shared<uint32_t>(static_cast<uint32_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<uint32_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "int64")
                     {
-                        auto value = std::make_shared<int64_t>(static_cast<int64_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<int64_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "uint64")
                     {
-                        auto value = std::make_shared<uint64_t>(static_cast<uint64_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, static_cast<uint64_t>(entity.value(field_name, 0)), ind);
                     }
 
                     else if (field_type == "blob")
                     {
-                        auto value = std::make_shared<std::string>(entity.value(field_name, sql->empty_blob()));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, entity.value(field_name, sql->empty_blob()), ind);
                     }
 
                     else if (field_type == "json")
                     {
-                        auto value = std::make_shared<json>(entity.value(field_name, json::object()));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, entity.value(field_name, json::object()), ind);
                     }
 
                     else if (field_type == "bool")
                     {
-                        auto value = std::make_shared<bool>(entity.value(field_name, false));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, entity.value(field_name, false), ind);
+                    }
+
+                    // TODO fix list here
+                    else if (field_type == "files")
+                    {
+                        soci::indicator ind = soci::i_ok;
+                        vals.set(field_name, entity.value(field_name, json::array()), ind);
                     }
                 }
             }
 
-            st.bind(vals);
-            st.execute(true);
+            // Execute sql query
+            *sql << sql_query, soci::use(vals);
             tr.commit();
 
             // Query back the created record and send it back to the client
@@ -595,11 +570,11 @@ namespace mantis
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
-        int count;
-        const std::string sqlStr = ("SELECT count(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1");
-        *sql << sqlStr, soci::use(id), soci::into(count);
+        soci::row row;
+        const std::string sqlStr = ("SELECT * FROM " + m_tableName + " WHERE id = :id LIMIT 1");
+        *sql << sqlStr, soci::use(id), soci::into(row);
 
-        if (count == 0)
+        if (!sql->got_data())
         {
             throw std::runtime_error("Item with id = '" + id + "' was not found!");
         }
@@ -609,6 +584,23 @@ namespace mantis
         Log::trace("SQL Query: {}", sql->get_query());
 
         tr.commit();
+
+
+        // Parse row to JSON
+        const auto record = parseDbRowToJson(row);
+
+        // Extract all fields that have file/files as the underlying data
+        std::vector<json> file_fields;
+        std::ranges::copy_if(m_fields, std::back_inserter(file_fields), [](const json& field) {
+            return field["type"].get<std::string>() == "file" || field["type"].get<std::string>() == "files";
+        });
+
+        // For each file field, remove it in the filesystem
+        for (const auto& file_field : file_fields)
+        {
+            const auto file_name = record.value(file_field["name"].get<std::string>(), "");
+            [[maybe_unused]] auto _ = MantisApp::instance().files().removeFile(m_tableName, file_name);
+        }
         return true;
     }
 

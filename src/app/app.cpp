@@ -22,7 +22,7 @@ namespace mantis
 {
     // -------------------------------------------------------------------------------- //
     // Static member definitions
-    std::unique_ptr<MantisApp> MantisApp::s_instance = nullptr;
+    MantisApp* MantisApp::s_instance = nullptr;
     std::mutex MantisApp::s_mutex;
 
     // -------------------------------------------------------------------------------- //
@@ -33,7 +33,8 @@ namespace mantis
         if (s_instance)
             throw std::runtime_error("MantisApp already instantiated, use MantisApp::instance() instead!");
 
-        s_instance.reset(this);
+        // Assign `this` pointer to the instance
+        s_instance = this;
 
         // Store cmd args into our member vector
         m_cmdArgs.reserve(argc);
@@ -57,8 +58,11 @@ namespace mantis
         Log::close();
 
         std::lock_guard<std::mutex> lock(s_mutex);
-        if (s_instance.get() == this)
-            [[maybe_unused]] auto ret = s_instance.release(); // We don't delete; stack-managed
+        if (s_instance == this)
+        {
+            // Reset instance pointer
+            s_instance = nullptr;
+        }
     }
 
     void MantisApp::init()
@@ -329,13 +333,13 @@ namespace mantis
         // Create instance objects
         m_logger = std::make_unique<LoggingUnit>();
         m_exprEval = std::make_unique<ExprEvaluator>(); // depends on log()
-        m_database = std::make_unique<DatabaseUnit>();  // depends on log()
-        m_http = std::make_unique<HttpUnit>();          // depends on db()
-        m_router = std::make_unique<Router>();          // depends on db() & http()
-        m_settings = std::make_unique<SettingsUnit>();  // depends on db(), router() & http()
+        m_database = std::make_unique<DatabaseUnit>(); // depends on log()
+        m_http = std::make_unique<HttpUnit>(); // depends on db()
+        m_router = std::make_unique<Router>(); // depends on db() & http()
+        m_settings = std::make_unique<SettingsUnit>(); // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
         m_validators = std::make_unique<Validator>();
-        m_files = std::make_unique<FileUnit>();         // depends on log()
+        m_files = std::make_unique<FileUnit>(); // depends on log()
     }
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -430,6 +434,10 @@ namespace mantis
     void MantisApp::openBrowserOnStart() const
     {
         MANTIS_REQUIRE_INIT();
+
+        // Return if flag is reset
+        if (!m_launchAdminPanel) return;
+
         std::string url = std::format("http://localhost:{}/admin", m_port);
 
 #ifdef _WIN32
@@ -442,7 +450,8 @@ namespace mantis
 #error Unsupported platform
 #endif
 
-        if (int result = std::system(command.c_str()); result != 0) {
+        if (int result = std::system(command.c_str()); result != 0)
+        {
             Log::info("Could not open browser: {} > {}", command, result);
         }
     }

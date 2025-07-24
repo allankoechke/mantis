@@ -28,7 +28,6 @@ namespace mantis
     };
 
 
-
     // Enum of the table type created,
     // base table types provide `index`, `created`, `updated`
     // auth table type provide `base` type + `email`, `password`, `name`
@@ -41,47 +40,52 @@ namespace mantis
     } TableType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(TableType, {
-        {TableType::Base, "base"},
-        {TableType::Auth, "auth"},
-        {TableType::View, "view"}
-    })
+                                 {TableType::Base, "base"},
+                                 {TableType::Auth, "auth"},
+                                 {TableType::View, "view"}
+                                 })
 
-    typedef enum class FieldTypeDecl {
-        XML         = soci::db_xml,
-        STRING      = soci::db_string,
-        DOUBLE      = soci::db_double,
-        DATE        = soci::db_date,
-        INT8        = soci::db_int8,
-        UINT8       = soci::db_uint8,
-        INT16       = soci::db_int16,
-        UINT16      = soci::db_uint16,
-        INT32       = soci::db_int32,
-        UINT32      = soci::db_uint32,
-        INT64       = soci::db_int64,
-        UINT64      = soci::db_uint64,
-        BLOB        = soci::db_blob,
+    typedef enum class FieldTypeDecl
+    {
+        XML = soci::db_xml,
+        STRING = soci::db_string,
+        DOUBLE = soci::db_double,
+        DATE = soci::db_date,
+        INT8 = soci::db_int8,
+        UINT8 = soci::db_uint8,
+        INT16 = soci::db_int16,
+        UINT16 = soci::db_uint16,
+        INT32 = soci::db_int32,
+        UINT32 = soci::db_uint32,
+        INT64 = soci::db_int64,
+        UINT64 = soci::db_uint64,
+        BLOB = soci::db_blob,
         // User defined types
         JSON,
-        BOOL
+        BOOL,
+        FILE, // Hold file name
+        FILES // Hold an array of file
     } FieldType;
 
     NLOHMANN_JSON_SERIALIZE_ENUM(FieldType, {
-        { FieldType::XML,       "xml"    },
-        { FieldType::STRING,    "string" },
-        { FieldType::DOUBLE,    "double" },
-        { FieldType::DATE,      "date"   },
-        { FieldType::INT8,      "int8"   },
-        { FieldType::UINT8,     "uint8"  },
-        { FieldType::INT16,     "int16"  },
-        { FieldType::UINT16,    "uint16" },
-        { FieldType::INT32,     "int32"  },
-        { FieldType::UINT32,    "uint32" },
-        { FieldType::INT64,     "int64"  },
-        { FieldType::UINT64,    "uint64" },
-        { FieldType::BLOB,      "blob"   },
-        { FieldType::JSON,      "json"   },
-        { FieldType::BOOL,      "bool"   },
-    })
+                                 { FieldType::XML, "xml" },
+                                 { FieldType::STRING, "string" },
+                                 { FieldType::DOUBLE, "double" },
+                                 { FieldType::DATE, "date" },
+                                 { FieldType::INT8, "int8" },
+                                 { FieldType::UINT8, "uint8" },
+                                 { FieldType::INT16, "int16" },
+                                 { FieldType::UINT16, "uint16" },
+                                 { FieldType::INT32, "int32" },
+                                 { FieldType::UINT32, "uint32" },
+                                 { FieldType::INT64, "int64" },
+                                 { FieldType::UINT64, "uint64" },
+                                 { FieldType::BLOB, "blob" },
+                                 { FieldType::JSON, "json" },
+                                 { FieldType::BOOL, "bool" },
+                                 { FieldType::FILE, "file" },
+                                 { FieldType::FILES, "files" },
+                                 })
 
     const std::vector<std::string> baseFields = {"id", "created", "updated"};
     const std::vector<std::string> authFields = {"id", "created", "updated", "name", "email", "password"};
@@ -96,7 +100,8 @@ namespace mantis
     typedef std::string Rule;
 
     // Field definition
-    struct Field {
+    struct Field
+    {
         std::string name;
         FieldType type;
 
@@ -104,7 +109,7 @@ namespace mantis
         bool primaryKey = false;
         bool system = false;
 
-        std::optional<std::string> defaultValue;        // as string, parse based on type
+        std::optional<std::string> defaultValue; // as string, parse based on type
         std::optional<std::string> regexPattern;
         std::optional<double> minValue;
         std::optional<double> maxValue;
@@ -113,7 +118,8 @@ namespace mantis
         std::optional<std::string> autoGeneratePattern; // regex for auto-gen strings
 
         // Convenience constructor
-        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false, json opts = json::object());
+        Field(std::string n, FieldType t, bool req = false, bool pk = false, bool sys = false,
+              json opts = json::object());
 
         [[nodiscard]]
         json to_json() const;
@@ -126,7 +132,8 @@ namespace mantis
     };
 
     // Represents a generic table in the system
-    struct Table {
+    struct Table
+    {
         virtual ~Table() = default;
         std::string id;
         std::string name;
@@ -153,7 +160,8 @@ namespace mantis
     };
 
     // Specific model for Base table (user-defined)
-    struct BaseTable : Table {
+    struct BaseTable : Table
+    {
         bool enableSync = true;
 
         BaseTable();
@@ -172,21 +180,24 @@ namespace mantis
     };
 
     // Specific model for View table
-    struct ViewTable : Table {
+    struct ViewTable : Table
+    {
         std::string sourceSQL;
         bool enableSync = false;
 
         ViewTable();
     };
 
-    struct SystemTable final : BaseTable {
+    struct SystemTable final : BaseTable
+    {
         bool enableSync = true;
 
         SystemTable();
         ~SystemTable() override = default;
     };
 
-    struct AdminTable final : AuthTable {
+    struct AdminTable final : AuthTable
+    {
         bool enableSync = true;
 
         AdminTable();

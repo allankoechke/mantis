@@ -69,6 +69,8 @@ namespace mantis
             const auto colName = row.get_properties(i).get_name();
             const auto colType = getColTypeFromName(colName, m_fields);
 
+            Log::trace("Parsing: #{} {} of type: {}", i, colName, colType);
+
             if (colType == "xml" || colType == "string")
             {
                 j[colName] = row.get<std::string>(i, "");
@@ -87,15 +89,7 @@ namespace mantis
                 }
                 else
                 {
-                    try
-                    {
-                        j[colName] = row.get<std::string>(i, "");
-                    }
-                    catch (soci::soci_error& e)
-                    {
-                        j[colName] = "";
-                        Log::critical("TablesUnit::Parse Column Name = {}, Column Type: {} - DB Row Error: {}", colName, colType, e.what());
-                    }
+                    j[colName] = row.get<std::string>(i, "");
                 }
             }
             else if (colType == "int8")
@@ -133,7 +127,7 @@ namespace mantis
             else if (colType == "blob")
             {
                 // TODO ? How do we handle BLOB?
-                j[colName] = row.get<std::string>(i);
+                // j[colName] = row.get<std::string>(i);
             }
             else if (colType == "json" || colType == "list")
             {
@@ -143,9 +137,19 @@ namespace mantis
             {
                 j[colName] = row.get<bool>(i);
             }
-            else // Return a string for unknown types // TODO avoid errors
+            else if (colType == "file")
             {
                 j[colName] = row.get<std::string>(i);
+            }
+            else if (colType == "files")
+            {
+                // TODO handle lists
+                // j[colName] = row.get<std::string>(i);
+            }
+            else
+            {
+                // Throw an error for unknown types
+                throw std::runtime_error(std::format("Unknown column type `{}` for column `{}`", colType, colName));
             }
         }
 

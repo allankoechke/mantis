@@ -84,16 +84,17 @@ std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldNa
     if (fieldName == "blob")    return FieldType::BLOB;
     if (fieldName == "json")    return FieldType::JSON;
     if (fieldName == "bool")    return FieldType::BOOL;
-    if (fieldName == "file")    return FieldType::STRING;
+    if (fieldName == "file")    return FieldType::FILE;
+    if (fieldName == "files")    return FieldType::FILES;
     return std::nullopt;
 }
 
 bool mantis::fieldExists(const TableType& type, const std::string& fieldName)
 {
     // Find if field exists ...
-    const auto contains = [&](const std::vector<std::string>& vec, const std::string& fieldName) -> bool
+    const auto contains = [&](const std::vector<std::string>& vec, const std::string& field_name) -> bool
     {
-        return std::find(vec.begin(), vec.end(), fieldName) != vec.end();
+        return std::ranges::find(vec, field_name) != vec.end();
     };
 
     switch (type)
@@ -116,7 +117,7 @@ bool mantis::isValidFieldType(const std::string& fieldType)
     // Valid field types for our backend
     std::vector<std::string> fieldTypes{"xml", "string", "double", "date",
         "int8", "uint8","int16", "uint16", "int32", "uint32", "int64", "uint64",
-        "blob", "json", "bool", "file"};
+        "blob", "json", "bool", "file", "files"};
 
     const auto it = std::ranges::find(fieldTypes, fieldType);
     return it != fieldTypes.end();
@@ -208,7 +209,6 @@ soci::db_type mantis::Field::toSociType() const
 soci::db_type mantis::Field::toSociType(const FieldType& f_type)
 {
     if (f_type == FieldType::XML) return soci::db_xml;
-    if (f_type == FieldType::STRING || f_type == FieldType::JSON) return soci::db_string;
     if (f_type == FieldType::DOUBLE) return soci::db_double;
     if (f_type == FieldType::DATE) return soci::db_date;
     if (f_type == FieldType::INT8) return soci::db_int8;

@@ -15,34 +15,32 @@ namespace mantis
 {
     namespace fs = std::filesystem;
 
-    void FileUnit::createDir(const std::string& table)
+    void FileUnit::createDir(const std::string& table) const
     {
+        Log::trace("Creating directory: {}", dirPath(table));
+
         if (table.empty()) return;
 
-        if (const auto path = MantisApp::instance().dataDir() + "/files/" + table;
-            !fs::exists(path))
+        if (const auto path = dirPath(table); !fs::exists(path))
             fs::create_directories(path);
     }
 
-    void FileUnit::renameDir(const std::string& old_name, const std::string& new_name)
+    void FileUnit::renameDir(const std::string& old_name, const std::string& new_name) const
     {
+        Log::trace("Renaming folder name from '{}' to '{}'", old_name, new_name);
+
         // Rename folder if it exists, else, create it
-        if (const auto old_path = MantisApp::instance().dataDir() + "/" + old_name;
-            fs::exists(old_path))
-            fs::rename(old_path,
-                       MantisApp::instance().dataDir() + "/files/" + new_name);
+        if (const auto old_path = dirPath(old_name); fs::exists(old_path))
+            fs::rename(old_path, dirPath(new_name));
+
         else
             createDir(new_name);
     }
 
-    void FileUnit::deleteDir(const std::string& table)
+    void FileUnit::deleteDir(const std::string& table) const
     {
-        fs::remove_all(MantisApp::instance().dataDir() + "/files/" + table);
-    }
-
-    std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
-    {
-        return (fs::path(MantisApp::instance().dataDir()) / table / filename).string();
+        Log::trace("Removing {}", dirPath(table));
+        fs::remove_all(dirPath(table));
     }
 
     std::optional<std::string> FileUnit::getFilePath(const std::string& table, const std::string& filename) const
@@ -65,11 +63,33 @@ namespace mantis
         return true;
     }
 
+    std::string FileUnit::dirPath(const std::string& table, bool create_if_missing) const
+    {
+        auto path = (fs::path(MantisApp::instance().dataDir()) / "files" / table).string();
+        if (!fs::exists(path) && create_if_missing)
+        {
+            fs::create_directories(path);
+        }
+        return path;
+    }
+
+    std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
+    {
+        return (fs::path(MantisApp::instance().dataDir()) / "files" / table / filename).string();
+    }
+
     bool FileUnit::removeFile(const std::string& table, const std::string& filename) const
     {
         try
         {
+            if (table.empty() || filename.empty())
+            {
+                Log::warn("Table name and filename are required!");
+                return false;
+            }
+
             const auto path = filePath(table, filename);
+            Log::trace("Removing file at `{}`", path);
 
             // Remove the file, only if it exists
             if (fs::exists(path))
