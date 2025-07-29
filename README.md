@@ -56,16 +56,44 @@
 ---
 
 ## 🚀 Getting Started
+There are three ways to get started with Mantis. 
+
+### 1. Using pre-built binaries
+Download pre-built binaries from our [release page](https://github.com/allankoechke/mantis/releases). First, download the zip package (~4mb) for the target platform and unzip it. With that, we can start the server as shown below;
+
+```bash
+./build/mantisapp serve -p 7070
+```
+#### Creating Admin Login account
+To use the admin dashboard once we have started the server, we need to set up a new admin user account. From the embedded Admin dashboard interface, there is no provision for creating new user.
+
+We can achieve this easily through the command-line tool for mantisapp.
+
+```bash
+mantisapp admins --add john@doe.com
+```
+
+You will be prompted to enter and confirm the password after which the user account can be used to sign into the admin dashboard.
+
+### 2. Building from source
+Why miss out on the fun? You can also clone the source setup your build environment and compile it all. Once compiled, the resultant binary can be executed just as the pre-compiled binary above.
 
 ```bash
 git clone --recurse-submodules https://github.com/allankoechke/mantis.git
 cd mantis
 cmake -B build
 cmake --build build
-./build/mantisapp serve -p 5000
+./build/mantisapp serve
 ```
 
+By default, the app runs on port `7070`.
+
+### 3. Embedding in another project
 You can also embed Mantis as a library in your own C++ project:
+
+- Add this project as a submodule to your project.
+- Link your project to the library `mantis` target.
+- Extend the project as shown below.
 
 ```cpp
 #include <mantis/app/app.h>
@@ -79,9 +107,10 @@ int main(const int argc, char* argv[])
 ```
 Check [/examples dir](/examples) for a working sample.
 
-### Using Docker
-You can also run `mantisapp` in a docker container. Check [using docker](doc/docker.md) docs for more information.  
+> Note: `MantisApp` has a blocking event loop when listening for http events. To avoid blocking your main thread if you intend to run something else there, move this into a separate thread.
 
+### 4. Using Docker
+You can also run `mantisapp` in a docker container. Check [using docker](doc/docker.md) docs for more information.  
 
 ---
 
@@ -108,7 +137,7 @@ mantis/
 * [Embedding Guide](doc/05.embedding.md)
 * [Sync Engine Design](doc/10.sync.md)
 
-For full API Docs, check [here](https://allankoechke.github.io/mantis/).
+For full API Docs, check [https://docs.mantisapp.dev](https://allankoechke.github.io/mantis/).
 
 ---
 

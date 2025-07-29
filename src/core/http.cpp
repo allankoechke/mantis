@@ -236,7 +236,7 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
         // Wait a little for the server to be fully ready
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto endpoint = std::format("{}:{}", host, port);
-        Log::info("Starting Servers: \n\tͰ API Endpoints: http://{}/api/v1/ \n\t˪ Admin Dashboard: http://{}/admin",
+        Log::info("Starting Servers: \n\t├── API Endpoints: http://{}/api/v1/ \n\t└── Admin Dashboard: http://{}/admin",
                   endpoint, endpoint);
 
         MantisApp::instance().openBrowserOnStart();

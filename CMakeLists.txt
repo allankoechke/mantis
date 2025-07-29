@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.1.15)
+project(mantisapp VERSION 0.2.1)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -97,8 +97,9 @@ if(NOT WIN32)
     set(HTTPLIB_REQUIRE_ZSTD TRUE)
     include(cmake/FindZSTD.cmake)
     find_package(zstd REQUIRED)
+
     if(zstd_FOUND)
-    add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
+        add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
     endif()
 endif()
 

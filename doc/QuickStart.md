@@ -44,8 +44,9 @@ git clone --recurse-submodules https://github.com/allankoechke/mantis.git
 cd mantis
 cmake -B build
 cmake --build build
-./build/mantisapp serve -p 5000
+./build/mantisapp serve
 ```
+By default, the http server is served on port `7070`.
 
 You can also embed Mantis as a library in your own C++ project:
 
@@ -65,7 +66,7 @@ Check [mantis/examples](https://github.com/allankoechke/mantis/tree/master/examp
 Mantis ships with a lightweight admin dashboard available on `<host>:<ip>/admin` and restricted to admin login only. By default, in your setup, you need to create a admin user account using the [CLI](01.cmd.md) command:
 
 ```shell
-mantisapp admins --add <email>
+mantisapp admins --add john@doe.com
 ```
 
 With the admin account created, we can then use it to log in to the admin dashboard. The dashboard allows for easy management of:
