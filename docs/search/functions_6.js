@@ -5,7 +5,7 @@ var searchData=
   ['generateshortid_2',['generateShortId',['../namespacemantis.html#ade1df4c33ed9fad130bdf6df9c2c0ad1',1,'mantis']]],
   ['generatetableid_3',['generateTableId',['../classmantis_1_1TableUnit.html#a6bb03ba4b80811ed6714179c93cfd71c',1,'mantis::TableUnit']]],
   ['generatetimebasedid_4',['generateTimeBasedId',['../namespacemantis.html#a2bc2a84280e5b58546a4ddfdeea4a230',1,'mantis']]],
-  ['get_5',['get',['../classmantis_1_1HttpUnit.html#ac65f8600643af3c94280bc1b7ae56142',1,'mantis::HttpUnit::Get()'],['../classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95',1,'mantis::Context::get(const std::string &amp;key)']]],
+  ['get_5',['get',['../classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95',1,'mantis::Context::get()'],['../classmantis_1_1HttpUnit.html#ac65f8600643af3c94280bc1b7ae56142',1,'mantis::HttpUnit::Get()']]],
   ['get_5for_6',['get_or',['../classmantis_1_1Context.html#ad1ddc69a1bad56269383d789b1ee1b55',1,'mantis::Context']]],
   ['getauthtoken_7',['getAuthToken',['../classmantis_1_1TableUnit.html#a4f58145cd3c1c387a5f610d1a0706189',1,'mantis::TableUnit']]],
   ['getcoltypefromname_8',['getColTypeFromName',['../classmantis_1_1TableUnit.html#a35dbd1927d78373e5e6b1e99131638d9',1,'mantis::TableUnit']]],

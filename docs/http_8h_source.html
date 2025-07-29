@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.2</span>
    </div>
   </td>
  </tr>
@@ -256,39 +256,39 @@ $(document).ready(function(){initNavTree('http_8h_source.html',''); initResizabl
 <div class="line"><a id="l00271" name="l00271"></a><span class="lineno">  271</span> </div>
 <div class="line"><a id="l00276" name="l00276"></a><span class="lineno">  276</span>        <a class="code hl_class" href="classmantis_1_1RouteRegistry.html">RouteRegistry</a>&amp; <a class="code hl_function" href="classmantis_1_1HttpUnit.html#aa0f67227f09877e15d0d1cd37c28cf6e">routeRegistry</a>();</div>
 <div class="line"><a id="l00277" name="l00277"></a><span class="lineno">  277</span> </div>
-<div class="line"><a id="l00278" name="l00278"></a><span class="lineno">  278</span>        httplib::Server&amp; <a class="code hl_function" href="classmantis_1_1HttpUnit.html#aa870f9639ef7bf95391529a91f4e889e">server</a>();</div>
-<div class="line"><a id="l00279" name="l00279"></a><span class="lineno">  279</span> </div>
-<div class="line"><a id="l00280" name="l00280"></a><span class="lineno"><a class="line" href="classmantis_1_1HttpUnit.html#a810bf4c597a34d8388a7b64c6d596080">  280</a></span>        <span class="keyword">const</span> std::string <a class="code hl_variable" href="classmantis_1_1HttpUnit.html#a810bf4c597a34d8388a7b64c6d596080">_class_</a> = <span class="stringliteral">&quot;mantis::HttpUnit&quot;</span>;</div>
-<div class="line"><a id="l00281" name="l00281"></a><span class="lineno">  281</span> </div>
-<div class="line"><a id="l00282" name="l00282"></a><span class="lineno">  282</span>    <span class="keyword">private</span>:</div>
-<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        <span class="keyword">using </span>Method = void (httplib::Server::*)(const std::string&amp;, const httplib::Server::Handler&amp;);</div>
+<div class="line"><a id="l00283" name="l00283"></a><span class="lineno">  283</span>        httplib::Server&amp; <a class="code hl_function" href="classmantis_1_1HttpUnit.html#aa870f9639ef7bf95391529a91f4e889e">server</a>();</div>
 <div class="line"><a id="l00284" name="l00284"></a><span class="lineno">  284</span> </div>
-<div class="line"><a id="l00285" name="l00285"></a><span class="lineno">  285</span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> HandlerType&gt;</div>
-<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span>        <span class="keyword">using </span>MethodBinder = std::function&lt;void(<span class="keyword">const</span> std::string&amp;, HandlerType)&gt;;</div>
-<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span> </div>
-<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <span class="keywordtype">void</span> route(<span class="keyword">const</span> MethodBinder&lt;httplib::Server::Handler&gt;&amp; bind_method,</div>
-<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span>                   <span class="keyword">const</span> std::string&amp; method,</div>
-<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>                   <span class="keyword">const</span> std::string&amp; path,</div>
-<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>                   <span class="keyword">const</span> <a class="code hl_typedef" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">RouteHandlerFunc</a>&amp; handler,</div>
-<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span>                   std::initializer_list&lt;Middleware&gt; middlewares);</div>
-<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span> </div>
-<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>        <span class="keywordtype">void</span> route(<span class="keyword">const</span> MethodBinder&lt;httplib::Server::HandlerWithContentReader&gt;&amp; bind_method,</div>
-<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                   <span class="keyword">const</span> std::string&amp; method,</div>
-<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                   <span class="keyword">const</span> std::string&amp; path,</div>
-<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>                   <span class="keyword">const</span> <a class="code hl_typedef" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">RouteHandlerFuncWithContentReader</a>&amp; handler,</div>
-<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span>                   std::initializer_list&lt;Middleware&gt; middlewares);</div>
-<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span> </div>
-<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>        <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Ts&gt; <span class="keyword">struct </span>overloaded : Ts... { <span class="keyword">using </span>Ts::operator()...; };</div>
-<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>        <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Ts&gt; overloaded(Ts...) -&gt; overloaded&lt;Ts...&gt;;</div>
-<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span> </div>
-<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>        httplib::Server svr;</div>
-<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span>        <a class="code hl_class" href="classmantis_1_1RouteRegistry.html">RouteRegistry</a> registry;</div>
-<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>        <span class="keyword">thread_local</span> <span class="keyword">static</span> <a class="code hl_class" href="classmantis_1_1Context.html">Context</a> current_context;</div>
-<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>    };</div>
+<div class="line"><a id="l00285" name="l00285"></a><span class="lineno"><a class="line" href="classmantis_1_1HttpUnit.html#a810bf4c597a34d8388a7b64c6d596080">  285</a></span>        <span class="keyword">const</span> std::string <a class="code hl_variable" href="classmantis_1_1HttpUnit.html#a810bf4c597a34d8388a7b64c6d596080">_class_</a> = <span class="stringliteral">&quot;mantis::HttpUnit&quot;</span>;</div>
+<div class="line"><a id="l00286" name="l00286"></a><span class="lineno">  286</span> </div>
+<div class="line"><a id="l00287" name="l00287"></a><span class="lineno">  287</span>    <span class="keyword">private</span>:</div>
+<div class="line"><a id="l00288" name="l00288"></a><span class="lineno">  288</span>        <span class="keyword">using </span>Method = void (httplib::Server::*)(const std::string&amp;, const httplib::Server::Handler&amp;);</div>
+<div class="line"><a id="l00289" name="l00289"></a><span class="lineno">  289</span> </div>
+<div class="line"><a id="l00290" name="l00290"></a><span class="lineno">  290</span>        <span class="keyword">template</span> &lt;<span class="keyword">typename</span> HandlerType&gt;</div>
+<div class="line"><a id="l00291" name="l00291"></a><span class="lineno">  291</span>        <span class="keyword">using </span>MethodBinder = std::function&lt;void(<span class="keyword">const</span> std::string&amp;, HandlerType)&gt;;</div>
+<div class="line"><a id="l00292" name="l00292"></a><span class="lineno">  292</span> </div>
+<div class="line"><a id="l00293" name="l00293"></a><span class="lineno">  293</span>        <span class="keywordtype">void</span> route(<span class="keyword">const</span> MethodBinder&lt;httplib::Server::Handler&gt;&amp; bind_method,</div>
+<div class="line"><a id="l00294" name="l00294"></a><span class="lineno">  294</span>                   <span class="keyword">const</span> std::string&amp; method,</div>
+<div class="line"><a id="l00295" name="l00295"></a><span class="lineno">  295</span>                   <span class="keyword">const</span> std::string&amp; path,</div>
+<div class="line"><a id="l00296" name="l00296"></a><span class="lineno">  296</span>                   <span class="keyword">const</span> <a class="code hl_typedef" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">RouteHandlerFunc</a>&amp; handler,</div>
+<div class="line"><a id="l00297" name="l00297"></a><span class="lineno">  297</span>                   std::initializer_list&lt;Middleware&gt; middlewares);</div>
+<div class="line"><a id="l00298" name="l00298"></a><span class="lineno">  298</span> </div>
+<div class="line"><a id="l00299" name="l00299"></a><span class="lineno">  299</span>        <span class="keywordtype">void</span> route(<span class="keyword">const</span> MethodBinder&lt;httplib::Server::HandlerWithContentReader&gt;&amp; bind_method,</div>
+<div class="line"><a id="l00300" name="l00300"></a><span class="lineno">  300</span>                   <span class="keyword">const</span> std::string&amp; method,</div>
+<div class="line"><a id="l00301" name="l00301"></a><span class="lineno">  301</span>                   <span class="keyword">const</span> std::string&amp; path,</div>
+<div class="line"><a id="l00302" name="l00302"></a><span class="lineno">  302</span>                   <span class="keyword">const</span> <a class="code hl_typedef" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">RouteHandlerFuncWithContentReader</a>&amp; handler,</div>
+<div class="line"><a id="l00303" name="l00303"></a><span class="lineno">  303</span>                   std::initializer_list&lt;Middleware&gt; middlewares);</div>
+<div class="line"><a id="l00304" name="l00304"></a><span class="lineno">  304</span> </div>
+<div class="line"><a id="l00305" name="l00305"></a><span class="lineno">  305</span>        <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Ts&gt; <span class="keyword">struct </span>overloaded : Ts... { <span class="keyword">using </span>Ts::operator()...; };</div>
+<div class="line"><a id="l00306" name="l00306"></a><span class="lineno">  306</span>        <span class="keyword">template</span>&lt;<span class="keyword">class</span>... Ts&gt; overloaded(Ts...) -&gt; overloaded&lt;Ts...&gt;;</div>
+<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span> </div>
+<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span>        httplib::Server svr;</div>
+<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span>        <a class="code hl_class" href="classmantis_1_1RouteRegistry.html">RouteRegistry</a> registry;</div>
+<div class="line"><a id="l00310" name="l00310"></a><span class="lineno">  310</span>        <span class="keyword">thread_local</span> <span class="keyword">static</span> <a class="code hl_class" href="classmantis_1_1Context.html">Context</a> current_context;</div>
+<div class="line"><a id="l00311" name="l00311"></a><span class="lineno">  311</span>    };</div>
 </div>
-<div class="line"><a id="l00307" name="l00307"></a><span class="lineno">  307</span>}</div>
-<div class="line"><a id="l00308" name="l00308"></a><span class="lineno">  308</span> </div>
-<div class="line"><a id="l00309" name="l00309"></a><span class="lineno">  309</span><span class="preprocessor">#endif </span><span class="comment">// HTTPSERVER_H</span></div>
+<div class="line"><a id="l00312" name="l00312"></a><span class="lineno">  312</span>}</div>
+<div class="line"><a id="l00313" name="l00313"></a><span class="lineno">  313</span> </div>
+<div class="line"><a id="l00314" name="l00314"></a><span class="lineno">  314</span><span class="preprocessor">#endif </span><span class="comment">// HTTPSERVER_H</span></div>
 <div class="ttc" id="aclassmantis_1_1Context_html"><div class="ttname"><a href="classmantis_1_1Context.html">mantis::Context</a></div><div class="ttdef"><b>Definition</b> http.h:59</div></div>
 <div class="ttc" id="aclassmantis_1_1Context_html_a01a68a55163e1cc12b94dadabdc9cb68"><div class="ttname"><a href="classmantis_1_1Context.html#a01a68a55163e1cc12b94dadabdc9cb68">mantis::Context::dump</a></div><div class="ttdeci">void dump()</div><div class="ttdoc">Convenience method for dumping context data for debugging.</div><div class="ttdef"><b>Definition</b> http.cpp:16</div></div>
 <div class="ttc" id="aclassmantis_1_1Context_html_a1c7ef46b732661af4bde66ae05058e03"><div class="ttname"><a href="classmantis_1_1Context.html#a1c7ef46b732661af4bde66ae05058e03">mantis::Context::Context</a></div><div class="ttdeci">Context()=default</div></div>
@@ -299,10 +299,10 @@ $(document).ready(function(){initNavTree('http_8h_source.html',''); initResizabl
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_a2750f753bad8a6fcdb1eb89fc88ab9ce"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#a2750f753bad8a6fcdb1eb89fc88ab9ce">mantis::HttpUnit::close</a></div><div class="ttdeci">void close()</div><div class="ttdoc">Close the HTTP server connection.</div><div class="ttdef"><b>Definition</b> http.cpp:258</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_a64a686970eb86bb296a6b41205a09742"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#a64a686970eb86bb296a6b41205a09742">mantis::HttpUnit::context</a></div><div class="ttdeci">static Context &amp; context()</div><div class="ttdef"><b>Definition</b> http.cpp:265</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_a73f49fd4c138dbcffd4c454c9d818edd"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#a73f49fd4c138dbcffd4c454c9d818edd">mantis::HttpUnit::Patch</a></div><div class="ttdeci">void Patch(const std::string &amp;path, const RouteHandlerFunc &amp;handler, std::initializer_list&lt; Middleware &gt; middlewares={})</div><div class="ttdef"><b>Definition</b> http.cpp:195</div></div>
-<div class="ttc" id="aclassmantis_1_1HttpUnit_html_a810bf4c597a34d8388a7b64c6d596080"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#a810bf4c597a34d8388a7b64c6d596080">mantis::HttpUnit::_class_</a></div><div class="ttdeci">const std::string _class_</div><div class="ttdef"><b>Definition</b> http.h:280</div></div>
+<div class="ttc" id="aclassmantis_1_1HttpUnit_html_a810bf4c597a34d8388a7b64c6d596080"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#a810bf4c597a34d8388a7b64c6d596080">mantis::HttpUnit::_class_</a></div><div class="ttdeci">const std::string _class_</div><div class="ttdef"><b>Definition</b> http.h:285</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_a8cb442abd43d9f2a6720b9d58bec7a53"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#a8cb442abd43d9f2a6720b9d58bec7a53">mantis::HttpUnit::Post</a></div><div class="ttdeci">void Post(const std::string &amp;path, const RouteHandlerFunc &amp;handler, std::initializer_list&lt; Middleware &gt; middlewares={})</div><div class="ttdef"><b>Definition</b> http.cpp:177</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_aa0f67227f09877e15d0d1cd37c28cf6e"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#aa0f67227f09877e15d0d1cd37c28cf6e">mantis::HttpUnit::routeRegistry</a></div><div class="ttdeci">RouteRegistry &amp; routeRegistry()</div><div class="ttdoc">Fetch the underlying route registry, check.</div><div class="ttdef"><b>Definition</b> http.cpp:270</div></div>
-<div class="ttc" id="aclassmantis_1_1HttpUnit_html_aa870f9639ef7bf95391529a91f4e889e"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#aa870f9639ef7bf95391529a91f4e889e">mantis::HttpUnit::server</a></div><div class="ttdeci">httplib::Server &amp; server()</div><div class="ttdef"><b>Definition</b> http.cpp:275</div></div>
+<div class="ttc" id="aclassmantis_1_1HttpUnit_html_aa870f9639ef7bf95391529a91f4e889e"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#aa870f9639ef7bf95391529a91f4e889e">mantis::HttpUnit::server</a></div><div class="ttdeci">httplib::Server &amp; server()</div><div class="ttdoc">Get a reference to the httplib::Server instance.</div><div class="ttdef"><b>Definition</b> http.cpp:275</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_ab79d396b33678132ce0747d9b39ba4ab"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#ab79d396b33678132ce0747d9b39ba4ab">mantis::HttpUnit::listen</a></div><div class="ttdeci">bool listen(const std::string &amp;host, const int &amp;port)</div><div class="ttdoc">Bind to a port and start listening for requests.</div><div class="ttdef"><b>Definition</b> http.cpp:222</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_ac65f8600643af3c94280bc1b7ae56142"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#ac65f8600643af3c94280bc1b7ae56142">mantis::HttpUnit::Get</a></div><div class="ttdeci">void Get(const std::string &amp;path, const RouteHandlerFunc &amp;handler, std::initializer_list&lt; Middleware &gt; middlewares={})</div><div class="ttdef"><b>Definition</b> http.cpp:168</div></div>
 <div class="ttc" id="aclassmantis_1_1HttpUnit_html_ad5b46a4d36a45188503b125e8b8fdae3"><div class="ttname"><a href="classmantis_1_1HttpUnit.html#ad5b46a4d36a45188503b125e8b8fdae3">mantis::HttpUnit::HttpUnit</a></div><div class="ttdeci">HttpUnit()</div><div class="ttdef"><b>Definition</b> http.cpp:101</div></div>

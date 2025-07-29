@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.1</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.2</span>
    </div>
   </td>
  </tr>
@@ -99,6 +99,9 @@ $(document).ready(function(){initNavTree('classmantis_1_1FileUnit.html',''); ini
 </div><!--header-->
 <div class="contents">
 
+<p>Handle file management for record type files.  
+ <a href="classmantis_1_1FileUnit.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="fileunit_8h_source.html">fileunit.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
@@ -106,23 +109,37 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a7934651499e7321550e3aa286c76e8bf" id="r_a7934651499e7321550e3aa286c76e8bf"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#a7934651499e7321550e3aa286c76e8bf">FileUnit</a> ()=default</td></tr>
 <tr class="separator:a7934651499e7321550e3aa286c76e8bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aaf19e75c6de5100912c3f9b85ac93936" id="r_aaf19e75c6de5100912c3f9b85ac93936"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#aaf19e75c6de5100912c3f9b85ac93936">createDir</a> (const std::string &amp;table) const</td></tr>
+<tr class="memdesc:aaf19e75c6de5100912c3f9b85ac93936"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create a directory matching passed in <code>table</code> name.  <br /></td></tr>
 <tr class="separator:aaf19e75c6de5100912c3f9b85ac93936"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afa41602627e982fb49f0939c811e4b70" id="r_afa41602627e982fb49f0939c811e4b70"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#afa41602627e982fb49f0939c811e4b70">renameDir</a> (const std::string &amp;old_name, const std::string &amp;new_name) const</td></tr>
+<tr class="memdesc:afa41602627e982fb49f0939c811e4b70"><td class="mdescLeft">&#160;</td><td class="mdescRight">Rename existing directory if found or create it if not found.  <br /></td></tr>
 <tr class="separator:afa41602627e982fb49f0939c811e4b70"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2223a3c2f48d058ffa13f45e6429f28b" id="r_a2223a3c2f48d058ffa13f45e6429f28b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#a2223a3c2f48d058ffa13f45e6429f28b">deleteDir</a> (const std::string &amp;table) const</td></tr>
+<tr class="memdesc:a2223a3c2f48d058ffa13f45e6429f28b"><td class="mdescLeft">&#160;</td><td class="mdescRight">Delete table directory and its contents.  <br /></td></tr>
 <tr class="separator:a2223a3c2f48d058ffa13f45e6429f28b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a843117248f6ff5d9ffae224819ef45d1" id="r_a843117248f6ff5d9ffae224819ef45d1"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#a843117248f6ff5d9ffae224819ef45d1">saveFile</a> (const std::string &amp;table, const std::string &amp;filename, const std::vector&lt; std::uint8_t &gt; &amp;content) const</td></tr>
-<tr class="separator:a843117248f6ff5d9ffae224819ef45d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a328d039a2c447101e9835c72e4a1da95" id="r_a328d039a2c447101e9835c72e4a1da95"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#a328d039a2c447101e9835c72e4a1da95">dirPath</a> (const std::string &amp;table, bool create_if_missing=false) const</td></tr>
+<tr class="memdesc:a328d039a2c447101e9835c72e4a1da95"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetch directory path string for a given table.  <br /></td></tr>
 <tr class="separator:a328d039a2c447101e9835c72e4a1da95"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae69edd7d6f960c50876d8edac47bad7d" id="r_ae69edd7d6f960c50876d8edac47bad7d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#ae69edd7d6f960c50876d8edac47bad7d">filePath</a> (const std::string &amp;table, const std::string &amp;filename) const</td></tr>
+<tr class="memdesc:ae69edd7d6f960c50876d8edac47bad7d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetch absolute path to where file is or would be for a given table and filename.  <br /></td></tr>
 <tr class="separator:ae69edd7d6f960c50876d8edac47bad7d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5dbc0398aec055db014983c6d7691df0" id="r_a5dbc0398aec055db014983c6d7691df0"><td class="memItemLeft" align="right" valign="top">std::optional&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#a5dbc0398aec055db014983c6d7691df0">getFilePath</a> (const std::string &amp;table, const std::string &amp;filename) const</td></tr>
+<tr class="memdesc:a5dbc0398aec055db014983c6d7691df0"><td class="mdescLeft">&#160;</td><td class="mdescRight">Fetch filename absolute path only if the file exists, else, return empty response.  <br /></td></tr>
 <tr class="separator:a5dbc0398aec055db014983c6d7691df0"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac54f832f9769dd2617717d691d4e3d24" id="r_ac54f832f9769dd2617717d691d4e3d24"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html#ac54f832f9769dd2617717d691d4e3d24">removeFile</a> (const std::string &amp;table, const std::string &amp;filename) const</td></tr>
+<tr class="memdesc:ac54f832f9769dd2617717d691d4e3d24"><td class="mdescLeft">&#160;</td><td class="mdescRight">Remove existing file given the table and filename.  <br /></td></tr>
 <tr class="separator:ac54f832f9769dd2617717d691d4e3d24"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>Handle file management for record type files. </p>
+<p>These files are the usual file assets stored in either <code>file</code> or <code>files</code> filed type. The idea here being, the file is stored on disk and the name saved to the database.</p>
+<p>The class should handle:</p><ul>
+<li>Creating &amp; deleting folders</li>
+<li>Creating &amp; deleting file resources as needed.</li>
+<li>Updating folder names when tables are renamed</li>
+<li>Deleting folder contents for dropped </li>
+</ul>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="a7934651499e7321550e3aa286c76e8bf" name="a7934651499e7321550e3aa286c76e8bf"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7934651499e7321550e3aa286c76e8bf">&#9670;&#160;</a></span>FileUnit()</h2>
 
@@ -165,6 +182,14 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Create a directory matching passed in <code>table</code> name. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td><a class="el" href="structmantis_1_1Table.html">Table</a> name to created directory for </td></tr>
+  </table>
+  </dd>
+</dl>
+
 </div>
 </div>
 <a id="a2223a3c2f48d058ffa13f45e6429f28b" name="a2223a3c2f48d058ffa13f45e6429f28b"></a>
@@ -182,6 +207,14 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Delete table directory and its contents. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td><a class="el" href="structmantis_1_1Table.html">Table</a> name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>
@@ -211,6 +244,16 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Fetch directory path string for a given table. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td><a class="el" href="structmantis_1_1Table.html">Table</a> name </td></tr>
+    <tr><td class="paramname">create_if_missing</td><td>Bool status to know whether to create directory if missing </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Absolute path to a directory for the passed in table </dd></dl>
+
 </div>
 </div>
 <a id="ae69edd7d6f960c50876d8edac47bad7d" name="ae69edd7d6f960c50876d8edac47bad7d"></a>
@@ -238,6 +281,16 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Fetch absolute path to where file is or would be for a given table and filename. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td><a class="el" href="structmantis_1_1Table.html">Table</a> name </td></tr>
+    <tr><td class="paramname">filename</td><td>File name </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Absolute path to the given filename and table name. </dd></dl>
 
 </div>
 </div>
@@ -267,6 +320,17 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p>Fetch filename absolute path only if the file exists, else, return empty response. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td><a class="el" href="structmantis_1_1Table.html">Table</a> name </td></tr>
+    <tr><td class="paramname">filename</td><td>FIle name </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Absolute filepath or none if filename does not exist in the table directory.</dd></dl>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1FileUnit.html#ae69edd7d6f960c50876d8edac47bad7d" title="Fetch absolute path to where file is or would be for a given table and filename.">filePath()</a> above. </dd></dl>
+
 </div>
 </div>
 <a id="ac54f832f9769dd2617717d691d4e3d24" name="ac54f832f9769dd2617717d691d4e3d24"></a>
@@ -294,6 +358,16 @@ Public Member Functions</h2></td></tr>
         </tr>
       </table>
 </div><div class="memdoc">
+
+<p>Remove existing file given the table and filename. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">table</td><td><a class="el" href="structmantis_1_1Table.html">Table</a> name </td></tr>
+    <tr><td class="paramname">filename</td><td>File name </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Status whether file deletion succeeded. </dd></dl>
 
 </div>
 </div>
@@ -323,39 +397,14 @@ Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
-</div>
-</div>
-<a id="a843117248f6ff5d9ffae224819ef45d1" name="a843117248f6ff5d9ffae224819ef45d1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a843117248f6ff5d9ffae224819ef45d1">&#9670;&#160;</a></span>saveFile()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">bool mantis::FileUnit::saveFile </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>table</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>filename</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::vector&lt; std::uint8_t &gt; &amp;&#160;</td>
-          <td class="paramname"><em>content</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
+<p>Rename existing directory if found or create it if not found. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">old_name</td><td>Old table name </td></tr>
+    <tr><td class="paramname">new_name</td><td>New table name </td></tr>
+  </table>
+  </dd>
+</dl>
 
 </div>
 </div>

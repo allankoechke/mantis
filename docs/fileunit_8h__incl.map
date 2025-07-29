@@ -1,11 +1,7 @@
 <map id="/home/runner/work/mantis/mantis/include/mantis/core/fileunit.h" name="/home/runner/work/mantis/mantis/include/mantis/core/fileunit.h">
-<area shape="rect" id="Node000001" title=" " alt="" coords="81,5,276,60"/>
-<area shape="rect" id="Node000002" title=" " alt="" coords="5,108,72,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="137,62,71,103,68,98,135,58"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="96,108,171,133"/>
-<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="167,61,148,97,143,95,162,59"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="195,108,253,133"/>
-<area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="195,59,214,95,209,97,190,61"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="278,108,341,133"/>
-<area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="220,58,282,98,279,103,217,62"/>
+<area shape="rect" id="Node000001" title="File management for record level file records." alt="" coords="5,5,200,60"/>
+<area shape="rect" id="Node000002" title=" " alt="" coords="20,108,95,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="91,61,72,97,67,95,86,59"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="119,108,177,133"/>
+<area shape="poly" id="edge2_Node000001_Node000003" title=" " alt="" coords="119,59,138,95,133,97,114,61"/>
 </map>

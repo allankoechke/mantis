@@ -1,7 +1,5 @@
 var NAVTREEINDEX3 =
 {
-"sync.html#autotoc_md126":[8,0,1,0],
-"sync.html#autotoc_md127":[8,0,1,1],
 "sync.html#autotoc_md128":[8,0,1,2],
 "sync.html#autotoc_md129":[8,0,1,3],
 "sync.html#autotoc_md131":[8,0,2],
