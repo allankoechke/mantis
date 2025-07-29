@@ -37,7 +37,7 @@
 | 🔄 WebSocket sync support         | ⬜ Planned      |
 | 🧩 Middleware support             | ✅ Completed |
 | 💾 Static file serving            | ✅ Completed      |
-| 🚀 Docker-ready deployment        | ⬜ Planned      |
+| 🚀 Docker-ready deployment        | ✅ Completed      |
 | 🧪 Unit + integration tests       | 🟡 In Progress     |
 | 📘 CLI + embeddable modes         | ✅ Completed |
 
