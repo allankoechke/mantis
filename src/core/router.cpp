@@ -488,6 +488,13 @@ bool mantis::Router::generateAdminCrudApis() const
                     Log::critical("Error processing request [2]: {}", e.what());
                 }
             });
+
+        // Add /public static file serving directory
+        if (!MantisApp::instance().http().server().set_mount_point("/", MantisApp::instance().publicDir()))
+        {
+            Log::critical("Failed to setup mount point directory for '/' at '{}'", MantisApp::instance().publicDir());
+            return false;
+        }
     }
 
     catch (const std::exception& e)
