@@ -66,8 +66,20 @@ namespace mantis
 
         const std::string __class_name__ = "mantis::Router";
     private:
+        /**
+         * @brief Generate API endpoint for file serving for record level file types.
+         * @return Status whether API generation succeeded.
+         */
         bool generateFileServingApi() const;
+        /**
+         * @brief Generate CRUD API endpoints for all managed table schema(s).
+         * @return Status whether CRUD APIs generation succeeded
+         */
         bool generateTableCrudApis();
+        /**
+         * @brief Generate Admin only CRUD endpoints.
+         * @return Status whether Admin only CRUD  generation succeeded
+         */
         bool generateAdminCrudApis() const;
 
         std::shared_ptr<TableUnit> m_adminTable;

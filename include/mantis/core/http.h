@@ -275,6 +275,11 @@ namespace mantis
          */
         RouteRegistry& routeRegistry();
 
+        /**
+         * @brief Get a reference to the httplib::Server instance
+         *
+         * @return A reference to the httplib server instance being used.
+         */
         httplib::Server& server();
 
         const std::string _class_ = "mantis::HttpUnit";
