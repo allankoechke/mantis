@@ -1,6 +1,7 @@
-//
-// Created by allan on 17/07/2025.
-//
+/**
+ * @file fileunit.cpp
+ * @brief Implementation for @see fileunit.h
+ */
 
 #include "../../include/mantis/core/fileunit.h"
 #include "../../include/mantis/core/logging.h"
@@ -8,8 +9,6 @@
 
 #include <fstream>
 #include <filesystem>
-
-#include "../../include/mantis/core/logging.h"
 
 namespace mantis
 {
@@ -54,14 +53,14 @@ namespace mantis
         return std::nullopt;
     }
 
-    bool FileUnit::saveFile(const std::string& table, const std::string& filename,
-                            const std::vector<uint8_t>& content) const
-    {
-        std::ofstream file(filePath(table, filename), std::ios::binary);
-        if (!file) return false;
-        file.write(reinterpret_cast<const char*>(content.data()), content.size());
-        return true;
-    }
+    // bool FileUnit::saveFile(const std::string& table, const std::string& filename,
+    //                         const std::vector<uint8_t>& content) const
+    // {
+    //     std::ofstream file(filePath(table, filename), std::ios::binary);
+    //     if (!file) return false;
+    //     file.write(reinterpret_cast<const char*>(content.data()), content.size());
+    //     return true;
+    // }
 
     std::string FileUnit::dirPath(const std::string& table, bool create_if_missing) const
     {
