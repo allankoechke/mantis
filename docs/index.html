@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.1.15</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.1</span>
    </div>
   </td>
  </tr>
@@ -133,8 +133,9 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="line">cd mantis</div>
 <div class="line">cmake -B build</div>
 <div class="line">cmake --build build</div>
-<div class="line">./build/mantisapp serve -p 5000</div>
-</div><!-- fragment --><p>You can also embed Mantis as a library in your own C++ project:</p>
+<div class="line">./build/mantisapp serve</div>
+</div><!-- fragment --><p> By default, the http server is served on port <code>7070</code>.</p>
+<p>You can also embed Mantis as a library in your own C++ project:</p>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="app_8h.html">mantis/app/app.h</a>&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> <a class="code hl_function" href="mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>* argv[])</div>
@@ -150,7 +151,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <h3><a class="anchor" id="autotoc_md145"></a>
 Admin Dashboard</h3>
 <p>Mantis ships with a lightweight admin dashboard available on <code>&lt;host&gt;:&lt;ip&gt;/admin</code> and restricted to admin login only. By default, in your setup, you need to create a admin user account using the <a class="el" href="01_8cmd_8md.html">CLI</a> command:</p>
-<div class="fragment"><div class="line">mantisapp admins --add &lt;email&gt;</div>
+<div class="fragment"><div class="line">mantisapp admins --add john@doe.com</div>
 </div><!-- fragment --><p>With the admin account created, we can then use it to log in to the admin dashboard. The dashboard allows for easy management of:</p><ul>
 <li>**__CRUD__** on admin accounts</li>
 <li>**__CRUD__** on system logs [WIP?]</li>

@@ -8,7 +8,7 @@ var searchData=
   ['addroute_5',['addRoute',['../classmantis_1_1Router.html#ad5d799c151f8b21c14c60394981a486b',1,'mantis::Router']]],
   ['addrule_6',['addrule',['../structmantis_1_1Table.html#add1ff1cfecb2cc33d31d527216519c02',1,'mantis::Table::addRule'],['../classmantis_1_1TableUnit.html#a12bfe98febac9396247cc1ec7b48a117',1,'mantis::TableUnit::addRule()']]],
   ['admin_20dashboard_7',['Admin Dashboard',['../index.html#autotoc_md145',1,'']]],
-  ['admins_20tt_20command_8',['👤 &lt;tt&gt;admins&lt;/tt&gt; Command',['../cli.html#autotoc_md14',1,'']]],
+  ['admins_20command_8',['👤 admins Command',['../cli.html#autotoc_md14',1,'']]],
   ['admintable_9',['admintable',['../structmantis_1_1AdminTable.html#a34bb24436257500a345dbb7c85ab6a24',1,'mantis::AdminTable::AdminTable()'],['../structmantis_1_1AdminTable.html',1,'mantis::AdminTable']]],
   ['advanced_20usage_10',['Advanced Usage',['../rest_api_rules.html#autotoc_md70',1,'']]],
   ['advanced_3a_20use_20mantis_20as_20a_20submodule_11',['🛠️ Advanced: Use Mantis as a Submodule',['../embedding.html#autotoc_md112',1,'']]],

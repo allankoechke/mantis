@@ -2,7 +2,7 @@ var searchData=
 [
   ['read_0',['read',['../classmantis_1_1CrudInterface.html#a92a7eebedb34edc544074243117835a1',1,'mantis::CrudInterface::read()'],['../classmantis_1_1SysTablesUnit.html#a42f328c43657ed0b074325d2dc77c67e',1,'mantis::SysTablesUnit::read()'],['../classmantis_1_1TableUnit.html#add4b33276a78deef8109909a33dd2b0f',1,'mantis::TableUnit::read(const std::string &amp;id, const json &amp;opts) override']]],
   ['recordexists_1',['recordExists',['../classmantis_1_1TableUnit.html#a9ffe17bae45626e32b4c622632c48496',1,'mantis::TableUnit']]],
-  ['reference_2',['🧭 &lt;tt&gt;mantisapp&lt;/tt&gt; CLI Reference',['../cli.html#autotoc_md8',1,'']]],
+  ['reference_2',['🧭 mantisapp CLI Reference',['../cli.html#autotoc_md8',1,'']]],
   ['reference_20guide_3',['REST API Reference Guide',['../rest_api.html',1,'']]],
   ['regexpattern_4',['regexPattern',['../structmantis_1_1Field.html#a74c5d7df7ec33803a34c55a4a0468b23',1,'mantis::Field']]],
   ['relationships_5',['Multi-Table Relationships',['../rest_api_rules.html#autotoc_md72',1,'']]],
@@ -17,7 +17,7 @@ var searchData=
   ['request_5fpending_14',['REQUEST_PENDING',['../http_8h.html#ad5550135843ca34b930f5ceb0584adaa',1,'http.h']]],
   ['requests_15',['🧪 Example Requests',['../rest_api.html#autotoc_md40',1,'']]],
   ['required_16',['required',['../structmantis_1_1Field.html#a7551e5857d125238bc76c99fdf6a57ff',1,'mantis::Field']]],
-  ['reserved_17',['🔄 &lt;tt&gt;sync&lt;/tt&gt; Command *(Reserved)*',['../cli.html#autotoc_md18',1,'']]],
+  ['reserved_17',['🔄 sync Command *(Reserved)*',['../cli.html#autotoc_md18',1,'']]],
   ['resetpassword_18',['resetPassword',['../classmantis_1_1TableUnit.html#ae5c0792f7bae011487b700e0e971f5da',1,'mantis::TableUnit']]],
   ['resolution_20strong_19',['2. &lt;strong&gt;Conflict Resolution&lt;/strong&gt;',['../sync.html#autotoc_md127',1,'']]],
   ['resolvepath_20',['resolvePath',['../namespacemantis.html#abe97209493d2bc0086c3678010342477',1,'mantis']]],

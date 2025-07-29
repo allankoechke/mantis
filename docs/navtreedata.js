@@ -28,13 +28,13 @@ var NAVTREE =
     [ "Getting Started", "index.html", null ],
     [ "Setting Up Mantis", "setup.html", null ],
     [ "Command Line Usage", "cli.html", [
-      [ "🧭 <tt>mantisapp</tt> CLI Reference", "cli.html#autotoc_md8", [
+      [ "🧭 mantisapp CLI Reference", "cli.html#autotoc_md8", [
         [ "⚙️ Global Options", "cli.html#autotoc_md10", null ],
-        [ "🚀 <tt>serve</tt> Command", "cli.html#autotoc_md12", null ],
-        [ "👤 <tt>admins</tt> Command", "cli.html#autotoc_md14", null ],
-        [ "🛠️ <tt>migrate</tt> Command *(WIP)*", "cli.html#autotoc_md16", null ],
+        [ "🚀 serve Command", "cli.html#autotoc_md12", null ],
+        [ "👤 admins Command", "cli.html#autotoc_md14", null ],
+        [ "🛠️ migrate Command *(WIP)*", "cli.html#autotoc_md16", null ],
         [ "</blockquote>", "cli.html#autotoc_md17", null ],
-        [ "🔄 <tt>sync</tt> Command *(Reserved)*", "cli.html#autotoc_md18", null ],
+        [ "🔄 sync Command *(Reserved)*", "cli.html#autotoc_md18", null ],
         [ "📝 Notes", "cli.html#autotoc_md20", null ],
         [ "📚 See Also", "cli.html#autotoc_md22", null ]
       ] ]
