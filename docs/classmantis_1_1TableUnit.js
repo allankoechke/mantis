@@ -23,6 +23,7 @@ var classmantis_1_1TableUnit =
     [ "list_records", "classmantis_1_1TableUnit.html#af201253f7b84d2c0c8f5dc1a24bb1563", null ],
     [ "listRule", "classmantis_1_1TableUnit.html#a5fd00682fbcf6d187c6a2952df92ee2d", null ],
     [ "parseDbRowToJson", "classmantis_1_1TableUnit.html#a1bfe3c904f1b28c3b7516b0e2189a8d5", null ],
+    [ "parseDbRowToJson", "classmantis_1_1TableUnit.html#aaf8844479656cc2c19f9051e51ce05ff", null ],
     [ "read", "classmantis_1_1TableUnit.html#add4b33276a78deef8109909a33dd2b0f", null ],
     [ "recordExists", "classmantis_1_1TableUnit.html#a9ffe17bae45626e32b4c622632c48496", null ],
     [ "remove", "classmantis_1_1TableUnit.html#afbed1050a45cf1ff2d1b24d28d04e12d", null ],

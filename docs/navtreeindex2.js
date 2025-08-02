@@ -1,5 +1,9 @@
 var NAVTREEINDEX2 =
 {
+"logging_8h.html#a3415e3e8dd3d16ea64aec8f0e9af4283":[11,0,1,0,1,8,2],
+"logging_8h.html#a558f262c132aae0f82c218213dd1ed0d":[11,0,1,0,1,8,1],
+"logging_8h.html#ac8fcce3e8202c1c2a90a006d99cc9690":[11,0,1,0,1,8,4],
+"logging_8h.html#ada8131e8cb8fbce16294534a4a808d07":[11,0,1,0,1,8,5],
 "logging_8h.html#ada8131e8cb8fbce16294534a4a808d07a2d3e4144aa384b18849ab9a8abad74d6":[11,0,1,0,1,8,5,0],
 "logging_8h.html#ada8131e8cb8fbce16294534a4a808d07a32bd8a1db2275458673903bdb84cb277":[11,0,1,0,1,8,5,3],
 "logging_8h.html#ada8131e8cb8fbce16294534a4a808d07a551b723eafd6a31d444fcb2f5920fbd3":[11,0,1,0,1,8,5,2],
@@ -245,9 +249,5 @@ var NAVTREEINDEX2 =
 "structmantis_1_1ViewTable.html#adef5bac62a166493a70a34d64a377aef":[9,0,0,24,1],
 "structmantis_1_1ViewTable.html#adef5bac62a166493a70a34d64a377aef":[10,0,0,24,1],
 "sync.html":[8],
-"sync.html#autotoc_md121":[8,0],
-"sync.html#autotoc_md123":[8,0,0],
-"sync.html#autotoc_md125":[8,0,1],
-"sync.html#autotoc_md126":[8,0,1,0],
-"sync.html#autotoc_md127":[8,0,1,1]
+"sync.html#autotoc_md121":[8,0]
 };

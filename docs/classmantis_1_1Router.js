@@ -9,5 +9,6 @@ var classmantis_1_1Router =
     [ "removeRoute", "classmantis_1_1Router.html#aacf3407728ed641e0c3493848992e65c", null ],
     [ "updateRoute", "classmantis_1_1Router.html#a6fb0dd6f291415d3472fb7ab46d5101f", null ],
     [ "updateRouteCache", "classmantis_1_1Router.html#a534f4467ac6fe5eaee89bb79391d4ee4", null ],
-    [ "__class_name__", "classmantis_1_1Router.html#a56a83fd1092b83aff3d519de4051937a", null ]
+    [ "__class_name__", "classmantis_1_1Router.html#a56a83fd1092b83aff3d519de4051937a", null ],
+    [ "adminTableFields", "classmantis_1_1Router.html#a7c0ed03bc30ae6acb60d7d7113cf33cf", null ]
 ];

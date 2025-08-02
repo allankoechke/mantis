@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.2</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.4</span>
    </div>
   </td>
  </tr>
@@ -213,6 +213,8 @@ Public Member Functions</h2></td></tr>
 <tr class="separator:a35dbd1927d78373e5e6b1e99131638d9"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a1bfe3c904f1b28c3b7516b0e2189a8d5" id="r_a1bfe3c904f1b28c3b7516b0e2189a8d5"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1TableUnit.html#a1bfe3c904f1b28c3b7516b0e2189a8d5">parseDbRowToJson</a> (const soci::row &amp;row) const</td></tr>
 <tr class="separator:a1bfe3c904f1b28c3b7516b0e2189a8d5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf8844479656cc2c19f9051e51ce05ff" id="r_aaf8844479656cc2c19f9051e51ce05ff"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1TableUnit.html#aaf8844479656cc2c19f9051e51ce05ff">parseDbRowToJson</a> (const soci::row &amp;row, const std::vector&lt; <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &gt; &amp;ref_fields) const</td></tr>
+<tr class="separator:aaf8844479656cc2c19f9051e51ce05ff"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a21eb2c0cb6f39fa3e64a04b8e9dda567" id="r_a21eb2c0cb6f39fa3e64a04b8e9dda567"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1TableUnit.html#a21eb2c0cb6f39fa3e64a04b8e9dda567">validateRequestBody</a> (const <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &amp;body) const</td></tr>
 <tr class="separator:a21eb2c0cb6f39fa3e64a04b8e9dda567"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae8be97f3a152fe4035cd92e897b79aee" id="r_ae8be97f3a152fe4035cd92e897b79aee"><td class="memItemLeft" align="right" valign="top">std::optional&lt; <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1TableUnit.html#ae8be97f3a152fe4035cd92e897b79aee">validateUpdateRequestBody</a> (const <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &amp;body) const</td></tr>
@@ -984,7 +986,7 @@ Protected Attributes</h2></td></tr>
 </div>
 </div>
 <a id="a1bfe3c904f1b28c3b7516b0e2189a8d5" name="a1bfe3c904f1b28c3b7516b0e2189a8d5"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a1bfe3c904f1b28c3b7516b0e2189a8d5">&#9670;&#160;</a></span>parseDbRowToJson()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#a1bfe3c904f1b28c3b7516b0e2189a8d5">&#9670;&#160;</a></span>parseDbRowToJson() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -995,6 +997,34 @@ Protected Attributes</h2></td></tr>
           <td class="paramtype">const soci::row &amp;&#160;</td>
           <td class="paramname"><em>row</em></td><td>)</td>
           <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="aaf8844479656cc2c19f9051e51ce05ff" name="aaf8844479656cc2c19f9051e51ce05ff"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf8844479656cc2c19f9051e51ce05ff">&#9670;&#160;</a></span>parseDbRowToJson() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> mantis::TableUnit::parseDbRowToJson </td>
+          <td>(</td>
+          <td class="paramtype">const soci::row &amp;&#160;</td>
+          <td class="paramname"><em>row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::vector&lt; <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &gt; &amp;&#160;</td>
+          <td class="paramname"><em>ref_fields</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
         </tr>
       </table>
 </div><div class="memdoc">
