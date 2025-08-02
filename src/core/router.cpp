@@ -27,8 +27,10 @@ mantis::Router::Router()
     AdminTable admin;
     admin.name = "__admins";
     admin.id = TableUnit::generateTableId("__admins");
+    auto admin_obj = admin.to_json();
 
-    m_adminTable = std::make_shared<TableUnit>(admin.to_json());
+    adminTableFields = admin_obj.value("fields", json::array());
+    m_adminTable = std::make_shared<TableUnit>(admin_obj);
     m_tableRoutes = std::make_shared<SysTablesUnit>("__tables",
                                                     TableUnit::generateTableId("__tables"), "base");
 
@@ -322,7 +324,7 @@ bool mantis::Router::generateFileServingApi() const
                 const auto table_name = req.path_params.at("table");
                 const auto file_name = req.path_params.at("filename");
 
-                if (table_name.empty() ||file_name.empty())
+                if (table_name.empty() || file_name.empty())
                 {
                     json response;
                     response["error"] = "Table name and file name are required!";
@@ -355,7 +357,8 @@ bool mantis::Router::generateFileServingApi() const
         );
 
         return true;
-    } catch (std::exception& e)
+    }
+    catch (std::exception& e)
     {
         Log::critical("Error creating file serving endpoint: {}", e.what());
     }

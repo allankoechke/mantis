@@ -6,6 +6,7 @@
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
+#include "mantis/core/router.h"
 
 #define __file__ "core/tables/tables_auth.cpp"
 
@@ -252,7 +253,9 @@ namespace mantis
                     {
                         // Populate the auth object with additional data from the database
                         // remove `password` field if available
-                        auto user = parseDbRowToJson(r);
+                        auto user = _table == "__admins"
+                                        ? parseDbRowToJson(r, MantisApp::instance().router().adminTableFields)
+                                        : parseDbRowToJson(r);
 
                         // Populate the `auth` object
                         auth["type"] = "user";
