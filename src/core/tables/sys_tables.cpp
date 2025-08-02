@@ -721,7 +721,7 @@ namespace mantis
             response["error"] = "Auth token missing user id or table name";
 
             res.status = 403;
-            res.set_content(resp.dump(), "application/json");
+            res.set_content(response.dump(), "application/json");
             DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
@@ -732,9 +732,9 @@ namespace mantis
         //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
         //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
         auto sql = MantisApp::instance().db().session();
-        soci::row r;
-        std::string query = "SELECT * FROM __admins WHERE id = :id LIMIT 1";
-        *sql << query, soci::use(_id), soci::into(r);
+        soci::row row;
+        std::string query = "SELECT id, email, created, updated FROM __admins WHERE id = :id LIMIT 1";
+        *sql << query, soci::use(_id), soci::into(row);
 
         // Return 404 if user was not found
         if (!sql->got_data())
@@ -745,27 +745,64 @@ namespace mantis
             response["error"] = "Auth id was not found.";
 
             res.status = 404;
-            res.set_content(resp.dump(), "application/json");
+            res.set_content(response.dump(), "application/json");
 
             DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
-        // Populate the auth object with additional data from the database
-        // remove `password` field if available
-        auto user = parseDbRowToJson(r);
-        auth["type"] = "user";
-        auth["id"] = _id;
-        auth["table"] = _table;
-
-        // Populate auth obj with user details ...
-        for (const auto& [key, value] : user.items())
+        try
         {
-            auth[key] = value;
-        }
+            // Populate the auth object with additional data from the database
+            // remove `password` field if available
+            json user;
+            user["id"] = row.get<std::string>(0);
+            user["email"] = row.get<std::string>(1);
 
-        // Remove password field
-        auth.erase("password");
+            // Handle date parsing, SQLITE uses `string` type
+            if (row.get_properties(2).get_db_type() == soci::db_date)
+            {
+                auto t = row.get<std::tm>(2);
+                auto c_ts = DatabaseUnit::tmToISODate(t);
+                user["created"] = c_ts;
+
+                t = row.get<std::tm>(3);
+                auto u_ts = DatabaseUnit::tmToISODate(t);
+                user["updated"] = u_ts;
+            }
+            else
+            {
+                user["created"] = row.get<std::string>(2);
+                user["updated"] = row.get<std::string>(3);
+            }
+
+            // Enrich auth object with auth information
+            auth["type"] = "user";
+            auth["id"] = _id;
+            auth["table"] = _table;
+
+            // Populate auth obj with user details ...
+            for (const auto& [key, value] : user.items())
+            {
+                auth[key] = value;
+            }
+
+            // Remove password field
+            // auth.erase("password");
+        } catch (const std::exception& e)
+        {
+            Log::critical("Error parsing logged user: {}", e.what());
+
+            json response;
+            response["status"] = 500;
+            response["data"] = json::object();
+            response["error"] = "Internal Server Error while parsing user record!";
+
+            res.status = 500;
+            res.set_content(response.dump(), "application/json");
+            DUMP_RESPONSE();
+            return REQUEST_HANDLED;
+        }
 
         // Update context data
         ctx.set("auth", auth);

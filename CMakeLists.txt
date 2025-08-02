@@ -137,8 +137,8 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInf
         message("Enabling ASAN")
         set(ENABLE_ASAN ON)
         
-        enable_asan_for_target(mantis)
-        enable_asan_for_target(mantisapp)
+        # enable_asan_for_target(mantis)
+        # enable_asan_for_target(mantisapp)
     endif()
 endif()
 include(cmake/asan.cmake)
