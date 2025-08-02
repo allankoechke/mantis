@@ -168,7 +168,7 @@ jobs:
           git switch gh-pages || git checkout --orphan gh-pages
           
           # Copy CNAME record before deleting the directory
-          cp docs/CNAME docs/html/
+          cp docs/CNAME build/docs/html/
           
           # Clean and copy new docs
           rm -rf docs

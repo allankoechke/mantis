@@ -249,7 +249,7 @@ mantis::json mantis::Router::updateRouteCache(const json& table_data)
 
 json mantis::Router::removeRoute(const json& table_data)
 {
-    Log::debug("{}", __func__);
+    TRACE_CLASS_METHOD()
 
     json res;
     res["success"] = false;
@@ -315,6 +315,8 @@ json mantis::Router::removeRoute(const json& table_data)
 
 bool mantis::Router::generateFileServingApi() const
 {
+    TRACE_CLASS_METHOD()
+
     try
     {
         MantisApp::instance().http().Get(
@@ -368,7 +370,7 @@ bool mantis::Router::generateFileServingApi() const
 
 bool mantis::Router::generateTableCrudApis()
 {
-    Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
+    TRACE_CLASS_METHOD()
 
     const auto sql = MantisApp::instance().db().session();
 
@@ -402,7 +404,7 @@ bool mantis::Router::generateTableCrudApis()
 
 bool mantis::Router::generateAdminCrudApis() const
 {
-    Log::trace("Mantis::ServerMgr::GenerateAdminCrudApis");
+    TRACE_CLASS_METHOD()
 
     try
     {
