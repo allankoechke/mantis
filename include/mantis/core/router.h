@@ -85,6 +85,9 @@ namespace mantis
         std::shared_ptr<TableUnit> m_adminTable;
         std::shared_ptr<SysTablesUnit> m_tableRoutes;
         std::vector<std::shared_ptr<TableUnit>> m_routes = {};
+
+    public:
+        std::vector<json> adminTableFields = {};
     };
 }
 

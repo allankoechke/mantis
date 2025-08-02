@@ -27,8 +27,10 @@ mantis::Router::Router()
     AdminTable admin;
     admin.name = "__admins";
     admin.id = TableUnit::generateTableId("__admins");
+    auto admin_obj = admin.to_json();
 
-    m_adminTable = std::make_shared<TableUnit>(admin.to_json());
+    adminTableFields = admin_obj.value("fields", json::array());
+    m_adminTable = std::make_shared<TableUnit>(admin_obj);
     m_tableRoutes = std::make_shared<SysTablesUnit>("__tables",
                                                     TableUnit::generateTableId("__tables"), "base");
 
@@ -247,7 +249,7 @@ mantis::json mantis::Router::updateRouteCache(const json& table_data)
 
 json mantis::Router::removeRoute(const json& table_data)
 {
-    Log::debug("{}", __func__);
+    TRACE_CLASS_METHOD()
 
     json res;
     res["success"] = false;
@@ -313,6 +315,8 @@ json mantis::Router::removeRoute(const json& table_data)
 
 bool mantis::Router::generateFileServingApi() const
 {
+    TRACE_CLASS_METHOD()
+
     try
     {
         MantisApp::instance().http().Get(
@@ -322,7 +326,7 @@ bool mantis::Router::generateFileServingApi() const
                 const auto table_name = req.path_params.at("table");
                 const auto file_name = req.path_params.at("filename");
 
-                if (table_name.empty() ||file_name.empty())
+                if (table_name.empty() || file_name.empty())
                 {
                     json response;
                     response["error"] = "Table name and file name are required!";
@@ -355,7 +359,8 @@ bool mantis::Router::generateFileServingApi() const
         );
 
         return true;
-    } catch (std::exception& e)
+    }
+    catch (std::exception& e)
     {
         Log::critical("Error creating file serving endpoint: {}", e.what());
     }
@@ -365,7 +370,7 @@ bool mantis::Router::generateFileServingApi() const
 
 bool mantis::Router::generateTableCrudApis()
 {
-    Log::debug("Mantis::ServerMgr::GenerateTableCrudApis");
+    TRACE_CLASS_METHOD()
 
     const auto sql = MantisApp::instance().db().session();
 
@@ -399,7 +404,7 @@ bool mantis::Router::generateTableCrudApis()
 
 bool mantis::Router::generateAdminCrudApis() const
 {
-    Log::trace("Mantis::ServerMgr::GenerateAdminCrudApis");
+    TRACE_CLASS_METHOD()
 
     try
     {
