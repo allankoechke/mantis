@@ -268,7 +268,11 @@ namespace mantis
         });
 
         // Parse request body to JSON Object, return an error if it fails
-        try { body = json::parse(body_str); }
+        try
+        {
+            if (body_str.empty()) body = json::object();
+            else body = json::parse(body_str);
+        }
         catch (const std::exception& e)
         {
             response["status"] = 500;
@@ -426,7 +430,11 @@ namespace mantis
         });
 
         // Parse request body to JSON Object, return an error if it fails
-        try { body = json::parse(body_str); }
+        try
+        {
+            if (body_str.empty()) body = json::object();
+            else body = json::parse(body_str);
+        }
         catch (const std::exception& e)
         {
             response["status"] = 500;
@@ -789,7 +797,8 @@ namespace mantis
 
             // Remove password field
             // auth.erase("password");
-        } catch (const std::exception& e)
+        }
+        catch (const std::exception& e)
         {
             Log::critical("Error parsing logged user: {}", e.what());
 

@@ -395,7 +395,11 @@ namespace mantis
             });
 
             // Parse request body to JSON Object, return an error if it fails
-            try { body = json::parse(body_str); }
+            try
+            {
+                if (body_str.empty()) body = json::object();
+                else body = json::parse(body_str);
+            }
             catch (const std::exception& e)
             {
                 response["status"] = 400;
@@ -424,6 +428,9 @@ namespace mantis
 
         for (const auto& file : files)
         {
+            // For non-file types, continue
+            if (file.filename.empty()) continue;
+
             const auto filepath = files_to_save[file.name]["path"].get<std::string>();
             Log::trace("Creating new file {}", filepath);
             if (std::ofstream ofs(filepath, std::ios::binary); ofs.is_open())
@@ -457,6 +464,9 @@ namespace mantis
 
             for (const auto& file : files)
             {
+                // For non-file types, continue
+                if (file.filename.empty()) continue;
+
                 const auto filename = files_to_save[file.name]["filename"].get<std::string>();
                 if (!MantisApp::instance().files().removeFile(m_tableName, filename))
                 {
@@ -573,7 +583,11 @@ namespace mantis
             });
 
             // Parse request body to JSON Object, return an error if it fails
-            try { body = json::parse(body_str); }
+            try
+            {
+                if (body_str.empty()) body = json::object();
+                else body = json::parse(body_str);
+            }
             catch (const std::exception& e)
             {
                 response["status"] = 400;
