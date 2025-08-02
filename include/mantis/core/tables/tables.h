@@ -103,6 +103,7 @@ namespace mantis
         static std::string generateTableId(const std::string& tablename);
         std::string getColTypeFromName(const std::string& col, const std::vector<json>& fields) const;
         json parseDbRowToJson(const soci::row& row) const;
+        json parseDbRowToJson(const soci::row& row, const std::vector<json>& ref_fields) const;
         std::optional<json> validateRequestBody(const json& body) const;
         std::optional<json> validateUpdateRequestBody(const json& body) const;
         bool recordExists(const std::string& id) const;

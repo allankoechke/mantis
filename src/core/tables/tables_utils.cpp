@@ -63,11 +63,22 @@ namespace mantis
 
     json TableUnit::parseDbRowToJson(const soci::row& row) const
     {
+        // Use the internal m_fields for parsing fields
+        return parseDbRowToJson(row, m_fields);
+    }
+
+    json TableUnit::parseDbRowToJson(const soci::row& row, const std::vector<json>& ref_fields) const
+    {
+        // Guard against empty reference schema fields
+        if (ref_fields.empty())
+                throw std::runtime_error(std::format("Parse db row error, empty reference schema fields passed!"));
+
+        // Build response json object
         json j;
         for (size_t i = 0; i < row.size(); i++)
         {
             const auto colName = row.get_properties(i).get_name();
-            const auto colType = getColTypeFromName(colName, m_fields);
+            const auto colType = getColTypeFromName(colName, ref_fields);
 
             Log::trace("Parsing: #{} {} of type: {}", i, colName, colType);
 
