@@ -9,6 +9,10 @@
 #include <thread>
 #include <format>
 
+// For thread logger
+#include <spdlog/sinks/stdout_color_sinks-inl.h>
+#include "spdlog/sinks/ansicolor_sink.h"
+
 #define __file__ "core/http.cpp"
 
 thread_local mantis::Context mantis::HttpUnit::current_context;
@@ -217,8 +221,6 @@ void mantis::HttpUnit::Delete(const std::string& path, const RouteHandlerFunc& h
 
 bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 {
-    std::cout << std::endl;
-
     // Check if server can bind to port before launching
     if (!svr.is_valid())
     {
@@ -227,17 +229,25 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
     }
 
     // Launch logging/browser in separate thread after listen starts
-    std::thread notifier([=]()
+    std::thread notifier([=]() -> void
     {
+        std::cout << std::endl;
+
         // Wait a little for the server to be fully ready
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto endpoint = std::format("{}:{}", host, port);
-        Log::info("Starting Servers: \n\t├── API Endpoints: http://{}/api/v1/ \n\t└── Admin Dashboard: http://{}/admin",
+
+        auto t_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+        t_sink->set_level(spdlog::level::trace);
+        t_sink->set_pattern("[%Y-%m-%d %H:%M:%S] [%-8l] %v");
+
+        spdlog::logger logger("t_sink", {t_sink});
+        logger.set_level(spdlog::level::trace);
+
+        logger.info("Starting Servers: \n\t├── API Endpoints: http://{}/api/v1/ \n\t└── Admin Dashboard: http://{}/admin\n",
                   endpoint, endpoint);
 
         MantisApp::instance().openBrowserOnStart();
-
-        std::cout << std::endl;
     });
 
     if (!svr.listen(host, port))

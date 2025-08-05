@@ -18,6 +18,5 @@
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/spdlog" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/tests/cmake-build-debug/_deps/googletest-src" vcs="Git" />
   </component>
 </project>

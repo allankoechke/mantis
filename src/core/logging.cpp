@@ -4,7 +4,6 @@
 
 #include "../../include/mantis/core/logging.h"
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
-
 #include "spdlog/sinks/ansicolor_sink.h"
 
 void mantis::LoggingUnit::close()
