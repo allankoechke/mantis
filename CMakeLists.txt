@@ -131,17 +131,16 @@ include(cmake/add-bcrypt.cmake)
 # Add CMRC for bundling assets
 include(cmake/add-cmrc.cmake)
 
-message(CMAKE_BUILD_TYPE)
 if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
     if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
-        message("Enabling ASAN")
+        message("Enabling Address Sanitizer")
+        include(cmake/asan.cmake)
         set(ENABLE_ASAN ON)
-        
-        # enable_asan_for_target(mantis)
-        # enable_asan_for_target(mantisapp)
+
+        enable_asan_for_target(mantis)
+        enable_asan_for_target(mantisapp)
     endif()
 endif()
-include(cmake/asan.cmake)
 
 # Add to CMakeLists.txt
 option(MANTIS_BUILD_TESTS "Build tests" ON)
