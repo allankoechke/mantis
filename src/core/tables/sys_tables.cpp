@@ -29,7 +29,7 @@ namespace mantis
         try
         {
             // Fetch All Records
-            Log::debug("Adding GET Request for table '{}'", m_tableName);
+            Log::debug("Creating route: [{:>6}] {}", "GET", basePath);
             MantisApp::instance().http().Get(
                 basePath,
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -49,7 +49,7 @@ namespace mantis
             );
 
             // Fetch Single Record
-            Log::debug("Adding GET/1 Request for table '{}'", m_tableName);
+            Log::debug("Creating route: [{:>6}] {}/:id", "GET", basePath);
             MantisApp::instance().http().Get(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -69,9 +69,10 @@ namespace mantis
             );
 
             // Add Record
-            Log::debug("Adding POST Request for table '{}'", m_tableName);
+            Log::debug("Creating route: [{:>6}] {}", "POST", basePath);
             MantisApp::instance().http().Post(
-                basePath, [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
+                basePath,
+                [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
                 {
                     createRecord(req, res, reader, ctx);
                 },
@@ -88,7 +89,7 @@ namespace mantis
             );
 
             // Update Record
-            Log::debug("Adding PATCH Request for table '{}'", m_tableName);
+            Log::debug("Creating route: [{:>6}] {}/:id", "PATCH", basePath);
             MantisApp::instance().http().Patch(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
@@ -108,7 +109,7 @@ namespace mantis
             );
 
             // Delete Record
-            Log::debug("Adding DELETE Request for table '{}'", m_tableName);
+            Log::debug("Creating route: [{:>6}] {}/:id", "DELETE", basePath);
             MantisApp::instance().http().Delete(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -128,7 +129,7 @@ namespace mantis
             );
 
             // Add Record
-            Log::debug("Adding POST Request for table '{}/auth-with-password'", m_routeName);
+            Log::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
             MantisApp::instance().http().Post(
                 basePath + "/auth-with-password",
                 [this](const Request& req, Response& res, Context& ctx) -> void

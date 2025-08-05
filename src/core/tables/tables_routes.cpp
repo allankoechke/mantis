@@ -25,7 +25,7 @@ namespace mantis
         try
         {
             // Fetch All Records
-            Log::debug("Adding GET Request for table '{}'", basePath);
+            Log::debug("Creating route: [{:>6}] {}", "GET", basePath);
             MantisApp::instance().http().Get(
                 basePath,
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -45,7 +45,7 @@ namespace mantis
             );
 
             // Fetch Single Record
-            Log::debug("Adding GET/1 Request for table '{}'", basePath);
+            Log::debug("Creating route: [{:>6}] {}{}", "GET/1", basePath, "/:id");
             MantisApp::instance().http().Get(
                 basePath + "/:id",
                 [this](const Request& req, Response& res, Context& ctx)-> void
@@ -68,7 +68,7 @@ namespace mantis
             if (m_tableType != "view")
             {
                 // Add Record
-                Log::debug("Adding POST Request for table '{}'", basePath);
+                Log::debug("Creating route: [{:>6}] {}", "POST", basePath);
                 MantisApp::instance().http().Post(
                     basePath, [this](const Request& req, Response& res, const ContentReader& reader,
                                      Context& ctx)-> void
@@ -88,7 +88,7 @@ namespace mantis
                 );
 
                 // Update Record
-                Log::debug("Adding PATCH Request for table '{}'", basePath);
+                Log::debug("Creating route: [{:>6}] {}{}", "PATCH", basePath, "/:id");
                 MantisApp::instance().http().Patch(
                     basePath + "/:id",
                     [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
@@ -108,7 +108,7 @@ namespace mantis
                 );
 
                 // Delete Record
-                Log::debug("Adding DELETE Request for table '{}'", basePath);
+                Log::debug("Creating route: [{:>6}] {}{}", "DELETE", basePath, "/:id");
                 MantisApp::instance().http().Delete(
                     basePath + "/:id",
                     [this](const Request& req, Response& res, Context& ctx)-> void
@@ -132,7 +132,7 @@ namespace mantis
             if (m_tableType == "auth")
             {
                 // Add Record
-                Log::debug("Adding POST Request for table '{}/auth-with-password'", basePath);
+                Log::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
                 MantisApp::instance().http().Post(
                     basePath + "/auth-with-password",
                     [this](const Request& req, Response& res, Context& ctx) -> void
@@ -358,7 +358,10 @@ namespace mantis
 
                     // Handle file upload
                     const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
-                    const auto new_filename = std::format("{}_{}", generateShortId(8), file.filename);
+                    const auto new_filename = std::format("{}_{}",
+                                                          generateShortId(8), sanitizeFilename(file.filename));
+
+                    // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
 
                     json f;
@@ -432,7 +435,6 @@ namespace mantis
             if (file.filename.empty()) continue;
 
             const auto filepath = files_to_save[file.name]["path"].get<std::string>();
-            Log::trace("Creating new file {}", filepath);
             if (std::ofstream ofs(filepath, std::ios::binary); ofs.is_open())
             {
                 ofs.write(file.content.data(), file.content.size());

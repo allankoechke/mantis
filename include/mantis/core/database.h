@@ -74,6 +74,11 @@ namespace mantis
 
         const std::string __class_name__ = "mantis::DatabaseUnit";
     private:
+        /**
+         * @brief Write WAL data to db file and truncate the WAL file
+         */
+        void writeCheckpoint() const;
+
         std::unique_ptr<soci::connection_pool> m_connPool;
     };
 

@@ -14,7 +14,9 @@
 
 #define __file__ "core/tables/sys_tables.cpp"
 
-mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr) {}
+mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
+{
+}
 
 bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const std::string& conn_str)
 {
@@ -43,12 +45,14 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     auto sqlite_db_path = joinPaths(MantisApp::instance().dataDir(), "mantis.db").string();
                     soci::session& sql = m_connPool->at(i);
 
-                    auto sqlite_conn_str = std::format("db={} timeout=30 shared_cache=true synchronous=normal foreign_keys=on", sqlite_db_path);
+                    auto sqlite_conn_str = std::format(
+                        "db={} timeout=30 shared_cache=true synchronous=normal foreign_keys=on", sqlite_db_path);
                     sql.open(soci::sqlite3, sqlite_conn_str);
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
 
                     // Open SQLite in WAL mode, helps in enabling multiple readers, single writer
                     sql << "PRAGMA journal_mode=WAL";
+                    sql << "PRAGMA wal_autocheckpoint=500"; // Checkpoint every 500 pages
 
                     break;
                 }
@@ -82,11 +86,20 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
         Log::critical("Database Connection Failed: Unknown Error");
     }
 
+    if (MantisApp::instance().dbType() == DbType::SQLITE)
+    {
+        // Write checkpoint out
+        writeCheckpoint();
+    }
+
     return false;
 }
 
 void mantis::DatabaseUnit::disconnect() const
 {
+    // Write checkpoint out
+    writeCheckpoint();
+
     // Pool size cast
     const auto pool_size = static_cast<size_t>(MantisApp::instance().poolSize());
     // Close all sessions in the pool
@@ -168,4 +181,13 @@ std::string mantis::DatabaseUnit::tmToISODate(const std::tm& t)
     const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
     std::string iso_string(buffer, length);
     return iso_string;
+}
+
+void mantis::DatabaseUnit::writeCheckpoint() const
+{
+    // Write out the WAL data to db file & truncate it
+    if (const auto sql = session(); sql->is_connected())
+    {
+        *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+    }
 }
