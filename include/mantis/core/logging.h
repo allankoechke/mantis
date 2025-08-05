@@ -21,11 +21,11 @@ namespace mantis
      */
     typedef enum class LogLevel : uint8_t
     {
-        TRACE = 0,  ///> Trace logging level
-        DEBUG,      ///> Debug Logging Level
-        INFO,       ///> Info Logging Level
-        WARN,       ///> Warning Logging Level
-        CRITICAL    ///> Critical Logging Level
+        TRACE = 0, ///> Trace logging level
+        DEBUG, ///> Debug Logging Level
+        INFO, ///> Info Logging Level
+        WARN, ///> Warning Logging Level
+        CRITICAL ///> Critical Logging Level
     } LogLevel;
 
     /**
@@ -75,9 +75,25 @@ namespace mantis
     };
 
     using Log = LoggingUnit;
+
+    /**
+     * @brief A class for tracing function execution [entry, exit]
+     * useful in following execution flow
+     */
+    class FuncLogger
+    {
+    public:
+        explicit FuncLogger(const std::string& msg);
+
+        ~FuncLogger();
+
+    private:
+        std::string m_msg;
+    };
 }
 
-#define TRACE_CLASS_METHOD() Log::trace("Enter > {} {}::{}()", __file__, __class_name__, __func__);
-#define TRACE_METHOD Log::trace("Enter > {} {}()", __file__, __func__);
+// Macro to automatically insert logger with function name
+#define TRACE_CLASS_METHOD() mantis::FuncLogger _logger(std::format("{} {}::{}()", __file__, __class_name__, __func__));
+#define TRACE_METHOD mantis::FuncLogger _logger(std::format("{} {}()", __file__, __func__));
 
 #endif //MANTIS_LOGGER_H

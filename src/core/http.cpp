@@ -93,7 +93,7 @@ mantis::json mantis::RouteRegistry::remove(const std::string& method, const std:
         const auto err = std::format("Route for {} {} not found!", method, path);
         // We didn't find that route, return error
         res["error"] = err;
-        Log::warn(err);
+        Log::warn("{}", err);
         return res;
     }
 

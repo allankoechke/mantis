@@ -42,3 +42,13 @@ void mantis::LoggingUnit::init()
     // Make `logger` the default logger
     spdlog::set_default_logger(logger);
 }
+
+mantis::FuncLogger::FuncLogger(const std::string& msg): m_msg(msg)
+{
+    Log::trace("Enter: {}", m_msg);
+}
+
+mantis::FuncLogger::~FuncLogger()
+{
+    Log::trace("Exit:  {}", m_msg);
+}

@@ -125,4 +125,25 @@ namespace mantis
         const char* value = std::getenv(key.c_str());
         return value ? std::string(value) : defaultValue;
     }
+
+    std::string sanitizeFilename(const std::string& name)
+    {
+        std::string sanitized;
+        for (const char ch : name)
+        {
+            if (ch == ' ' || ch == '\t')
+            {
+                sanitized += '_';
+            }
+            else if (ch == ',')
+            {
+                continue; // skip commas
+            }
+            else
+            {
+                sanitized += ch;
+            }
+        }
+        return sanitized;
+    }
 }

@@ -191,6 +191,14 @@ namespace mantis
      */
     std::string getEnvOrDefault(const std::string& key, const std::string& defaultValue);
 
+    /**
+     * @brief Sanitize filenames by swapping whitespaces with `_` and removing commas if any
+     *
+     * @param name File name
+     * @return Sanitized filename
+     */
+    std::string sanitizeFilename(const std::string& name);
+
 
     // ----------------------------------------------------------------- //
     // AUTH UTILS
@@ -230,7 +238,6 @@ namespace mantis
      * @return JSON object indicating whether the verification was successful and an error value if any.
      */
     json verifyPassword(const std::string& password, const std::string& stored_hash);
-
 }
 
 #endif // MANTIS_UTILS_H
