@@ -285,6 +285,16 @@ namespace mantis
         const std::string _class_ = "mantis::HttpUnit";
 
     private:
+        /**
+         * @brief Decompress the response body for logging purposes, else, the logger outputs
+         * gibberish data.
+         *
+         * @param body Response body data (compressed already if that's supported)
+         * @param encoding Encoding type
+         * @return Uncompressed string data
+         */
+        std::string decompressResponseBody(const std::string& body, const std::string& encoding);
+
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
 
         template <typename HandlerType>

@@ -36,10 +36,9 @@ void mantis::LoggingUnit::init()
     console_sink->set_level(spdlog::level::trace);
     console_sink->set_pattern("[%Y-%m-%d %H:%M:%S] [%-8l] %v");
 
-    // auto file_sink =
-    //     std::make_shared<spdlog::sinks::basic_file_sink_mt>("logs/mantis.log", true);
-    // file_sink->set_level(spdlog::level::trace);
+    const auto logger = std::make_shared<spdlog::logger>("multi_sink", console_sink);
+    logger->set_level(spdlog::level::trace);
 
-    spdlog::logger logger("multi_sink", {console_sink});
-    logger.set_level(spdlog::level::trace);
+    // Make `logger` the default logger
+    spdlog::set_default_logger(logger);
 }

@@ -90,9 +90,10 @@ mantis::json mantis::RouteRegistry::remove(const std::string& method, const std:
     const auto it = routes.find({method, path});
     if (it == routes.end())
     {
+        const auto err = std::format("Route for {} {} not found!", method, path);
         // We didn't find that route, return error
-        res["error"] = "Route for " + method + " " + path + " not found!";
-        Log::warn("Route for {} {} not found!", method, path);
+        res["error"] = err;
+        Log::warn(err);
         return res;
     }
 
@@ -119,7 +120,10 @@ mantis::HttpUnit::HttpUnit()
         res.set_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
         res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.set_header("Access-Control-Max-Age", "86400");
+    });
 
+    svr.set_logger([this](const auto& req, const auto& res)
+    {
         // Calculate execution time (if start_time was set)
         const auto end_time = std::chrono::steady_clock::now();
         const auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -132,8 +136,21 @@ mantis::HttpUnit::HttpUnit()
         }
         else
         {
-            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\t└──{}",
-                      req.version, req.method, req.path, res.status, duration_ms, res.body);
+            // Decompress if content is compressed
+            if (res.body.empty())
+            {
+                Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
+                          req.version, req.method, req.path, res.status, duration_ms);
+            }
+            else
+            {
+                // Get the compression encoding
+                const std::string encoding = res.get_header_value("Content-Encoding");
+
+                auto body = encoding.empty() ? res.body : decompressResponseBody(res.body, encoding);
+                Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\t└──Body: {}",
+                          req.version, req.method, req.path, res.status, duration_ms, body);
+            }
         }
     });
 
@@ -244,8 +261,9 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
         spdlog::logger logger("t_sink", {t_sink});
         logger.set_level(spdlog::level::trace);
 
-        logger.info("Starting Servers: \n\t├── API Endpoints: http://{}/api/v1/ \n\t└── Admin Dashboard: http://{}/admin\n",
-                  endpoint, endpoint);
+        logger.info(
+            "Starting Servers: \n\t├── API Endpoints: http://{}/api/v1/ \n\t└── Admin Dashboard: http://{}/admin\n",
+            endpoint, endpoint);
 
         MantisApp::instance().openBrowserOnStart();
     });
@@ -281,6 +299,65 @@ mantis::RouteRegistry& mantis::HttpUnit::routeRegistry()
 httplib::Server& mantis::HttpUnit::server()
 {
     return svr;
+}
+
+std::string mantis::HttpUnit::decompressResponseBody(const std::string& body, const std::string& encoding)
+{
+    std::string decompressed_content;
+
+    if (encoding == "gzip" || encoding == "deflate")
+    {
+#ifdef CPPHTTPLIB_ZLIB_SUPPORT
+        httplib::detail::gzip_decompressor decompressor;
+        if (decompressor.is_valid())
+        {
+            decompressor.decompress(
+                body.data(), body.size(),
+                [&](const char* data, const size_t len)
+                {
+                    decompressed_content.append(data, len);
+                    return true;
+                }
+            );
+        }
+#endif
+    }
+    else if (encoding.find("br") != std::string::npos)
+    {
+#ifdef CPPHTTPLIB_BROTLI_SUPPORT
+        httplib::detail::brotli_decompressor decompressor;
+        if (decompressor.is_valid())
+        {
+            decompressor.decompress(
+                body.data(), body.size(),
+                [&](const char* data, const size_t len)
+                {
+                    decompressed_content.append(data, len);
+                    return true;
+                }
+            );
+        }
+#endif
+    }
+    else if (encoding == "zstd")
+    {
+#ifdef CPPHTTPLIB_ZSTD_SUPPORT
+        httplib::detail::zstd_decompressor decompressor;
+        if (decompressor.is_valid())
+        {
+            decompressor.decompress(
+                body.data(), body.size(),
+                [&](const char* data, const size_t len)
+                {
+                    decompressed_content.append(data, len);
+                    return true;
+                }
+            );
+        }
+#endif
+    }
+
+    return decompressed_content;
 }
 
 void mantis::HttpUnit::route(
