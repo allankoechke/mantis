@@ -10,6 +10,7 @@ var annotated_dup =
       [ "ExprEvaluator", "structmantis_1_1ExprEvaluator.html", "structmantis_1_1ExprEvaluator" ],
       [ "Field", "structmantis_1_1Field.html", "structmantis_1_1Field" ],
       [ "FileUnit", "classmantis_1_1FileUnit.html", "classmantis_1_1FileUnit" ],
+      [ "FuncLogger", "classmantis_1_1FuncLogger.html", "classmantis_1_1FuncLogger" ],
       [ "HttpUnit", "classmantis_1_1HttpUnit.html", "classmantis_1_1HttpUnit" ],
       [ "JWT", "classmantis_1_1JWT.html", null ],
       [ "LoggingUnit", "classmantis_1_1LoggingUnit.html", "classmantis_1_1LoggingUnit" ],

@@ -10,5 +10,6 @@ var searchData=
   ['fileunit_7',['FileUnit',['../classmantis_1_1FileUnit.html#a7934651499e7321550e3aa286c76e8bf',1,'mantis::FileUnit']]],
   ['find_8',['find',['../classmantis_1_1RouteRegistry.html#ab296c9afa8887f22c2628bfd8a2116c3',1,'mantis::RouteRegistry::find()'],['../classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f',1,'mantis::Validator::find()']]],
   ['findfieldbykey_9',['findFieldByKey',['../classmantis_1_1TableUnit.html#aeb0e1101b9c2be401432e8b641076eea',1,'mantis::TableUnit']]],
-  ['fromjson_10',['fromJson',['../classmantis_1_1TableUnit.html#a6b42ede1de6b44bd8da8d4d4e6be7756',1,'mantis::TableUnit']]]
+  ['fromjson_10',['fromJson',['../classmantis_1_1TableUnit.html#a6b42ede1de6b44bd8da8d4d4e6be7756',1,'mantis::TableUnit']]],
+  ['funclogger_11',['FuncLogger',['../classmantis_1_1FuncLogger.html#abbef031ee3e3e7518554d2040557378f',1,'mantis::FuncLogger']]]
 ];

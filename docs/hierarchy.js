@@ -11,6 +11,7 @@ var hierarchy =
     [ "mantis::ExprEvaluator", "structmantis_1_1ExprEvaluator.html", null ],
     [ "mantis::Field", "structmantis_1_1Field.html", null ],
     [ "mantis::FileUnit", "classmantis_1_1FileUnit.html", null ],
+    [ "mantis::FuncLogger", "classmantis_1_1FuncLogger.html", null ],
     [ "mantis::HttpUnit", "classmantis_1_1HttpUnit.html", null ],
     [ "mantis::JWT", "classmantis_1_1JWT.html", null ],
     [ "soci::logger_impl", null, [

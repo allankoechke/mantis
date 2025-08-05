@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.5</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.6</span>
    </div>
   </td>
  </tr>
@@ -149,27 +149,29 @@ $(document).ready(function(){initNavTree('utils_8h_source.html',''); initResizab
 <div class="line"><a id="l00185" name="l00185"></a><span class="lineno">  185</span> </div>
 <div class="line"><a id="l00192" name="l00192"></a><span class="lineno">  192</span>    std::string <a class="code hl_function" href="namespacemantis.html#a5e25a8cc629f217be134c89138011502">getEnvOrDefault</a>(<span class="keyword">const</span> std::string&amp; key, <span class="keyword">const</span> std::string&amp; defaultValue);</div>
 <div class="line"><a id="l00193" name="l00193"></a><span class="lineno">  193</span> </div>
-<div class="line"><a id="l00194" name="l00194"></a><span class="lineno">  194</span> </div>
-<div class="line"><a id="l00195" name="l00195"></a><span class="lineno">  195</span>    <span class="comment">// ----------------------------------------------------------------- //</span></div>
-<div class="line"><a id="l00196" name="l00196"></a><span class="lineno">  196</span>    <span class="comment">// AUTH UTILS</span></div>
-<div class="line"><a id="l00197" name="l00197"></a><span class="lineno">  197</span>    <span class="comment">// ----------------------------------------------------------------- //</span></div>
-<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    std::string <a class="code hl_function" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">bcryptBase64Encode</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> len);</div>
-<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span> </div>
-<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span>    std::string <a class="code hl_function" href="namespacemantis.html#a73a3aa68eaf070b0dc152df95c6b91ad">generateSalt</a>(<span class="keywordtype">int</span> cost = 12);</div>
-<div class="line"><a id="l00214" name="l00214"></a><span class="lineno">  214</span> </div>
-<div class="line"><a id="l00220" name="l00220"></a><span class="lineno">  220</span>    <a class="code hl_typedef" href="mantis_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> <a class="code hl_function" href="namespacemantis.html#a23e98d8e10ea45122b69111f3016c2a4">hashPassword</a>(<span class="keyword">const</span> std::string&amp; password);</div>
-<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span> </div>
-<div class="line"><a id="l00232" name="l00232"></a><span class="lineno">  232</span>    <a class="code hl_typedef" href="mantis_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> <a class="code hl_function" href="namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab">verifyPassword</a>(<span class="keyword">const</span> std::string&amp; password, <span class="keyword">const</span> std::string&amp; stored_hash);</div>
-<div class="line"><a id="l00233" name="l00233"></a><span class="lineno">  233</span> </div>
-<div class="line"><a id="l00234" name="l00234"></a><span class="lineno">  234</span>}</div>
-<div class="line"><a id="l00235" name="l00235"></a><span class="lineno">  235</span> </div>
-<div class="line"><a id="l00236" name="l00236"></a><span class="lineno">  236</span><span class="preprocessor">#endif </span><span class="comment">// MANTIS_UTILS_H</span></div>
+<div class="line"><a id="l00200" name="l00200"></a><span class="lineno">  200</span>    std::string <a class="code hl_function" href="namespacemantis.html#a5d624a74a0fc190a4b84f1dbce42c214">sanitizeFilename</a>(<span class="keyword">const</span> std::string&amp; name);</div>
+<div class="line"><a id="l00201" name="l00201"></a><span class="lineno">  201</span> </div>
+<div class="line"><a id="l00202" name="l00202"></a><span class="lineno">  202</span> </div>
+<div class="line"><a id="l00203" name="l00203"></a><span class="lineno">  203</span>    <span class="comment">// ----------------------------------------------------------------- //</span></div>
+<div class="line"><a id="l00204" name="l00204"></a><span class="lineno">  204</span>    <span class="comment">// AUTH UTILS</span></div>
+<div class="line"><a id="l00205" name="l00205"></a><span class="lineno">  205</span>    <span class="comment">// ----------------------------------------------------------------- //</span></div>
+<div class="line"><a id="l00212" name="l00212"></a><span class="lineno">  212</span>    std::string <a class="code hl_function" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">bcryptBase64Encode</a>(<span class="keyword">const</span> <span class="keywordtype">unsigned</span> <span class="keywordtype">char</span>* data, <span class="keywordtype">size_t</span> len);</div>
+<div class="line"><a id="l00213" name="l00213"></a><span class="lineno">  213</span> </div>
+<div class="line"><a id="l00221" name="l00221"></a><span class="lineno">  221</span>    std::string <a class="code hl_function" href="namespacemantis.html#a73a3aa68eaf070b0dc152df95c6b91ad">generateSalt</a>(<span class="keywordtype">int</span> cost = 12);</div>
+<div class="line"><a id="l00222" name="l00222"></a><span class="lineno">  222</span> </div>
+<div class="line"><a id="l00228" name="l00228"></a><span class="lineno">  228</span>    <a class="code hl_typedef" href="mantis_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> <a class="code hl_function" href="namespacemantis.html#a23e98d8e10ea45122b69111f3016c2a4">hashPassword</a>(<span class="keyword">const</span> std::string&amp; password);</div>
+<div class="line"><a id="l00229" name="l00229"></a><span class="lineno">  229</span> </div>
+<div class="line"><a id="l00240" name="l00240"></a><span class="lineno">  240</span>    <a class="code hl_typedef" href="mantis_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a> <a class="code hl_function" href="namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab">verifyPassword</a>(<span class="keyword">const</span> std::string&amp; password, <span class="keyword">const</span> std::string&amp; stored_hash);</div>
+<div class="line"><a id="l00241" name="l00241"></a><span class="lineno">  241</span>}</div>
+<div class="line"><a id="l00242" name="l00242"></a><span class="lineno">  242</span> </div>
+<div class="line"><a id="l00243" name="l00243"></a><span class="lineno">  243</span><span class="preprocessor">#endif </span><span class="comment">// MANTIS_UTILS_H</span></div>
 <div class="ttc" id="amantis_8h_html_ab701e3ac61a85b337ec5c1abaad6742d"><div class="ttname"><a href="mantis_8h.html#ab701e3ac61a85b337ec5c1abaad6742d">json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdef"><b>Definition</b> mantis.h:35</div></div>
 <div class="ttc" id="anamespacemantis_html"><div class="ttname"><a href="namespacemantis.html">mantis</a></div><div class="ttdoc">router.h</div><div class="ttdef"><b>Definition</b> app.h:30</div></div>
 <div class="ttc" id="anamespacemantis_html_a23e98d8e10ea45122b69111f3016c2a4"><div class="ttname"><a href="namespacemantis.html#a23e98d8e10ea45122b69111f3016c2a4">mantis::hashPassword</a></div><div class="ttdeci">json hashPassword(const std::string &amp;password)</div><div class="ttdoc">Digests user password + a generated salt to yield a hashed password.</div><div class="ttdef"><b>Definition</b> auth_utils.cpp:49</div></div>
 <div class="ttc" id="anamespacemantis_html_a2bc2a84280e5b58546a4ddfdeea4a230"><div class="ttname"><a href="namespacemantis.html#a2bc2a84280e5b58546a4ddfdeea4a230">mantis::generateTimeBasedId</a></div><div class="ttdeci">std::string generateTimeBasedId()</div><div class="ttdoc">Generate a time base UUID.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:49</div></div>
 <div class="ttc" id="anamespacemantis_html_a3832564f3023e4b1683a1a9392f17bd8"><div class="ttname"><a href="namespacemantis.html#a3832564f3023e4b1683a1a9392f17bd8">mantis::generateReadableTimeId</a></div><div class="ttdeci">std::string generateReadableTimeId()</div><div class="ttdoc">Generates a readable time-based UUID.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:66</div></div>
 <div class="ttc" id="anamespacemantis_html_a3b035e6242171c178e93e4f5e29fb18e"><div class="ttname"><a href="namespacemantis.html#a3b035e6242171c178e93e4f5e29fb18e">mantis::joinPaths</a></div><div class="ttdeci">fs::path joinPaths(const std::string &amp;path1, const std::string &amp;path2)</div><div class="ttdoc">&lt; Use shorthand fs to refer to the std::filesystem</div><div class="ttdef"><b>Definition</b> path_utils.cpp:8</div></div>
+<div class="ttc" id="anamespacemantis_html_a5d624a74a0fc190a4b84f1dbce42c214"><div class="ttname"><a href="namespacemantis.html#a5d624a74a0fc190a4b84f1dbce42c214">mantis::sanitizeFilename</a></div><div class="ttdeci">std::string sanitizeFilename(const std::string &amp;name)</div><div class="ttdoc">Sanitize filenames by swapping whitespaces with _ and removing commas if any.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:129</div></div>
 <div class="ttc" id="anamespacemantis_html_a5e25a8cc629f217be134c89138011502"><div class="ttname"><a href="namespacemantis.html#a5e25a8cc629f217be134c89138011502">mantis::getEnvOrDefault</a></div><div class="ttdeci">std::string getEnvOrDefault(const std::string &amp;key, const std::string &amp;defaultValue)</div><div class="ttdoc">Retrieves a value from an environment variable or a default value if the env variable was not set.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:123</div></div>
 <div class="ttc" id="anamespacemantis_html_a7198d676b24903590c1462d7af4958a7"><div class="ttname"><a href="namespacemantis.html#a7198d676b24903590c1462d7af4958a7">mantis::createDirs</a></div><div class="ttdeci">bool createDirs(const fs::path &amp;path)</div><div class="ttdoc">Create directory, given a path.</div><div class="ttdef"><b>Definition</b> path_utils.cpp:27</div></div>
 <div class="ttc" id="anamespacemantis_html_a73a3aa68eaf070b0dc152df95c6b91ad"><div class="ttname"><a href="namespacemantis.html#a73a3aa68eaf070b0dc152df95c6b91ad">mantis::generateSalt</a></div><div class="ttdeci">std::string generateSalt(int cost=12)</div><div class="ttdoc">Generates a salt to be used in hashing user passwords.</div><div class="ttdef"><b>Definition</b> auth_utils.cpp:35</div></div>

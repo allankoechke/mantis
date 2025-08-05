@@ -122,9 +122,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classmantis_1_1SysTablesUnit.html#a5542061c3fcb51720df7a935f565b360",
-"logging_8h.html#a3415e3e8dd3d16ea64aec8f0e9af4283",
-"sync.html#autotoc_md123"
+"classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447",
+"index.html",
+"structmantis_1_1ViewTable.html#abb14ce2181837e55c28327a3cff9b0ce"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

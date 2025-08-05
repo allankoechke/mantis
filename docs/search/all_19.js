@@ -32,7 +32,7 @@ var searchData=
   ['routehandlerfuncwithcontentreader_29',['RouteHandlerFuncWithContentReader',['../namespacemantis.html#a11862d7f473e670e73f32411830d2ebc',1,'mantis']]],
   ['routekey_30',['RouteKey',['../namespacemantis.html#afd5355e620b80081a28ab075e5332e37',1,'mantis']]],
   ['routekeyhash_31',['RouteKeyHash',['../structmantis_1_1RouteKeyHash.html',1,'mantis']]],
-  ['router_32',['router',['../classmantis_1_1Router.html',1,'mantis::Router'],['../classmantis_1_1MantisApp.html#a19c58dfee147f79319bb8e96065038c8',1,'mantis::MantisApp::router()'],['../classmantis_1_1Router.html#adb388b798ded52b987c919a4f56fad5b',1,'mantis::Router::Router()']]],
+  ['router_32',['router',['../classmantis_1_1Router.html',1,'mantis::Router'],['../classmantis_1_1Router.html#adb388b798ded52b987c919a4f56fad5b',1,'mantis::Router::Router()'],['../classmantis_1_1MantisApp.html#a19c58dfee147f79319bb8e96065038c8',1,'mantis::MantisApp::router()']]],
   ['router_20strong_33',['2. &lt;strong&gt;API Router&lt;/strong&gt;',['../architecture.html#autotoc_md82',1,'']]],
   ['router_2ecpp_34',['router.cpp',['../router_8cpp.html',1,'']]],
   ['router_2eh_35',['router.h',['../router_8h.html',1,'']]],

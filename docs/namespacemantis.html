@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.5</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.6</span>
    </div>
   </td>
  </tr>
@@ -127,6 +127,9 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FileUnit.html">FileUnit</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Handle file management for record type files.  <a href="classmantis_1_1FileUnit.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1FuncLogger.html">FuncLogger</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A class for tracing function execution [entry, exit] useful in following execution flow.  <a href="classmantis_1_1FuncLogger.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1HttpUnit.html">HttpUnit</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -313,6 +316,9 @@ Functions</h2></td></tr>
 <tr class="memitem:a5e25a8cc629f217be134c89138011502" id="r_a5e25a8cc629f217be134c89138011502"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a5e25a8cc629f217be134c89138011502">getEnvOrDefault</a> (const std::string &amp;key, const std::string &amp;defaultValue)</td></tr>
 <tr class="memdesc:a5e25a8cc629f217be134c89138011502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a value from an environment variable or a default value if the env variable was not set.  <br /></td></tr>
 <tr class="separator:a5e25a8cc629f217be134c89138011502"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5d624a74a0fc190a4b84f1dbce42c214" id="r_a5d624a74a0fc190a4b84f1dbce42c214"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a5d624a74a0fc190a4b84f1dbce42c214">sanitizeFilename</a> (const std::string &amp;name)</td></tr>
+<tr class="memdesc:a5d624a74a0fc190a4b84f1dbce42c214"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize filenames by swapping whitespaces with <code>_</code> and removing commas if any.  <br /></td></tr>
+<tr class="separator:a5d624a74a0fc190a4b84f1dbce42c214"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e23dffb248fc4160e5c6c09a594eae2" id="r_a9e23dffb248fc4160e5c6c09a594eae2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">bcryptBase64Encode</a> (const unsigned char *data, size_t len)</td></tr>
 <tr class="memdesc:a9e23dffb248fc4160e5c6c09a594eae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode a Salt string to bcrypt base64 format.  <br /></td></tr>
 <tr class="separator:a9e23dffb248fc4160e5c6c09a594eae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -1139,6 +1145,33 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Returns an absolute filesystem path. </dd></dl>
+
+</div>
+</div>
+<a id="a5d624a74a0fc190a4b84f1dbce42c214" name="a5d624a74a0fc190a4b84f1dbce42c214"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5d624a74a0fc190a4b84f1dbce42c214">&#9670;&#160;</a></span>sanitizeFilename()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::sanitizeFilename </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Sanitize filenames by swapping whitespaces with <code>_</code> and removing commas if any. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>File name </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Sanitized filename </dd></dl>
 
 </div>
 </div>

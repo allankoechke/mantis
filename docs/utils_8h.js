@@ -11,6 +11,7 @@ var utils_8h =
     [ "hashPassword", "utils_8h.html#a23e98d8e10ea45122b69111f3016c2a4", null ],
     [ "joinPaths", "utils_8h.html#a3b035e6242171c178e93e4f5e29fb18e", null ],
     [ "resolvePath", "utils_8h.html#abe97209493d2bc0086c3678010342477", null ],
+    [ "sanitizeFilename", "utils_8h.html#a5d624a74a0fc190a4b84f1dbce42c214", null ],
     [ "splitString", "utils_8h.html#afb33333e17a1823a3d22b074c7bd6a6e", null ],
     [ "strToBool", "utils_8h.html#ac8290417ff7c03d59488e7c321ff05c7", null ],
     [ "toLowerCase", "utils_8h.html#acbd04202feeade10ac601e3bc4d00feb", null ],

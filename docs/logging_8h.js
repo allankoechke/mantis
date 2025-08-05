@@ -1,6 +1,7 @@
 var logging_8h =
 [
     [ "mantis::LoggingUnit", "classmantis_1_1LoggingUnit.html", "classmantis_1_1LoggingUnit" ],
+    [ "mantis::FuncLogger", "classmantis_1_1FuncLogger.html", "classmantis_1_1FuncLogger" ],
     [ "TRACE_CLASS_METHOD", "logging_8h.html#a558f262c132aae0f82c218213dd1ed0d", null ],
     [ "TRACE_METHOD", "logging_8h.html#a3415e3e8dd3d16ea64aec8f0e9af4283", null ],
     [ "Log", "logging_8h.html#ae32fb5a6aeb988dd0ab354f811874d86", null ],
