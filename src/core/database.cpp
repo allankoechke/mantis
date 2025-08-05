@@ -40,10 +40,16 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                 {
                     // For SQLite, lets explicitly define location and name of the database
                     // we intend to use within the `dataDir`
-                    auto sqlite_str = "db=" + joinPaths(MantisApp::instance().dataDir(), "mantis.db").string();
+                    auto sqlite_db_path = joinPaths(MantisApp::instance().dataDir(), "mantis.db").string();
                     soci::session& sql = m_connPool->at(i);
-                    sql.open(soci::sqlite3, sqlite_str);
+
+                    auto sqlite_conn_str = std::format("db={} timeout=30 shared_cache=true synchronous=normal foreign_keys=on", sqlite_db_path);
+                    sql.open(soci::sqlite3, sqlite_conn_str);
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+
+                    // Open SQLite in WAL mode, helps in enabling multiple readers, single writer
+                    sql << "PRAGMA journal_mode=WAL";
+
                     break;
                 }
             case DbType::PSQL:

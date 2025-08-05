@@ -576,12 +576,11 @@ namespace mantis
 
         if (!sql->got_data())
         {
-            throw std::runtime_error("Item with id = '" + id + "' was not found!");
+            throw std::runtime_error(std::format("Could not find record with id = {}", id));
         }
 
         // Remove from DB
         *sql << "DELETE FROM " + m_tableName + " WHERE id = :id", soci::use(id);
-        Log::trace("SQL Query: {}", sql->get_query());
 
         tr.commit();
 
@@ -590,16 +589,31 @@ namespace mantis
         const auto record = parseDbRowToJson(row);
 
         // Extract all fields that have file/files as the underlying data
-        std::vector<json> file_fields;
-        std::ranges::copy_if(m_fields, std::back_inserter(file_fields), [](const json& field) {
-            return field["type"].get<std::string>() == "file" || field["type"].get<std::string>() == "files";
+        std::vector<json> files_in_fields;
+        std::ranges::for_each(m_fields, [&](const json& field) {
+            const auto& type = field["type"].get<std::string>();
+            const auto& name = field["name"].get<std::string>();
+            if (type == "file")
+            {
+                const auto& file = record.value(name, "");
+                if (!file.empty()) files_in_fields.push_back(file);
+            }
+            else if (type == "files")
+            {
+                const auto& files = record.value(name, std::vector<std::string>{});
+                // Expand the array data out
+                for (const auto& file : files)
+                {
+                    if (!file.empty()) files_in_fields.push_back(file);
+                }
+            }
         });
 
         // For each file field, remove it in the filesystem
-        for (const auto& file_field : file_fields)
+        for (const auto& file_name : files_in_fields)
         {
-            const auto file_name = record.value(file_field["name"].get<std::string>(), "");
-            [[maybe_unused]] auto _ = MantisApp::instance().files().removeFile(m_tableName, file_name);
+            [[maybe_unused]]
+            auto _ = MantisApp::instance().files().removeFile(m_tableName, file_name);
         }
         return true;
     }

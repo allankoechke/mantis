@@ -115,18 +115,7 @@ mantis::HttpUnit::HttpUnit()
         res.set_header("Access-Control-Allow-Methods", "GET, POST, PATCH, DELETE, OPTIONS");
         res.set_header("Access-Control-Allow-Headers", "Content-Type, Authorization");
         res.set_header("Access-Control-Max-Age", "86400");
-    });
 
-    // Handle preflight OPTIONS requests
-    svr.Options(".*", [](const auto& req, auto& res)
-    {
-        // Headers are already set by post_routing_handler
-        res.status = 200;
-    });
-
-    // Set Global Logger
-    svr.set_logger([](const Request& req, const Response& res)
-    {
         // Calculate execution time (if start_time was set)
         const auto end_time = std::chrono::steady_clock::now();
         const auto duration_ms = std::chrono::duration_cast<std::chrono::milliseconds>(
@@ -139,9 +128,16 @@ mantis::HttpUnit::HttpUnit()
         }
         else
         {
-            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\tData: {}",
+            Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\t└──{}",
                       req.version, req.method, req.path, res.status, duration_ms, res.body);
         }
+    });
+
+    // Handle preflight OPTIONS requests
+    svr.Options(".*", [](const auto& req, auto& res)
+    {
+        // Headers are already set by post_routing_handler
+        res.status = 200;
     });
 
     // Set Error Handler

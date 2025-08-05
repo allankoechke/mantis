@@ -8,7 +8,7 @@
       <jdbc-url>jdbc:sqlite:B:\Repos\cpp-projects\mantis\cmake-build-debug\data\vault.db</jdbc-url>
       <working-dir>$ProjectFileDir$</working-dir>
     </data-source>
-    <data-source source="LOCAL" name="mantis [2]" uuid="4c87dc28-881e-4d50-8a92-1ac4adc3a48f">
+    <data-source source="LOCAL" name="mantis" uuid="9de9e17c-694a-4c21-a3a6-11ba10e4f3f3">
       <driver-ref>sqlite.xerial</driver-ref>
       <synchronize>true</synchronize>
       <jdbc-driver>org.sqlite.JDBC</jdbc-driver>

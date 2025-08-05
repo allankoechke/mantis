@@ -29,7 +29,7 @@ namespace mantis
         json res{{"error", ""}, {"data", json::object()}};
 
         // Get a session object
-        const auto sql =  MantisApp::instance().db().session();
+        const auto sql = MantisApp::instance().db().session();
 
         try
         {
@@ -71,7 +71,7 @@ namespace mantis
     {
         // Guard against empty reference schema fields
         if (ref_fields.empty())
-                throw std::runtime_error(std::format("Parse db row error, empty reference schema fields passed!"));
+            throw std::runtime_error(std::format("Parse db row error, empty reference schema fields passed!"));
 
         // Build response json object
         json j;
@@ -80,8 +80,22 @@ namespace mantis
             const auto colName = row.get_properties(i).get_name();
             const auto colType = getColTypeFromName(colName, ref_fields);
 
-            Log::trace("Parsing: #{} {} of type: {}", i, colName, colType);
+            // Check column type is valid type
+            if (colType.empty() || !isValidFieldType(colType)) // Or not in expected types
+            {
+                // Throw an error for unknown types
+                throw std::runtime_error(std::format("Unknown column type `{}` for column `{}`", colType, colName));
+            }
 
+            // Handle null values immediately
+            if (row.get_indicator(i) == soci::i_null)
+            {
+                // Handle null value in JSON
+                j[colName] = nullptr;
+                continue;
+            }
+
+            // Handle type conversions
             if (colType == "xml" || colType == "string")
             {
                 j[colName] = row.get<std::string>(i, "");
@@ -154,14 +168,11 @@ namespace mantis
             }
             else if (colType == "files")
             {
-                // TODO handle lists
-                // j[colName] = row.get<std::string>(i);
+                // TODO handle lists as array of files
+                j[colName] = row.get<json>(i);
             }
-            else
-            {
-                // Throw an error for unknown types
-                throw std::runtime_error(std::format("Unknown column type `{}` for column `{}`", colType, colName));
-            }
+
+            // Log::trace("Parsing: #{} {} of type: {}", i, colName, colType);
         }
 
         return j;
@@ -189,7 +200,7 @@ namespace mantis
         try
         {
             int count;
-            const auto sql =  MantisApp::instance().db().session();
+            const auto sql = MantisApp::instance().db().session();
             *sql << "SELECT COUNT(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1",
                 soci::use(id), soci::into(count);
             return count > 0;
