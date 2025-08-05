@@ -447,18 +447,15 @@ bool mantis::Router::generateAdminCrudApis() const
                 {
                     const auto fs = cmrc::mantis::get_filesystem();
                     std::string path = req.matches[1];
-                    Log::trace("Match 1: {}", path);
 
                     // Normalize the path
                     if (path.empty() || path == "/")
                     {
                         path = "/qrc/index.html";
-                        Log::trace("/qrc/index.html");
                     }
                     else
                     {
                         path = std::format("/qrc{}", path);
-                        Log::trace("{}", path);
                     }
 
                     if (!fs.exists(path))
@@ -474,12 +471,12 @@ bool mantis::Router::generateAdminCrudApis() const
                         res.status = 200;
                         const auto file = fs.open(path);
                         const auto mime = getMimeType(path);
-                        Log::trace("File: {}, size: {}, mime: {}", path, file.size(), mime);
+                        // Log::trace("File: {}, size: {}, mime: {}", path, file.size(), mime);
                         res.set_content(file.begin(), file.size(), mime);
                     }
                     catch (const std::exception& e)
                     {
-                        Log::critical("Error processing request [1]: {}", e.what());
+                        Log::critical("Error processing /admin response: {}", e.what());
                         res.status = 404;
 
                         const auto file = fs.open("/qrc/404.html");
@@ -490,7 +487,7 @@ bool mantis::Router::generateAdminCrudApis() const
                 catch (const std::exception& e)
                 {
                     res.status = 500;
-                    Log::critical("Error processing request [2]: {}", e.what());
+                    Log::critical("Error processing /admin request: {}", e.what());
                 }
             });
 
