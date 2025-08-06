@@ -6,13 +6,6 @@
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include "spdlog/sinks/ansicolor_sink.h"
 
-void mantis::LoggingUnit::close()
-{
-    // Causes SEGFAULT for `heap-use-after-free`, this method is automatically
-    // called by app destructor
-    // spdlog::shutdown();
-}
-
 void mantis::LoggingUnit::setLogLevel(const LogLevel& level)
 {
     switch (level)

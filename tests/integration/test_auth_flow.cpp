@@ -10,13 +10,13 @@ class AuthTest : public ::testing::Test {
     protected:
     void SetUp() override {
         // Just create the HTTP client - server is already running
-        client = std::make_unique<httplib::Client>("http://localhost:8080");
+        client = std::make_unique<httplib::Client>("http://localhost:8081");
 
         // Clean up any test data from previous tests
-        cleanupTestData();
+        // cleanupTestData();
 
         // Create test tables for this test suite
-        createTestTableWithRules();
+        // createTestTableWithRules();
     }
 
     void TearDown() override {
@@ -27,8 +27,8 @@ class AuthTest : public ::testing::Test {
     void cleanupTestData() const
     {
         // Delete test tables and data created by this test
-        client->Delete("/api/v1/tables/test_permissions");
-        client->Delete("/api/v1/tables/admin_only");
+        // client->Delete("/api/v1/tables/test_permissions");
+        // client->Delete("/api/v1/tables/admin_only");
         // etc.
     }
 

@@ -54,8 +54,15 @@ target_link_libraries(mantis_tests
         GTest::gtest_main
         GTest::gmock_main
 )
-set(ENABLE_ASAN ON)
-include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/asan.cmake)
+
+if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
+    message("Enabling Address Sanitizer")
+    include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/asan.cmake)
+    include(../cmake/asan.cmake)
+    set(ENABLE_ASAN ON)
+
+    enable_asan_for_target(mantis_tests)
+endif()
 
 # Include directories
 target_include_directories(mantis_tests
@@ -68,8 +75,6 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
             -Wa,-mbig-obj  # Tell assembler to handle large objects
     )
 endif()
-
-enable_asan_for_target(mantis_tests)
 
 # Register tests with CTest
 include(GoogleTest)

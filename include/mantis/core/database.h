@@ -28,6 +28,7 @@ namespace mantis
     class DatabaseUnit {
     public:
         DatabaseUnit();
+        ~DatabaseUnit();
 
         /**
          * @brief Initializes the connection pool & connects to specific database.
