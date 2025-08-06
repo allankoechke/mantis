@@ -186,10 +186,16 @@ namespace mantis {
         setDataDir(data_dir);
 
         toLowerCase(db);
-        if (db == "sqlite") setDbType(DbType::SQLITE);
+        if (db == "sqlite")
+            setDbType(DbType::SQLITE);
+
         else if (db == "mysql") setDbType(DbType::MYSQL);
-        else if (db == "psql") setDbType(DbType::PSQL);
-        else quit(-1, "Backend Database '" + db + "' is unknown!");
+
+        else if (db == "psql" || db == "postgresql" || db == "postgres")
+            setDbType(DbType::PSQL);
+
+        else
+            quit(-1, std::format("Backend Database `{}` is unsupported!", db));
 
         [[maybe_unused]] auto x = MantisApp::instance().poolSize();
 
