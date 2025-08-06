@@ -275,7 +275,9 @@ namespace mantis
         std::chrono::time_point<std::chrono::steady_clock> m_startTime;
 
         int m_port = 7070;
+
         std::string m_host = "127.0.0.1";
+
         int m_poolSize = 2;
         bool m_toStartServer = false;
         bool m_launchAdminPanel = false;

@@ -10,11 +10,14 @@
 #include "../../include/mantis/core/settings.h"
 
 #include <soci/sqlite3/soci-sqlite3.h>
+#include <soci/postgresql/soci-postgresql.h>
 #include <private/soci-mktime.h>
 
 #define __file__ "core/tables/sys_tables.cpp"
 
-mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr) {}
+mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
+{
+}
 
 mantis::DatabaseUnit::~DatabaseUnit() { disconnect(); }
 
@@ -57,6 +60,17 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     break;
                 }
             case DbType::PSQL:
+                {
+                    // Connection Options
+                    ///> Basic: "dbname=mydb user=scott password=tiger"
+                    ///> With Host: "host=localhost port=5432 dbname=test user=postgres password=postgres");
+                    ///> With Config: "dbname=mydatabase user=myuser password=mypass singlerows=true"
+
+                    soci::session& sql = m_connPool->at(i);
+                    sql.open(soci::postgresql, conn_str);
+                    sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+                    break;
+                }
             case DbType::MYSQL:
                 Log::warn("Database Connection for '{}' Not Implemented Yet!", conn_str);
 
