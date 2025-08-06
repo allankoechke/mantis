@@ -13,6 +13,7 @@
 #include <mantis/utils/utils.h>
 
 #include "test_helpers.h"
+#include "mantis/core/http.h"
 
 class MantisTestEnvironment final : public ::testing::Environment {
 public:
@@ -21,59 +22,65 @@ public:
         const auto wwwPath = TestDatabase::getTestBasePath() / "www";
 
         // Create test arguments for the global server
-        const char* test_args[] = {
-            "mantis_test",
-            "--database", "SQLITE",
-            "--dataDir", dataPath.string().c_str(),
-            "--publicDir", wwwPath.string().c_str(),
+        m_testArgs = {
+            "mantis_test", "--database", "SQLITE",
+            "--dataDir", dataPath.string(),
+            "--publicDir", wwwPath.string(),
             "--dev",
-            "serve",
-            "--port", "8081",
+            "serve", "--port", "8081", "--host", "127.0.0.1"
         };
-        int argc = std::size(test_args);
 
-        // Create and start the global Mantis app
-        global_app = std::make_unique<mantis::MantisApp>(argc, const_cast<char**>(test_args));
-        global_app->init(); // Initialize App
-
+        std::vector<std::string> args_copy = m_testArgs;
         // Start server in background thread
-        server_thread = std::thread([this]() {
-            [[maybe_unused]] auto ok = global_app->run();
+        server_thread = std::thread([args_copy = std::move(args_copy)]() mutable -> void {
+            char *argv[13];
+            for (auto i = 0; i < args_copy.size(); ++i) {
+                argv[i] = const_cast<char *>(args_copy.at(i).c_str());
+            }
+
+            // Create and start the global Mantis app
+            const auto app = std::make_unique<mantis::MantisApp>(args_copy.size(), argv);
+            app->init(); // Initialize App
+            const auto _ = app->run();
+            std::cout << "App Done Running!" << std::endl;
         });
 
         // Wait for server to be ready
-        std::this_thread::sleep_for(std::chrono::milliseconds(500));
+        std::this_thread::sleep_for(std::chrono::milliseconds(1000));
 
-        // Verify server is running
-        httplib::Client test_client("http://localhost:8081");
-        if (auto result = test_client.Get("/"); !result || result->status != 404) { // 404 is expected for root path
+        if (mantis::MantisApp::instance().http().server().is_running()) {
             throw std::runtime_error("Failed to start test server");
         }
-
-        std::cout << "Base Path: " << TestDatabase::getTestBasePath() << std::endl;
+        // Verify server is running
+        httplib::Client test_client("http://localhost:8081");
+        if (auto result = test_client.Get("/"); !result || result->status != 404) {
+            // 404 is expected for root path
+            throw std::runtime_error("Failed to start test server");
+        }
     }
 
     void TearDown() override {
-        if (global_app) {
-            global_app->close();
-        }
+        mantis::MantisApp::quit(0, "");
+
         if (server_thread.joinable()) {
             server_thread.join();
         }
 
-        mantis::MantisApp::instance().db().disconnect();
-        TestDatabase::cleanupTestDb();
+        // mantis::MantisApp::instance().db().disconnect();
+        // TestDatabase::cleanupTestDb();
+        std::cout << std::endl << "Test Server Stopped" << std::endl;
     }
 
-    static mantis::MantisApp& GetApp() { return *global_app; }
+    static mantis::MantisApp &GetApp() { return mantis::MantisApp::instance(); }
 
 private:
-    static std::unique_ptr<mantis::MantisApp> global_app;
+    // static std::shared_ptr<mantis::MantisApp> global_app;
     static std::thread server_thread;
+    std::vector<std::string> m_testArgs;
 };
 
 // Static member definitions
-std::unique_ptr<mantis::MantisApp> MantisTestEnvironment::global_app = nullptr;
+// std::shared_ptr<mantis::MantisApp> MantisTestEnvironment::global_app = nullptr;
 std::thread MantisTestEnvironment::server_thread;
 
 #endif //TEST_ENVIRONMENT_H

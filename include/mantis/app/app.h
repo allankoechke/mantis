@@ -15,6 +15,7 @@
 #include <mutex>
 #include <filesystem>
 #include <argparse/argparse.hpp>
+#include <chrono>
 
 #include "../core/expr_evaluator.h"
 
@@ -87,7 +88,7 @@ namespace mantis
          * @return `0` if execution was okay, else a non-zero value.
          */
         [[nodiscard]]
-        int run() const;
+        int run();
 
         /**
          * @brief Close the application
@@ -223,7 +224,16 @@ namespace mantis
          */
         void openBrowserOnStart() const;
 
+        /**
+         * @brief Get the server start time in std::chrono::
+         *
+         * @return Server start time
+         */
+        std::chrono::time_point<std::chrono::steady_clock> startTime() const;
+
     private:
+        const std::string __class_name__ = "mantis::MantisApp";
+
         // Points to externally constructed instance (no ownership)
         static MantisApp* s_instance;
         static std::mutex s_mutex;
@@ -260,6 +270,9 @@ namespace mantis
         std::string m_dataDir;
         DbType m_dbType;
         std::string m_connString{};
+
+        // System uptime checkpoint
+        std::chrono::time_point<std::chrono::steady_clock> m_startTime;
 
         int m_port = 7070;
         std::string m_host = "127.0.0.1";

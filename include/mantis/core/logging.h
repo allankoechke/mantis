@@ -39,8 +39,6 @@ namespace mantis
         ~LoggingUnit() = default;
 
         static void init();
-        static void close();
-
         static void setLogLevel(const LogLevel& level = LogLevel::INFO);
 
         template <typename... Args>

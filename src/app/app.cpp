@@ -17,17 +17,18 @@
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
 
+#define __file__ "app/app.cpp"
 
-namespace mantis
-{
+namespace mantis {
     // -------------------------------------------------------------------------------- //
     // Static member definitions
-    MantisApp* MantisApp::s_instance = nullptr;
+    MantisApp *MantisApp::s_instance = nullptr;
     std::mutex MantisApp::s_mutex;
 
     // -------------------------------------------------------------------------------- //
-    MantisApp::MantisApp(const int argc, char** argv)
-        : m_dbType(DbType::SQLITE)
+    MantisApp::MantisApp(const int argc, char **argv)
+        : m_dbType(DbType::SQLITE),
+          m_startTime(std::chrono::steady_clock::now())
     {
         std::lock_guard<std::mutex> lock(s_mutex);
         if (s_instance)
@@ -38,11 +39,9 @@ namespace mantis
 
         // Store cmd args into our member vector
         m_cmdArgs.reserve(argc);
-        for (int i = 0; i < argc; ++i)
-        {
+        for (int i = 0; i < argc; ++i) {
             m_cmdArgs.emplace_back(argv[i]); // copy each string over
         }
-
 
         // Initialize Default Features in cparse
         cparse::cparse_init();
@@ -50,23 +49,21 @@ namespace mantis
         // Enable Multi Sinks
         Log::init();
 
-        Log::info("mantis v{}", appVersion());
+        Log::info("Mantis v{}", appVersion());
     }
 
-    MantisApp::~MantisApp()
-    {
-        Log::close();
+    MantisApp::~MantisApp() {
+        TRACE_CLASS_METHOD()
 
         std::lock_guard<std::mutex> lock(s_mutex);
-        if (s_instance == this)
-        {
+        if (s_instance == this) {
             // Reset instance pointer
             s_instance = nullptr;
         }
+        std::cout << std::endl << "MantisApp released!" << std::endl;
     }
 
-    void MantisApp::init()
-    {
+    void MantisApp::init() {
         // If we had init already, don't proceed!
         if (initialized) return;
 
@@ -85,64 +82,62 @@ namespace mantis
         parseArgs(); // Parse args & start units
     }
 
-    MantisApp& MantisApp::instance()
-    {
+    MantisApp &MantisApp::instance() {
         std::lock_guard<std::mutex> lock(s_mutex);
         if (!s_instance)
             throw std::runtime_error("MantisApp not yet instantiated");
         return *s_instance;
     }
 
-    void MantisApp::parseArgs()
-    {
+    void MantisApp::parseArgs() {
         MANTIS_REQUIRE_INIT();
 
         // Main program parser with global arguments
         argparse::ArgumentParser program("mantisapp", appVersion());
         program.add_argument("--database", "-d")
-               .nargs(1)
-               .help("<type> Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE)");
+                .nargs(1)
+                .help("<type> Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE)");
         program.add_argument("--connection", "-c")
-               .nargs(1)
-               .help("<conn> Database connection string.");
+                .nargs(1)
+                .help("<conn> Database connection string.");
         program.add_argument("--dataDir")
-               .nargs(1)
-               .help("<dir> Data directory (default: ./data)");
+                .nargs(1)
+                .help("<dir> Data directory (default: ./data)");
         program.add_argument("--publicDir")
-               .nargs(1)
-               .help("<dir> Static files directory (default: ./public).");
+                .nargs(1)
+                .help("<dir> Static files directory (default: ./public).");
         program.add_argument("--dev").flag();
 
         // Serve subcommand
         argparse::ArgumentParser serve_command("serve");
         serve_command.add_argument("--port", "-p")
-                     .default_value(7070)
-                     .scan<'i', int>()
-                     .help("<port> Server Port (default: 7070)");
+                .default_value(7070)
+                .scan<'i', int>()
+                .help("<port> Server Port (default: 7070)");
         serve_command.add_argument("--host", "-h")
-                     .nargs(1)
-                     .default_value("0.0.0.0")
-                     .help("<host> Server Host (default: 0.0.0.0)");
+                .nargs(1)
+                .default_value("0.0.0.0")
+                .help("<host> Server Host (default: 0.0.0.0)");
 
         // Admins subcommand with nested subcommands
         argparse::ArgumentParser admins_command("admins");
         // Create mutually exclusive group for --add and --rm
-        auto& group = admins_command.add_mutually_exclusive_group(true);
+        auto &group = admins_command.add_mutually_exclusive_group(true);
         group.add_argument("--add")
-             .nargs(1)
-             .help("<email> Add a new admin user.");
+                .nargs(1)
+                .help("<email> Add a new admin user.");
         group.add_argument("--rm")
-             .nargs(1)
-             .help("<email/id> Remove existing admin user.");
+                .nargs(1)
+                .help("<email/id> Remove existing admin user.");
 
         // Migrations subcommand with nested subcommands
         argparse::ArgumentParser migrations_command("migrate");
         admins_command.add_argument("--up")
-                      .nargs(1)
-                      .help("<file> Initiate Migration from .json file.");
+                .nargs(1)
+                .help("<file> Initiate Migration from .json file.");
         admins_command.add_argument("--down")
-                      .nargs(1)
-                      .help(".");
+                .nargs(1)
+                .help(".");
 
         // Migrations subcommand with nested subcommands
         argparse::ArgumentParser sync_command("sync");
@@ -153,21 +148,17 @@ namespace mantis
         program.add_subparser(migrations_command);
         program.add_subparser(sync_command);
 
-        try
-        {
+        try {
             // Create a vector of `const char*` pointing to the owned `std::string`s
-            std::vector<const char*> argv;
+            std::vector<const char *> argv;
             argv.reserve(m_cmdArgs.size());
-            for (const auto& arg : m_cmdArgs)
-            {
+            for (const auto &arg: m_cmdArgs) {
                 argv.push_back(arg.c_str());
             }
 
             // Parse safely — strings are now owned by `m_cmdArgs`
             program.parse_args(static_cast<int>(argv.size()), argv.data());
-        }
-        catch (const std::exception& err)
-        {
+        } catch (const std::exception &err) {
             std::cerr << err.what() << std::endl;
             std::stringstream ss;
             ss << program;
@@ -182,8 +173,7 @@ namespace mantis
         const auto pubDir = program.present<std::string>("--publicDir").value_or("./public");
 
         // Set trace mode if flag is set
-        if (program.get<bool>("--dev"))
-        {
+        if (program.get<bool>("--dev")) {
             // Print developer messages - set it to trace for now
             Log::setLogLevel(LogLevel::TRACE);
         }
@@ -207,26 +197,22 @@ namespace mantis
         m_database->connect(m_dbType, m_connString);
         m_database->migrate();
 
-        if (!m_database->isConnected())
-        {
+        if (!m_database->isConnected()) {
             Log::critical("Database was not opened");
             quit(-1, "Database opening failed!");
         }
 
         // Check which commands were used
-        if (program.is_subcommand_used("serve"))
-        {
+        if (program.is_subcommand_used("serve")) {
             const auto host = serve_command.get<std::string>("--host");
             const auto port = serve_command.get<int>("--port");
 
             setHost(host);
             setPort(port);
             m_toStartServer = true;
-        }
-        else if (program.is_subcommand_used("admins"))
-        {
-            const auto admin_user = admins_command.present<std::vector<std::string>>("--add")
-                                                  .value_or(std::vector<std::string>{});
+        } else if (program.is_subcommand_used("admins")) {
+            const auto admin_user = admins_command.present<std::vector<std::string> >("--add")
+                    .value_or(std::vector<std::string>{});
 
             // Create admin table object, we'll use it to get JSON rep for use in
             // the TableUnit construction. Similar to what we do when creating routes.
@@ -237,11 +223,9 @@ namespace mantis
             // Create TableUnit from admin json dump
             TableUnit t{admin.to_json()};
 
-            if (admins_command.is_used("--add"))
-            {
+            if (admins_command.is_used("--add")) {
                 if (const auto ev = validators().validate("email", admin_user.at(0));
-                    !ev.at("error").get<std::string>().empty())
-                {
+                    !ev.at("error").get<std::string>().empty()) {
                     Log::critical("Error validating admin email: {}", ev.at("error").get<std::string>());
                     quit(-1, "Email validation failed!");
                 }
@@ -249,16 +233,14 @@ namespace mantis
                 // Get password from user then validate it!
                 auto password = trim(getUserValueSecurely("Getting Admin Password"));
                 if (auto c_password = trim(getUserValueSecurely("Confirm Admin Password"));
-                    password != c_password)
-                {
+                    password != c_password) {
                     Log::critical("Passwords do not match!");
                     quit(-1, "Passwords do not match!");
                 }
 
                 // Validate password against regex stored
                 if (const auto ev = validators().validate("password", password);
-                    !ev.at("error").get<std::string>().empty())
-                {
+                    !ev.at("error").get<std::string>().empty()) {
                     Log::critical("Error validating email: {}", ev.at("error").get<std::string>());
                     quit(-1, "Email validation failed!");
                 }
@@ -266,8 +248,7 @@ namespace mantis
                 // Create new admin user
                 json new_admin{{"email", admin_user.at(0)}, {"password", password}};
                 if (const auto resp = t.create(new_admin, json::object());
-                    resp.at("status").get<int>() != 201)
-                {
+                    resp.at("status").get<int>() != 201) {
                     Log::critical("Failed to created Admin user: {}", resp.at("error").get<std::string>());
                     quit(-1, "");
                 }
@@ -275,14 +256,10 @@ namespace mantis
                 // Admin User was created!
                 Log::info("Yes! Admin created successfully.");
                 quit(0, "");
-            }
-
-            else if (admins_command.is_used("--rm"))
-            {
+            } else if (admins_command.is_used("--rm")) {
                 const auto admin_email_or_id = admins_command.present<std::string>("--rm")
-                                                             .value_or("");
-                if (trim(admin_email_or_id).length() < 5)
-                {
+                        .value_or("");
+                if (trim(admin_email_or_id).length() < 5) {
                     Log::critical("Invalid Admin email or id provided!");
                     quit(1, "");
                 }
@@ -291,42 +268,32 @@ namespace mantis
                 Log::trace("Check if email/id [{}] exists", admin_email_or_id);
                 auto resp = t.checkValueInColumns(admin_email_or_id, {"id", "email"});
                 Log::trace("Admin Found Response: {}", resp.dump());
-                if (!resp.at("error").get<std::string>().empty())
-                {
+                if (!resp.at("error").get<std::string>().empty()) {
                     Log::critical("Failed to get admin account matching id/email = {} - {}",
                                   admin_email_or_id, resp.at("error").get<std::string>());
                     quit(-1, "");
                 }
 
-                try
-                {
+                try {
                     const auto data = resp.at("data").get<json>();
                     Log::trace("Admin Data: {}", data.dump());
-                    if (t.remove(data.at("id").get<std::string>(), json::object()))
-                    {
+                    if (t.remove(data.at("id").get<std::string>(), json::object())) {
                         Log::info("Admin removed successfully.");
                         quit(0, "");
                     }
-                }
-                catch (soci::soci_error& e)
-                {
+                } catch (soci::soci_error &e) {
                     Log::critical("Failed to remove admin account: {}", e.what());
                 }
                 quit(-1, "");
             }
-        }
-        else if (program.is_subcommand_used("migrate"))
-        {
+        } else if (program.is_subcommand_used("migrate")) {
             // Do migration stuff here
-        }
-        else if (program.is_subcommand_used("sync"))
-        {
+        } else if (program.is_subcommand_used("sync")) {
             // Do sync actions
         }
     }
 
-    void MantisApp::init_units()
-    {
+    void MantisApp::init_units() {
         if (!ensureDirsAreCreated())
             quit(-1, "Failed to create database directories!");
 
@@ -342,8 +309,10 @@ namespace mantis
         m_files = std::make_unique<FileUnit>(); // depends on log()
     }
 
-    int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
-    {
+    int MantisApp::quit(const int &exitCode, [[maybe_unused]] const std::string &reason) {
+        // Stop server if running
+        MantisApp::instance().close();
+
         if (exitCode != 0)
             Log::critical("Exiting Application with Code = {}", exitCode);
         else
@@ -352,24 +321,24 @@ namespace mantis
         std::exit(exitCode);
     }
 
-    void MantisApp::close() const
-    {
+    void MantisApp::close() const {
         MANTIS_REQUIRE_INIT();
 
         http().close();
     }
 
-    int MantisApp::run() const
-    {
+    int MantisApp::run() {
         MANTIS_REQUIRE_INIT();
 
         if (!m_router->initialize())
             quit(-1, "Failed to initialize router!");
 
+        // Set server start time
+        m_startTime = std::chrono::steady_clock::now();
+
         // If server command is explicitly passed in, start listening,
         // else, exit!
-        if (m_toStartServer)
-        {
+        if (m_toStartServer) {
             if (!m_http->listen(m_host, m_port))
                 return -1;
         }
@@ -377,62 +346,52 @@ namespace mantis
         return 0;
     }
 
-    DatabaseUnit& MantisApp::db() const
-    {
+    DatabaseUnit &MantisApp::db() const {
         MANTIS_REQUIRE_INIT();
         return *m_database;
     }
 
-    LoggingUnit& MantisApp::log() const
-    {
+    LoggingUnit &MantisApp::log() const {
         MANTIS_REQUIRE_INIT();
         return *m_logger;
     }
 
-    HttpUnit& MantisApp::http() const
-    {
+    HttpUnit &MantisApp::http() const {
         MANTIS_REQUIRE_INIT();
         return *m_http;
     }
 
-    argparse::ArgumentParser& MantisApp::cmd() const
-    {
+    argparse::ArgumentParser &MantisApp::cmd() const {
         MANTIS_REQUIRE_INIT();
         return *m_opts;
     }
 
-    Router& MantisApp::router() const
-    {
+    Router &MantisApp::router() const {
         MANTIS_REQUIRE_INIT();
         return *m_router;
     }
 
-    Validator& MantisApp::validators() const
-    {
+    Validator &MantisApp::validators() const {
         MANTIS_REQUIRE_INIT();
         return *m_validators;
     }
 
-    ExprEvaluator& MantisApp::evaluator() const
-    {
+    ExprEvaluator &MantisApp::evaluator() const {
         MANTIS_REQUIRE_INIT();
         return *m_exprEval;
     }
 
-    SettingsUnit& MantisApp::settings() const
-    {
+    SettingsUnit &MantisApp::settings() const {
         MANTIS_REQUIRE_INIT();
         return *m_settings;
     }
 
-    FileUnit& MantisApp::files() const
-    {
+    FileUnit &MantisApp::files() const {
         MANTIS_REQUIRE_INIT();
         return *m_files;
     }
 
-    void MantisApp::openBrowserOnStart() const
-    {
+    void MantisApp::openBrowserOnStart() const {
         MANTIS_REQUIRE_INIT();
 
         // Return if flag is reset
@@ -445,25 +404,26 @@ namespace mantis
 #elif __APPLE__
             std::string command = "open " + url;
 #elif __linux__
-            std::string command = "xdg-open " + url;
+        std::string command = "xdg-open " + url;
 #else
 #error Unsupported platform
 #endif
 
-        if (int result = std::system(command.c_str()); result != 0)
-        {
+        if (int result = std::system(command.c_str()); result != 0) {
             Log::info("Could not open browser: {} > {}", command, result);
         }
     }
 
-    void MantisApp::setDbType(const DbType& dbType)
-    {
+    std::chrono::time_point<std::chrono::steady_clock> MantisApp::startTime() const {
+        return m_startTime;
+    }
+
+    void MantisApp::setDbType(const DbType &dbType) {
         MANTIS_REQUIRE_INIT();
         m_dbType = dbType;
     }
 
-    std::string MantisApp::jwtSecretKey()
-    {
+    std::string MantisApp::jwtSecretKey() {
         MANTIS_REQUIRE_INIT();
         // This is the default secret key, override it through environment variable
         // MANTIS_JWT_SECRET, recommended to override this key
@@ -471,10 +431,8 @@ namespace mantis
         return getEnvOrDefault("MANTIS_JWT_SECRET", "ed12086b9a609a5e410053b0541cb2d8da7087c1bb5e045962377d323ea6eb59");
     }
 
-    void MantisApp::ensureInitialized(const char* caller) const
-    {
-        if (!initialized)
-        {
+    void MantisApp::ensureInitialized(const char *caller) const {
+        if (!initialized) {
             std::cerr << "[MantisApp] Error: init() not called before use.\n";
             std::cerr << "  -> Called from: " << caller << "\n";
             throw std::runtime_error("MantisApp::init() must be called before using this method");
@@ -482,40 +440,33 @@ namespace mantis
         }
     }
 
-    std::string MantisApp::appVersion()
-    {
+    std::string MantisApp::appVersion() {
         return getVersionString();
     }
 
-    int MantisApp::appMinorVersion()
-    {
+    int MantisApp::appMinorVersion() {
         return MANTIS_VERSION_MINOR;
     }
 
-    int MantisApp::appMajorVersion()
-    {
+    int MantisApp::appMajorVersion() {
         return MANTIS_VERSION_MAJOR;
     }
 
-    int MantisApp::appPatchVersion()
-    {
+    int MantisApp::appPatchVersion() {
         return MANTIS_VERSION_PATCH;
     }
 
-    DbType MantisApp::dbType() const
-    {
+    DbType MantisApp::dbType() const {
         MANTIS_REQUIRE_INIT();
         return m_dbType;
     }
 
-    int MantisApp::port() const
-    {
+    int MantisApp::port() const {
         MANTIS_REQUIRE_INIT();
         return m_port;
     }
 
-    void MantisApp::setPort(const int& port)
-    {
+    void MantisApp::setPort(const int &port) {
         MANTIS_REQUIRE_INIT();
         if (port < 0 || port > 65535)
             return;
@@ -524,14 +475,12 @@ namespace mantis
         Log::debug("Setting Server Port to {}", port);
     }
 
-    std::string MantisApp::host() const
-    {
+    std::string MantisApp::host() const {
         MANTIS_REQUIRE_INIT();
         return m_host;
     }
 
-    void MantisApp::setHost(const std::string& host)
-    {
+    void MantisApp::setHost(const std::string &host) {
         MANTIS_REQUIRE_INIT();
         if (host.empty())
             return;
@@ -540,14 +489,12 @@ namespace mantis
         Log::debug("Setting Server Host to {}", host);
     }
 
-    int MantisApp::poolSize() const
-    {
+    int MantisApp::poolSize() const {
         MANTIS_REQUIRE_INIT();
         return m_poolSize;
     }
 
-    void MantisApp::setPoolSize(const int& pool_size)
-    {
+    void MantisApp::setPoolSize(const int &pool_size) {
         MANTIS_REQUIRE_INIT();
         if (pool_size <= 0)
             return;
@@ -555,14 +502,12 @@ namespace mantis
         m_poolSize = pool_size;
     }
 
-    std::string MantisApp::publicDir() const
-    {
+    std::string MantisApp::publicDir() const {
         MANTIS_REQUIRE_INIT();
         return m_publicDir;
     }
 
-    void MantisApp::setPublicDir(const std::string& dir)
-    {
+    void MantisApp::setPublicDir(const std::string &dir) {
         MANTIS_REQUIRE_INIT();
         if (dir.empty())
             return;
@@ -570,14 +515,12 @@ namespace mantis
         m_publicDir = dir;
     }
 
-    std::string MantisApp::dataDir() const
-    {
+    std::string MantisApp::dataDir() const {
         MANTIS_REQUIRE_INIT();
         return m_dataDir;
     }
 
-    void MantisApp::setDataDir(const std::string& dir)
-    {
+    void MantisApp::setDataDir(const std::string &dir) {
         MANTIS_REQUIRE_INIT();
         if (dir.empty())
             return;
@@ -585,8 +528,7 @@ namespace mantis
         m_dataDir = dir;
     }
 
-    inline bool MantisApp::ensureDirsAreCreated() const
-    {
+    inline bool MantisApp::ensureDirsAreCreated() const {
         MANTIS_REQUIRE_INIT();
         // Data Directory
         if (!createDirs(resolvePath(m_dataDir)))
@@ -598,8 +540,7 @@ namespace mantis
         return true;
     }
 
-    std::string MantisApp::getUserValueSecurely(const std::string& prompt)
-    {
+    std::string MantisApp::getUserValueSecurely(const std::string &prompt) {
         MANTIS_REQUIRE_INIT();
         std::string password;
         Log::info("{}", prompt);
@@ -607,32 +548,27 @@ namespace mantis
 
 #ifdef WIN32
         char ch;
-        while ((ch = _getch()) != '\r')
-        {
+        while ((ch = _getch()) != '\r') {
             // Enter key
-            if (ch == '\b')
-            {
+            if (ch == '\b') {
                 // Backspace
-                if (!password.empty())
-                {
+                if (!password.empty()) {
                     password.pop_back();
                     std::cout << "\b \b"; // Erase character from console
                 }
-            }
-            else
-            {
+            } else {
                 password += ch;
                 std::cout << '*'; // Optional: print '*' for each char
             }
         }
 #else
-            termios oldt, newt;
-            tcgetattr(STDIN_FILENO, &oldt);           // get current terminal settings
-            newt = oldt;
-            newt.c_lflag &= ~ECHO;                    // disable echo
-            tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // set new settings
-            std::getline(std::cin, password);         // read password
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // restore old settings
+        termios oldt, newt;
+        tcgetattr(STDIN_FILENO, &oldt); // get current terminal settings
+        newt = oldt;
+        newt.c_lflag &= ~ECHO; // disable echo
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt); // set new settings
+        std::getline(std::cin, password); // read password
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // restore old settings
 #endif
 
         std::cout << '\n';

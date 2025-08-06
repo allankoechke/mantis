@@ -281,9 +281,10 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 
 void mantis::HttpUnit::close()
 {
-    Log::trace("Stopping Server, if its running ...");
-    if (svr.is_running())
+    if (svr.is_running()) {
         svr.stop();
+        Log::info("HTTP Server Stopped.\n\t ...");
+    }
 }
 
 mantis::Context& mantis::HttpUnit::context()

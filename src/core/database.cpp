@@ -14,9 +14,9 @@
 
 #define __file__ "core/tables/sys_tables.cpp"
 
-mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
-{
-}
+mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr) {}
+
+mantis::DatabaseUnit::~DatabaseUnit() { disconnect(); }
 
 bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const std::string& conn_str)
 {
