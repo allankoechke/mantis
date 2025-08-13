@@ -38,15 +38,8 @@ namespace mantis
                 trials++;
 
                 //  As trials go over 5, expand the id size by a character every time
-                if (trials > 5)
-                {
-                    id = generateShortId(12 + trials % 5);
-                }
-
-                else
-                {
-                    id = generateShortId();
-                }
+                if (trials > 5) id = generateShortId(12 + trials % 5);
+                else id = generateShortId();
 
                 // Try getting a new ID ten times before giving up. Avoid infinite loops
                 if (trials >= 10)
@@ -66,153 +59,22 @@ namespace mantis
                 placeholders += placeholders.empty() ? (":" + field_name) : (", :" + field_name);
             }
 
-            Log::trace("Table Data: {}", entity.dump());
-
             // Create the SQL Query
             std::string sql_query = "INSERT INTO " + m_tableName + "(" + columns + ") VALUES (" + placeholders + ")";
-
-            // Prepare statement
-            // soci::statement st = sql->prepare << sql_query;
 
             // Store all bound values to ensure lifetime
             soci::values vals;
 
-            // Bind parameters dynamically
-            for (const auto& field : m_fields)
+            soci::indicator ind = soci::i_ok;
+            vals.set("id", id, ind);
+            vals.set("created", created_tm, ind);
+            vals.set("updated", created_tm, ind);
+
+            // Bind soci::values to entity values
+            const auto status = bindEntityToSociValue(vals, entity);
+            if (status.has_value())
             {
-                const auto field_name = field.at("name").get<std::string>();
-
-                if (field_name == "id")
-                {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, id, ind);
-                }
-
-                else if (field_name == "created" || field_name == "updated")
-                {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, created_tm, ind);
-                }
-
-                // For password types, let's hash them before binding to DB
-                else if (field_name == "password")
-                {
-                    // Extract password value and hash it
-                    auto res = hashPassword(entity.value(field_name, ""));
-                    if (!res.value("error", "").empty())
-                    {
-                        // Something went wrong while hashing password
-                        Log::critical("Failed to hash user password. Reason: {}", res.value("error", ""));
-                        result["error"] = res.value("error", "");
-                        result["data"] = json::object();
-                        result["status"] = 500;
-                        return result;
-                    }
-
-                    // Add the hashed password to the soci::vals
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, res.at("hash").get<std::string>(), ind);
-                }
-
-                else
-                {
-                    const auto field_type = field.at("type").get<std::string>();
-                    if (field_type == "xml" || field_type == "string" || field_type == "file")
-                    {
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, entity.value(field_name, ""), ind);
-                    }
-
-                    else if (field_type == "double")
-                    {
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, entity.value(field_name, 0.0), ind);
-                    }
-
-                    else if (field_type == "date")
-                    {
-                        // TODO may throw an error?
-                        std::tm tm{};
-                        std::istringstream ss(entity.value(field_name, ""));
-                        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
-
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, tm, ind);
-                    }
-
-                    else if (field_type == "int8")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<int8_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "uint8")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<uint8_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "int16")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<int16_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "uint16")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<uint16_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "int32")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<int32_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "uint32")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<uint32_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "int64")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<int64_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "uint64")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, static_cast<uint64_t>(entity.value(field_name, 0)), ind);
-                    }
-
-                    else if (field_type == "blob")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, entity.value(field_name, sql->empty_blob()), ind);
-                    }
-
-                    else if (field_type == "json")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, entity.value(field_name, json::object()), ind);
-                    }
-
-                    else if (field_type == "bool")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, entity.value(field_name, false), ind);
-                    }
-
-                    // TODO fix list here
-                    else if (field_type == "files")
-                    {
-                        soci::indicator ind = soci::i_ok;
-                        vals.set(field_name, entity.value(field_name, json::array()), ind);
-                    }
-                }
+                return status.value();
             }
 
             // Execute sql query
@@ -306,7 +168,7 @@ namespace mantis
         {
             // Create default time values
             std::time_t current_t = time(nullptr);
-            std::tm* created_tm = std::localtime(&current_t);
+            std::tm created_tm = *std::localtime(&current_t);
             std::string columns, placeholders;
 
             // Create a temporary container to track fields we intend to update.
@@ -344,183 +206,25 @@ namespace mantis
 
             // Create the SQL Query
             std::string sql_query = "UPDATE " + m_tableName + " SET " + columns + " WHERE id = :id";
-            Log::trace("SQL Query: {}", sql_query);
 
             // Prepare statement
             soci::statement st = sql->prepare << sql_query;
 
-            // Store all bound values to ensure lifetime
-            std::vector<std::shared_ptr<void>> bound_values;
+            // Store values for binding
             soci::values vals;
 
-            // Bind parameters dynamically
-            for (const auto& key : updateFields)
+            vals.set("id", id);
+            vals.set("updated", created_tm);
+
+            // Bind soci::values to entity values
+            const auto status = bindEntityToSociValue(vals, entity);
+            if (status.has_value())
             {
-                const auto field = findFieldByKey(key).value();
-                const auto field_name = field.at("name").get<std::string>();
-
-                // Just skip these fields
-                if (key == "id" || key == "created") continue;
-
-                if (key == "updated")
-                {
-                    auto value = std::make_shared<std::tm>(*created_tm);
-                    bound_values.push_back(value);
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, *value, ind);
-                }
-
-                // For password types, let's hash them before binding to DB
-                else if (field_name == "password")
-                {
-                    // Extract password value and hash it
-                    std::string pswd = entity.value(field_name, "");
-                    auto res = hashPassword(pswd);
-                    if (!res.value("error", "").empty())
-                    {
-                        // Something went wrong while hashing password
-                        Log::critical("Failed to hash user password. Reason: {}", res.value("error", ""));
-                        result["error"] = res.value("error", "");
-                        result["data"] = json::object();
-                        result["status"] = 500;
-                        return result;
-                    }
-
-                    // Add the hashed password to the soci::vals
-                    auto value = std::make_shared<std::string>(res.at("hash").get<std::string>());
-                    bound_values.push_back(value);
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, *value, ind);
-                }
-
-                else
-                {
-                    if (const auto field_type = field.at("type").get<std::string>();
-                        field_type == "xml" || field_type == "string")
-                    {
-                        auto value = std::make_shared<std::string>(entity.value(field_name, ""));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "double")
-                    {
-                        auto value = std::make_shared<double>(entity.value(field_name, 0.0));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "date")
-                    {
-                        // TODO may throw an error?
-                        std::tm tm{};
-                        std::istringstream ss(entity.value(field_name, ""));
-                        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
-
-                        auto value = std::make_shared<std::tm>(tm);
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "int8")
-                    {
-                        auto value = std::make_shared<int8_t>(static_cast<int8_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "uint8")
-                    {
-                        auto value = std::make_shared<uint8_t>(static_cast<uint8_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "int16")
-                    {
-                        auto value = std::make_shared<int16_t>(static_cast<int16_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "uint16")
-                    {
-                        auto value = std::make_shared<uint16_t>(static_cast<uint16_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "int32")
-                    {
-                        auto value = std::make_shared<int32_t>(static_cast<int32_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "uint32")
-                    {
-                        auto value = std::make_shared<uint32_t>(static_cast<uint32_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "int64")
-                    {
-                        auto value = std::make_shared<int64_t>(static_cast<int64_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "uint64")
-                    {
-                        auto value = std::make_shared<uint64_t>(static_cast<uint64_t>(entity.value(field_name, 0)));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "blob")
-                    {
-                        auto value = std::make_shared<std::string>(entity.value(field_name, sql->empty_blob()));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "json")
-                    {
-                        auto value = std::make_shared<json>(entity.value(field_name, json::object()));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-
-                    else if (field_type == "bool")
-                    {
-                        auto value = std::make_shared<bool>(entity.value(field_name, false));
-                        bound_values.push_back(value);
-                        soci::indicator ind = soci::i_ok;;
-                        vals.set(field_name, *value, ind);
-                    }
-                }
+                return status.value();
             }
 
-            // Add binding for 'id'
-            vals.set("id", id);
-
             // Bind values, then execute
-            st.bind(vals);
-            st.execute(true);
+            *sql << sql_query, soci::use(vals);
             tr.commit();
 
             // Query back the created record and send it back to the client
@@ -581,16 +285,15 @@ namespace mantis
 
         // Remove from DB
         *sql << "DELETE FROM " + m_tableName + " WHERE id = :id", soci::use(id);
-
         tr.commit();
-
 
         // Parse row to JSON
         const auto record = parseDbRowToJson(row);
 
         // Extract all fields that have file/files as the underlying data
         std::vector<json> files_in_fields;
-        std::ranges::for_each(m_fields, [&](const json& field) {
+        std::ranges::for_each(m_fields, [&](const json& field)
+        {
             const auto& type = field["type"].get<std::string>();
             const auto& name = field["name"].get<std::string>();
             if (type == "file")
@@ -613,7 +316,7 @@ namespace mantis
         for (const auto& file_name : files_in_fields)
         {
             [[maybe_unused]]
-            auto _ = MantisApp::instance().files().removeFile(m_tableName, file_name);
+                auto _ = MantisApp::instance().files().removeFile(m_tableName, file_name);
         }
         return true;
     }

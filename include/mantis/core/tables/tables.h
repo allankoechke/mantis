@@ -104,6 +104,16 @@ namespace mantis
         std::string getColTypeFromName(const std::string& col, const std::vector<json>& fields) const;
         json parseDbRowToJson(const soci::row& row) const;
         json parseDbRowToJson(const soci::row& row, const std::vector<json>& ref_fields) const;
+
+        /**
+         * @brief Helper function to bind json values to soci::values for use in
+         * soci::use(...) when executing SQL statements
+         *
+         * @param vals Reference to the soci::values object
+         * @param entity Const ref to the json payload
+         * @return Error object if unsuccessful else a std::nullopt
+         */
+        std::optional<json> bindEntityToSociValue(soci::values& vals, const json& entity) const;
         std::optional<json> validateRequestBody(const json& body) const;
         std::optional<json> validateUpdateRequestBody(const json& body) const;
         bool recordExists(const std::string& id) const;
