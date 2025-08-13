@@ -40,7 +40,7 @@ jobs:
 
       - name: Install dependencies on Ubuntu
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libzstd-dev
+        run: sudo apt-get update && sudo apt-get install -y libzstd-dev && sudo apt install libpq-dev
 
       - name: Install MinGW
         if: matrix.os == 'windows-latest'

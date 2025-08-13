@@ -10,10 +10,16 @@
 #include "../../include/mantis/core/settings.h"
 
 #include <soci/sqlite3/soci-sqlite3.h>
-#include <soci/postgresql/soci-postgresql.h>
 #include <private/soci-mktime.h>
 
+#ifdef MANTIS_HAS_POSTGRESQL
+#include <soci/postgresql/soci-postgresql.h>
+#endif
+
 #define __file__ "core/tables/sys_tables.cpp"
+// #include "soci/postgresql/soci-postgresql.h"
+// // In your main function:
+// soci::dynamic_backends::register_backend("postgresql", soci::postgresql);
 
 mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
 {
@@ -61,6 +67,7 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                 }
             case DbType::PSQL:
                 {
+#ifdef MANTIS_HAS_POSTGRESQL
                     // Connection Options
                     ///> Basic: "dbname=mydb user=scott password=tiger"
                     ///> With Host: "host=localhost port=5432 dbname=test user=postgres password=postgres");
@@ -69,6 +76,9 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     soci::session& sql = m_connPool->at(i);
                     sql.open(soci::postgresql, conn_str);
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+#elif
+                Log::warn("Database Connection for '{}' has not been implemented yet!", conn_str);
+#endif
                     break;
                 }
             case DbType::MYSQL:
