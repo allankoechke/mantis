@@ -323,6 +323,8 @@ namespace mantis
             // Process uploaded files and form fields
             for (const auto& file : files)
             {
+                std::cout << "File: " << file.name << std::endl;
+
                 if (!file.filename.empty())
                 {
                     // Ensure field is of file type
@@ -369,11 +371,49 @@ namespace mantis
                     f["path"] = filepath;
                     files_to_save[file.name] = f;
 
+                    if (it->at("type").get<std::string>() == "file")
+                    {
+                        // For `file` type
+                        body[file.name] = new_filename;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            // For `files` type
+                            // Should be a JSON array, lets construct that if necessary
+                            if (body.contains(file.name))
+                            {
+                                auto& v = body[file.name];
+                                std::cout << v.dump() << std::endl;
+                                // auto prev = v.get<std::string>();
+                                // v = json::array({prev});
+                                v.push_back({"name", new_filename});
+                            }
+                            else
+                                body[file.name] = json::array({"name", new_filename});
+                        } catch (std::exception& e)
+                        {
+                            std::cout << e.what() << std::endl;
+
+                            response["status"] = 500;
+                            response["error"] = e.what();
+                            response["data"] = json::object();
+                            res.set_content(response.dump(), "application/json");
+
+                            return;
+                        }
+
+                        std::cout << "FILES: " << body[file.name].dump() << std::endl;
+                    }
+
                     // Add file info to JSON body object
                     body[file.name] = new_filename;
+                    std::cout << "BODY: " << body.dump() << std::endl;
                 }
                 else
                 {
+                    std::cout << "ELSE?" << std::endl;
                     // This is a regular form field, treat as JSON data
                     try
                     {
@@ -415,6 +455,7 @@ namespace mantis
             }
         }
 
+        std::cout << "DONE?" << std::endl;
         // Validate JSON body, return any validation errors encountered
         if (const auto resp = validateRequestBody(body))
         {

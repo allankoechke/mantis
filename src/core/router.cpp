@@ -53,7 +53,7 @@ bool mantis::Router::initialize() {
         return false;
 
     // Add other necessary endpoints
-    auto _ = generateMiscEndpoints();
+    [[maybe_unused]] auto _ = generateMiscEndpoints();
 
     // If all was completed with no issues, just return OK!
     return true;
