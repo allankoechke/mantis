@@ -296,13 +296,16 @@ namespace mantis
         {
             const auto& type = field["type"].get<std::string>();
             const auto& name = field["name"].get<std::string>();
-            if (type == "file")
+            if (type == "file" && !record[name].is_null())
             {
+
                 const auto& file = record.value(name, "");
                 if (!file.empty()) files_in_fields.push_back(file);
             }
-            else if (type == "files")
+            if (type == "files" && !record[name].is_null() && record[name].is_array())
             {
+                std::cout << "DEL FILES: " << record[name].dump() << std::endl;
+
                 const auto& files = record.value(name, std::vector<std::string>{});
                 // Expand the array data out
                 for (const auto& file : files)
