@@ -12,7 +12,7 @@
 #include <soci/sqlite3/soci-sqlite3.h>
 #include <private/soci-mktime.h>
 
-#ifdef MANTIS_HAS_POSTGRESQL
+#if MANTIS_HAS_POSTGRESQL
 #include <soci/postgresql/soci-postgresql.h>
 // #include "soci/postgresql/soci-postgresql.h"
 // soci::dynamic_backends::register_backend("postgresql", soci::postgresql);
@@ -66,7 +66,7 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                 }
             case DbType::PSQL:
                 {
-#ifdef MANTIS_HAS_POSTGRESQL
+#if MANTIS_HAS_POSTGRESQL
                     // Connection Options
                     ///> Basic: "dbname=mydb user=scott password=tiger"
                     ///> With Host: "host=localhost port=5432 dbname=test user=postgres password=postgres");
