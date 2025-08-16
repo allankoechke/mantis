@@ -14,12 +14,11 @@
 
 #ifdef MANTIS_HAS_POSTGRESQL
 #include <soci/postgresql/soci-postgresql.h>
+// #include "soci/postgresql/soci-postgresql.h"
+// soci::dynamic_backends::register_backend("postgresql", soci::postgresql);
 #endif
 
 #define __file__ "core/tables/sys_tables.cpp"
-// #include "soci/postgresql/soci-postgresql.h"
-// // In your main function:
-// soci::dynamic_backends::register_backend("postgresql", soci::postgresql);
 
 mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
 {
@@ -76,7 +75,7 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     soci::session& sql = m_connPool->at(i);
                     sql.open(soci::postgresql, conn_str);
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
-#elif
+#else
                 Log::warn("Database Connection for '{}' has not been implemented yet!", conn_str);
 #endif
                     break;

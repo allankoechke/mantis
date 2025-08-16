@@ -12,6 +12,7 @@
 #include <string>
 #include <filesystem>
 #include <random>
+#include <chrono>
 
 #include "../core/logging.h"
 
@@ -166,7 +167,7 @@ namespace mantis
      * @see generateTimeBasedId() For a time-based UUID.
      * @see generateReadableTimeId() For a readable time-based UUID.
      */
-    std::string generateShortId(size_t length = 12);
+    std::string generateShortId(size_t length = 16);
 
     /**
      * @brief Split given string based on given delimiter

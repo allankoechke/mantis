@@ -4,6 +4,8 @@
 #include "../../include/mantis/utils/utils.h"
 #include <algorithm>
 
+#include "httplib.h"
+
 namespace mantis
 {
     std::optional<json> tryParseJsonStr(const std::string& json_str)
@@ -87,20 +89,17 @@ namespace mantis
 
     std::string generateShortId(const size_t length)
     {
-        static constexpr char charset[] =
-            "0123456789"
-            "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-            "abcdefghijklmnopqrstuvwxyz";
-
-        std::random_device rd;
-        std::mt19937 gen(rd());
-        std::uniform_int_distribution<size_t> dis(0, sizeof(charset) - 2);
+        static const std::string chars =
+            "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
+        thread_local std::mt19937_64 rng{std::random_device{}()};
+        std::uniform_int_distribution<std::size_t> dist(0, chars.size() - 1);
 
         std::string id;
         id.reserve(length);
-        for (size_t i = 0; i < length; ++i)
-            id += charset[dis(gen)];
-
+        for (std::size_t i = 0; i < length; ++i)
+        {
+            id.push_back(chars[dist(rng)]);
+        }
         return id;
     }
 

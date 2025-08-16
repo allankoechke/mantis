@@ -171,6 +171,9 @@ namespace mantis
             std::tm created_tm = *std::localtime(&current_t);
             std::string columns, placeholders;
 
+            // Store files to delete by filename
+            std::vector<std::string> files_to_delete{};
+
             // Create a temporary container to track fields we intend to update.
             // Why? We'll limit to the fields we have in our schema, that way, we
             // don't have any surprises.
@@ -185,10 +188,16 @@ namespace mantis
                 if (key == "id" || key == "created" || key == "updated") continue;
 
                 // First, ensure the key exists in our schema fields
-                if (!findFieldByKey(key).has_value()) continue;
+                auto schema = findFieldByKey(key);
+                if (!schema.has_value()) continue;
 
                 columns += columns.empty() ? (key + " = :" + key) : (", " + key + " = :" + key);
                 updateFields.push_back(key);
+
+                if (schema.value()["type"] == "files" || schema.value()["type"] == "files")
+                {
+                    // if (val.is_null())
+                }
             }
 
             // Check that we have fields to update, if not so, just return
@@ -203,6 +212,25 @@ namespace mantis
             // Add Updated field as an extra field for updates ...
             columns += columns.empty() ? ("updated = :updated") : (", updated = :updated");
             updateFields.emplace_back("updated");
+
+            // Query DB for current record data, stripping off system fields
+            // Check for file/files fields and:
+            // - Check if set to null -> Delete all file
+            // - Check if new vs old matches -> Delete old file
+            // For files
+            // - Check if set to null -> Delete files
+            // - Handling diff?
+            // Check if item exists of given id
+            soci::row r;
+            const std::string sql_str = ("SELECT * FROM " + m_tableName + " WHERE id = :id LIMIT 1");
+            *sql << sql_str, soci::use(id), soci::into(r);
+
+            if (!sql->got_data())
+            {
+                result["error"] = std::format("Could not find record with id = {}", id);
+                result["status"] = 500;
+                return result;
+            }
 
             // Create the SQL Query
             std::string sql_query = "UPDATE " + m_tableName + " SET " + columns + " WHERE id = :id";
@@ -228,7 +256,6 @@ namespace mantis
             tr.commit();
 
             // Query back the created record and send it back to the client
-            soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
             auto record = parseDbRowToJson(r);
 
