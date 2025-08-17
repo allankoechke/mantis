@@ -228,6 +228,7 @@ namespace mantis
     {
     public:
         HttpUnit();
+        ~HttpUnit();
 
         void Get(const std::string& path,
                  const RouteHandlerFunc& handler,

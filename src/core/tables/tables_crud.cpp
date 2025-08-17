@@ -173,6 +173,7 @@ namespace mantis
 
             // Store files to delete by filename
             std::vector<std::string> files_to_delete{};
+            std::vector<json> file_fields{};
 
             // Create a temporary container to track fields we intend to update.
             // Why? We'll limit to the fields we have in our schema, that way, we
@@ -194,9 +195,17 @@ namespace mantis
                 columns += columns.empty() ? (key + " = :" + key) : (", " + key + " = :" + key);
                 updateFields.push_back(key);
 
+                // Track file fields for use later on
                 if (schema.value()["type"] == "files" || schema.value()["type"] == "files")
                 {
-                    // if (val.is_null())
+                    file_fields.push_back(
+                        json{
+                            {"name", key},
+                            {"value", val},
+                            {
+                                "type", schema.value()["type"]
+                            }
+                        });
                 }
             }
 
@@ -221,22 +230,73 @@ namespace mantis
             // - Check if set to null -> Delete files
             // - Handling diff?
             // Check if item exists of given id
-            soci::row r;
-            const std::string sql_str = ("SELECT * FROM " + m_tableName + " WHERE id = :id LIMIT 1");
-            *sql << sql_str, soci::use(id), soci::into(r);
-
-            if (!sql->got_data())
+            if (!file_fields.empty())
             {
-                result["error"] = std::format("Could not find record with id = {}", id);
-                result["status"] = 500;
-                return result;
+                std::string fields_to_query{};
+
+                for (const auto& file : file_fields)
+                {
+                    if (fields_to_query.empty()) fields_to_query = file["name"];
+                    else fields_to_query += ", " + file["name"].get<std::string>();
+                }
+
+                const std::string sql_str = std::format("SELECT {} FROM {} WHERE id = :id LIMIT 1",
+                                                        fields_to_query, m_tableName);
+
+                soci::row r;
+                *sql << sql_str, soci::use(id), soci::into(r);
+
+                if (!sql->got_data())
+                {
+                    result["error"] = std::format("Could not find record with id = {}", id);
+                    result["status"] = 500;
+                    return result;
+                }
+
+                auto record = parseDbRowToJson(r);
+
+                std::cout << record.dump() << std::endl;
+
+                // From the record, check for changes in files
+                // Assuming record order is maintained on query ...
+                for (const auto& file_field : file_fields)
+                {
+                    const auto field_name = file_field["name"].get<std::string>();
+
+                    // For null values in db, continue
+                    if (record[field_name].is_null()) continue;
+
+                    const auto files_in_db = file_field["type"] == "files"
+                                                 ? record[field_name]
+                                                 : json::array({record[field_name]});
+
+                    if (file_field["value"] == nullptr ||
+                        (file_field["value"].is_array() && file_field["value"].size() == 0) ||
+                        (file_field["value"].is_string() && file_field["value"].empty()))
+                    {
+                        // TODO enforce nullptr for such entries
+                        // If value set is null, add all file(s) to delete array
+                        files_to_delete.insert(files_to_delete.end(), files_in_db.begin(), files_in_db.end());
+                        continue;
+                    }
+
+                    const auto new_files = file_field["type"] == "files"
+                                               ? file_field["value"]
+                                               : json::array({file_field["value"]});
+
+                    for (const auto& file : files_in_db)
+                    {
+                        if (std::ranges::find(new_files, file) == new_files.end())
+                        {
+                            // The new list/file is missing the file named in the db, so delete it
+                            files_to_delete.push_back(file);
+                        }
+                    }
+                }
             }
 
             // Create the SQL Query
             std::string sql_query = "UPDATE " + m_tableName + " SET " + columns + " WHERE id = :id";
-
-            // Prepare statement
-            soci::statement st = sql->prepare << sql_query;
 
             // Store values for binding
             soci::values vals;
@@ -255,7 +315,17 @@ namespace mantis
             *sql << sql_query, soci::use(vals);
             tr.commit();
 
+            // Delete files, if any were removed ...
+            for (const auto& file : files_to_delete)
+            {
+                if (!MantisApp::instance().files().removeFile(m_tableName, file))
+                {
+                    Log::warn("Could not delete: `{}`", file);
+                }
+            }
+
             // Query back the created record and send it back to the client
+            soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
             auto record = parseDbRowToJson(r);
 
@@ -325,7 +395,6 @@ namespace mantis
             const auto& name = field["name"].get<std::string>();
             if (type == "file" && !record[name].is_null())
             {
-
                 const auto& file = record.value(name, "");
                 if (!file.empty()) files_in_fields.push_back(file);
             }

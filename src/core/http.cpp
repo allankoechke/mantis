@@ -182,6 +182,11 @@ mantis::HttpUnit::HttpUnit()
     });
 }
 
+mantis::HttpUnit::~HttpUnit()
+{
+    if (svr.is_running()) svr.stop();
+}
+
 void mantis::HttpUnit::Get(const std::string& path, const RouteHandlerFunc& handler,
                            const std::initializer_list<Middleware> middlewares)
 {
