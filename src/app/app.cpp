@@ -17,6 +17,7 @@
 #define MANTIS_REQUIRE_INIT() \
     MantisApp::instance().ensureInitialized(__func__);
 
+#define __file__ "app/app.cpp"
 
 namespace mantis
 {
@@ -27,7 +28,8 @@ namespace mantis
 
     // -------------------------------------------------------------------------------- //
     MantisApp::MantisApp(const int argc, char** argv)
-        : m_dbType(DbType::SQLITE)
+        : m_dbType(DbType::SQLITE),
+          m_startTime(std::chrono::steady_clock::now())
     {
         std::lock_guard<std::mutex> lock(s_mutex);
         if (s_instance)
@@ -43,19 +45,21 @@ namespace mantis
             m_cmdArgs.emplace_back(argv[i]); // copy each string over
         }
 
-
         // Initialize Default Features in cparse
         cparse::cparse_init();
 
         // Enable Multi Sinks
         Log::init();
 
-        Log::info("mantis v{}", appVersion());
+        Log::info("Mantis v{}", appVersion());
     }
 
     MantisApp::~MantisApp()
     {
-        Log::close();
+        TRACE_CLASS_METHOD()
+
+        // Terminate any shared pointers
+        close();
 
         std::lock_guard<std::mutex> lock(s_mutex);
         if (s_instance == this)
@@ -196,10 +200,16 @@ namespace mantis
         setDataDir(data_dir);
 
         toLowerCase(db);
-        if (db == "sqlite") setDbType(DbType::SQLITE);
+        if (db == "sqlite")
+            setDbType(DbType::SQLITE);
+
         else if (db == "mysql") setDbType(DbType::MYSQL);
-        else if (db == "psql") setDbType(DbType::PSQL);
-        else quit(-1, "Backend Database '" + db + "' is unknown!");
+
+        else if (db == "psql" || db == "postgresql" || db == "postgres")
+            setDbType(DbType::PSQL);
+
+        else
+            quit(-1, std::format("Backend Database `{}` is unsupported!", db));
 
         [[maybe_unused]] auto x = MantisApp::instance().poolSize();
 
@@ -276,7 +286,6 @@ namespace mantis
                 Log::info("Yes! Admin created successfully.");
                 quit(0, "");
             }
-
             else if (admins_command.is_used("--rm"))
             {
                 const auto admin_email_or_id = admins_command.present<std::string>("--rm")
@@ -318,10 +327,12 @@ namespace mantis
         else if (program.is_subcommand_used("migrate"))
         {
             // Do migration stuff here
+            Log::info("Migration CMD support has not been implemented yet! ");
         }
         else if (program.is_subcommand_used("sync"))
         {
             // Do sync actions
+            Log::info("Sync CMD support has not been implemented yet!");
         }
     }
 
@@ -344,6 +355,9 @@ namespace mantis
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
     {
+        // Stop server if running
+        MantisApp::instance().close();
+
         if (exitCode != 0)
             Log::critical("Exiting Application with Code = {}", exitCode);
         else
@@ -352,19 +366,31 @@ namespace mantis
         std::exit(exitCode);
     }
 
-    void MantisApp::close() const
+    void MantisApp::close()
     {
         MANTIS_REQUIRE_INIT();
 
-        http().close();
+        // Destroy instance objects
+        if (m_files) m_files.reset();
+        if (m_validators) m_validators.reset();
+        if (m_opts) m_opts.reset();
+        if (m_settings) m_settings.reset();
+        if (m_router) m_router.reset();
+        if (m_http) m_http.reset();
+        if (m_database) m_database.reset();
+        if (m_exprEval) m_exprEval.reset();
+        if (m_logger) m_logger.reset();
     }
 
-    int MantisApp::run() const
+    int MantisApp::run()
     {
         MANTIS_REQUIRE_INIT();
 
         if (!m_router->initialize())
             quit(-1, "Failed to initialize router!");
+
+        // Set server start time
+        m_startTime = std::chrono::steady_clock::now();
 
         // If server command is explicitly passed in, start listening,
         // else, exit!
@@ -445,7 +471,7 @@ namespace mantis
 #elif __APPLE__
             std::string command = "open " + url;
 #elif __linux__
-            std::string command = "xdg-open " + url;
+        std::string command = "xdg-open " + url;
 #else
 #error Unsupported platform
 #endif
@@ -454,6 +480,11 @@ namespace mantis
         {
             Log::info("Could not open browser: {} > {}", command, result);
         }
+    }
+
+    std::chrono::time_point<std::chrono::steady_clock> MantisApp::startTime() const
+    {
+        return m_startTime;
     }
 
     void MantisApp::setDbType(const DbType& dbType)
@@ -607,32 +638,27 @@ namespace mantis
 
 #ifdef WIN32
         char ch;
-        while ((ch = _getch()) != '\r')
-        {
+        while ((ch = _getch()) != '\r') {
             // Enter key
-            if (ch == '\b')
-            {
+            if (ch == '\b') {
                 // Backspace
-                if (!password.empty())
-                {
+                if (!password.empty()) {
                     password.pop_back();
                     std::cout << "\b \b"; // Erase character from console
                 }
-            }
-            else
-            {
+            } else {
                 password += ch;
                 std::cout << '*'; // Optional: print '*' for each char
             }
         }
 #else
-            termios oldt, newt;
-            tcgetattr(STDIN_FILENO, &oldt);           // get current terminal settings
-            newt = oldt;
-            newt.c_lflag &= ~ECHO;                    // disable echo
-            tcsetattr(STDIN_FILENO, TCSANOW, &newt);  // set new settings
-            std::getline(std::cin, password);         // read password
-            tcsetattr(STDIN_FILENO, TCSANOW, &oldt);  // restore old settings
+        termios oldt, newt;
+        tcgetattr(STDIN_FILENO, &oldt); // get current terminal settings
+        newt = oldt;
+        newt.c_lflag &= ~ECHO; // disable echo
+        tcsetattr(STDIN_FILENO, TCSANOW, &newt); // set new settings
+        std::getline(std::cin, password); // read password
+        tcsetattr(STDIN_FILENO, TCSANOW, &oldt); // restore old settings
 #endif
 
         std::cout << '\n';

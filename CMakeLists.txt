@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.2.6)
+project(mantisapp VERSION 0.2.7)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -146,6 +146,7 @@ endif()
 option(MANTIS_BUILD_TESTS "Build tests" ON)
 
 if(MANTIS_BUILD_TESTS)
+    message("Enabling tests for mantis")
     enable_testing()
     add_subdirectory(tests)
 endif()

@@ -162,7 +162,7 @@ namespace mantis
 
     void TableUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
-        Log::trace("Fetching record from endpoint {}", req.path);
+        TRACE_CLASS_METHOD()
 
         // Extract request ID and check that it's not empty
         const auto id = req.path_params.at("id");
@@ -228,7 +228,7 @@ namespace mantis
 
     void TableUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
     {
-        Log::trace("Fetching all record from endpoint {}", req.path);
+        TRACE_CLASS_METHOD()
 
         // Pagination req params
         json pagination;
@@ -298,7 +298,7 @@ namespace mantis
 
     void TableUnit::createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
-        Log::trace("Creating new record, endpoint {}", req.path);
+        TRACE_CLASS_METHOD()
 
         json body, response;
         // Store path to saved files for easy rollback if db process fails
@@ -364,13 +364,44 @@ namespace mantis
                     // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
 
-                    json f;
-                    f["filename"] = new_filename;
-                    f["path"] = filepath;
-                    files_to_save[file.name] = f;
+                    // File record to be saved
+                    json file_record;
+                    file_record["filename"] = new_filename;
+                    file_record["path"] = filepath; // Path on disk to write the file
+                    file_record["name"] = file.name; // Original file name as passed by the user
+                    file_record["hash"] = MantisApp::instance().http().hashMultipartMetadata(file);
 
-                    // Add file info to JSON body object
-                    body[file.name] = new_filename;
+                    if (it->at("type").get<std::string>() == "file")
+                    {
+                        // For `file` type
+                        files_to_save[file.name] = file_record;
+
+                        // Add to the req body
+                        body[file.name] = new_filename;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            // Should be a JSON array, lets construct that if necessary
+                            if (!body.contains(file.name)) body[file.name] = nullptr;
+                            if (!files_to_save.contains(file.name)) files_to_save[file.name] = nullptr;
+
+                            body[file.name].push_back(new_filename);
+                            files_to_save[file.name].push_back(file_record);
+                        }
+                        catch (std::exception& e)
+                        {
+                            std::cout << e.what() << std::endl;
+
+                            response["status"] = 500;
+                            response["error"] = e.what();
+                            response["data"] = json::object();
+                            res.set_content(response.dump(), "application/json");
+
+                            return;
+                        }
+                    }
                 }
                 else
                 {
@@ -429,16 +460,44 @@ namespace mantis
             return;
         };
 
+        // For tracking written files, just in case we need to revert changes
+        std::vector<std::string> saved_files{};
+
         for (const auto& file : files)
         {
             // For non-file types, continue
             if (file.filename.empty()) continue;
 
-            const auto filepath = files_to_save[file.name]["path"].get<std::string>();
+            const auto file_list = files_to_save[file.name].is_array()
+                                       ? files_to_save[file.name]
+                                       : json::array({files_to_save[file.name]});
+
+            auto it = std::ranges::find_if(file_list, [&](const json& f)
+            {
+                return f["hash"].get<std::string>() == MantisApp::instance().http().hashMultipartMetadata(file);
+            });
+
+            if (it == file_list.end())
+            {
+                // Should not happen, but if it does, throw 500 error
+                response["status"] = 500;
+                response["data"] = json::object();
+                response["error"] = "Error writing files, hash mismatch!";
+
+                res.status = 500;
+                res.set_content(response.dump(), "application/json");
+                return;
+            }
+
+            auto& file_record = *it;
+            const auto filepath = file_record["path"].get<std::string>();
             if (std::ofstream ofs(filepath, std::ios::binary); ofs.is_open())
             {
                 ofs.write(file.content.data(), file.content.size());
                 ofs.close();
+
+                // Keep track of written files
+                saved_files.push_back(file_record["filename"].get<std::string>());
             }
             else
             {
@@ -448,6 +507,14 @@ namespace mantis
 
                 res.status = 500;
                 res.set_content(response.dump(), "application/json");
+
+                // Remove any written files
+                for (const auto& f : saved_files)
+                {
+                    [[maybe_unused]]
+                        auto _ = MantisApp::instance().files().removeFile(m_tableName, f);
+                }
+
                 return;
             }
         }
@@ -464,15 +531,11 @@ namespace mantis
             res.set_content(response.dump(), "application/json");
             res.status = status;
 
-            for (const auto& file : files)
+            for (const auto& f : saved_files)
             {
-                // For non-file types, continue
-                if (file.filename.empty()) continue;
-
-                const auto filename = files_to_save[file.name]["filename"].get<std::string>();
-                if (!MantisApp::instance().files().removeFile(m_tableName, filename))
+                if (!MantisApp::instance().files().removeFile(m_tableName, f))
                 {
-                    Log::warn("Could not delete: `{}`", filename);
+                    Log::warn("Could not delete: `{}`", f);
                 }
             }
 
@@ -502,7 +565,7 @@ namespace mantis
 
     void TableUnit::updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
-        Log::trace("Updating record, endpoint {}", req.path);
+        TRACE_CLASS_METHOD()
 
         json body, response;
         // Extract request ID and check that it's not empty
@@ -519,8 +582,18 @@ namespace mantis
             res.set_content(response.dump(), "application/json");
             return;
         }
+        // Check that record exists before we continue ...
+        if (!recordExists(id))
+        {
+            response["status"] = 404;
+            response["data"] = json::object();
+            response["error"] = "Record with id " + id + " was not found.";
 
-        // TODO handle file updates
+            res.status = 404;
+            res.set_content(response.dump(), "application/json");
+            return;
+        }
+
         // Store path to saved files for easy rollback if db process fails
         json files_to_save{};
         httplib::MultipartFormDataItems files;
@@ -545,19 +618,83 @@ namespace mantis
             {
                 if (!file.filename.empty())
                 {
+                    // Ensure field is of file type
+                    auto it = std::ranges::find_if(m_fields, [&file](const json& schema_field)
+                    {
+                        // Check whether the schema name matches the file field name
+                        return schema_field.at("name").get<std::string>() == file.name;
+                    });
+
+                    // Ensure field being
+                    if (it == m_fields.end())
+                    {
+                        response["status"] = 400;
+                        response["error"] = std::format("Unknown field `{}` for file type upload!", file.name);
+                        response["data"] = json::object();
+
+                        res.set_content(response.dump(), "application/json");
+                        res.status = 400;
+                        return;
+                    }
+
+                    // Ensure field is of `file|files` type.
+                    if (!(it->at("type").get<std::string>() == "file" || it->at("type").get<std::string>() == "files"))
+                    {
+                        response["status"] = 400;
+                        response["error"] = std::format("Field `{}` is not of type `file` or `files`!", file.name);
+                        response["data"] = json::object();
+
+                        res.set_content(response.dump(), "application/json");
+                        res.status = 400;
+                        return;
+                    }
+
                     // Handle file upload
                     const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
-                    const auto new_filename = std::format("{}_{}", generateShortId(8), file.filename);
+                    const auto new_filename = std::format("{}_{}",
+                                                          generateShortId(8), sanitizeFilename(file.filename));
+
+                    // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
 
-                    // TODO ensure field type is of `file` type
-                    json f;
-                    f["filename"] = new_filename;
-                    f["path"] = dir;
-                    files_to_save[file.name] = f;
+                    // File record to be saved
+                    json file_record;
+                    file_record["filename"] = new_filename;
+                    file_record["path"] = filepath; // Path on disk to write the file
+                    file_record["name"] = file.name; // Original file name as passed by the user
+                    file_record["hash"] = MantisApp::instance().http().hashMultipartMetadata(file);
 
-                    // Add file info to JSON body object
-                    body[file.name] = new_filename;
+                    if (it->at("type").get<std::string>() == "file")
+                    {
+                        // For `file` type
+                        files_to_save[file.name] = file_record;
+
+                        // Add to the req body
+                        body[file.name] = new_filename;
+                    }
+                    else
+                    {
+                        try
+                        {
+                            // Should be a JSON array, lets construct that if necessary
+                            if (!body.contains(file.name)) body[file.name] = nullptr;
+                            if (!files_to_save.contains(file.name)) files_to_save[file.name] = nullptr;
+
+                            body[file.name].push_back(new_filename);
+                            files_to_save[file.name].push_back(file_record);
+                        }
+                        catch (std::exception& e)
+                        {
+                            std::cout << e.what() << std::endl;
+
+                            response["status"] = 500;
+                            response["error"] = e.what();
+                            response["data"] = json::object();
+                            res.set_content(response.dump(), "application/json");
+
+                            return;
+                        }
+                    }
                 }
                 else
                 {
@@ -602,18 +739,6 @@ namespace mantis
             }
         }
 
-        // Check that record exists before we continue ...
-        if (!recordExists(id))
-        {
-            response["status"] = 404;
-            response["data"] = json::object();
-            response["error"] = "Record with id " + id + " was not found.";
-
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
-            return;
-        }
-
         // Validate JSON body, return any validation errors encountered
         if (const auto resp = validateUpdateRequestBody(body))
         {
@@ -628,6 +753,67 @@ namespace mantis
             return;
         };
 
+        // For tracking written files, just in case we need to revert changes
+        std::vector<std::string> saved_files{};
+
+        for (const auto& file : files)
+        {
+            // For non-file types, continue
+            if (file.filename.empty()) continue;
+
+            const auto file_list = files_to_save[file.name].is_array()
+                                       ? files_to_save[file.name]
+                                       : json::array({files_to_save[file.name]});
+
+            auto it = std::ranges::find_if(file_list, [&](const json& f)
+            {
+                return f["hash"].get<std::string>() == MantisApp::instance().http().hashMultipartMetadata(file);
+            });
+
+            if (it == file_list.end())
+            {
+                // Should not happen, but if it does, throw 500 error
+                response["status"] = 500;
+                response["data"] = json::object();
+                response["error"] = "Error writing files, hash mismatch!";
+
+                res.status = 500;
+                res.set_content(response.dump(), "application/json");
+                return;
+            }
+
+            auto& file_record = *it;
+            const auto filepath = file_record["path"].get<std::string>();
+            if (std::ofstream ofs(filepath, std::ios::binary); ofs.is_open())
+            {
+                ofs.write(file.content.data(), file.content.size());
+                ofs.close();
+
+                // Keep track of written files
+                saved_files.push_back(file_record["filename"].get<std::string>());
+            }
+            else
+            {
+                response["status"] = 500;
+                response["error"] = "Failed to save file: " + file.filename;
+                response["data"] = json::object();
+
+                res.status = 500;
+                res.set_content(response.dump(), "application/json");
+
+                // Remove any written files
+                for (const auto& f : saved_files)
+                {
+                    if (!MantisApp::instance().files().removeFile(m_tableName, f))
+                    {
+                        Log::warn("Could not delete: `{}`", f);
+                    }
+                }
+
+                return;
+            }
+        }
+
         // Try creating the record, if it checkMinValueFuncs, return the error
         auto respObj = update(id, body, json{});
         if (!respObj.value("error", "").empty())
@@ -639,6 +825,14 @@ namespace mantis
 
             res.set_content(response.dump(), "application/json");
             res.status = status;
+
+            for (const auto& f : saved_files)
+            {
+                if (!MantisApp::instance().files().removeFile(m_tableName, f))
+                {
+                    Log::warn("Could not delete: `{}`", f);
+                }
+            }
 
             Log::critical("Failed to update record, id = {}, reason: {}", id, respObj.dump());
             return;

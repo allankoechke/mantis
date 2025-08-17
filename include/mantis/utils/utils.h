@@ -12,6 +12,9 @@
 #include <string>
 #include <filesystem>
 #include <random>
+#include <chrono>
+#include <string_view>
+#include <algorithm>
 
 #include "../core/logging.h"
 
@@ -166,7 +169,7 @@ namespace mantis
      * @see generateTimeBasedId() For a time-based UUID.
      * @see generateReadableTimeId() For a readable time-based UUID.
      */
-    std::string generateShortId(size_t length = 12);
+    std::string generateShortId(size_t length = 16);
 
     /**
      * @brief Split given string based on given delimiter
@@ -192,13 +195,49 @@ namespace mantis
     std::string getEnvOrDefault(const std::string& key, const std::string& defaultValue);
 
     /**
-     * @brief Sanitize filenames by swapping whitespaces with `_` and removing commas if any
      *
-     * @param name File name
-     * @return Sanitized filename
+     * @brief Check if a character is invalid in a filename.
+     *
+     * Invalid characters typically include reserved symbols such as
+     * slashes, colons, question marks, etc. This function allows
+     * filtering and sanitization of filenames.
+     *
+     * @param c Character to check.
+     * @return true if the character is invalid in a filename, false otherwise.
      */
-    std::string sanitizeFilename(const std::string& name);
+    static bool invalidChar(unsigned char c);
 
+    /**
+     * @brief Sanitize a string in-place by removing or replacing invalid characters.
+     *
+     * This modifies the provided string directly. Characters deemed invalid
+     * by `invalidChar()` are replaced with an underscore (`_`).
+     *
+     * @param s Reference to the string to sanitize.
+     */
+    static void sanitizeInPlace(const std::string& s);
+
+    /**
+     * @brief Sanitize a filename and ensure uniqueness.
+     *
+     * Creates a safe filename from the given input. Invalid characters are
+     * replaced with underscores. The resulting filename is truncated to
+     * `maxLen` characters, and a short unique ID is appended to avoid collisions.
+     *
+     * Example:
+     *   Input: "my*illegal:file?.txt"
+     *   Output: "my_illegal_file_txt_abC82xM01qP"
+     *
+     * @param original Original filename (input).
+     * @param maxLen Maximum length of the sanitized name before adding ID. Default = 50.
+     * @param idLen Length of the unique ID suffix. Default = 12.
+     * @param idSep Separator inserted between the name and the ID. Default = "_".
+     * @return Sanitized filename with appended unique ID.
+     */
+    std::string sanitizeFilename(std::string_view original,
+                                 std::size_t maxLen = 50,
+                                 std::size_t idLen = 12,
+                                 std::string_view idSep = "_");
 
     // ----------------------------------------------------------------- //
     // AUTH UTILS

@@ -178,6 +178,148 @@ namespace mantis
         return j;
     }
 
+    std::optional<json> TableUnit::bindEntityToSociValue(soci::values& vals, const json& entity) const
+    {
+        // Bind parameters dynamically
+        for (const auto& field : m_fields)
+        {
+            const auto field_name = field.at("name").get<std::string>();
+
+            if (field_name == "id" || field_name == "created" || field_name == "updated")
+            {
+                continue;
+            }
+
+            // For password types, let's hash them before binding to DB
+            if (field_name == "password")
+            {
+                // Extract password value and hash it
+                auto res = hashPassword(entity.value(field_name, ""));
+                if (!res.value("error", "").empty())
+                {
+                    // Something went wrong while hashing password
+                    Log::critical("Failed to hash user password. Reason: {}", res.value("error", ""));
+
+                    json result;
+                    result["error"] = res.value("error", "");
+                    result["data"] = json::object();
+                    result["status"] = 500;
+                    return result;
+                }
+
+                // Add the hashed password to the soci::vals
+                soci::indicator ind = soci::i_ok;;
+                vals.set(field_name, res.at("hash").get<std::string>(), ind);
+            }
+
+            else
+            {
+                // Skip fields that are not in the json object
+                if (!entity.contains(field_name)) continue;
+
+                const auto field_type = field.at("type").get<std::string>();
+                if (field_type == "xml" || field_type == "string" || field_type == "file")
+                {
+                    soci::indicator ind = soci::i_ok;;
+                    vals.set(field_name, entity.value(field_name, ""), ind);
+                }
+
+                else if (field_type == "double")
+                {
+                    soci::indicator ind = soci::i_ok;;
+                    vals.set(field_name, entity.value(field_name, 0.0), ind);
+                }
+
+                else if (field_type == "date")
+                {
+                    // TODO may throw an error?
+                    std::tm tm{};
+                    std::istringstream ss(entity.value(field_name, ""));
+                    ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+
+                    soci::indicator ind = soci::i_ok;;
+                    vals.set(field_name, tm, ind);
+                }
+
+                else if (field_type == "int8")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<int8_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "uint8")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<uint8_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "int16")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<int16_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "uint16")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<uint16_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "int32")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<int32_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "uint32")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<uint32_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "int64")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<int64_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "uint64")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, static_cast<uint64_t>(entity.value(field_name, 0)), ind);
+                }
+
+                else if (field_type == "blob")
+                {
+                    // TODO implement BLOB type
+                    // soci::indicator ind = soci::i_ok;
+                    // vals.set(field_name, entity.value(field_name, sql->empty_blob()), ind);
+                }
+
+                else if (field_type == "json")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, entity.value(field_name, json::object()), ind);
+                }
+
+                else if (field_type == "bool")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, entity.value(field_name, false), ind);
+                }
+
+                // TODO fix list here
+                else if (field_type == "files")
+                {
+                    soci::indicator ind = soci::i_ok;
+                    vals.set(field_name, entity.value(field_name, json::array()), ind);
+                }
+            }
+        }
+
+        return std::nullopt;
+    }
+
     std::string TableUnit::generateTableId(const std::string& tablename)
     {
         return "mt_" + std::to_string(std::hash<std::string>{}(tablename));

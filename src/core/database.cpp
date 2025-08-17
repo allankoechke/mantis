@@ -12,10 +12,21 @@
 #include <soci/sqlite3/soci-sqlite3.h>
 #include <private/soci-mktime.h>
 
+#if MANTIS_HAS_POSTGRESQL
+#include <soci/postgresql/soci-postgresql.h>
+// #include "soci/postgresql/soci-postgresql.h"
+// soci::dynamic_backends::register_backend("postgresql", soci::postgresql);
+#endif
+
 #define __file__ "core/tables/sys_tables.cpp"
 
 mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
 {
+}
+
+mantis::DatabaseUnit::~DatabaseUnit()
+{
+    disconnect();
 }
 
 bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const std::string& conn_str)
@@ -57,6 +68,21 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     break;
                 }
             case DbType::PSQL:
+                {
+#if MANTIS_HAS_POSTGRESQL
+                    // Connection Options
+                    ///> Basic: "dbname=mydb user=scott password=tiger"
+                    ///> With Host: "host=localhost port=5432 dbname=test user=postgres password=postgres");
+                    ///> With Config: "dbname=mydatabase user=myuser password=mypass singlerows=true"
+
+                    soci::session& sql = m_connPool->at(i);
+                    sql.open(soci::postgresql, conn_str);
+                    sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+#else
+                Log::warn("Database Connection for '{}' has not been implemented yet!", conn_str);
+#endif
+                    break;
+                }
             case DbType::MYSQL:
                 Log::warn("Database Connection for '{}' Not Implemented Yet!", conn_str);
 
@@ -185,9 +211,15 @@ std::string mantis::DatabaseUnit::tmToISODate(const std::tm& t)
 
 void mantis::DatabaseUnit::writeCheckpoint() const
 {
-    // Write out the WAL data to db file & truncate it
-    if (const auto sql = session(); sql->is_connected())
+    try
     {
-        *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+        // Write out the WAL data to db file & truncate it
+        if (const auto sql = session(); sql->is_connected())
+        {
+            *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+        }
+    } catch (std::exception& e)
+    {
+        Log::critical("Database Connection SOCI::Error: {}", e.what());
     }
 }

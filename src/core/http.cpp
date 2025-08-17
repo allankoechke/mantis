@@ -281,9 +281,10 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 
 void mantis::HttpUnit::close()
 {
-    Log::trace("Stopping Server, if its running ...");
-    if (svr.is_running())
+    if (svr.is_running()) {
         svr.stop();
+        Log::info("HTTP Server Stopped.\n\t ...");
+    }
 }
 
 mantis::Context& mantis::HttpUnit::context()
@@ -299,6 +300,22 @@ mantis::RouteRegistry& mantis::HttpUnit::routeRegistry()
 httplib::Server& mantis::HttpUnit::server()
 {
     return svr;
+}
+
+std::string mantis::HttpUnit::hashMultipartMetadata(const httplib::MultipartFormData& data)
+{
+    constexpr std::hash<std::string> hasher;
+    const size_t h1 = hasher(data.name);
+    const size_t h3 = hasher(data.filename);
+    const size_t h4 = hasher(data.content_type);
+    const size_t content_size_hash = hasher(std::to_string(data.content.size()));
+
+    size_t result = h1;
+    result ^= h3 + 0x9e3779b9 + (result << 6) + (result >> 2);
+    result ^= h4 + 0x9e3779b9 + (result << 6) + (result >> 2);
+    result ^= content_size_hash + 0x9e3779b9 + (result << 6) + (result >> 2);
+
+    return std::to_string(result);
 }
 
 std::string mantis::HttpUnit::decompressResponseBody(const std::string& body, const std::string& encoding)

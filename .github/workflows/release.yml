@@ -40,7 +40,7 @@ jobs:
 
       - name: Install dependencies on Ubuntu
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libzstd-dev
+        run: sudo apt-get update && sudo apt-get install -y libzstd-dev && sudo apt install libpq-dev
 
       - name: Install MinGW
         if: matrix.os == 'windows-latest'
@@ -79,6 +79,10 @@ jobs:
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
+
+#      - name: Test
+#        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+#        run: ctest --build-config ${{ matrix.build_type }}
 
       - name: Zip the build output
         if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'ubuntu-latest'
