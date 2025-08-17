@@ -125,24 +125,88 @@ namespace mantis
         return value ? std::string(value) : defaultValue;
     }
 
-    std::string sanitizeFilename(const std::string& name)
+    bool invalidChar(const unsigned char c)
     {
-        std::string sanitized;
-        for (const char ch : name)
+        return c < 0x20 || c == 0x7F ||
+            c == '<' || c == '>' || c == ':' || c == '"' ||
+            c == '/' || c == '\\' || c == '|' || c == '?' || c == '*' ||
+            c == '+' || c == '\t' || c == ' ' || c == '\n' || c == '\r' ||
+            c == '%' || c == '=';
+    }
+
+    void sanitizeInPlace(std::string& s)
+    {
+        for (auto& ch : s)
         {
-            if (ch == ' ' || ch == '\t')
-            {
-                sanitized += '_';
-            }
-            else if (ch == ',')
-            {
-                continue; // skip commas
-            }
-            else
-            {
-                sanitized += ch;
-            }
+            unsigned char c = static_cast<unsigned char>(ch);
+            if (invalidChar(c)) ch = '_';
         }
-        return sanitized;
+
+        // collapse consecutive underscores
+        s.erase(
+            std::ranges::unique(s, [](const char a, const char b)
+                                {
+                                    return a == '_' && b == '_';
+                                }
+            ).begin(),
+            s.end());
+
+        s.erase(
+            std::ranges::unique(s, [](const char a, const char b)
+                                {
+                                    return a == '_' && b == '-';
+                                }
+            ).begin(),
+            s.end());
+
+        s.erase(
+            std::ranges::unique(s, [](const char a, const char b)
+                                {
+                                    return a == '-' && b == '_';
+                                }
+            ).begin(),
+            s.end());
+
+        // trim leading/trailing spaces and dots
+        auto isTrim = [](const unsigned char c) { return c == ' ' || c == '.'; };
+        while (!s.empty() && isTrim(static_cast<unsigned char>(s.front()))) s.erase(s.begin());
+        while (!s.empty() && isTrim(static_cast<unsigned char>(s.back()))) s.pop_back();
+        if (s.empty()) s = "unnamed";
+    }
+
+    std::string sanitizeFilename(const std::string_view original,
+                                 const std::size_t maxLen, const std::size_t idLen,
+                                 const std::string_view idSep)
+    {
+        const fs::path p{std::string{original}};
+        std::string stem = p.stem().string();
+        std::string ext = p.has_extension() ? p.extension().string() : std::string{};
+
+        sanitizeInPlace(stem);
+        const auto max_size = stem.size() + ext.size() + idLen + idSep.size();
+
+        const std::string id = generateShortId(idLen);
+
+        if (max_size <= maxLen)
+        {
+            const auto name = stem;
+            return ext.empty()
+                       ? std::format("{}{}{}", id, idSep, name)
+                       : std::format("{}{}{}{}", id, idSep, name, ext);
+        }
+
+        auto shorten = [&](const std::string& s, const std::size_t n) -> std::string
+        {
+            if (n >= s.size()) return "";
+
+            const std::size_t keep = (s.size() - n - 3) / 2;
+            const std::size_t front = keep;
+            const std::size_t back = s.size() - n - 3 - front;
+
+            return std::format("{}...{}", s.substr(0, front), s.substr(s.size() - back));
+        };
+
+        const auto name = shorten(stem, max_size - maxLen);
+        return ext.empty() ? std::format("{}{}{}", id, idSep, name) : std::format("{}{}{}{}", id, idSep, name, ext);
     }
 }
