@@ -58,13 +58,15 @@ namespace mantis
     {
         TRACE_CLASS_METHOD()
 
+        // Terminate any shared pointers
+        close();
+
         std::lock_guard<std::mutex> lock(s_mutex);
         if (s_instance == this)
         {
             // Reset instance pointer
             s_instance = nullptr;
         }
-        std::cout << std::endl << "MantisApp released!" << std::endl;
     }
 
     void MantisApp::init()
@@ -364,11 +366,20 @@ namespace mantis
         std::exit(exitCode);
     }
 
-    void MantisApp::close() const
+    void MantisApp::close()
     {
         MANTIS_REQUIRE_INIT();
 
-        http().close();
+        // Destroy instance objects
+        if (m_files) m_files.reset();
+        if (m_validators) m_validators.reset();
+        if (m_opts) m_opts.reset();
+        if (m_settings) m_settings.reset();
+        if (m_router) m_router.reset();
+        if (m_http) m_http.reset();
+        if (m_database) m_database.reset();
+        if (m_exprEval) m_exprEval.reset();
+        if (m_logger) m_logger.reset();
     }
 
     int MantisApp::run()

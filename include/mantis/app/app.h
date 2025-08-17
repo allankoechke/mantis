@@ -91,11 +91,14 @@ namespace mantis
         int run();
 
         /**
-         * @brief Close the application
+         * @brief Close the application and reset object
+         * instances that are dependent on the class
          *
-         * Internally, this stops running http server.
+         * Internally, this stops running http server,
+         * disconnects from the database and does any required
+         * cleanup
          */
-        void close() const;
+        void close();
 
         /**
          * @brief Quit the running application immediately.

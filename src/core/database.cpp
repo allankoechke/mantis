@@ -24,7 +24,10 @@ mantis::DatabaseUnit::DatabaseUnit() : m_connPool(nullptr)
 {
 }
 
-mantis::DatabaseUnit::~DatabaseUnit() { disconnect(); }
+mantis::DatabaseUnit::~DatabaseUnit()
+{
+    disconnect();
+}
 
 bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const std::string& conn_str)
 {
@@ -208,9 +211,15 @@ std::string mantis::DatabaseUnit::tmToISODate(const std::tm& t)
 
 void mantis::DatabaseUnit::writeCheckpoint() const
 {
-    // Write out the WAL data to db file & truncate it
-    if (const auto sql = session(); sql->is_connected())
+    try
     {
-        *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+        // Write out the WAL data to db file & truncate it
+        if (const auto sql = session(); sql->is_connected())
+        {
+            *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+        }
+    } catch (std::exception& e)
+    {
+        Log::critical("Database Connection SOCI::Error: {}", e.what());
     }
 }
