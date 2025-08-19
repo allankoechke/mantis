@@ -262,6 +262,7 @@ namespace mantis
                 for (const auto& file_field : file_fields)
                 {
                     const auto field_name = file_field["name"].get<std::string>();
+                    std::cout << "Fieldname: " << field_name << std::endl;
 
                     // For null values in db, continue
                     if (record[field_name].is_null()) continue;
