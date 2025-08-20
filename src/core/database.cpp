@@ -63,10 +63,7 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
 
                     // Log SQL insert values in DevMode only!
                     if (MantisApp::instance().isDevMode())
-                    {
                         sql.set_query_context_logging_mode(soci::log_context::always);
-                        sql.set
-                    }
                     else
                         sql.set_query_context_logging_mode(soci::log_context::on_error);
 

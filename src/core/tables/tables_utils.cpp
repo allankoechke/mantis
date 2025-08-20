@@ -221,7 +221,8 @@ namespace mantis
                 // If the value is null, set i_null and continue
                 if (entity[field_name].is_null())
                 {
-                    vals.set(field_name, NULL, soci::i_null);
+                    std::optional<int> val; // Set to optional, no value is set in db
+                    vals.set(field_name, val, soci::i_null);
                     continue;
                 }
 

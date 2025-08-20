@@ -25,7 +25,8 @@ namespace mantis
      *
      * The class handles database connections, pooling and sessions.
      */
-    class DatabaseUnit {
+    class DatabaseUnit
+    {
     public:
         DatabaseUnit();
         ~DatabaseUnit();
@@ -74,6 +75,7 @@ namespace mantis
         static std::string tmToISODate(const std::tm& t);
 
         const std::string __class_name__ = "mantis::DatabaseUnit";
+
     private:
         /**
          * @brief Write WAL data to db file and truncate the WAL file
@@ -94,10 +96,11 @@ namespace mantis
          * @brief Called before query is executed by soci, we can log the query here.
          * @param query SQL Query to be executed
          */
-        void start_query(std::string const & query) override
+        void start_query(std::string const& query) override
         {
             logger_impl::start_query(query);
             Log::trace("$ sql << {}", query);
+            // Log::trace("$ sql << {}\n\t└── Values ({})", query, params);
         }
 
     private:

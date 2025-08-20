@@ -105,7 +105,8 @@ namespace mantis
             result["status"] = 500;
 
             return result;
-        } catch (const std::exception& e)
+        }
+        catch (const std::exception& e)
         {
             tr.rollback();
 
@@ -114,7 +115,8 @@ namespace mantis
             result["status"] = 500;
 
             return result;
-        } catch (...)
+        }
+        catch (...)
         {
             tr.rollback();
 
@@ -222,14 +224,8 @@ namespace mantis
             columns += columns.empty() ? ("updated = :updated") : (", updated = :updated");
             updateFields.emplace_back("updated");
 
-            // Query DB for current record data, stripping off system fields
-            // Check for file/files fields and:
-            // - Check if set to null -> Delete all file
-            // - Check if new vs old matches -> Delete old file
-            // For files
-            // - Check if set to null -> Delete files
-            // - Handling diff?
-            // Check if item exists of given id
+            // Check for file(s) being saved from the request, determine if there is
+            // need to delete/overwrite existing files
             if (!file_fields.empty())
             {
                 std::string fields_to_query{};
@@ -253,8 +249,8 @@ namespace mantis
                     return result;
                 }
 
+                // Parse soci::row to JSON object
                 auto record = parseDbRowToJson(r);
-                Log::debug("Record in db: {}", record.dump());
 
                 // From the record, check for changes in files
                 // Assuming record order is maintained on query ...
@@ -273,7 +269,6 @@ namespace mantis
                         (file_field["value"].is_array() && file_field["value"].size() == 0) ||
                         (file_field["value"].is_string() && file_field["value"].empty()))
                     {
-                        // TODO enforce nullptr for such entries
                         // If value set is null, add all file(s) to delete array
                         files_to_delete.insert(files_to_delete.end(), files_in_db.begin(), files_in_db.end());
                         continue;
@@ -314,22 +309,15 @@ namespace mantis
 
             // Bind values, then execute
             *sql << sql_query, soci::use(vals);
+            // Log::trace(">> $ sql << {}\n\t└── Values ({})", sql->get_query(), sql->get_last_query_context());
             tr.commit();
-
-            // Let's log the files we are deleting ...
-            if (!files_to_delete.empty())
-            {
-                std::cout << "Deleting files: " << std::endl;
-                for (const auto& f : files_to_delete) std::cout << "\t - " << f << std::endl;
-                std::cout << std::endl;
-            }
 
             // Delete files, if any were removed ...
             for (const auto& file : files_to_delete)
             {
                 if (!MantisApp::instance().files().removeFile(m_tableName, file))
                 {
-                    Log::warn("Could not delete: `{}`", file);
+                    Log::warn("Could not delete file, is it missing?\n\t- `{}`", file);
                 }
             }
 
@@ -353,13 +341,15 @@ namespace mantis
             result["status"] = 500;
 
             return result;
-        } catch (const std::exception& e)
+        }
+        catch (const std::exception& e)
         {
             result["error"] = e.what();
             result["status"] = 500;
 
             return result;
-        } catch (...)
+        }
+        catch (...)
         {
             result["error"] = "Unknown Error!";
             result["status"] = 500;
