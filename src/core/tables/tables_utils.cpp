@@ -7,6 +7,8 @@
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
 
+#include <iomanip>
+
 #define __file__ "core/tables/tables_utils.cpp"
 
 namespace mantis
@@ -208,8 +210,7 @@ namespace mantis
                 }
 
                 // Add the hashed password to the soci::vals
-                soci::indicator ind = soci::i_ok;;
-                vals.set(field_name, res.at("hash").get<std::string>(), ind);
+                vals.set(field_name, res.at("hash").get<std::string>());
             }
 
             else
@@ -217,102 +218,101 @@ namespace mantis
                 // Skip fields that are not in the json object
                 if (!entity.contains(field_name)) continue;
 
+                // If the value is null, set i_null and continue
+                if (entity[field_name].is_null())
+                {
+                    vals.set(field_name, NULL, soci::i_null);
+                    continue;
+                }
+
+                // For non-null values, set the value accordingly
                 const auto field_type = field.at("type").get<std::string>();
                 if (field_type == "xml" || field_type == "string" || field_type == "file")
                 {
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, entity.value(field_name, ""), ind);
+                    vals.set(field_name, entity.value(field_name, ""));
                 }
 
                 else if (field_type == "double")
                 {
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, entity.value(field_name, 0.0), ind);
+                    vals.set(field_name, entity.value(field_name, 0.0));
                 }
 
                 else if (field_type == "date")
                 {
-                    // TODO may throw an error?
-                    std::tm tm{};
-                    std::istringstream ss(entity.value(field_name, ""));
-                    ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
+                    auto dt_str = entity.value(field_name, "");
+                    if (dt_str.empty())
+                    {
+                        vals.set(field_name, 0, soci::i_null);
+                    }
+                    else
+                    {
+                        std::tm tm{};
+                        std::istringstream ss{dt_str};
+                        ss >> std::get_time(&tm, "%Y-%m-%dT%H:%M:%S");
 
-                    soci::indicator ind = soci::i_ok;;
-                    vals.set(field_name, tm, ind);
+                        vals.set(field_name, tm);
+                    }
                 }
 
                 else if (field_type == "int8")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<int8_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<int8_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "uint8")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<uint8_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<uint8_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "int16")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<int16_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<int16_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "uint16")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<uint16_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<uint16_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "int32")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<int32_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<int32_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "uint32")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<uint32_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<uint32_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "int64")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<int64_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<int64_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "uint64")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, static_cast<uint64_t>(entity.value(field_name, 0)), ind);
+                    vals.set(field_name, static_cast<uint64_t>(entity.value(field_name, 0)));
                 }
 
                 else if (field_type == "blob")
                 {
                     // TODO implement BLOB type
-                    // soci::indicator ind = soci::i_ok;
-                    // vals.set(field_name, entity.value(field_name, sql->empty_blob()), ind);
+                    // vals.set(field_name, entity.value(field_name, sql->empty_blob()));
                 }
 
                 else if (field_type == "json")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, entity.value(field_name, json::object()), ind);
+                    vals.set(field_name, entity.value(field_name, json::object()));
                 }
 
                 else if (field_type == "bool")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, entity.value(field_name, false), ind);
+                    vals.set(field_name, entity.value(field_name, false));
                 }
 
-                // TODO fix list here
                 else if (field_type == "files")
                 {
-                    soci::indicator ind = soci::i_ok;
-                    vals.set(field_name, entity.value(field_name, json::array()), ind);
+                    vals.set(field_name, entity.value(field_name, json::array()));
                 }
             }
         }

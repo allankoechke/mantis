@@ -234,6 +234,8 @@ namespace mantis
          */
         std::chrono::time_point<std::chrono::steady_clock> startTime() const;
 
+        bool isDevMode() const;
+
     private:
         const std::string __class_name__ = "mantis::MantisApp";
 
@@ -272,7 +274,6 @@ namespace mantis
         std::string m_publicDir;
         std::string m_dataDir;
         DbType m_dbType;
-        std::string m_connString{};
 
         // System uptime checkpoint
         std::chrono::time_point<std::chrono::steady_clock> m_startTime;
@@ -284,6 +285,7 @@ namespace mantis
         int m_poolSize = 2;
         bool m_toStartServer = false;
         bool m_launchAdminPanel = false;
+        bool m_isDevMode = false;
 
         std::unique_ptr<DatabaseUnit> m_database;
         std::unique_ptr<LoggingUnit> m_logger;

@@ -196,7 +196,7 @@ namespace mantis
                 updateFields.push_back(key);
 
                 // Track file fields for use later on
-                if (schema.value()["type"] == "files" || schema.value()["type"] == "files")
+                if (schema.value()["type"] == "file" || schema.value()["type"] == "files")
                 {
                     file_fields.push_back(
                         json{
@@ -254,15 +254,13 @@ namespace mantis
                 }
 
                 auto record = parseDbRowToJson(r);
-
-                std::cout << record.dump() << std::endl;
+                Log::debug("Record in db: {}", record.dump());
 
                 // From the record, check for changes in files
                 // Assuming record order is maintained on query ...
                 for (const auto& file_field : file_fields)
                 {
                     const auto field_name = file_field["name"].get<std::string>();
-                    std::cout << "Fieldname: " << field_name << std::endl;
 
                     // For null values in db, continue
                     if (record[field_name].is_null()) continue;
@@ -306,15 +304,25 @@ namespace mantis
             vals.set("updated", created_tm);
 
             // Bind soci::values to entity values
-            const auto status = bindEntityToSociValue(vals, entity);
-            if (status.has_value())
+            // Check if the return has a value, if yes, return the value
+            if (const auto status = bindEntityToSociValue(vals, entity);
+                status.has_value())
             {
+                // An error occurred while binding data to soci::values
                 return status.value();
             }
 
             // Bind values, then execute
             *sql << sql_query, soci::use(vals);
             tr.commit();
+
+            // Let's log the files we are deleting ...
+            if (!files_to_delete.empty())
+            {
+                std::cout << "Deleting files: " << std::endl;
+                for (const auto& f : files_to_delete) std::cout << "\t - " << f << std::endl;
+                std::cout << std::endl;
+            }
 
             // Delete files, if any were removed ...
             for (const auto& file : files_to_delete)

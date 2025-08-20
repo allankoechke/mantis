@@ -358,8 +358,7 @@ namespace mantis
 
                     // Handle file upload
                     const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
-                    const auto new_filename = std::format("{}_{}",
-                                                          generateShortId(8), sanitizeFilename(file.filename));
+                    const auto new_filename = sanitizeFilename(file.filename);
 
                     // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
@@ -652,8 +651,7 @@ namespace mantis
 
                     // Handle file upload
                     const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
-                    const auto new_filename = std::format("{}_{}",
-                                                          generateShortId(8), sanitizeFilename(file.filename));
+                    const auto new_filename = sanitizeFilename(file.filename);
 
                     // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
@@ -709,39 +707,62 @@ namespace mantis
                             return schema_field.at("name").get<std::string>() == file.name;
                         });
 
-                        auto data = json::parse(file.content);
-                        if (it != m_fields.end() && it->at("type").get<std::string>() == "files")
+                        if (it != m_fields.end())
                         {
-                            if (!data.is_array())
-                            {
-                                response["status"] = 400;
-                                response["data"] = json::object();
-                                response["error"] = std::format("Error parsing field `{}`, expected an array!",
-                                                                file.name);
+                            auto data = trim(file.content).empty() ? nullptr : json::parse(file.content);
 
-                                res.set_content(response.dump(), "application/json");
-                                res.status = 400;
-                                return;
+                            // For file types, append the file list to any existiing array if any or
+                            // parse the array correctly to an array of data
+                            if (it->at("type").get<std::string>() == "files")
+                            {
+                                if (!data.is_array() && !data.is_null())
+                                {
+                                    response["status"] = 400;
+                                    response["data"] = json::object();
+                                    response["error"] = std::format("Error parsing field `{}`, expected an array!",
+                                                                    file.name);
+
+                                    res.status = 400;
+                                    res.set_content(response.dump(), "application/json");
+                                    return;
+                                }
+
+                                // Create empty field if it does not exist yet
+                                if (!body.contains(file.name)) body[file.name] = nullptr;
+
+                                // For empty/null values, just continue
+                                if (data == nullptr) continue;
+
+                                // Append data content to the body field
+                                for (const auto& d: data) body[file.name].push_back(d);
                             }
 
-                            // Create empty field if it does not exist yet
-                            if (!body.contains(file.name)) body[file.name] = nullptr;
-
-                            // Append data content to the body field
-                            body[file.name].insert(body[file.name].begin(), data.begin(), data.end());
+                            else
+                            {
+                                // For all other input types, simply add the data to the respective field.
+                                // Overwrites any existing data
+                                body[file.name] = data;
+                            }
                         }
                     }
-                    catch (...)
+                    catch (const std::exception& e)
                     {
-                        // If not valid JSON, store as string
-                        body[file.name] = file.content;
+                        // TODO check if parse for other data types works fine
+
+                        response["status"] = 500;
+                        response["data"] = json::object();
+                        response["error"] = e.what();
+
+                        res.status = 500;
+                        res.set_content(response.dump(), "application/json");
+                        Log::critical("Error parsing field data: {}", e.what());
+                        return;
                     }
                 }
             }
         }
         else
         {
-            std::cout << "ELSE?\n";
             // Handle JSON/regular body
             std::string body_str;
             reader([&](const char* data, const size_t data_length) -> bool
@@ -751,11 +772,7 @@ namespace mantis
             });
 
             // Parse request body to JSON Object, return an error if it fails
-            try
-            {
-                if (body_str.empty()) body = json::object();
-                else body = json::parse(body_str);
-            }
+            try { if (!body_str.empty()) body = json::parse(body_str); }
             catch (const std::exception& e)
             {
                 response["status"] = 400;
@@ -772,7 +789,7 @@ namespace mantis
         if (const auto resp = validateUpdateRequestBody(body))
         {
             response["status"] = resp.value().value("status", 500);
-            response["error"] = resp.value().value("error", "");
+            response["error"] = resp.value().value("error", "Error validating request body!");
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");

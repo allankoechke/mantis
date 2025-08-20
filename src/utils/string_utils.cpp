@@ -125,7 +125,7 @@ namespace mantis
         return value ? std::string(value) : defaultValue;
     }
 
-    bool invalidChar(const unsigned char c)
+    static bool invalidChar(const unsigned char c)
     {
         return c < 0x20 || c == 0x7F ||
             c == '<' || c == '>' || c == ':' || c == '"' ||
@@ -134,7 +134,7 @@ namespace mantis
             c == '%' || c == '=';
     }
 
-    void sanitizeInPlace(std::string& s)
+    static void sanitizeInPlace(std::string& s)
     {
         for (auto& ch : s)
         {

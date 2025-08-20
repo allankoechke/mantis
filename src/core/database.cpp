@@ -61,6 +61,15 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     sql.open(soci::sqlite3, sqlite_conn_str);
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
 
+                    // Log SQL insert values in DevMode only!
+                    if (MantisApp::instance().isDevMode())
+                    {
+                        sql.set_query_context_logging_mode(soci::log_context::always);
+                        sql.set
+                    }
+                    else
+                        sql.set_query_context_logging_mode(soci::log_context::on_error);
+
                     // Open SQLite in WAL mode, helps in enabling multiple readers, single writer
                     sql << "PRAGMA journal_mode=WAL";
                     sql << "PRAGMA wal_autocheckpoint=500"; // Checkpoint every 500 pages
@@ -78,8 +87,14 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                     soci::session& sql = m_connPool->at(i);
                     sql.open(soci::postgresql, conn_str);
                     sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+
+                    // Log SQL insert values in DevMode only!
+                    if (MantisApp::instance().isDevMode())
+                        sql.set_query_context_logging_mode(soci::log_context::always);
+                    else
+                        sql.set_query_context_logging_mode(soci::log_context::on_error);
 #else
-                Log::warn("Database Connection for '{}' has not been implemented yet!", conn_str);
+                    Log::warn("Database Connection for '{}' has not been implemented yet!", conn_str);
 #endif
                     break;
                 }
@@ -218,7 +233,8 @@ void mantis::DatabaseUnit::writeCheckpoint() const
         {
             *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
         }
-    } catch (std::exception& e)
+    }
+    catch (std::exception& e)
     {
         Log::critical("Database Connection SOCI::Error: {}", e.what());
     }

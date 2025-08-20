@@ -215,7 +215,7 @@ namespace mantis
      *
      * @param s Reference to the string to sanitize.
      */
-    static void sanitizeInPlace(const std::string& s);
+    static void sanitizeInPlace(std::string& s);
 
     /**
      * @brief Sanitize a filename and ensure uniqueness.
