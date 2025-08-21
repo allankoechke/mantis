@@ -408,12 +408,19 @@ namespace mantis
                     // This is a regular form field, treat as JSON data
                     try
                     {
-                        body[file.name] = json::parse(file.content);
+                        auto data = trim(file.content).empty() ? nullptr : json::parse(file.content);
+                        body[file.name] = data;
                     }
-                    catch (...)
+                    catch (const std::exception& e)
                     {
-                        // If not valid JSON, store as string
-                        body[file.name] = file.content;
+                        response["status"] = 500;
+                        response["data"] = json::object();
+                        response["error"] = e.what();
+
+                        res.status = 500;
+                        res.set_content(response.dump(), "application/json");
+                        Log::critical("Error parsing field data: {}", e.what());
+                        return;
                     }
                 }
             }
@@ -709,46 +716,89 @@ namespace mantis
 
                         if (it != m_fields.end())
                         {
-                            auto data = trim(file.content).empty() ? nullptr : json::parse(file.content);
+                            try
+                            { // Local catch block for JSON parsing errors
+                                const auto& type = it->at("type").get<std::string>();
 
-                            // For file types, append the file list to any existiing array if any or
-                            // parse the array correctly to an array of data
-                            if (it->at("type").get<std::string>() == "files")
-                            {
-                                if (!data.is_array() && !data.is_null())
+                                // For file types, append the file list to any existing array if any or
+                                // parse the array correctly to an array of data
+                                if (type == "files")
                                 {
-                                    response["status"] = 400;
-                                    response["data"] = json::object();
-                                    response["error"] = std::format("Error parsing field `{}`, expected an array!",
-                                                                    file.name);
+                                    auto data = trim(file.content).empty() ? nullptr : json::parse(file.content);
+                                    if (!data.is_array() && !data.is_null())
+                                    {
+                                        response["status"] = 400;
+                                        response["data"] = json::object();
+                                        response["error"] = std::format("Error parsing field `{}`, expected an array!",
+                                                                        file.name);
 
-                                    res.status = 400;
-                                    res.set_content(response.dump(), "application/json");
-                                    return;
+                                        res.status = 400;
+                                        res.set_content(response.dump(), "application/json");
+                                        return;
+                                    }
+
+                                    // Create empty field if it does not exist yet
+                                    if (!body.contains(file.name)) body[file.name] = nullptr;
+
+                                    // For empty/null values, just continue
+                                    if (data == nullptr) continue;
+
+                                    // Append data content to the body field
+                                    for (const auto& d: data) body[file.name].push_back(d);
                                 }
 
-                                // Create empty field if it does not exist yet
-                                if (!body.contains(file.name)) body[file.name] = nullptr;
+                                else
+                                {
+                                    // For all other input types, simply add the data to the respective field.
+                                    // Overwrites any existing data
 
-                                // For empty/null values, just continue
-                                if (data == nullptr) continue;
+                                    auto getValueFromType = [&](const std::string& type, const std::string& value)
+                                    {
+                                        json obj;
+                                        const auto content = trim(value);
+                                        if (content.empty())
+                                        {
+                                            obj["value"] = nullptr;
+                                        }
+                                        else if (type == "xml" || type == "string" || type == "date" || type == "file")
+                                        {
+                                            obj["value"] = content;
+                                        }
+                                        else if (type == "double" || type == "int8" || type == "uint8" || type == "int16" || type == "uint16" || type == "int32" || type == "uint32" || type == "int64" || type == "uint64")
+                                        {
+                                            obj["value"] = json::parse(content);
+                                        }
+                                        else if (type == "json" || type == "bool")
+                                        {
+                                            obj["value"] = json::parse(content);
+                                        }
+                                        else
+                                        {
+                                            obj["value"] = content;
+                                        }
 
-                                // Append data content to the body field
-                                for (const auto& d: data) body[file.name].push_back(d);
-                            }
+                                        return obj;
+                                    };
 
-                            else
+                                    auto v = getValueFromType(type, file.content)["value"];
+                                    std::cout << type << " - " << v << ";" << std::endl;
+                                    body[file.name] = v;
+                                }
+                            } catch (std::exception& e)
                             {
-                                // For all other input types, simply add the data to the respective field.
-                                // Overwrites any existing data
-                                body[file.name] = data;
+                                response["status"] = 500;
+                                response["data"] = json::object();
+                                response["error"] = e.what();
+
+                                res.status = 500;
+                                res.set_content(response.dump(), "application/json");
+                                Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name, file.content);
+                                return;
                             }
                         }
                     }
                     catch (const std::exception& e)
                     {
-                        // TODO check if parse for other data types works fine
-
                         response["status"] = 500;
                         response["data"] = json::object();
                         response["error"] = e.what();
