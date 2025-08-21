@@ -106,6 +106,16 @@ namespace mantis
         json parseDbRowToJson(const soci::row& row, const std::vector<json>& ref_fields) const;
 
         /**
+         * Convert input values to JSON type
+         *
+         * @param type Field type [string, int8, xml, etc.]
+         * @param value Value to convert
+         * @return JSON object of the format {"value": <value>}
+         */
+        json getValueFromType(const std::string& type, const std::string& value);;
+
+
+        /**
          * @brief Helper function to bind json values to soci::values for use in
          * soci::use(...) when executing SQL statements
          *

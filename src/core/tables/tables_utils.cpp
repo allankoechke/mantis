@@ -180,6 +180,34 @@ namespace mantis
         return j;
     }
 
+    json TableUnit::getValueFromType(const std::string& type, const std::string& value)
+    {
+        json obj;
+        const auto content = trim(value);
+        if (content.empty())
+        {
+            obj["value"] = nullptr;
+        }
+        else if (type == "xml" || type == "string" || type == "date" || type == "file")
+        {
+            obj["value"] = content;
+        }
+        else if (type == "double" || type == "int8" || type == "uint8" || type == "int16" || type == "uint16" || type == "int32" || type == "uint32" || type == "int64" || type == "uint64")
+        {
+            obj["value"] = json::parse(content);
+        }
+        else if (type == "json" || type == "bool")
+        {
+            obj["value"] = json::parse(content);
+        }
+        else
+        {
+            obj["value"] = content;
+        }
+
+        return obj;
+    }
+
     std::optional<json> TableUnit::bindEntityToSociValue(soci::values& vals, const json& entity) const
     {
         // Bind parameters dynamically
