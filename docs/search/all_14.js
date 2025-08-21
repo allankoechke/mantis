@@ -12,7 +12,7 @@ var searchData=
   ['m_5ftabletype_9',['m_tableType',['../classmantis_1_1TableUnit.html#ada79e8d2bffba4eff2149b420c9bf0ba',1,'mantis::TableUnit']]],
   ['m_5fupdaterule_10',['m_updateRule',['../classmantis_1_1TableUnit.html#a57116b731108d56f363c64c19d8f7233',1,'mantis::TableUnit']]],
   ['main_11',['main',['../mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e',1,'mantisapp.cpp']]],
-  ['mantis_12',['mantis',['../embedding.html#autotoc_md101',1,'🔧 Why Embed Mantis?'],['../setup.html#autotoc_md5',1,'🚀 Running Mantis'],['../embedding.html',1,'Embedding Mantis'],['../namespacemantis.html',1,'mantis'],['../setup.html',1,'Setting Up Mantis']]],
+  ['mantis_12',['mantis',['../embedding.html#autotoc_md101',1,'🔧 Why Embed Mantis?'],['../setup.html#autotoc_md5',1,'🚀 Running Mantis'],['../embedding.html',1,'Embedding Mantis'],['../files.html',1,'Handling Files in Mantis'],['../namespacemantis.html',1,'mantis'],['../setup.html',1,'Setting Up Mantis']]],
   ['mantis_20architecture_20overview_13',['Mantis Architecture Overview',['../architecture.html#autotoc_md74',1,'']]],
   ['mantis_20as_20a_20submodule_14',['🛠️ Advanced: Use Mantis as a Submodule',['../embedding.html#autotoc_md112',1,'']]],
   ['mantis_20sync_20engine_20design_20not_20implemented_20yet_15',['Mantis Sync Engine Design (NOT IMPLEMENTED YET!)',['../sync.html#autotoc_md121',1,'']]],

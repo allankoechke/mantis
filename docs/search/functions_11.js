@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['sanitizefilename_0',['sanitizeFilename',['../namespacemantis.html#a5d624a74a0fc190a4b84f1dbce42c214',1,'mantis']]],
+  ['sanitizefilename_0',['sanitizeFilename',['../namespacemantis.html#a71d9b005929526118af08c2ed3f74e8e',1,'mantis']]],
   ['server_1',['server',['../classmantis_1_1HttpUnit.html#aa870f9639ef7bf95391529a91f4e889e',1,'mantis::HttpUnit']]],
   ['session_2',['session',['../classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174',1,'mantis::DatabaseUnit']]],
   ['set_3',['set',['../classmantis_1_1Context.html#acba5e9d0fe8417b71f0e729a59724bc8',1,'mantis::Context']]],
@@ -26,7 +26,8 @@ var searchData=
   ['setuproutes_23',['setuproutes',['../classmantis_1_1SettingsUnit.html#a7a6b80cf6a4558b5e028d4e38479a5c7',1,'mantis::SettingsUnit::setupRoutes()'],['../classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447',1,'mantis::SysTablesUnit::setupRoutes()'],['../classmantis_1_1TableUnit.html#a36d744738e6485000f0978564e9221f0',1,'mantis::TableUnit::setupRoutes()']]],
   ['splitstring_24',['splitString',['../namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e',1,'mantis']]],
   ['start_5fquery_25',['start_query',['../classmantis_1_1MantisLoggerImpl.html#a2db30983ded9d0dc19872d37269d0760',1,'mantis::MantisLoggerImpl']]],
-  ['strtobool_26',['strToBool',['../namespacemantis.html#ac8290417ff7c03d59488e7c321ff05c7',1,'mantis']]],
-  ['systablesunit_27',['SysTablesUnit',['../classmantis_1_1SysTablesUnit.html#a0d6d1a12a8871e56323010fb4e39adf9',1,'mantis::SysTablesUnit']]],
-  ['systemtable_28',['SystemTable',['../structmantis_1_1SystemTable.html#ace7eedaedbe29a525ce2181c1d0f5986',1,'mantis::SystemTable']]]
+  ['starttime_26',['startTime',['../classmantis_1_1MantisApp.html#a845599e5d84a45d4464efe5dcb567a06',1,'mantis::MantisApp']]],
+  ['strtobool_27',['strToBool',['../namespacemantis.html#ac8290417ff7c03d59488e7c321ff05c7',1,'mantis']]],
+  ['systablesunit_28',['SysTablesUnit',['../classmantis_1_1SysTablesUnit.html#a0d6d1a12a8871e56323010fb4e39adf9',1,'mantis::SysTablesUnit']]],
+  ['systemtable_29',['SystemTable',['../structmantis_1_1SystemTable.html#ace7eedaedbe29a525ce2181c1d0f5986',1,'mantis::SystemTable']]]
 ];

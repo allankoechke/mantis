@@ -8,18 +8,24 @@
 <area shape="poly" id="edge3_Node000001_Node000004" title=" " alt="" coords="364,59,399,96,395,100,361,62"/>
 <area shape="rect" id="Node000005" href="$utils_8h.html" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="519,108,673,148"/>
 <area shape="poly" id="edge4_Node000001_Node000005" title=" " alt="" coords="412,58,533,101,531,106,410,63"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="416,196,475,221"/>
-<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="561,150,481,192,479,187,559,146"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="499,196,589,221"/>
-<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="586,150,562,186,557,183,581,147"/>
-<area shape="rect" id="Node000008" title=" " alt="" coords="613,196,685,221"/>
-<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="611,147,636,183,631,186,607,150"/>
-<area shape="rect" id="Node000009" href="$logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="710,196,837,221"/>
-<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="640,146,736,188,734,193,637,150"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="471,269,659,324"/>
-<area shape="poly" id="edge9_Node000009_Node000010" title=" " alt="" coords="746,224,642,267,640,262,744,219"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="684,277,863,317"/>
-<area shape="poly" id="edge10_Node000009_Node000011" title=" " alt="" coords="776,222,776,263,771,263,771,222"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="887,269,1046,324"/>
-<area shape="poly" id="edge11_Node000009_Node000012" title=" " alt="" coords="800,219,896,261,894,266,798,224"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="269,196,328,221"/>
+<area shape="poly" id="edge5_Node000005_Node000006" title=" " alt="" coords="524,151,342,198,340,193,522,145"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="352,196,443,221"/>
+<area shape="poly" id="edge6_Node000005_Node000007" title=" " alt="" coords="549,150,440,193,438,188,547,146"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="467,196,539,221"/>
+<area shape="poly" id="edge7_Node000005_Node000008" title=" " alt="" coords="575,150,529,189,526,185,572,146"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="563,196,629,221"/>
+<area shape="poly" id="edge8_Node000005_Node000009" title=" " alt="" coords="599,148,599,182,593,182,593,148"/>
+<area shape="rect" id="Node000010" title=" " alt="" coords="654,196,751,221"/>
+<area shape="poly" id="edge9_Node000005_Node000010" title=" " alt="" coords="623,146,677,185,674,190,620,150"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="776,196,861,221"/>
+<area shape="poly" id="edge10_Node000005_Node000011" title=" " alt="" coords="650,145,774,189,772,194,648,151"/>
+<area shape="rect" id="Node000012" href="$logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="886,196,1013,221"/>
+<area shape="poly" id="edge11_Node000005_Node000012" title=" " alt="" coords="674,144,885,190,884,196,673,149"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="647,269,835,324"/>
+<area shape="poly" id="edge12_Node000012_Node000013" title=" " alt="" coords="922,224,818,267,816,262,920,219"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="860,277,1039,317"/>
+<area shape="poly" id="edge13_Node000012_Node000014" title=" " alt="" coords="952,222,952,263,947,263,947,222"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="1063,269,1222,324"/>
+<area shape="poly" id="edge14_Node000012_Node000015" title=" " alt="" coords="976,219,1072,261,1070,266,974,224"/>
 </map>

@@ -2,7 +2,7 @@ var classmantis_1_1MantisApp =
 [
     [ "MantisApp", "classmantis_1_1MantisApp.html#a0ee2b66430665169653ab2b7ac7018c1", null ],
     [ "~MantisApp", "classmantis_1_1MantisApp.html#a33ea488da00cdaf9832bffd55695110d", null ],
-    [ "close", "classmantis_1_1MantisApp.html#a2c7d78a59d151562853a07e29a241ade", null ],
+    [ "close", "classmantis_1_1MantisApp.html#a80ecd4d316223f01eacab6765265cc1e", null ],
     [ "cmd", "classmantis_1_1MantisApp.html#a1c63b1574d22c5f0e663f63169a31518", null ],
     [ "dataDir", "classmantis_1_1MantisApp.html#ac888ce270d5351648b7c93804c1fcb1e", null ],
     [ "db", "classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c", null ],
@@ -13,13 +13,14 @@ var classmantis_1_1MantisApp =
     [ "host", "classmantis_1_1MantisApp.html#a96728241ef9dcff136d0440ff4facf27", null ],
     [ "http", "classmantis_1_1MantisApp.html#ab2f169ca51fc37f5a54d198af6d6f825", null ],
     [ "init", "classmantis_1_1MantisApp.html#a36cc27dccd72638b968ffca25c9fa3c8", null ],
+    [ "isDevMode", "classmantis_1_1MantisApp.html#a836f8d06f0f4d44e47f67ac10ce0fc05", null ],
     [ "log", "classmantis_1_1MantisApp.html#a413ca02b3eb0174a13e6dbb8aafa5c36", null ],
     [ "openBrowserOnStart", "classmantis_1_1MantisApp.html#a49b1b62210b2786a9717eafe4d8d8710", null ],
     [ "poolSize", "classmantis_1_1MantisApp.html#a0bed909bb11c21fb92ece716ca17c6c8", null ],
     [ "port", "classmantis_1_1MantisApp.html#ac72b0c02c8d627414a26639f77311190", null ],
     [ "publicDir", "classmantis_1_1MantisApp.html#a9df87a395333a5cec95cf759387bc05d", null ],
     [ "router", "classmantis_1_1MantisApp.html#a19c58dfee147f79319bb8e96065038c8", null ],
-    [ "run", "classmantis_1_1MantisApp.html#acb6ee6e7930c2153c9437c67f0af3fcd", null ],
+    [ "run", "classmantis_1_1MantisApp.html#a8890e110135d4981a382adb0a824292c", null ],
     [ "setDataDir", "classmantis_1_1MantisApp.html#aa39f3105148ae6918274963b724404f3", null ],
     [ "setDbType", "classmantis_1_1MantisApp.html#a308ad03844c435c4f90e11fe0b54a93f", null ],
     [ "setHost", "classmantis_1_1MantisApp.html#aafb58e3035cba33da43e10c1488231a1", null ],
@@ -27,5 +28,6 @@ var classmantis_1_1MantisApp =
     [ "setPort", "classmantis_1_1MantisApp.html#abba2e3ecc5a161c8e623599b2e1be189", null ],
     [ "setPublicDir", "classmantis_1_1MantisApp.html#acefabf6f521e7269ba2f9186e0fbffad", null ],
     [ "settings", "classmantis_1_1MantisApp.html#a6e757b060c96db07da310f659aed8cee", null ],
+    [ "startTime", "classmantis_1_1MantisApp.html#a845599e5d84a45d4464efe5dcb567a06", null ],
     [ "validators", "classmantis_1_1MantisApp.html#a9a945a51d82e62bb503860105882a9d4", null ]
 ];

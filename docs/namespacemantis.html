@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.6</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
    </div>
   </td>
  </tr>
@@ -307,18 +307,18 @@ Functions</h2></td></tr>
 <tr class="memitem:a3832564f3023e4b1683a1a9392f17bd8" id="r_a3832564f3023e4b1683a1a9392f17bd8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a3832564f3023e4b1683a1a9392f17bd8">generateReadableTimeId</a> ()</td></tr>
 <tr class="memdesc:a3832564f3023e4b1683a1a9392f17bd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a readable time-based UUID.  <br /></td></tr>
 <tr class="separator:a3832564f3023e4b1683a1a9392f17bd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade1df4c33ed9fad130bdf6df9c2c0ad1" id="r_ade1df4c33ed9fad130bdf6df9c2c0ad1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ade1df4c33ed9fad130bdf6df9c2c0ad1">generateShortId</a> (size_t length=12)</td></tr>
-<tr class="memdesc:ade1df4c33ed9fad130bdf6df9c2c0ad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a short UUID.  <br /></td></tr>
-<tr class="separator:ade1df4c33ed9fad130bdf6df9c2c0ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90a5625faff184237b8c6a18c660139a" id="r_a90a5625faff184237b8c6a18c660139a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a90a5625faff184237b8c6a18c660139a">generateShortId</a> (size_t length=16)</td></tr>
+<tr class="memdesc:a90a5625faff184237b8c6a18c660139a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a short UUID.  <br /></td></tr>
+<tr class="separator:a90a5625faff184237b8c6a18c660139a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb33333e17a1823a3d22b074c7bd6a6e" id="r_afb33333e17a1823a3d22b074c7bd6a6e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">splitString</a> (const std::string &amp;input, const std::string &amp;delimiter)</td></tr>
 <tr class="memdesc:afb33333e17a1823a3d22b074c7bd6a6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Split given string based on given delimiter.  <br /></td></tr>
 <tr class="separator:afb33333e17a1823a3d22b074c7bd6a6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e25a8cc629f217be134c89138011502" id="r_a5e25a8cc629f217be134c89138011502"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a5e25a8cc629f217be134c89138011502">getEnvOrDefault</a> (const std::string &amp;key, const std::string &amp;defaultValue)</td></tr>
 <tr class="memdesc:a5e25a8cc629f217be134c89138011502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a value from an environment variable or a default value if the env variable was not set.  <br /></td></tr>
 <tr class="separator:a5e25a8cc629f217be134c89138011502"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d624a74a0fc190a4b84f1dbce42c214" id="r_a5d624a74a0fc190a4b84f1dbce42c214"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a5d624a74a0fc190a4b84f1dbce42c214">sanitizeFilename</a> (const std::string &amp;name)</td></tr>
-<tr class="memdesc:a5d624a74a0fc190a4b84f1dbce42c214"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize filenames by swapping whitespaces with <code>_</code> and removing commas if any.  <br /></td></tr>
-<tr class="separator:a5d624a74a0fc190a4b84f1dbce42c214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71d9b005929526118af08c2ed3f74e8e" id="r_a71d9b005929526118af08c2ed3f74e8e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a71d9b005929526118af08c2ed3f74e8e">sanitizeFilename</a> (std::string_view original, std::size_t maxLen=50, std::size_t idLen=12, std::string_view idSep=&quot;_&quot;)</td></tr>
+<tr class="memdesc:a71d9b005929526118af08c2ed3f74e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize a filename and ensure uniqueness.  <br /></td></tr>
+<tr class="separator:a71d9b005929526118af08c2ed3f74e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e23dffb248fc4160e5c6c09a594eae2" id="r_a9e23dffb248fc4160e5c6c09a594eae2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">bcryptBase64Encode</a> (const unsigned char *data, size_t len)</td></tr>
 <tr class="memdesc:a9e23dffb248fc4160e5c6c09a594eae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode a Salt string to bcrypt base64 format.  <br /></td></tr>
 <tr class="separator:a9e23dffb248fc4160e5c6c09a594eae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -843,7 +843,7 @@ Variables</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A readable-time based UUID</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacemantis.html#a2bc2a84280e5b58546a4ddfdeea4a230" title="Generate a time base UUID.">generateTimeBasedId()</a> For a time-based UUID. </dd>
 <dd>
-<a class="el" href="namespacemantis.html#ade1df4c33ed9fad130bdf6df9c2c0ad1" title="Generates a short UUID.">generateShortId()</a> For a short UUID. </dd></dl>
+<a class="el" href="namespacemantis.html#a90a5625faff184237b8c6a18c660139a" title="Generates a short UUID.">generateShortId()</a> For a short UUID. </dd></dl>
 
 </div>
 </div>
@@ -875,8 +875,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ade1df4c33ed9fad130bdf6df9c2c0ad1" name="ade1df4c33ed9fad130bdf6df9c2c0ad1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ade1df4c33ed9fad130bdf6df9c2c0ad1">&#9670;&#160;</a></span>generateShortId()</h2>
+<a id="a90a5625faff184237b8c6a18c660139a" name="a90a5625faff184237b8c6a18c660139a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a90a5625faff184237b8c6a18c660139a">&#9670;&#160;</a></span>generateShortId()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -885,7 +885,7 @@ Variables</h2></td></tr>
           <td class="memname">std::string mantis::generateShortId </td>
           <td>(</td>
           <td class="paramtype">size_t&#160;</td>
-          <td class="paramname"><em>length</em> = <code>12</code></td><td>)</td>
+          <td class="paramname"><em>length</em> = <code>16</code></td><td>)</td>
           <td></td>
         </tr>
       </table>
@@ -922,7 +922,7 @@ Variables</h2></td></tr>
 <dl class="section return"><dt>Returns</dt><dd>A time based UUID</dd></dl>
 <dl class="section see"><dt>See also</dt><dd><a class="el" href="namespacemantis.html#a3832564f3023e4b1683a1a9392f17bd8" title="Generates a readable time-based UUID.">generateReadableTimeId()</a> For a readable time-based UUID. </dd>
 <dd>
-<a class="el" href="namespacemantis.html#ade1df4c33ed9fad130bdf6df9c2c0ad1" title="Generates a short UUID.">generateShortId()</a> For a short UUID. </dd></dl>
+<a class="el" href="namespacemantis.html#a90a5625faff184237b8c6a18c660139a" title="Generates a short UUID.">generateShortId()</a> For a short UUID. </dd></dl>
 
 </div>
 </div>
@@ -1148,8 +1148,8 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a5d624a74a0fc190a4b84f1dbce42c214" name="a5d624a74a0fc190a4b84f1dbce42c214"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a5d624a74a0fc190a4b84f1dbce42c214">&#9670;&#160;</a></span>sanitizeFilename()</h2>
+<a id="a71d9b005929526118af08c2ed3f74e8e" name="a71d9b005929526118af08c2ed3f74e8e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a71d9b005929526118af08c2ed3f74e8e">&#9670;&#160;</a></span>sanitizeFilename()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -1157,21 +1157,48 @@ Variables</h2></td></tr>
         <tr>
           <td class="memname">std::string mantis::sanitizeFilename </td>
           <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>name</em></td><td>)</td>
+          <td class="paramtype">std::string_view&#160;</td>
+          <td class="paramname"><em>original</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>maxLen</em> = <code>50</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::size_t&#160;</td>
+          <td class="paramname"><em>idLen</em> = <code>12</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">std::string_view&#160;</td>
+          <td class="paramname"><em>idSep</em> = <code>&quot;_&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
 </div><div class="memdoc">
 
-<p>Sanitize filenames by swapping whitespaces with <code>_</code> and removing commas if any. </p>
+<p>Sanitize a filename and ensure uniqueness. </p>
+<p>Creates a safe filename from the given input. Invalid characters are replaced with underscores. The resulting filename is truncated to <code>maxLen</code> characters, and a short unique ID is appended to avoid collisions.</p>
+<p>Example: Input: "my*illegal:file?.txt" Output: "my_illegal_file_txt_abC82xM01qP"</p>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
-    <tr><td class="paramname">name</td><td>File name </td></tr>
+    <tr><td class="paramname">original</td><td>Original filename (input). </td></tr>
+    <tr><td class="paramname">maxLen</td><td>Maximum length of the sanitized name before adding ID. Default = 50. </td></tr>
+    <tr><td class="paramname">idLen</td><td>Length of the unique ID suffix. Default = 12. </td></tr>
+    <tr><td class="paramname">idSep</td><td>Separator inserted between the name and the ID. Default = "_". </td></tr>
   </table>
   </dd>
 </dl>
-<dl class="section return"><dt>Returns</dt><dd>Sanitized filename </dd></dl>
+<dl class="section return"><dt>Returns</dt><dd>Sanitized filename with appended unique ID. </dd></dl>
 
 </div>
 </div>
@@ -1213,7 +1240,7 @@ Variables</h2></td></tr>
 <div class="fragment"><div class="line"><span class="keyword">auto</span> parts = <a class="code hl_function" href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">splitString</a>(<span class="stringliteral">&quot;Hello, John!&quot;</span>, <span class="stringliteral">&quot;,&quot;</span>);</div>
 <div class="line">std::cout &lt;&lt; parts.size() &lt;&lt; std::endl;</div>
 <div class="line"><span class="comment">// &gt; Should be a vector of two strings `Hello` and ` World`</span></div>
-<div class="ttc" id="anamespacemantis_html_afb33333e17a1823a3d22b074c7bd6a6e"><div class="ttname"><a href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">mantis::splitString</a></div><div class="ttdeci">std::vector&lt; std::string &gt; splitString(const std::string &amp;input, const std::string &amp;delimiter)</div><div class="ttdoc">Split given string based on given delimiter.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:107</div></div>
+<div class="ttc" id="anamespacemantis_html_afb33333e17a1823a3d22b074c7bd6a6e"><div class="ttname"><a href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">mantis::splitString</a></div><div class="ttdeci">std::vector&lt; std::string &gt; splitString(const std::string &amp;input, const std::string &amp;delimiter)</div><div class="ttdoc">Split given string based on given delimiter.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:106</div></div>
 </div><!-- fragment --> 
 </div>
 </div>
@@ -1356,7 +1383,7 @@ Variables</h2></td></tr>
 <div class="line"><span class="keywordflow">if</span>(user.has_value()) {</div>
 <div class="line">     <span class="comment">// Do something ...</span></div>
 <div class="line">}</div>
-<div class="ttc" id="anamespacemantis_html_a8ecebf53d24d9678f7005d0b4ee8da6d"><div class="ttname"><a href="namespacemantis.html#a8ecebf53d24d9678f7005d0b4ee8da6d">mantis::tryParseJsonStr</a></div><div class="ttdeci">std::optional&lt; json &gt; tryParseJsonStr(const std::string &amp;json_str)</div><div class="ttdoc">Attempt to parse a JSON string.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:9</div></div>
+<div class="ttc" id="anamespacemantis_html_a8ecebf53d24d9678f7005d0b4ee8da6d"><div class="ttname"><a href="namespacemantis.html#a8ecebf53d24d9678f7005d0b4ee8da6d">mantis::tryParseJsonStr</a></div><div class="ttdeci">std::optional&lt; json &gt; tryParseJsonStr(const std::string &amp;json_str)</div><div class="ttdoc">Attempt to parse a JSON string.</div><div class="ttdef"><b>Definition</b> string_utils.cpp:11</div></div>
 </div><!-- fragment --> 
 </div>
 </div>

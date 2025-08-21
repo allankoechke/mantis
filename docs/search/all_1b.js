@@ -18,7 +18,7 @@ var searchData=
   ['tables_5fvalidation_2ecpp_15',['tables_validation.cpp',['../tables__validation_8cpp.html',1,'']]],
   ['tabletype_16',['tabletype',['../classmantis_1_1TableUnit.html#aa1181122430ff57cc1d69bd93bb7f2e5',1,'mantis::TableUnit::tableType()'],['../namespacemantis.html#ab43b6b3436ac978b866169a6682d728d',1,'mantis::TableType'],['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4daf',1,'mantis::TableType']]],
   ['tableunit_17',['tableunit',['../classmantis_1_1TableUnit.html',1,'mantis::TableUnit'],['../classmantis_1_1TableUnit.html#a6e8e0ba71ae56c483d130c454813572b',1,'mantis::TableUnit::TableUnit(std::string tableName, std::string tableId, std::string tableType=&quot;base&quot;)'],['../classmantis_1_1TableUnit.html#aa227fe9cbf2ce9c18d4f14ae162018c7',1,'mantis::TableUnit::TableUnit(const json &amp;schema=json::object())']]],
-  ['tech_20stack_18',['🛠️ Tech Stack',['../index.html#autotoc_md142',1,'']]],
+  ['tech_20stack_18',['🛠️ Tech Stack',['../index.html#autotoc_md154',1,'']]],
   ['test_20edge_20cases_19',['3. Test Edge Cases',['../rest_api_rules.html#autotoc_md66',1,'']]],
   ['testing_20',['🧪 Sync Testing',['../sync.html#autotoc_md133',1,'']]],
   ['testing_20access_20rules_21',['Testing Access Rules',['../rest_api_rules.html#autotoc_md62',1,'']]],

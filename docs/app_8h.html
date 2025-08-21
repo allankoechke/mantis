@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.6</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
    </div>
   </td>
  </tr>
@@ -106,6 +106,7 @@ $(document).ready(function(){initNavTree('app_8h.html',''); initResizable(); });
 <code>#include &lt;mutex&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;argparse/argparse.hpp&gt;</code><br />
+<code>#include &lt;chrono&gt;</code><br />
 <code>#include &quot;<a class="el" href="expr__evaluator_8h_source.html">../core/expr_evaluator.h</a>&quot;</code><br />
 <code>#include &lt;termios.h&gt;</code><br />
 <code>#include &lt;unistd.h&gt;</code><br />
@@ -114,28 +115,30 @@ Include dependency graph for app.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="app_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2app_2app_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2app_2app_8h" id="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2app_2app_8h">
-<area shape="rect" title="The main application for mantis." alt="" coords="213,5,408,60"/>
-<area shape="rect" title=" " alt="" coords="90,181,149,207"/>
-<area shape="poly" title=" " alt="" coords="214,48,153,58,94,71,44,89,26,99,14,110,9,120,9,129,23,147,48,164,78,177,76,182,46,168,19,151,4,131,4,119,10,106,23,94,42,84,92,66,152,53,213,43"/>
-<area shape="rect" title=" " alt="" coords="24,108,88,133"/>
-<area shape="poly" title=" " alt="" coords="234,63,102,107,100,102,232,58"/>
-<area shape="rect" title=" " alt="" coords="112,108,202,133"/>
-<area shape="poly" title=" " alt="" coords="265,62,191,104,188,99,262,58"/>
-<area shape="rect" title=" " alt="" coords="226,108,394,133"/>
-<area shape="poly" title=" " alt="" coords="313,60,313,94,308,94,308,60"/>
-<area shape="rect" href="expr__evaluator_8h.html" title="Expression Evaluator Unit for database access rules." alt="" coords="419,108,594,133"/>
-<area shape="poly" title=" " alt="" coords="371,58,469,100,467,105,369,63"/>
-<area shape="rect" title=" " alt="" coords="618,108,702,133"/>
-<area shape="poly" title=" " alt="" coords="409,55,605,103,604,108,408,60"/>
-<area shape="rect" title=" " alt="" coords="726,108,801,133"/>
-<area shape="poly" title=" " alt="" coords="408,48,713,105,712,110,407,53"/>
-<area shape="poly" title=" " alt="" coords="445,136,163,188,162,182,444,131"/>
-<area shape="rect" title=" " alt="" coords="307,181,431,207"/>
-<area shape="poly" title=" " alt="" coords="486,136,405,177,402,173,483,131"/>
-<area shape="rect" title=" " alt="" coords="455,181,558,207"/>
-<area shape="poly" title=" " alt="" coords="509,134,509,168,504,168,504,134"/>
-<area shape="rect" title=" " alt="" coords="582,181,729,207"/>
-<area shape="poly" title=" " alt="" coords="532,131,620,173,618,178,529,136"/>
+<area shape="rect" title="The main application for mantis." alt="" coords="286,5,480,60"/>
+<area shape="rect" title=" " alt="" coords="138,181,196,207"/>
+<area shape="poly" title=" " alt="" coords="286,43,207,51,126,64,58,84,32,96,16,110,9,123,11,135,20,146,36,156,79,172,125,183,123,188,77,177,34,161,17,150,6,137,3,123,11,106,29,91,56,79,125,59,206,46,285,37"/>
+<area shape="rect" title=" " alt="" coords="26,108,90,133"/>
+<area shape="poly" title=" " alt="" coords="286,62,104,110,102,105,285,57"/>
+<area shape="rect" title=" " alt="" coords="114,108,204,133"/>
+<area shape="poly" title=" " alt="" coords="315,63,203,105,201,100,314,58"/>
+<area shape="rect" title=" " alt="" coords="228,108,396,133"/>
+<area shape="poly" title=" " alt="" coords="363,62,333,99,328,96,359,58"/>
+<area shape="rect" title=" " alt="" coords="420,108,487,133"/>
+<area shape="poly" title=" " alt="" coords="407,58,437,96,433,99,402,62"/>
+<area shape="rect" href="expr__evaluator_8h.html" title="Expression Evaluator Unit for database access rules." alt="" coords="512,108,686,133"/>
+<area shape="poly" title=" " alt="" coords="450,58,558,100,556,105,448,63"/>
+<area shape="rect" title=" " alt="" coords="710,108,794,133"/>
+<area shape="poly" title=" " alt="" coords="481,54,697,104,696,109,480,59"/>
+<area shape="rect" title=" " alt="" coords="819,108,894,133"/>
+<area shape="poly" title=" " alt="" coords="481,47,806,105,805,110,480,52"/>
+<area shape="poly" title=" " alt="" coords="530,136,211,188,210,183,529,131"/>
+<area shape="rect" title=" " alt="" coords="400,181,524,207"/>
+<area shape="poly" title=" " alt="" coords="578,136,497,177,495,173,576,131"/>
+<area shape="rect" title=" " alt="" coords="548,181,650,207"/>
+<area shape="poly" title=" " alt="" coords="602,134,602,168,596,168,596,134"/>
+<area shape="rect" title=" " alt="" coords="675,181,822,207"/>
+<area shape="poly" title=" " alt="" coords="624,131,713,173,710,178,622,136"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">

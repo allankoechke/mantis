@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.6</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
    </div>
   </td>
  </tr>
@@ -101,7 +101,8 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <p align="center"></p>
 <p><b>A lightweight, pluggable Backend-as-a-Service (BaaS) library built in C++</b><br  />
  Portable. Embeddable. Syncable. Built for speed and extensibility. </p>
-<h2><a class="anchor" id="autotoc_md140"></a>
+<hr  />
+<h2><a class="anchor" id="autotoc_md152"></a>
 🔧 Overview</h2>
 <p><b>Mantis</b> is a modular, lightweight C++ library designed to power modern backend systems in embedded devices, desktop tools, or standalone server deployments. Inspired by systems like PocketBase and Supabase, Mantis focuses on:</p>
 <ul>
@@ -113,7 +114,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <li>Embeddable as a reusable C++ library</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md142"></a>
+<h2><a class="anchor" id="autotoc_md154"></a>
 🛠️ Tech Stack</h2>
 <ul>
 <li><b>Language</b>: C++</li>
@@ -123,19 +124,39 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <li><b>Sync</b>: WebSocket / REST delta sync (planned)</li>
 </ul>
 <blockquote class="doxtable">
-<p>&zwj;NOTE: On windows, we use <code>mingw</code> not <code>MSVC</code> due to some feature incompatibility. For <code>mingw</code>, it requires at least <code>v13</code> with support for <code>std::format</code>. </p>
+<p>&zwj;<b>Note:</b> On Windows, use <code>mingw</code> (not <code>MSVC</code>) due to feature incompatibility. For <code>mingw</code>, version 13+ is required for <code>std::format</code> support. </p>
 </blockquote>
-<h2><a class="anchor" id="autotoc_md143"></a>
+<h2><a class="anchor" id="autotoc_md155"></a>
 &lt;/blockquote&gt;</h2>
-<h2><a class="anchor" id="autotoc_md144"></a>
+<h2><a class="anchor" id="autotoc_md156"></a>
 🚀 Getting Started</h2>
+<p>There are several ways to get started with Mantis:</p>
+<h3><a class="anchor" id="autotoc_md157"></a>
+1. Using Pre-built Binaries</h3>
+<p>Download pre-built binaries from the <a href="https://github.com/allankoechke/mantis/releases">release page</a>. Unzip the package and start the server:</p>
+<div class="fragment"><div class="line">./build/mantisapp serve -p 7070</div>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md158"></a>
+Creating an Admin Account</h4>
+<p>To use the admin dashboard, you must first create an admin user account. This can be done via the CLI:</p>
+<div class="fragment"><div class="line">mantisapp admins --add john@doe.com</div>
+</div><!-- fragment --><p> You will be prompted to enter and confirm the password. The account can then be used to log in to the admin dashboard.</p>
+<h3><a class="anchor" id="autotoc_md159"></a>
+2. Building from Source</h3>
+<p>Clone the repository and build the project:</p>
 <div class="fragment"><div class="line">git clone --recurse-submodules https://github.com/allankoechke/mantis.git</div>
 <div class="line">cd mantis</div>
 <div class="line">cmake -B build</div>
 <div class="line">cmake --build build</div>
 <div class="line">./build/mantisapp serve</div>
-</div><!-- fragment --><p> By default, the http server is served on port <code>7070</code>.</p>
-<p>You can also embed Mantis as a library in your own C++ project:</p>
+</div><!-- fragment --><p> By default, the server runs on port <code>7070</code>.</p>
+<h3><a class="anchor" id="autotoc_md160"></a>
+3. Embedding in Another Project</h3>
+<p>You can embed Mantis as a library in your own C++ project:</p>
+<ul>
+<li>Add this project as a submodule to your project.</li>
+<li>Link your project to the <code>mantis</code> library target.</li>
+<li>Extend your project as shown below:</li>
+</ul>
 <div class="fragment"><div class="line"><span class="preprocessor">#include &lt;<a class="code" href="app_8h.html">mantis/app/app.h</a>&gt;</span></div>
 <div class="line"> </div>
 <div class="line"><span class="keywordtype">int</span> <a class="code hl_function" href="mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a>(<span class="keyword">const</span> <span class="keywordtype">int</span> argc, <span class="keywordtype">char</span>* argv[])</div>
@@ -145,24 +166,30 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <div class="line">    <span class="keywordflow">return</span> app.run();</div>
 <div class="line">}</div>
 <div class="ttc" id="aapp_8h_html"><div class="ttname"><a href="app_8h.html">app.h</a></div><div class="ttdoc">The main application for mantis.</div></div>
-<div class="ttc" id="aclassmantis_1_1MantisApp_html"><div class="ttname"><a href="classmantis_1_1MantisApp.html">mantis::MantisApp</a></div><div class="ttdoc">Mantis entry point.</div><div class="ttdef"><b>Definition</b> app.h:64</div></div>
+<div class="ttc" id="aclassmantis_1_1MantisApp_html"><div class="ttname"><a href="classmantis_1_1MantisApp.html">mantis::MantisApp</a></div><div class="ttdoc">Mantis entry point.</div><div class="ttdef"><b>Definition</b> app.h:65</div></div>
 <div class="ttc" id="amantisapp_8cpp_html_a638b85ceffac097c2aa79b76ba8c055e"><div class="ttname"><a href="mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a></div><div class="ttdeci">int main(const int argc, char *argv[])</div><div class="ttdoc">MantisApp standalone entrypoint.</div><div class="ttdef"><b>Definition</b> mantisapp.cpp:16</div></div>
-</div><!-- fragment --><p> Check <a href="https://github.com/allankoechke/mantis/tree/master/examples">mantis/examples</a> for a sample</p>
-<h3><a class="anchor" id="autotoc_md145"></a>
-Admin Dashboard</h3>
-<p>Mantis ships with a lightweight admin dashboard available on <code>&lt;host&gt;:&lt;ip&gt;/admin</code> and restricted to admin login only. By default, in your setup, you need to create a admin user account using the <a class="el" href="01_8cmd_8md.html">CLI</a> command:</p>
-<div class="fragment"><div class="line">mantisapp admins --add john@doe.com</div>
-</div><!-- fragment --><p>With the admin account created, we can then use it to log in to the admin dashboard. The dashboard allows for easy management of:</p><ul>
-<li>**__CRUD__** on admin accounts</li>
-<li>**__CRUD__** on system logs [WIP?]</li>
-<li>**__CRUD__** on database tables (only the tables managed by mantis).</li>
-<li>**__CRUD__** on records in the tables.</li>
-<li>Schema &amp; database migration [WIP?]</li>
-</ul>
-<p>By default, admin auth tokens expire after an hour, but it's configurable in the settings tab of the dashboard.</p>
-<p><img src="mantis-admin.png" alt="Mantis Admin" class="inline"/> ___admin dashboard snapshot___</p>
+</div><!-- fragment --><p> Check <a href="https://github.com/allankoechke/mantis/tree/master/examples">mantis/examples</a> for a sample.</p>
+<blockquote class="doxtable">
+<p>&zwj;<b>Note:</b> <code>MantisApp</code> has a blocking event loop when listening for HTTP events. To avoid blocking your main thread, run it in a separate thread if needed. </p>
+</blockquote>
+<h3><a class="anchor" id="autotoc_md161"></a>
+4. Using Docker</h3>
+<p>You can also run <code>mantisapp</code> in a Docker container. See doc/docker.md for more information.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md147"></a>
+<h2><a class="anchor" id="autotoc_md163"></a>
+🖥️ Admin Dashboard</h2>
+<p>Mantis ships with a lightweight admin dashboard available at <code>&lt;host&gt;:&lt;port&gt;/admin</code> (admin login required). The dashboard allows for easy management of:</p>
+<ul>
+<li><b>CRUD</b> on admin accounts</li>
+<li><b>CRUD</b> on system logs [WIP]</li>
+<li><b>CRUD</b> on database tables (managed by Mantis)</li>
+<li><b>CRUD</b> on records in the tables</li>
+<li>Schema &amp; database migration [WIP]</li>
+</ul>
+<p>By default, admin auth tokens expire after an hour (configurable in the dashboard settings).</p>
+<p><img src="assets/mantis-admin.png" alt="Mantis Admin" class="inline"/> <em>Admin dashboard snapshot</em></p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md165"></a>
 📁 Project Structure</h2>
 <div class="fragment"><div class="line">mantis/</div>
 <div class="line">├── include/</div>
@@ -173,7 +200,42 @@ Admin Dashboard</h3>
 <div class="line">├── docker/             # Docker deployment</div>
 <div class="line">└── CMakeLists.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md149"></a>
+<h2><a class="anchor" id="autotoc_md167"></a>
+🩺 Healthcheck Endpoint</h2>
+<p>Mantis provides a healthcheck endpoint for monitoring and orchestration tools:</p>
+<div class="fragment"><div class="line">GET /api/v1/health</div>
+</div><!-- fragment --><p>Returns:</p>
+<div class="fragment"><div class="line">{</div>
+<div class="line">  &quot;status&quot;: &quot;ok&quot;,</div>
+<div class="line">  &quot;uptime&quot;: 12345</div>
+<div class="line">}</div>
+</div><!-- fragment --><p>Use this endpoint to verify server availability and uptime.</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md169"></a>
+📂 File Handling</h2>
+<p>Mantis supports file uploads and management via the API:</p>
+<ul>
+<li><b>Serving files:</b><ul>
+<li>All files stored in the database are served under <code>/api/files/&lt;table name&gt;/&lt;filename&gt;</code></li>
+</ul>
+</li>
+<li><b>Creating records with files:</b><ul>
+<li>Send a <code>POST</code> request to the table route using <code>multipart/form-data</code> (FormData)</li>
+</ul>
+</li>
+<li><b>Updating files in records:</b><ul>
+<li>Send a <code>PATCH</code> request to the table record with new files as you would update other fields</li>
+<li>For fields with multiple files, include the original files you want to keep; missing files will be deleted</li>
+</ul>
+</li>
+<li><b>Deleting files:</b><ul>
+<li>Send an update (PATCH) omitting the file name from the field; the backend will delete the file</li>
+</ul>
+</li>
+</ul>
+<p>See <a class="el" href="11_8files_8md.html">files.md</a> for more details.</p>
+<hr  />
+<h2><a class="anchor" id="autotoc_md171"></a>
 🤝 Contributing</h2>
 <p>Contributions are welcome! Please see <a href="https://github.com/allankoechke/mantis/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> and open an issue or PR. </p>
 </div></div><!-- PageDoc -->

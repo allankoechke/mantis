@@ -11,10 +11,13 @@ var searchData=
   ['port_8',['port',['../classmantis_1_1MantisApp.html#ac72b0c02c8d627414a26639f77311190',1,'mantis::MantisApp']]],
   ['post_9',['post',['../classmantis_1_1HttpUnit.html#a8cb442abd43d9f2a6720b9d58bec7a53',1,'mantis::HttpUnit::Post(const std::string &amp;path, const RouteHandlerFunc &amp;handler, std::initializer_list&lt; Middleware &gt; middlewares={})'],['../classmantis_1_1HttpUnit.html#a6b8a794097e9c138f8e343397b72f321',1,'mantis::HttpUnit::Post(const std::string &amp;path, const RouteHandlerFuncWithContentReader &amp;handler, std::initializer_list&lt; Middleware &gt; middlewares={})']]],
   ['practices_10',['Best Practices',['../rest_api_rules.html#autotoc_md63',1,'']]],
-  ['precompiled_20binaries_11',['⚡️ Using Precompiled Binaries',['../setup.html#autotoc_md2',1,'']]],
-  ['primarykey_12',['primaryKey',['../structmantis_1_1Field.html#ab6dba00405f8bfc3d7b5fbc9ad7cd64c',1,'mantis::Field']]],
-  ['principles_13',['📐 Core Principles',['../architecture.html#autotoc_md76',1,'']]],
-  ['project_20structure_14',['project structure',['../index.html#autotoc_md147',1,'📁 Project Structure'],['../embedding.html#autotoc_md108',1,'📂 Example Project Structure']]],
-  ['psql_15',['PSQL',['../namespacemantis.html#a9b66d60c6176ce653dfa970027ec5e23aded8cccbe048f0dd04dd4b3ebccc383d',1,'mantis']]],
-  ['publicdir_16',['publicDir',['../classmantis_1_1MantisApp.html#a9df87a395333a5cec95cf759387bc05d',1,'mantis::MantisApp']]]
+  ['pre_20built_20binaries_11',['1. Using Pre-built Binaries',['../index.html#autotoc_md157',1,'']]],
+  ['precompiled_20binaries_12',['⚡️ Using Precompiled Binaries',['../setup.html#autotoc_md2',1,'']]],
+  ['primarykey_13',['primaryKey',['../structmantis_1_1Field.html#ab6dba00405f8bfc3d7b5fbc9ad7cd64c',1,'mantis::Field']]],
+  ['principles_14',['📐 Core Principles',['../architecture.html#autotoc_md76',1,'']]],
+  ['project_15',['3. Embedding in Another Project',['../index.html#autotoc_md160',1,'']]],
+  ['project_20structure_16',['project structure',['../index.html#autotoc_md165',1,'📁 Project Structure'],['../embedding.html#autotoc_md108',1,'📂 Example Project Structure']]],
+  ['psql_17',['PSQL',['../namespacemantis.html#a9b66d60c6176ce653dfa970027ec5e23aded8cccbe048f0dd04dd4b3ebccc383d',1,'mantis']]],
+  ['publicdir_18',['publicDir',['../classmantis_1_1MantisApp.html#a9df87a395333a5cec95cf759387bc05d',1,'mantis::MantisApp']]],
+  ['purpose_19',['Purpose',['../healthcheck.html#autotoc_md145',1,'']]]
 ];

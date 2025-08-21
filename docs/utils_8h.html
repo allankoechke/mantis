@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.6</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
    </div>
   </td>
  </tr>
@@ -104,27 +104,36 @@ $(document).ready(function(){initNavTree('utils_8h.html',''); initResizable(); }
 <div class="textblock"><code>#include &lt;string&gt;</code><br />
 <code>#include &lt;filesystem&gt;</code><br />
 <code>#include &lt;random&gt;</code><br />
+<code>#include &lt;chrono&gt;</code><br />
+<code>#include &lt;string_view&gt;</code><br />
+<code>#include &lt;algorithm&gt;</code><br />
 <code>#include &quot;<a class="el" href="logging_8h_source.html">../core/logging.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utils.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="utils_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8h" id="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8h">
-<area shape="rect" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="88,5,283,60"/>
+<area shape="rect" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="235,5,429,60"/>
 <area shape="rect" title=" " alt="" coords="5,108,64,133"/>
-<area shape="poly" title=" " alt="" coords="141,62,68,103,66,99,138,58"/>
+<area shape="poly" title=" " alt="" coords="242,63,78,110,76,105,240,58"/>
 <area shape="rect" title=" " alt="" coords="88,108,179,133"/>
-<area shape="poly" title=" " alt="" coords="172,61,150,98,145,95,167,59"/>
+<area shape="poly" title=" " alt="" coords="272,63,174,105,171,100,270,58"/>
 <area shape="rect" title=" " alt="" coords="203,108,275,133"/>
-<area shape="poly" title=" " alt="" coords="204,59,226,95,222,98,199,61"/>
-<area shape="rect" href="logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="299,108,426,133"/>
-<area shape="poly" title=" " alt="" coords="241,58,328,100,325,104,238,62"/>
-<area shape="rect" title=" " alt="" coords="61,181,249,236"/>
-<area shape="poly" title=" " alt="" coords="336,136,232,179,230,174,334,131"/>
-<area shape="rect" title=" " alt="" coords="273,189,452,229"/>
-<area shape="poly" title=" " alt="" coords="365,134,365,175,360,175,360,134"/>
-<area shape="rect" title=" " alt="" coords="477,181,635,236"/>
-<area shape="poly" title=" " alt="" coords="390,131,486,173,483,178,388,136"/>
+<area shape="poly" title=" " alt="" coords="305,62,263,100,260,96,302,58"/>
+<area shape="rect" title=" " alt="" coords="299,108,365,133"/>
+<area shape="poly" title=" " alt="" coords="335,60,335,94,329,94,329,60"/>
+<area shape="rect" title=" " alt="" coords="390,108,487,133"/>
+<area shape="poly" title=" " alt="" coords="366,58,415,97,412,101,363,62"/>
+<area shape="rect" title=" " alt="" coords="512,108,597,133"/>
+<area shape="poly" title=" " alt="" coords="401,58,513,100,511,105,399,63"/>
+<area shape="rect" href="logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="622,108,749,133"/>
+<area shape="poly" title=" " alt="" coords="430,55,626,102,625,107,429,60"/>
+<area shape="rect" title=" " alt="" coords="383,181,571,236"/>
+<area shape="poly" title=" " alt="" coords="658,136,554,179,552,174,656,131"/>
+<area shape="rect" title=" " alt="" coords="596,189,775,229"/>
+<area shape="poly" title=" " alt="" coords="688,134,688,175,683,175,683,134"/>
+<area shape="rect" title=" " alt="" coords="799,181,958,236"/>
+<area shape="poly" title=" " alt="" coords="712,131,808,173,806,178,710,136"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -212,18 +221,18 @@ Functions</h2></td></tr>
 <tr class="memitem:a3832564f3023e4b1683a1a9392f17bd8" id="r_a3832564f3023e4b1683a1a9392f17bd8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a3832564f3023e4b1683a1a9392f17bd8">mantis::generateReadableTimeId</a> ()</td></tr>
 <tr class="memdesc:a3832564f3023e4b1683a1a9392f17bd8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a readable time-based UUID.  <br /></td></tr>
 <tr class="separator:a3832564f3023e4b1683a1a9392f17bd8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ade1df4c33ed9fad130bdf6df9c2c0ad1" id="r_ade1df4c33ed9fad130bdf6df9c2c0ad1"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ade1df4c33ed9fad130bdf6df9c2c0ad1">mantis::generateShortId</a> (size_t length=12)</td></tr>
-<tr class="memdesc:ade1df4c33ed9fad130bdf6df9c2c0ad1"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a short UUID.  <br /></td></tr>
-<tr class="separator:ade1df4c33ed9fad130bdf6df9c2c0ad1"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a90a5625faff184237b8c6a18c660139a" id="r_a90a5625faff184237b8c6a18c660139a"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a90a5625faff184237b8c6a18c660139a">mantis::generateShortId</a> (size_t length=16)</td></tr>
+<tr class="memdesc:a90a5625faff184237b8c6a18c660139a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a short UUID.  <br /></td></tr>
+<tr class="separator:a90a5625faff184237b8c6a18c660139a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:afb33333e17a1823a3d22b074c7bd6a6e" id="r_afb33333e17a1823a3d22b074c7bd6a6e"><td class="memItemLeft" align="right" valign="top">std::vector&lt; std::string &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#afb33333e17a1823a3d22b074c7bd6a6e">mantis::splitString</a> (const std::string &amp;input, const std::string &amp;delimiter)</td></tr>
 <tr class="memdesc:afb33333e17a1823a3d22b074c7bd6a6e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Split given string based on given delimiter.  <br /></td></tr>
 <tr class="separator:afb33333e17a1823a3d22b074c7bd6a6e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5e25a8cc629f217be134c89138011502" id="r_a5e25a8cc629f217be134c89138011502"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a5e25a8cc629f217be134c89138011502">mantis::getEnvOrDefault</a> (const std::string &amp;key, const std::string &amp;defaultValue)</td></tr>
 <tr class="memdesc:a5e25a8cc629f217be134c89138011502"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves a value from an environment variable or a default value if the env variable was not set.  <br /></td></tr>
 <tr class="separator:a5e25a8cc629f217be134c89138011502"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a5d624a74a0fc190a4b84f1dbce42c214" id="r_a5d624a74a0fc190a4b84f1dbce42c214"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a5d624a74a0fc190a4b84f1dbce42c214">mantis::sanitizeFilename</a> (const std::string &amp;name)</td></tr>
-<tr class="memdesc:a5d624a74a0fc190a4b84f1dbce42c214"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize filenames by swapping whitespaces with <code>_</code> and removing commas if any.  <br /></td></tr>
-<tr class="separator:a5d624a74a0fc190a4b84f1dbce42c214"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a71d9b005929526118af08c2ed3f74e8e" id="r_a71d9b005929526118af08c2ed3f74e8e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a71d9b005929526118af08c2ed3f74e8e">mantis::sanitizeFilename</a> (std::string_view original, std::size_t maxLen=50, std::size_t idLen=12, std::string_view idSep=&quot;_&quot;)</td></tr>
+<tr class="memdesc:a71d9b005929526118af08c2ed3f74e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize a filename and ensure uniqueness.  <br /></td></tr>
+<tr class="separator:a71d9b005929526118af08c2ed3f74e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e23dffb248fc4160e5c6c09a594eae2" id="r_a9e23dffb248fc4160e5c6c09a594eae2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">mantis::bcryptBase64Encode</a> (const unsigned char *data, size_t len)</td></tr>
 <tr class="memdesc:a9e23dffb248fc4160e5c6c09a594eae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode a Salt string to bcrypt base64 format.  <br /></td></tr>
 <tr class="separator:a9e23dffb248fc4160e5c6c09a594eae2"><td class="memSeparator" colspan="2">&#160;</td></tr>

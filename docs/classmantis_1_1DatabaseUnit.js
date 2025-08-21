@@ -1,6 +1,7 @@
 var classmantis_1_1DatabaseUnit =
 [
     [ "DatabaseUnit", "classmantis_1_1DatabaseUnit.html#a4d6e14bf7e3e6a6cb0475991bbea8a8e", null ],
+    [ "~DatabaseUnit", "classmantis_1_1DatabaseUnit.html#a04caa5285069c61a8953979b7a8d97a4", null ],
     [ "connect", "classmantis_1_1DatabaseUnit.html#aaf1cf9804c647918f741e3fdaa66986c", null ],
     [ "connectionPool", "classmantis_1_1DatabaseUnit.html#a8b8def11d322287cb3b6bb6d34104894", null ],
     [ "disconnect", "classmantis_1_1DatabaseUnit.html#a6b930d444ba72828d4118ffd15da8b95", null ],

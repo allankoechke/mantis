@@ -1,4 +1,5 @@
 var searchData=
 [
-  ['in_20docker_0',['Running in Docker',['../docker.html',1,'']]]
+  ['getting_20started_0',['Getting Started',['../index.html',1,'']]],
+  ['guide_1',['REST API Reference Guide',['../rest_api.html',1,'']]]
 ];

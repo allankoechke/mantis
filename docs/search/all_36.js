@@ -1,6 +1,7 @@
 var searchData=
 [
-  ['🛠️_20advanced_3a_20use_20mantis_20as_20a_20submodule_0',['🛠️ Advanced: Use Mantis as a Submodule',['../embedding.html#autotoc_md112',1,'']]],
-  ['🛠️_20migrate_20command_20wip_1',['🛠️ migrate Command *(WIP)*',['../cli.html#autotoc_md16',1,'']]],
-  ['🛠️_20tech_20stack_2',['🛠️ Tech Stack',['../index.html#autotoc_md142',1,'']]]
+  ['🚀_20getting_20started_0',['🚀 Getting Started',['../index.html#autotoc_md156',1,'']]],
+  ['🚀_20running_20mantis_1',['🚀 Running Mantis',['../setup.html#autotoc_md5',1,'']]],
+  ['🚀_20serve_20command_2',['🚀 serve Command',['../cli.html#autotoc_md12',1,'']]],
+  ['🚀_20standalone_20binary_3',['🚀 Standalone Binary',['../architecture.html#autotoc_md93',1,'']]]
 ];

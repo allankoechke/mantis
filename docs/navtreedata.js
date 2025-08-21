@@ -87,6 +87,8 @@ var NAVTREE =
         [ "🏁 Summary", "sync.html#autotoc_md139", null ]
       ] ]
     ] ],
+    [ "Handling Files in Mantis", "files.html", null ],
+    [ "Healthcheck Endpoint", "healthcheck.html", null ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -122,9 +124,9 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classmantis_1_1SysTablesUnit.html#a1f220eab6789e7793b9887298837a447",
-"index.html",
-"structmantis_1_1ViewTable.html#abb14ce2181837e55c28327a3cff9b0ce"
+"classmantis_1_1SettingsUnit.html#aa85cc84001581c051dc114f4a35115e1",
+"http_8cpp.html#a6d52b503c1252a454522f24685ea9da2",
+"structmantis_1_1Table.html#aa419a968da0a9e7bbc587016010b85d8"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

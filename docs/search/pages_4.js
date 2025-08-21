@@ -1,5 +1,4 @@
 var searchData=
 [
-  ['getting_20started_0',['Getting Started',['../index.html',1,'']]],
-  ['guide_1',['REST API Reference Guide',['../rest_api.html',1,'']]]
+  ['files_20in_20mantis_0',['Handling Files in Mantis',['../files.html',1,'']]]
 ];
