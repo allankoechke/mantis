@@ -104,6 +104,10 @@ if(NOT WIN32)
     endif()
 endif()
 
+# Disable
+if(WIN32)
+    set(HTTPLIB_USE_NON_BLOCKING_GETADDRINFO OFF)
+endif(WIN32)
 add_subdirectory(3rdParty/httplib-cpp)
 
 # Add spdlog

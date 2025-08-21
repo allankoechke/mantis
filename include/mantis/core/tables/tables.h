@@ -112,7 +112,7 @@ namespace mantis
          * @param value Value to convert
          * @return JSON object of the format {"value": <value>}
          */
-        json getValueFromType(const std::string& type, const std::string& value);;
+        json getValueFromType(const std::string& type, const std::string& value);
 
 
         /**

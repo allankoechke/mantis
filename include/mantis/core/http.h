@@ -288,7 +288,7 @@ namespace mantis
          * @param data Multipart file reference
          * @return Hash
          */
-        static std::string hashMultipartMetadata(const httplib::MultipartFormData& data);
+        static std::string hashMultipartMetadata(const httplib::FormData& data);
 
         const std::string _class_ = "mantis::HttpUnit";
 

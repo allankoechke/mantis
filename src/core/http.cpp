@@ -286,7 +286,8 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
 
 void mantis::HttpUnit::close()
 {
-    if (svr.is_running()) {
+    if (svr.is_running())
+    {
         svr.stop();
         Log::info("HTTP Server Stopped.\n\t ...");
     }
@@ -307,7 +308,7 @@ httplib::Server& mantis::HttpUnit::server()
     return svr;
 }
 
-std::string mantis::HttpUnit::hashMultipartMetadata(const httplib::MultipartFormData& data)
+std::string mantis::HttpUnit::hashMultipartMetadata(const httplib::FormData& data)
 {
     constexpr std::hash<std::string> hasher;
     const size_t h1 = hasher(data.name);
@@ -417,12 +418,12 @@ void mantis::HttpUnit::route(
             // Empty regular content reader - does nothing
             [](httplib::ContentReceiver receiver) -> bool
             {
-                return true; // Just return success without calling receiver
+                return true;
             },
-            // Empty multipart content reader - does nothing
-            [](httplib::MultipartContentHeader header, httplib::ContentReceiver receiver) -> bool
+            // Form data reader - does nothing
+            [](httplib::FormDataHeader header, httplib::ContentReceiver receiver) -> bool
             {
-                return true; // Just return success without calling header or receiver
+                return true;
             }
         );
 

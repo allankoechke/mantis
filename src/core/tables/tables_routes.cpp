@@ -303,13 +303,13 @@ namespace mantis
         json body, response;
         // Store path to saved files for easy rollback if db process fails
         json files_to_save{};
-        httplib::MultipartFormDataItems files;
+        std::vector<httplib::FormData> files;
 
         if (req.is_multipart_form_data())
         {
             // Handle file upload using content receiver pattern
             reader(
-                [&](const httplib::MultipartFormData& file) -> bool
+                [&](const httplib::FormData& file) -> bool
                 {
                     files.push_back(file);
                     return true;
@@ -318,7 +318,8 @@ namespace mantis
                 {
                     files.back().content.append(data, data_length);
                     return true;
-                });
+                }
+            );
 
             // Process uploaded files and form fields
             for (const auto& file : files)
@@ -662,13 +663,13 @@ namespace mantis
 
         // Store path to saved files for easy rollback if db process fails
         json files_to_save{};
-        httplib::MultipartFormDataItems files;
+        std::vector<httplib::FormData> files;
 
         if (req.is_multipart_form_data())
         {
             // Handle file upload using content receiver pattern
             reader(
-                [&](const httplib::MultipartFormData& file) -> bool
+                [&](const httplib::FormData& file) -> bool
                 {
                     files.push_back(file);
                     return true;
