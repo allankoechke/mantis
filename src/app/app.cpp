@@ -181,7 +181,7 @@ namespace mantis
 
         // Get main program args
         auto db = program.present<std::string>("--database").value_or("sqlite");
-        const auto m_connString = program.present<std::string>("--connection").value_or("");
+        const auto connString = program.present<std::string>("--connection").value_or("");
         const auto dataDir = program.present<std::string>("--dataDir").value_or("./data");
         const auto pubDir = program.present<std::string>("--publicDir").value_or("./public");
 
@@ -190,6 +190,7 @@ namespace mantis
         {
             // Print developer messages - set it to trace for now
             Log::setLogLevel(LogLevel::TRACE);
+            m_isDevMode = true;
         }
 
         // TODO validate directory paths
@@ -214,7 +215,7 @@ namespace mantis
         [[maybe_unused]] auto x = MantisApp::instance().poolSize();
 
         // Initialize database connection & Migration
-        m_database->connect(m_dbType, m_connString);
+        m_database->connect(m_dbType, connString);
         m_database->migrate();
 
         if (!m_database->isConnected())
@@ -485,6 +486,11 @@ namespace mantis
     std::chrono::time_point<std::chrono::steady_clock> MantisApp::startTime() const
     {
         return m_startTime;
+    }
+
+    bool MantisApp::isDevMode() const
+    {
+        return m_isDevMode;
     }
 
     void MantisApp::setDbType(const DbType& dbType)

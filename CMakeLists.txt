@@ -7,11 +7,12 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5) # Chilbuff still on CMake 3.1
 
 # Mantis Admin Dashboard Fetch Flags
 # Mantis Admin dashboard version to embed
-set(MANTIS_ADMIN_VERSION v0.1.6)
-set(MANTIS_ADMIN_HASH 39a78d95a49f768ebb6f72453cc3c2726ce2c6f602669105e833920644f38f7a)
+set(MANTIS_ADMIN_VERSION v0.1.7)
+set(MANTIS_ADMIN_HASH 184fe54ab4d003de49cc75565258fafe098486b8a177fb8f9405398015e16081)
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
@@ -103,6 +104,10 @@ if(NOT WIN32)
     endif()
 endif()
 
+# Disable
+if(WIN32)
+    set(HTTPLIB_USE_NON_BLOCKING_GETADDRINFO OFF)
+endif(WIN32)
 add_subdirectory(3rdParty/httplib-cpp)
 
 # Add spdlog

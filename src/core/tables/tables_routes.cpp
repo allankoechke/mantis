@@ -303,13 +303,13 @@ namespace mantis
         json body, response;
         // Store path to saved files for easy rollback if db process fails
         json files_to_save{};
-        httplib::MultipartFormDataItems files;
+        std::vector<httplib::FormData> files;
 
         if (req.is_multipart_form_data())
         {
             // Handle file upload using content receiver pattern
             reader(
-                [&](const httplib::MultipartFormData& file) -> bool
+                [&](const httplib::FormData& file) -> bool
                 {
                     files.push_back(file);
                     return true;
@@ -318,7 +318,8 @@ namespace mantis
                 {
                     files.back().content.append(data, data_length);
                     return true;
-                });
+                }
+            );
 
             // Process uploaded files and form fields
             for (const auto& file : files)
@@ -358,8 +359,7 @@ namespace mantis
 
                     // Handle file upload
                     const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
-                    const auto new_filename = std::format("{}_{}",
-                                                          generateShortId(8), sanitizeFilename(file.filename));
+                    const auto new_filename = sanitizeFilename(file.filename);
 
                     // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
@@ -392,13 +392,14 @@ namespace mantis
                         }
                         catch (std::exception& e)
                         {
-                            std::cout << e.what() << std::endl;
+                            Log::critical("Error Parsing Files: {}", e.what());
 
                             response["status"] = 500;
                             response["error"] = e.what();
                             response["data"] = json::object();
-                            res.set_content(response.dump(), "application/json");
 
+                            res.status = 500;
+                            res.set_content(response.dump(), "application/json");
                             return;
                         }
                     }
@@ -408,12 +409,78 @@ namespace mantis
                     // This is a regular form field, treat as JSON data
                     try
                     {
-                        body[file.name] = json::parse(file.content);
+                        auto it = std::ranges::find_if(m_fields, [&file](const json& schema_field)
+                        {
+                            // Check whether the schema name matches the file field name
+                            return schema_field.at("name").get<std::string>() == file.name;
+                        });
+
+                        if (it != m_fields.end())
+                        {
+                            try
+                            {
+                                // Local catch block for JSON parsing errors
+                                const auto& type = it->at("type").get<std::string>();
+
+                                // For file types, append the file list to any existing array if any or
+                                // parse the array correctly to an array of data
+                                if (type == "files")
+                                {
+                                    auto data = trim(file.content).empty() ? nullptr : json::parse(file.content);
+                                    if (!data.is_array() && !data.is_null())
+                                    {
+                                        response["status"] = 400;
+                                        response["data"] = json::object();
+                                        response["error"] = std::format("Error parsing field `{}`, expected an array!",
+                                                                        file.name);
+
+                                        res.status = 400;
+                                        res.set_content(response.dump(), "application/json");
+                                        return;
+                                    }
+
+                                    // Create empty field if it does not exist yet
+                                    if (!body.contains(file.name)) body[file.name] = nullptr;
+
+                                    // For empty/null values, just continue
+                                    if (data == nullptr) continue;
+
+                                    // Append data content to the body field
+                                    for (const auto& d : data) body[file.name].push_back(d);
+                                }
+
+                                else
+                                {
+                                    // For all other input types, simply add the data to the respective field.
+                                    // Overwrites any existing data
+                                    auto v = getValueFromType(type, file.content)["value"];
+                                    body[file.name] = v;
+                                }
+                            }
+                            catch (std::exception& e)
+                            {
+                                response["status"] = 500;
+                                response["data"] = json::object();
+                                response["error"] = e.what();
+
+                                res.status = 500;
+                                res.set_content(response.dump(), "application/json");
+                                Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
+                                              file.content);
+                                return;
+                            }
+                        }
                     }
-                    catch (...)
+                    catch (const std::exception& e)
                     {
-                        // If not valid JSON, store as string
-                        body[file.name] = file.content;
+                        response["status"] = 500;
+                        response["data"] = json::object();
+                        response["error"] = e.what();
+
+                        res.status = 500;
+                        res.set_content(response.dump(), "application/json");
+                        Log::critical("Error parsing field data: {}", e.what());
+                        return;
                     }
                 }
             }
@@ -596,13 +663,13 @@ namespace mantis
 
         // Store path to saved files for easy rollback if db process fails
         json files_to_save{};
-        httplib::MultipartFormDataItems files;
+        std::vector<httplib::FormData> files;
 
         if (req.is_multipart_form_data())
         {
             // Handle file upload using content receiver pattern
             reader(
-                [&](const httplib::MultipartFormData& file) -> bool
+                [&](const httplib::FormData& file) -> bool
                 {
                     files.push_back(file);
                     return true;
@@ -651,8 +718,7 @@ namespace mantis
 
                     // Handle file upload
                     const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
-                    const auto new_filename = std::format("{}_{}",
-                                                          generateShortId(8), sanitizeFilename(file.filename));
+                    const auto new_filename = sanitizeFilename(file.filename);
 
                     // Create filepath for writing file contents
                     std::string filepath = (fs::path(dir) / new_filename).string();
@@ -685,13 +751,14 @@ namespace mantis
                         }
                         catch (std::exception& e)
                         {
-                            std::cout << e.what() << std::endl;
+                            Log::critical("Error Parsing Files: {}", e.what());
 
                             response["status"] = 500;
                             response["error"] = e.what();
                             response["data"] = json::object();
-                            res.set_content(response.dump(), "application/json");
 
+                            res.status = 500;
+                            res.set_content(response.dump(), "application/json");
                             return;
                         }
                     }
@@ -701,12 +768,79 @@ namespace mantis
                     // This is a regular form field, treat as JSON data
                     try
                     {
-                        body[file.name] = json::parse(file.content);
+                        auto it = std::ranges::find_if(m_fields, [&file](const json& schema_field)
+                        {
+                            // Check whether the schema name matches the file field name
+                            return schema_field.at("name").get<std::string>() == file.name;
+                        });
+
+                        if (it != m_fields.end())
+                        {
+                            try
+                            {
+                                // Local catch block for JSON parsing errors
+                                const auto& type = it->at("type").get<std::string>();
+
+                                // For file types, append the file list to any existing array if any or
+                                // parse the array correctly to an array of data
+                                if (type == "files")
+                                {
+                                    auto data = trim(file.content).empty() ? nullptr : json::parse(file.content);
+                                    if (!data.is_array() && !data.is_null())
+                                    {
+                                        response["status"] = 400;
+                                        response["data"] = json::object();
+                                        response["error"] = std::format("Error parsing field `{}`, expected an array!",
+                                                                        file.name);
+
+                                        res.status = 400;
+                                        res.set_content(response.dump(), "application/json");
+                                        return;
+                                    }
+
+                                    // Create empty field if it does not exist yet
+                                    if (!body.contains(file.name)) body[file.name] = nullptr;
+
+                                    // For empty/null values, just continue
+                                    if (data == nullptr) continue;
+
+                                    // Append data content to the body field
+                                    for (const auto& d : data) body[file.name].push_back(d);
+                                }
+
+                                else
+                                {
+                                    // For all other input types, simply add the data to the respective field.
+                                    // Overwrites any existing data
+                                    auto v = getValueFromType(type, file.content)["value"];
+                                    std::cout << type << " - " << v << ";" << std::endl;
+                                    body[file.name] = v;
+                                }
+                            }
+                            catch (std::exception& e)
+                            {
+                                response["status"] = 500;
+                                response["data"] = json::object();
+                                response["error"] = e.what();
+
+                                res.status = 500;
+                                res.set_content(response.dump(), "application/json");
+                                Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
+                                              file.content);
+                                return;
+                            }
+                        }
                     }
-                    catch (...)
+                    catch (const std::exception& e)
                     {
-                        // If not valid JSON, store as string
-                        body[file.name] = file.content;
+                        response["status"] = 500;
+                        response["data"] = json::object();
+                        response["error"] = e.what();
+
+                        res.status = 500;
+                        res.set_content(response.dump(), "application/json");
+                        Log::critical("Error parsing field data: {}", e.what());
+                        return;
                     }
                 }
             }
@@ -722,11 +856,7 @@ namespace mantis
             });
 
             // Parse request body to JSON Object, return an error if it fails
-            try
-            {
-                if (body_str.empty()) body = json::object();
-                else body = json::parse(body_str);
-            }
+            try { if (!body_str.empty()) body = json::parse(body_str); }
             catch (const std::exception& e)
             {
                 response["status"] = 400;
@@ -743,7 +873,7 @@ namespace mantis
         if (const auto resp = validateUpdateRequestBody(body))
         {
             response["status"] = resp.value().value("status", 500);
-            response["error"] = resp.value().value("error", "");
+            response["error"] = resp.value().value("error", "Error validating request body!");
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
