@@ -1,3 +1,4 @@
+
 @mainpage Getting Started
 
 <p align="center">
@@ -11,6 +12,7 @@
   Portable. Embeddable. Syncable. Built for speed and extensibility.
 </p>
 
+---
 
 ## 🔧 Overview
 
@@ -33,11 +35,33 @@
 - **Packaging**: Docker + CLI
 - **Sync**: WebSocket / REST delta sync (planned)
 
-> NOTE: On windows, we use `mingw` not `MSVC` due to some feature incompatibility. For `mingw`, it requires at least `v13` with support for `std::format`.
+> **Note:** On Windows, use `mingw` (not `MSVC`) due to feature incompatibility. For `mingw`, version 13+ is required for `std::format` support.
 
 ---
 
 ## 🚀 Getting Started
+
+There are several ways to get started with Mantis:
+
+### 1. Using Pre-built Binaries
+
+Download pre-built binaries from the [release page](https://github.com/allankoechke/mantis/releases). Unzip the package and start the server:
+
+```bash
+./build/mantisapp serve -p 7070
+```
+
+#### Creating an Admin Account
+To use the admin dashboard, you must first create an admin user account. This can be done via the CLI:
+
+```bash
+mantisapp admins --add john@doe.com
+```
+You will be prompted to enter and confirm the password. The account can then be used to log in to the admin dashboard.
+
+### 2. Building from Source
+
+Clone the repository and build the project:
 
 ```bash
 git clone --recurse-submodules https://github.com/allankoechke/mantis.git
@@ -46,9 +70,15 @@ cmake -B build
 cmake --build build
 ./build/mantisapp serve
 ```
-By default, the http server is served on port `7070`.
+By default, the server runs on port `7070`.
 
-You can also embed Mantis as a library in your own C++ project:
+### 3. Embedding in Another Project
+
+You can embed Mantis as a library in your own C++ project:
+
+- Add this project as a submodule to your project.
+- Link your project to the `mantis` library target.
+- Extend your project as shown below:
 
 ```cpp
 #include <mantis/app/app.h>
@@ -60,26 +90,30 @@ int main(const int argc, char* argv[])
     return app.run();
 }
 ```
-Check [mantis/examples](https://github.com/allankoechke/mantis/tree/master/examples) for a sample
+Check [mantis/examples](https://github.com/allankoechke/mantis/tree/master/examples) for a sample.
 
-### Admin Dashboard
-Mantis ships with a lightweight admin dashboard available on `<host>:<ip>/admin` and restricted to admin login only. By default, in your setup, you need to create a admin user account using the [CLI](01.cmd.md) command:
+> **Note:** `MantisApp` has a blocking event loop when listening for HTTP events. To avoid blocking your main thread, run it in a separate thread if needed.
 
-```shell
-mantisapp admins --add john@doe.com
-```
+### 4. Using Docker
 
-With the admin account created, we can then use it to log in to the admin dashboard. The dashboard allows for easy management of:
-- **__CRUD__** on admin accounts
-- **__CRUD__** on system logs [WIP?]
-- **__CRUD__** on database tables (only the tables managed by mantis).
-- **__CRUD__** on records in the tables.
-- Schema & database migration [WIP?]
+You can also run `mantisapp` in a Docker container. See [doc/docker.md](doc/docker.md) for more information.
 
-By default, admin auth tokens expire after an hour, but it's configurable in the settings tab of the dashboard.
+---
 
-![Mantis Admin](mantis-admin.png)
-___admin dashboard snapshot___
+## 🖥️ Admin Dashboard
+
+Mantis ships with a lightweight admin dashboard available at `<host>:<port>/admin` (admin login required). The dashboard allows for easy management of:
+
+- **CRUD** on admin accounts
+- **CRUD** on system logs [WIP]
+- **CRUD** on database tables (managed by Mantis)
+- **CRUD** on records in the tables
+- Schema & database migration [WIP]
+
+By default, admin auth tokens expire after an hour (configurable in the dashboard settings).
+
+![Mantis Admin](assets/mantis-admin.png)
+_Admin dashboard snapshot_
 
 ---
 
@@ -95,6 +129,45 @@ mantis/
 ├── docker/             # Docker deployment
 └── CMakeLists.txt
 ```
+
+---
+
+## 🩺 Healthcheck Endpoint
+
+Mantis provides a healthcheck endpoint for monitoring and orchestration tools:
+
+```
+GET /api/v1/health
+```
+
+Returns:
+
+```json
+{
+  "status": "ok",
+  "uptime": 12345
+}
+```
+
+Use this endpoint to verify server availability and uptime.
+
+---
+
+## 📂 File Handling
+
+Mantis supports file uploads and management via the API:
+
+- **Serving files:**
+  - All files stored in the database are served under `/api/files/<table name>/<filename>`
+- **Creating records with files:**
+  - Send a `POST` request to the table route using `multipart/form-data` (FormData)
+- **Updating files in records:**
+  - Send a `PATCH` request to the table record with new files as you would update other fields
+  - For fields with multiple files, include the original files you want to keep; missing files will be deleted
+- **Deleting files:**
+  - Send an update (PATCH) omitting the file name from the field; the backend will delete the file
+
+See [files.md](11.files.md) for more details.
 
 ---
 
