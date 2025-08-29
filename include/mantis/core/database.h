@@ -46,8 +46,9 @@ namespace mantis
 
         /**
          * @brief Run database migrations, creates the default system tables.
+         * @return `true` if migration completes successfully else `false`.
          */
-        void migrate() const;
+        bool migrate() const;
 
         /**
          * @brief Get access to a session from the pool

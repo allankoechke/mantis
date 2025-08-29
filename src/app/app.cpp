@@ -216,7 +216,11 @@ namespace mantis
 
         // Initialize database connection & Migration
         m_database->connect(m_dbType, connString);
-        m_database->migrate();
+        if (!m_database->migrate())
+        {
+            Log::critical("Database migration failed, see previous error!");
+            quit(-1, "Database migration failed, see previous error!");
+        }
 
         if (!m_database->isConnected())
         {
