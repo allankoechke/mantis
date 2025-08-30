@@ -216,14 +216,6 @@ bool mantis::DatabaseUnit::isConnected() const
     return sql->is_connected();
 }
 
-std::string mantis::DatabaseUnit::tmToISODate(const std::tm& t)
-{
-    char buffer[80];
-    const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
-    std::string iso_string(buffer, length);
-    return iso_string;
-}
-
 void mantis::DatabaseUnit::writeCheckpoint() const
 {
     // Enable this write checkpoint for SQLite databases ONLY

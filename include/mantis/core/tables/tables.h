@@ -124,11 +124,20 @@ namespace mantis
          * @return Error object if unsuccessful else a std::nullopt
          */
         std::optional<json> bindEntityToSociValue(soci::values& vals, const json& entity) const;
-        std::optional<json> validateRequestBody(const json& body) const;
-        std::optional<json> validateUpdateRequestBody(const json& body) const;
+
+        std::optional<std::string> validateRequestBody(const json& body) const;
+        std::optional<std::string> validateUpdateRequestBody(const json& body) const;
+
         bool recordExists(const std::string& id) const;
         std::optional<json> findFieldByKey(const std::string& key) const;
         json checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const;
+
+        // Validators ...
+        static std::pair<bool, std::string> minimumConstraintCheck(const json& field, const json& entity);
+        static std::pair<bool, std::string> maximumConstraintCheck(const json& field, const json& entity);
+        static std::pair<bool, std::string> requiredConstraintCheck(const json& field, const json& entity);
+        static std::pair<bool, std::string> validatorConstraintCheck(const json& field, const json& entity);
+        static std::pair<bool, std::string> viewTypeSQLCheck(const json& entity);
 
         const std::string __class_name__ = "TableUnit";
     protected:

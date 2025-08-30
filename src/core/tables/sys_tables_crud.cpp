@@ -2,20 +2,18 @@
 // Created by allan on 18/05/2025.
 //
 
-#include "../../../include/mantis/core/tables/sys_tables.h"
-#include "../../../include/mantis/app/app.h"
-#include "../../../include/mantis/core/crud/crud.h"
-#include "../../../include/mantis/core/database.h"
-#include "../../../include/mantis/core/models/models.h"
-#include "../../../include/mantis/core/tables/tables.h"
-#include "../../../include/mantis/core/logging.h"
-#include "../../../include/mantis/utils/utils.h"
-
-#include <soci/soci.h>
-
+#include "mantis/core/tables/sys_tables.h"
+#include "mantis/app/app.h"
+#include "mantis/core/database.h"
+#include "mantis/core/models/models.h"
+#include "mantis/core/tables/tables.h"
+#include "mantis/core/logging.h"
+#include "mantis/utils/utils.h"
 #include "mantis/core/fileunit.h"
 #include "mantis/core/router.h"
-#include "private/soci-mktime.h"
+
+#include <soci/soci.h>
+#include <private/soci-mktime.h>
 
 #define __file__ "core/tables/sys_tables_crud.cpp"
 
@@ -194,8 +192,8 @@ namespace mantis
                 obj["type"] = type;
                 obj["has_api"] = has_api;
                 obj["schema"] = json::parse(schema_str);
-                obj["created"] = DatabaseUnit::tmToISODate(*created_tm);
-                obj["updated"] = DatabaseUnit::tmToISODate(*created_tm);
+                obj["created"] = tmToStr(*created_tm);
+                obj["updated"] = tmToStr(*created_tm);
 
                 result["data"] = obj;
 
@@ -745,7 +743,9 @@ namespace mantis
         const auto sql = MantisApp::instance().db().session();
         const soci::rowset<soci::row> rs = (sql->prepare <<
             "SELECT id, name, type, schema, has_api, created, updated FROM __tables");
-        nlohmann::json response = nlohmann::json::array();
+
+        // Response Object
+        auto response = json::array();
 
         for (const auto& row : rs)
         {
@@ -754,8 +754,9 @@ namespace mantis
             const auto type = row.get<std::string>(2);
             const auto schema_json = row.get<json>(3);
             const auto has_api = row.get<bool>(4);
-            const auto created = row.get<std::string>(5);
-            const auto updated = row.get<std::string>(6);
+
+            const auto created = dbDateToString(sql->get_backend_name(), row, 5);
+            const auto updated = dbDateToString(sql->get_backend_name(), row, 6);;
 
             json tb;
             tb["id"] = id;
@@ -774,7 +775,6 @@ namespace mantis
 
     bool SysTablesUnit::itemExists(const std::string& tableName, const std::string& id) const
     {
-        Log::trace("SysTablesUnit::itemExists for {} {}", tableName, id);
         try
         {
             int count;

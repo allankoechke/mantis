@@ -51,12 +51,26 @@ namespace mantis
             std::tm created_tm = *std::localtime(&current_t);
             std::string columns, placeholders;
 
+            auto entity_copy = entity;
+
+            // Force default values here ...
+            entity_copy["id"] = "";
+            entity_copy["created"] = nullptr;
+            entity_copy["updated"] = nullptr;
+
             // Create the field cols and value cols as concatenated strings
-            for (const auto& field : m_fields)
+            for (const auto& [key, _] : entity_copy.items())
             {
-                const auto field_name = field.at("name").get<std::string>();
-                columns += columns.empty() ? field_name : ", " + field_name;
-                placeholders += placeholders.empty() ? (":" + field_name) : (", :" + field_name);
+                // First, ensure the key exists in our schema fields
+                auto schema = findFieldByKey(key);
+                if (!schema.has_value())
+                {
+                    entity_copy.erase(key);
+                    continue;
+                }
+
+                columns += columns.empty() ? key : ", " + key;
+                placeholders += placeholders.empty() ? (":" + key) : (", :" + key);
             }
 
             // Create the SQL Query
@@ -64,14 +78,12 @@ namespace mantis
 
             // Store all bound values to ensure lifetime
             soci::values vals;
-
-            soci::indicator ind = soci::i_ok;
-            vals.set("id", id, ind);
-            vals.set("created", created_tm, ind);
-            vals.set("updated", created_tm, ind);
+            vals.set("id", id, soci::i_ok);
+            vals.set("created", created_tm, soci::i_ok);
+            vals.set("updated", created_tm, soci::i_ok);
 
             // Bind soci::values to entity values
-            const auto status = bindEntityToSociValue(vals, entity);
+            const auto status = bindEntityToSociValue(vals, entity_copy);
             if (status.has_value())
             {
                 return status.value();
@@ -85,8 +97,6 @@ namespace mantis
             soci::row r;
             *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
             auto added_row = parseDbRowToJson(r);
-
-            Log::trace("Added record: {}", added_row.dump());
 
             // Remove user password from the response
             if (tableType() == "auth") added_row.erase("password");

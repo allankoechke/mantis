@@ -210,6 +210,7 @@ soci::db_type mantis::Field::toSociType() const
 
 soci::db_type mantis::Field::toSociType(const FieldType& f_type)
 {
+    if (f_type == FieldType::JSON) return soci::db_string;
     if (f_type == FieldType::XML) return soci::db_xml;
     if (f_type == FieldType::DOUBLE) return soci::db_double;
     if (f_type == FieldType::DATE) return soci::db_date;
@@ -222,9 +223,8 @@ soci::db_type mantis::Field::toSociType(const FieldType& f_type)
     if (f_type == FieldType::INT64) return soci::db_int64;
     if (f_type == FieldType::UINT64) return soci::db_uint64;
     if (f_type == FieldType::BLOB) return soci::db_blob;
-    if (f_type == FieldType::BOOL) return soci::db_int8;
-    if (f_type == FieldType::STRING || f_type == FieldType::JSON
-        || f_type == FieldType::FILE || f_type == FieldType::FILES)
+    if (f_type == FieldType::BOOL) return soci::db_uint16;
+    if (f_type == FieldType::STRING || f_type == FieldType::FILE || f_type == FieldType::FILES)
         return soci::db_string;
 
     throw std::invalid_argument("Unknown field type");
@@ -272,18 +272,21 @@ std::string mantis::Table::to_sql() const
                        : sql->get_backend()->create_column_type(soci::db_int16, 0, 0);
         }
 
+        // Convert bool types to `db_uint16`
+        if (db_type == "postgresql" && t == FieldType::BOOL)
+        {
+            return sql->get_backend()->create_column_type(soci::db_uint16, 0, 0);
+        }
+
         // General catch for all other types
         return sql->get_backend()->create_column_type(Field::toSociType(t), 0, 0);
     };
-
 
     // Get DB Session
     const auto sql = MantisApp::instance().db().session();
 
     std::ostringstream ddl;
     ddl << "CREATE TABLE IF NOT EXISTS " << name << " (";
-
-
     for (size_t i = 0; i < fields.size(); ++i)
     {
         if (i > 0) ddl << ", ";
@@ -297,8 +300,8 @@ std::string mantis::Table::to_sql() const
         if (field.isUnique) ddl << " UNIQUE";
         if (field.defaultValue.has_value()) ddl << " DEFAULT '" << field.defaultValue.value() << "'";
     }
-
     ddl << ");";
+
     return ddl.str();
 }
 

@@ -68,13 +68,6 @@ namespace mantis
          */
         [[nodiscard]] bool isConnected() const;
 
-        /**
-         * @brief Convert c++ std::tm date/time value to ISO formatted string.
-         * @param t std::tm value
-         * @return ISO formatted datetime value
-         */
-        static std::string tmToISODate(const std::tm& t);
-
         const std::string __class_name__ = "mantis::DatabaseUnit";
 
     private:

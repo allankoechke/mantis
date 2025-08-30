@@ -27,9 +27,8 @@ if(MANTIS_SHARED_DEPS)
     message("-- Building Mantis dynamic libs")
 else()
     set(BUILD_SHARED_LIBS FALSE)
-    set(MANTIS_LIB_TYPE STATIC
-            src/core/fileunit.cpp
-            include/mantis/core/fileunit.h)
+    set(MANTIS_LIB_TYPE STATIC)
+
     # For static builds, embed libstdgcc and libstdc++ to avoid binary loading fails
     # due to mismatch libstd* libs.
     set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -static-libgcc -static-libstdc++")
@@ -83,12 +82,16 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     src/utils/auth_utils.cpp
     src/utils/string_utils.cpp
     src/utils/path_utils.cpp
+    src/utils/type_utils.cpp
 
     include/mantis/core/private-impl/soci_custom_types.hpp
     include/mantis/app/config.hpp.in
 
     src/core/settings.cpp
     include/mantis/core/settings.h
+
+    src/core/fileunit.cpp
+    include/mantis/core/fileunit.h
 )
 
 # Add httplib

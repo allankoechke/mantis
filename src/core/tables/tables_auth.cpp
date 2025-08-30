@@ -14,7 +14,7 @@ namespace mantis
 {
     void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
     {
-        Log::trace("Auth on record, endpoint {}", req.path);
+        TRACE_CLASS_METHOD();
 
         json body, response;
         try { body = json::parse(req.body); }
@@ -26,8 +26,6 @@ namespace mantis
 
             res.status = 500;
             res.set_content(response.dump(), "application/json");
-
-            Log::critical("Could not parse request body! Reason: {}", e.what());
             return;
         }
 
@@ -65,7 +63,6 @@ namespace mantis
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
             *sql << query, soci::use(email), soci::into(r);
-            // Log::trace("Executed Query: {}", query);
 
             if (!sql->got_data())
             {
@@ -75,8 +72,6 @@ namespace mantis
 
                 res.status = 404;
                 res.set_content(response.dump(), "application/json");
-
-                Log::debug("No user found matching given email/password combination.");
                 return;
             }
 
@@ -100,7 +95,6 @@ namespace mantis
 
                     res.status = 500;
                     res.set_content(response.dump(), "application/json");
-                    Log::info("Error creating JWT token: {}", response.dump());
                     return;
                 }
 
@@ -114,7 +108,6 @@ namespace mantis
 
                 res.status = 200;
                 res.set_content(response.dump(), "application/json");
-                Log::info("Login Successful, user: {}", response.dump());
                 return;
             }
 
@@ -153,6 +146,8 @@ namespace mantis
 
     void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
     {
+        TRACE_CLASS_METHOD();
+
         [[maybe_unused]] auto sql = MantisApp::instance().db().session();
 
         Log::trace("Resetting password on record, endpoint {}", req.path);
@@ -162,8 +157,6 @@ namespace mantis
 
     bool TableUnit::getAuthToken(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
     {
-        Log::trace("Extracting Auth Token on path {}", req.path);
-
         // If we have an auth header, extract it into the ctx, else
         // add a guest user type. The auth if present, should have
         // the user id, auth table, etc.
@@ -182,12 +175,13 @@ namespace mantis
 
         // Update the context
         ctx.set("auth", auth);
-        ctx.dump();
         return REQUEST_PENDING;
     }
 
     bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx)
     {
+        TRACE_CLASS_METHOD();
+
         // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
 
@@ -225,7 +219,6 @@ namespace mantis
         if (auth.contains("token") && !auth["token"].is_null() && !auth["token"].empty())
         {
             const auto token = auth.value("token", "");
-            Log::trace("User Token: {}", token);
 
             // If token validation worked, lets get data from database
             if (const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());

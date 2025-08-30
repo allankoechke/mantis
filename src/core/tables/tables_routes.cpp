@@ -235,16 +235,16 @@ namespace mantis
         pagination["perPage"] = 100; // Number of records per page
         pagination["pageIndex"] = 1; // Current page, 1-index based
         pagination["pageCount"] = -1; // Total pages
-        pagination["recordCount"] = 0; // Total pages
+        pagination["recordCount"] = 0; // Total records
         pagination["countPages"] = true; // Whether to calculate number of pages
 
-        if (req.has_param("perPage"))
+        if (req.has_param("perPage") && !req.get_param_value("perPage").empty())
             pagination["perPage"] = std::stoi(req.get_param_value("perPage"));
 
-        if (req.has_param("pageIndex"))
+        if (req.has_param("pageIndex") && !req.get_param_value("pageIndex").empty())
             pagination["pageIndex"] = std::stoi(req.get_param_value("pageIndex"));
 
-        if (req.has_param("countPages"))
+        if (req.has_param("countPages") && !req.get_param_value("countPages").empty())
         {
             const std::string value = req.get_param_value("countPages");
             pagination["countPages"] = value.empty() ? true : strToBool(value);
@@ -514,16 +514,17 @@ namespace mantis
         }
 
         // Validate JSON body, return any validation errors encountered
-        if (const auto resp = validateRequestBody(body))
+        const auto resp = validateRequestBody(body);
+        if (resp.has_value())
         {
-            response["status"] = resp.value().value("status", 500);
-            response["error"] = resp.value().value("error", "");
+            response["status"] = 400;
+            response["error"] = resp.value();
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
-            res.status = resp.value().value("status", 500);
+            res.status = 400;
 
-            Log::critical("Error Validating Field: {}", resp.value().value("error", ""));
+            Log::critical("Error Validating Request Body: {}", resp.value());
             return;
         };
 
@@ -872,14 +873,14 @@ namespace mantis
         // Validate JSON body, return any validation errors encountered
         if (const auto resp = validateUpdateRequestBody(body))
         {
-            response["status"] = resp.value().value("status", 500);
-            response["error"] = resp.value().value("error", "Error validating request body!");
+            response["status"] = 400;
+            response["error"] = resp.value();
             response["data"] = json::object();
 
             res.set_content(response.dump(), "application/json");
-            res.status = resp.value().value("status", 500);
+            res.status = 400;
 
-            Log::critical("Error Validating Field: {}", resp.value().value("error", ""));
+            Log::critical("Error Validating Field: {}", resp.value());
             return;
         };
 

@@ -21,6 +21,8 @@ namespace mantis
 
     bool SysTablesUnit::setupRoutes()
     {
+        TRACE_CLASS_METHOD()
+
         if (m_tableName.empty() && m_routeName.empty()) return false;
 
         const auto path = m_routeName.empty() ? m_tableName : m_routeName;
@@ -158,6 +160,8 @@ namespace mantis
 
     void SysTablesUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
     {
+        TRACE_CLASS_METHOD()
+
         // Response Object
         json response;
 
@@ -222,6 +226,8 @@ namespace mantis
 
     void SysTablesUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
     {
+        TRACE_CLASS_METHOD()
+
         json response;
         try
         {
@@ -258,6 +264,8 @@ namespace mantis
 
     void SysTablesUnit::createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
+        TRACE_CLASS_METHOD()
+
         json body, response;
 
         // Handle as JSON/regular body
@@ -350,8 +358,7 @@ namespace mantis
                     if (field_type.empty())
                     {
                         response["status"] = 400;
-                        response["error"] = "Field type '" + field_type + "' for '" + name +
-                            "' is empty!";
+                        response["error"] = std::format("Field type `{}` for `{}` is empty!", field_type, name);
                         response["data"] = json::object();
 
                         res.status = 400;
@@ -361,8 +368,7 @@ namespace mantis
                     if (!isValidFieldType(field_type))
                     {
                         response["status"] = 400;
-                        response["error"] = "Field type '" + field_type + "' for '" + name +
-                            "' is not a valid type";
+                        response["error"] = std::format("Field type `{}` for `{}` is not recognized!", field_type, name);
                         response["data"] = json::object();
 
                         res.status = 400;
@@ -404,7 +410,7 @@ namespace mantis
 
     void SysTablesUnit::updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
     {
-        Log::trace("Updating table, endpoint {}", req.path);
+        TRACE_CLASS_METHOD()
 
         json body, response;
         // Extract request ID and check that it's not empty
@@ -452,7 +458,7 @@ namespace mantis
         {
             response["status"] = 404;
             response["data"] = json::object();
-            response["error"] = "Record with id " + id + " was not found.";
+            response["error"] = std::format("Record with id = `{}` was not found.", id);
 
             res.status = 404;
             res.set_content(response.dump(), "application/json");
@@ -478,7 +484,6 @@ namespace mantis
         // Get the data, for auth types, redact the password information
         // it's not useful data to return in the response despite being hashed
         const auto record = respObj.at("data");
-        Log::trace("Record update successful: {}", record.dump());
 
         // Return the added record + the system generated fields
         response["status"] = 200;
@@ -491,6 +496,8 @@ namespace mantis
 
     void SysTablesUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
     {
+        TRACE_CLASS_METHOD()
+
         const auto id = req.path_params.at("id");
         json response;
         if (id.empty())
@@ -547,14 +554,12 @@ namespace mantis
 
             res.status = 500;
             res.set_content(response.dump(), "application/json");
-
-            Log::critical("Could not parse request body! Reason: {}", e.what());
             return;
         }
 
         // Get email & password values
-        const auto email = (body.contains("email") && body["email"].is_null()) ? body.value("email", "") : "";
-        const auto password = (body.contains("password") && body["password"].is_null())
+        const auto email = (body.contains("email") && !body["email"].is_null()) ? body.value("email", "") : "";
+        const auto password = (body.contains("password") && !body["password"].is_null())
                                   ? body.value("password", "")
                                   : "";
 
@@ -586,7 +591,6 @@ namespace mantis
             // Find user with an email passed in ....
             const auto sql = MantisApp::instance().db().session();
 
-            Log::trace("Admin: U: {}, P: {}", email, password);
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
             *sql << query, soci::use(email), soci::into(r);
@@ -599,9 +603,6 @@ namespace mantis
 
                 res.status = 404;
                 res.set_content(response.dump(), "application/json");
-
-                Log::debug("[No DB Match] No user found matching given email/password combination. {}",
-                           response.dump());
                 return;
             }
 
@@ -614,7 +615,6 @@ namespace mantis
                 auto user = parseDbRowToJson(r);
                 user.erase("password"); // Remove password field
 
-                // C
                 const json claims{{"id", user.at("id").get<std::string>()}, {"table", m_tableName}};
                 const auto obj = JWT::createJWTToken(claims, MantisApp::jwtSecretKey());
                 if (const auto err = obj.at("error").get<std::string>(); !err.empty())
@@ -625,8 +625,6 @@ namespace mantis
 
                     res.status = 500;
                     res.set_content(response.dump(), "application/json");
-
-                    Log::info("Error creating JWT token: {}", response.dump());
 
                     return;
                 }
@@ -681,6 +679,8 @@ namespace mantis
 
     bool SysTablesUnit::hasAccess(const Request& req, Response& res, Context& ctx)
     {
+        TRACE_CLASS_METHOD()
+
         // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
 
@@ -696,13 +696,11 @@ namespace mantis
             res.status = 403;
             res.set_content(response.dump(), "application/json");
 
-            DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
         // Expand logged user if token is present
         const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
-        Log::trace("RESP: {}", resp.dump());
         if (!resp.value("verified", false) || !resp.value("error", "").empty())
         {
             json response;
@@ -712,7 +710,7 @@ namespace mantis
 
             res.status = 403;
             res.set_content(response.dump(), "application/json");
-            DUMP_RESPONSE();
+
             return REQUEST_HANDLED;
         }
 
@@ -720,7 +718,7 @@ namespace mantis
         // return an error
         const auto _id = resp.value("id", "");
         const auto _table = resp.value("table", "");
-        Log::trace("After Auth: id = {}, table = {}", _id, _table);
+        // Log::trace("After Auth: id = {}, table = {}", _id, _table);
 
         if (_id.empty() || _table.empty())
         {
@@ -731,7 +729,7 @@ namespace mantis
 
             res.status = 403;
             res.set_content(response.dump(), "application/json");
-            DUMP_RESPONSE();
+
             return REQUEST_HANDLED;
         }
 
@@ -756,7 +754,6 @@ namespace mantis
             res.status = 404;
             res.set_content(response.dump(), "application/json");
 
-            DUMP_RESPONSE();
             return REQUEST_HANDLED;
         }
 
@@ -772,12 +769,10 @@ namespace mantis
             if (row.get_properties(2).get_db_type() == soci::db_date)
             {
                 auto t = row.get<std::tm>(2);
-                auto c_ts = DatabaseUnit::tmToISODate(t);
-                user["created"] = c_ts;
+                user["created"] = tmToStr(t);
 
                 t = row.get<std::tm>(3);
-                auto u_ts = DatabaseUnit::tmToISODate(t);
-                user["updated"] = u_ts;
+                user["updated"] = tmToStr(t);
             }
             else
             {
@@ -795,9 +790,6 @@ namespace mantis
             {
                 auth[key] = value;
             }
-
-            // Remove password field
-            // auth.erase("password");
         }
         catch (const std::exception& e)
         {
@@ -810,7 +802,7 @@ namespace mantis
 
             res.status = 500;
             res.set_content(response.dump(), "application/json");
-            DUMP_RESPONSE();
+
             return REQUEST_HANDLED;
         }
 
@@ -818,7 +810,7 @@ namespace mantis
         ctx.set("auth", auth);
 
         const auto table_name = auth.value("table", "");
-        Log::trace("Auth table is: {}", table_name);
+        // Log::trace("Auth table is: {}", table_name);
         // Check if user is logged in as Admin
         if (table_name == "__admins")
         {
@@ -836,7 +828,7 @@ namespace mantis
 
         res.status = 403;
         res.set_content(response.dump(), "application/json");
-        DUMP_RESPONSE();
+
         return REQUEST_HANDLED;
     }
 } // mantis

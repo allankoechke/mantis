@@ -168,6 +168,15 @@ namespace mantis
          * @return Selected DatabaseType enum value.
          */
         [[nodiscard]] DbType dbType() const;
+
+        /**
+         * @brief Get the current database type as a string type
+         * matching the soci::get_backend_name() response to allow using this
+         * without fetching database session instance.
+         *
+         * @return string repr of the current db type
+         */
+        [[nodiscard]] std::string dbTypeByName() const;
         /**
          * Update the active database type for Mantis.
          * @param dbType New database type enum value.
