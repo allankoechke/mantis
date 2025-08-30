@@ -15,6 +15,7 @@
 #include <chrono>
 #include <string_view>
 #include <algorithm>
+#include <soci/row.h>
 
 #include "../core/logging.h"
 
@@ -277,6 +278,20 @@ namespace mantis
      * @return JSON object indicating whether the verification was successful and an error value if any.
      */
     json verifyPassword(const std::string& password, const std::string& stored_hash);
+
+    // ----------------------------------------------------------------- //
+    // AUTH UTILS
+    // ----------------------------------------------------------------- //
+
+    /**
+     * @brief Convert c++ std::tm date/time value to ISO formatted string.
+     * @param t std::tm value
+     * @return ISO formatted datetime value
+     */
+    std::string tmToStr(const std::tm& t);
+    std::tm strToTM(const std::string& value);
+    std::string dbDateToString(const std::string& dbType, const soci::row& row, int index);
+
 }
 
 #endif // MANTIS_UTILS_H

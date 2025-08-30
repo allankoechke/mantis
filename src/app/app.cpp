@@ -216,7 +216,11 @@ namespace mantis
 
         // Initialize database connection & Migration
         m_database->connect(m_dbType, connString);
-        m_database->migrate();
+        if (!m_database->migrate())
+        {
+            Log::critical("Database migration failed, see previous error!");
+            quit(-1, "Database migration failed, see previous error!");
+        }
 
         if (!m_database->isConnected())
         {
@@ -470,7 +474,7 @@ namespace mantis
 #ifdef _WIN32
         std::string command = "start " + url;
 #elif __APPLE__
-            std::string command = "open " + url;
+        std::string command = "open " + url;
 #elif __linux__
         std::string command = "xdg-open " + url;
 #else
@@ -543,6 +547,19 @@ namespace mantis
     {
         MANTIS_REQUIRE_INIT();
         return m_dbType;
+    }
+
+    std::string MantisApp::dbTypeByName() const
+    {
+        MANTIS_REQUIRE_INIT();
+
+        switch (m_dbType)
+        {
+        case DbType::SQLITE: return "sqlite3";
+        case DbType::PSQL: return "postgresql";
+        case DbType::MYSQL: return "mysql";
+        default: return "";
+        }
     }
 
     int MantisApp::port() const
@@ -644,15 +661,20 @@ namespace mantis
 
 #ifdef WIN32
         char ch;
-        while ((ch = _getch()) != '\r') {
+        while ((ch = _getch()) != '\r')
+        {
             // Enter key
-            if (ch == '\b') {
+            if (ch == '\b')
+            {
                 // Backspace
-                if (!password.empty()) {
+                if (!password.empty())
+                {
                     password.pop_back();
                     std::cout << "\b \b"; // Erase character from console
                 }
-            } else {
+            }
+            else
+            {
                 password += ch;
                 std::cout << '*'; // Optional: print '*' for each char
             }

@@ -108,16 +108,7 @@ namespace mantis
             }
             else if (colType == "date")
             {
-                if (row.get_properties(i).get_db_type() == soci::db_date)
-                {
-                    auto t = row.get<std::tm>(i);
-                    auto ts = DatabaseUnit::tmToISODate(t);
-                    j[colName] = ts;
-                }
-                else
-                {
-                    j[colName] = row.get<std::string>(i, "");
-                }
+                j[colName] = mantis::dbDateToString(MantisApp::instance().dbTypeByName(), row, i);
             }
             else if (colType == "int8")
             {
@@ -170,11 +161,8 @@ namespace mantis
             }
             else if (colType == "files")
             {
-                // TODO handle lists as array of files
                 j[colName] = row.get<json>(i);
             }
-
-            // Log::trace("Parsing: #{} {} of type: {}", i, colName, colType);
         }
 
         return j;
@@ -192,7 +180,9 @@ namespace mantis
         {
             obj["value"] = content;
         }
-        else if (type == "double" || type == "int8" || type == "uint8" || type == "int16" || type == "uint16" || type == "int32" || type == "uint32" || type == "int64" || type == "uint64")
+        else if (type == "double" || type == "int8" || type == "uint8" || type == "int16" ||
+            type == "uint16" || type == "int32" ||
+            type == "uint32" || type == "int64" || type == "uint64")
         {
             obj["value"] = json::parse(content);
         }
@@ -358,7 +348,6 @@ namespace mantis
     {
         for (const auto& field : fields)
         {
-            // Log::trace("Field: {}, Type: {}, col: {}", field.at("name").get<std::string>(), field.at("type").get<std::string>(), col);
             if (field.value("name", "") == col && !col.empty())
                 return field.value("type", "");
         }

@@ -10,8 +10,6 @@
 
 namespace mantis
 {
-#define DUMP_RESPONSE() Log::trace("DUMP_RESPONSE: {}", response.dump())
-
     class TablesCrud;
 
     /**

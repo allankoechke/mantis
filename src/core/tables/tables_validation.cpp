@@ -11,330 +11,304 @@
 
 namespace mantis
 {
-    std::optional<json> TableUnit::validateRequestBody(const json& body) const
+    std::optional<std::string> TableUnit::validateRequestBody(const json& body) const
     {
-        // Create default base object
-        for (const auto& field : m_fields)
+        // If the table type is of view type, check that the SQL is passed in ...
+        if (m_tableType == "view")
         {
-            json obj;
-            const auto& name = field.value("name", "");
+            const auto& [pass, err] = viewTypeSQLCheck(body);
+            if (!pass) return err;
+        }
 
-            // Skip system generated fields
-            if (name == "id" || name == "created" || name == "updated") continue;
-
-            const auto& type = field.value("type", "");
-            // const auto& value = getTypedValue(body, name, type);
-
-            // || body.at(name).is_null()
-            // TODO current assumption is that the value is not empty, fix that later
-            if (const auto& required = field.value("required", false);
-                required && !body.contains(name))
+        else // For `base` and `auth` types
+        {
+            // Create default base object
+            for (const auto& field : m_fields)
             {
-                obj["error"] = "Field '" + name + "' is required";
-                obj["status"] = 400;
-                return obj;
-            }
+                const auto& name = field.value("name", "");
 
-            Log::trace("Check for min value");
-            if (!field["minValue"].is_null())
-            {
-                const auto minValue = field["minValue"].get<double>();
-                Log::trace("Checking if minValue is satisfied: Is String? {}, Value? {}, Condition: {}",
-                           type == "string", body.value(name, "").size(),
-                           body.value(name, "").size() < static_cast<size_t>(minValue));
-                if (type == "string" && body.value(name, "").size() < static_cast<size_t>(minValue))
-                {
-                    obj["error"] = name + " should be at least " + std::to_string(static_cast<int>(minValue)) +
-                        " chars long.";
-                    obj["status"] = 400;
-                    return obj;
+                // Skip system generated fields
+                if (name == "id" || name == "created" || name == "updated") continue;
+
+
+                { // REQUIRED CONSTRAINT CHECK
+                    const auto& [pass, err] = requiredConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
 
-                Log::trace("Min Value check for integral types ...");
-                auto checkMinValueFunc = [&](auto _val, auto _min)
-                {
-                    if (_val < _min)
-                    {
-                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(_min);
-                        obj["status"] = 400;
-                        return true;
-                    }
-                    return false;
-                };
-
-                if (type == "double" &&
-                    checkMinValueFunc(body.at(name).get<double>(), minValue))
-                {
-                    return obj;
-                }
-                else if (type == "int8" &&
-                    checkMinValueFunc(body.at(name).get<int8_t>(), static_cast<int8_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint8" &&
-                    checkMinValueFunc(body.at(name).get<uint8_t>(), static_cast<uint8_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "int16" &&
-                    checkMinValueFunc(body.at(name).get<int16_t>(), static_cast<int16_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint16" &&
-                    checkMinValueFunc(body.at(name).get<uint16_t>(), static_cast<uint16_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "int32" &&
-                    checkMinValueFunc(body.at(name).get<int32_t>(), static_cast<int32_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint32" &&
-                    checkMinValueFunc(body.at(name).get<uint32_t>(), static_cast<uint32_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "int64" &&
-                    checkMinValueFunc(body.at(name).get<int64_t>(), static_cast<int64_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint64" &&
-                    checkMinValueFunc(body.at(name).get<uint64_t>(), static_cast<uint64_t>(minValue)))
-                {
-                    return obj;
-                }
-            }
-
-            Log::trace("Check for max value");
-            if (!field["maxValue"].is_null())
-            {
-                const auto maxValue = field["maxValue"].get<double>();
-
-                if (type == "string" && body.at(name).size() > maxValue)
-                {
-                    obj["error"] = "String value should be at most " + std::to_string(maxValue) + " characters long.";
-                    obj["status"] = 400;
-                    return obj;
+                { // MINIMUM CONSTRAINT CHECK
+                    const auto& [pass, err] = minimumConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
 
-                if (type == "double"
-                    || type == "int8" || type == "uint8"
-                    || type == "int16" || type == "uint16"
-                    || type == "int32" || type == "uint32"
-                    || type == "int64" || type == "uint64")
-                {
-                    if (body.at(name) > maxValue)
-                    {
-                        obj["error"] = "Field '" + name + "' value should be less or equal to " + std::to_string(
-                            maxValue);
-                        obj["status"] = 400;
-                        return obj;
-                    }
+                { // MAXIMUM CONSTRAINT CHECK
+                    const auto& [pass, err] = maximumConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
-            }
 
-            // if (field["defaultValue"] && !body.contains(name))
-            // {
-            //
-            // }
-
-            Log::trace("Check for view type");
-            // If the table type is of view type, check that the SQL is passed in ...
-            if (m_tableType == "view")
-            {
-                auto sql_stmt = body.at("sql").get<std::string>();
-                trim(sql_stmt);
-                if (sql_stmt.empty())
-                {
-                    obj["error"] = "View tables require SQL query Statement";
-                    obj["status"] = 400;
-                    return obj;
+                { // VALIDATOR CONSTRAINT CHECK
+                    const auto& [pass, err] = validatorConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
             }
         }
 
-        Log::trace("Done checking");
+        // Return null option for no error cases
         return std::nullopt;
     }
 
-    std::optional<json> TableUnit::validateUpdateRequestBody(const json& body) const
+    std::optional<std::string> TableUnit::validateUpdateRequestBody(const json& body) const
     {
-        // Create default base object
-        for (const auto& [key, val] : body.items())
+        // If the table type is of view type, check that the SQL is passed in ...
+        if (m_tableType == "view")
         {
-            json obj;
-            const auto j = findFieldByKey(key);
+            const auto& [pass, err] = viewTypeSQLCheck(body);
+            if (!pass) return err;
+        }
 
-            if (!j.has_value())
+        else // For `auth` and `base` types
+        {
+            // Create default base object
+            for (const auto& [key, val] : body.items())
             {
-                obj["error"] = "Field '" + key + "' is required";
-                obj["status"] = 400;
-                return obj;
-            }
+                const auto j = findFieldByKey(key);
 
-            const auto& field = j.value();
-            const auto& name = field.value("name", "");
-
-            // Skip system generated fields
-            if (name == "id" || name == "created" || name == "updated") continue;
-
-            const auto& type = field.value("type", "");
-
-            if (const auto& required = field.value("required", false);
-                required && !body.contains(name))
-            {
-                obj["error"] = "Field '" + name + "' is required";
-                obj["status"] = 400;
-                return obj;
-            }
-
-            Log::trace("Is minValue set? {}", field["minValue"].is_null());
-            if (!field["minValue"].is_null())
-            {
-                const auto minValue = field["minValue"].get<double>();
-
-                Log::trace("Checking if minValue is satisfied: Is String? {}, Value? {}, Condition: {}",
-                           type == "string", body.value(name, "").size(),
-                           body.value(name, "").size() < static_cast<size_t>(minValue));
-                if (type == "string" && body.value(name, "").size() < static_cast<size_t>(minValue))
+                if (!j.has_value())
                 {
-                    obj["error"] = "String value should be at least " + std::to_string(minValue) + " characters long.";
-                    obj["status"] = 400;
-                    return obj;
+                    return std::format("Unknown field named `{}`!", key);
                 }
 
-                Log::trace("Min Value check for integral types ...");
-                auto checkMinValueFunc = [&](auto _val, auto _min)
-                {
-                    if (_val < _min)
-                    {
-                        obj["error"] = "Field '" + name + "' should be greater or equal to " + std::to_string(_min);
-                        obj["status"] = 400;
-                        return true;
-                    }
-                    return false;
-                };
+                const auto& field = j.value();
+                const auto& name = field.value("name", "");
 
-                if (type == "double" &&
-                    checkMinValueFunc(body.at(name).get<double>(), minValue))
-                {
-                    return obj;
-                }
-                else if (type == "int8" &&
-                    checkMinValueFunc(body.at(name).get<int8_t>(), static_cast<int8_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint8" &&
-                    checkMinValueFunc(body.at(name).get<uint8_t>(), static_cast<uint8_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "int16" &&
-                    checkMinValueFunc(body.at(name).get<int16_t>(), static_cast<int16_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint16" &&
-                    checkMinValueFunc(body.at(name).get<uint16_t>(), static_cast<uint16_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "int32" &&
-                    checkMinValueFunc(body.at(name).get<int32_t>(), static_cast<int32_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint32" &&
-                    checkMinValueFunc(body.at(name).get<uint32_t>(), static_cast<uint32_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "int64" &&
-                    checkMinValueFunc(body.at(name).get<int64_t>(), static_cast<int64_t>(minValue)))
-                {
-                    return obj;
-                }
-                else if (type == "uint64" &&
-                    checkMinValueFunc(body.at(name).get<uint64_t>(), static_cast<uint64_t>(minValue)))
-                {
-                    return obj;
-                }
-            }
+                // Skip system generated fields
+                if (name == "id" || name == "created" || name == "updated") continue;
 
-            // Log::trace("Check for max value");
-            if (!field["maxValue"].is_null())
-            {
-                const auto maxValue = field["maxValue"].get<double>();
-
-                if (type == "string" && body.value(name, "").size() > maxValue)
-                {
-                    obj["error"] = "String value should be at most " + std::to_string(maxValue) + " characters long.";
-                    obj["status"] = 400;
-                    return obj;
+                { // REQUIRED CONSTRAINT CHECK
+                    const auto& [pass, err] = requiredConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
 
-                if (type == "double"
-                    || type == "int8" || type == "uint8"
-                    || type == "int16" || type == "uint16"
-                    || type == "int32" || type == "uint32"
-                    || type == "int64" || type == "uint64")
-                {
-                    if (body.at(name) > maxValue)
-                    {
-                        obj["error"] = "Field '" + name + "' value should be less or equal to " + std::to_string(
-                            maxValue);
-                        obj["status"] = 400;
-                        return obj;
-                    }
+                { // MINIMUM CONSTRAINT CHECK
+                    const auto& [pass, err] = minimumConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
-            }
 
-            if (!field["validator"].is_null())
-            {
-                auto pattern = field["validator"].get<std::string>();
-                if (const auto opt =  MantisApp::instance().validators().find(pattern);
-                    opt.has_value() && type == "string")
-                {
-                    // Since we have a regex string, lets validate it and return if it fails ...
-                    const auto& reg = opt.value()["regex"].get<std::string>();
-                    const auto& err = opt.value()["error"].get<std::string>();
-
-                    auto f = body.at(name).get<std::string>();
-                    if (const std::regex r_pattern(reg); !std::regex_match(f, r_pattern))
-                    {
-                        obj["error"] = err;
-                        obj["status"] = 400;
-                        return obj;
-                    }
+                { // MAXIMUM CONSTRAINT CHECK
+                    const auto& [pass, err] = maximumConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
-            }
 
-            // if (field["defaultValue"] && !body.contains(name))
-            // {
-            //
-            // }
-
-            // Log::trace("Check for view type");
-            // If the table type is of view type, check that the SQL is passed in ...
-            if (m_tableType == "view")
-            {
-                auto sql_stmt = body.at("sql").get<std::string>();
-                trim(sql_stmt);
-                if (sql_stmt.empty())
-                {
-                    obj["error"] = "View tables require SQL query Statement";
-                    obj["status"] = 400;
-                    return obj;
+                { // VALIDATOR CONSTRAINT CHECK
+                    const auto& [pass, err] = validatorConstraintCheck(field, body);
+                    if (!pass) return err;
                 }
             }
         }
 
-        // Log::trace("Done checking");
+        return std::nullopt;
+    }
+
+    std::pair<bool, std::string> TableUnit::minimumConstraintCheck(const json& field, const json& entity)
+    {
+        if (!field["minValue"].is_null())
+        {
+            const auto& min_value = field["minValue"].get<double>();
+            const auto& field_name = field["name"].get<std::string>();
+            const auto& field_type = field["name"].get<std::string>();
+
+            if (field_type == "string" && entity.value(field_name, "").size() < static_cast<size_t>(min_value))
+            {
+                return std::make_pair(false,
+                    std::format("Minimum Constraint Failed: Char length for `{}` should be >= {}",
+                    field_name, static_cast<int>(min_value)));
+            }
+
+            if (field_type == "double" || field_type == "int8" || field_type == "uint8" || field_type == "int16" ||
+                field_type == "uint16" || field_type == "int32" || field_type == "uint32" || field_type == "int64" ||
+                field_type == "uint64")
+            {
+                if (entity.at(field_name) < min_value)
+                {
+                   return std::pair(false,
+                       std::format("Minimum Constraint Failed: Value for `{}` should be >= {}",
+                       field_name, min_value));
+                }
+            }
+        }
+
+        return std::make_pair(true, "");
+    }
+
+    std::pair<bool, std::string> TableUnit::maximumConstraintCheck(const json& field, const json& entity)
+    {
+        if (!field["maxValue"].is_null())
+        {
+            const auto max_value = field["maxValue"].get<double>();
+            const auto& field_name = field["name"].get<std::string>();
+            const auto& field_type = field["name"].get<std::string>();
+
+            if (field_type == "string" && entity.value(field_name, "").size() > static_cast<size_t>(max_value))
+            {
+                return std::make_pair(false,
+                    std::format("Minimum Constraint Failed: Char length for `{}` should be >= {}",
+                    field_name, static_cast<int>(max_value)));
+            }
+
+            if (field_type == "double" || field_type == "int8" || field_type == "uint8" || field_type == "int16" ||
+                field_type == "uint16" || field_type == "int32" || field_type == "uint32" || field_type == "int64" ||
+                field_type == "uint64")
+            {
+                if (entity.at(field_name) > max_value)
+                {
+                    return std::pair(false,
+                        std::format("Maximum Constraint Failed: Value for `{}` should be <= {}",
+                        field_name, max_value));
+                }
+            }
+        }
+
+        return std::make_pair(true, "");
+    }
+
+    std::pair<bool, std::string> TableUnit::requiredConstraintCheck(const json& field, const json& entity)
+    {
+        // Get the required flag and the field name
+        const auto& required = field.value("required", false);
+        const auto& field_name = field["name"].get<std::string>();
+
+        if (required && entity[field_name].is_null())
+        {
+            return std::make_pair(false, std::format("Field `{}` is required", field_name));
+        }
+
+        return std::make_pair(true, "");
+    }
+
+    std::pair<bool, std::string> TableUnit::validatorConstraintCheck(const json& field, const json& entity)
+    {
+        if (!field["validator"].is_null())
+        {
+            const auto& pattern = field["validator"].get<std::string>();
+            const auto& field_name = field["name"].get<std::string>();
+            const auto& field_type = field["type"].get<std::string>();
+
+            // Check if we have a regex or typed validator from our store
+            const auto opt =  MantisApp::instance().validators().find(pattern);
+            if (opt.has_value() && field_type == "string")
+            {
+                // Since we have a regex string, lets validate it and return if it fails ...
+                const auto& reg = opt.value()["regex"].get<std::string>();
+                const auto& err = opt.value()["error"].get<std::string>();
+
+                auto f = entity.at(field_name).get<std::string>();
+                if (const std::regex r_pattern(reg); !std::regex_match(f, r_pattern))
+                {
+                    return std::make_pair(false, err);
+                }
+            }
+        }
+
+        return std::make_pair(true, "");
+    }
+
+    std::pair<bool, std::string> TableUnit::viewTypeSQLCheck(const json& entity)
+    {
+        if (!entity.contains("sql") || entity["sql"].is_null() || trim(entity["sql"].get<std::string>()).empty())
+        {
+            return std::make_pair(false, "View tables require a valid SQL View query!");
+        }
+
+        // const auto& sql = trim(entity.at("sql").get<std::string>());
+        // Check that it contains an `id` field
+        // Check it does not contain malicious things!!
+
+        return std::make_pair(true, "");
+    }
+
+    std::optional<json> TableUnit::validateTableSchema(const json& entity)
+    {
+        json response;
+
+        if (!entity.contains("name") || entity["name"].is_null() || trim(entity.value("name", "")).empty())
+        {
+            response["status"] = 400;
+            response["error"] = "Table name is required";
+            response["data"] = json::object();
+            return response;
+        }
+
+        if (!entity.contains("type") || entity["type"].is_null())
+        {
+            response["status"] = 400;
+            response["error"] = "Table type is missing. Expected `base`, `view`, or `auth`.";
+            response["data"] = json::object();
+
+            return response;
+        }
+
+        // Check that the type is either a view|base|auth type
+        auto type = trim(entity.value("type", ""));
+        toLowerCase(type);
+        if (!(type == "view" || type == "base" || type == "auth"))
+        {
+            response["status"] = 400;
+            response["error"] = "Table type should be either `base`, `view`, or `auth`.";
+            response["data"] = json::object();
+
+            return response;
+        }
+
+        // If the table type is of view type, check that the SQL is passed in ...
+        if (type == "view")
+        {
+            const auto& [ok, err] = viewTypeSQLCheck(entity);
+            if (!ok)
+            {
+                response["status"] = 400;
+                response["error"] = err;
+                response["data"] = json::object();
+
+                return response;
+            }
+        }
+
+        else if (entity.contains("fields") && !entity["fields"].is_null())
+        {
+            // Check fields if any is added
+            for (const auto& field : entity.value("fields", std::vector<json>()))
+            {
+                if (!field.contains("name") || field["name"].is_null() || trim(field["name"].get<std::string>()).empty())
+                {
+                    response["status"] = 400;
+                    response["error"] = "One of the fields is missing a valid name";
+                    response["data"] = json::object();
+
+                    return response;
+                }
+
+                if (!field.contains("type") || field["type"].is_null() || trim(field["type"].get<std::string>()).empty())
+                {
+                    response["status"] = 400;
+                    response["error"] = std::format("Field type `{}` for `{}` is empty!",
+                        field["type"].get<std::string>(), field["name"].get<std::string>());
+                    response["data"] = json::object();
+
+                    return response;
+                }
+
+                if (!isValidFieldType(trim(field["type"].get<std::string>())))
+                {
+                    response["status"] = 400;
+                    response["error"] = std::format("Field type `{}` for `{}` is not recognized!",
+                        field["type"].get<std::string>(), field["name"].get<std::string>());
+                    response["data"] = json::object();
+
+                    return response;
+                }
+            }
+        }
+
         return std::nullopt;
     }
 }

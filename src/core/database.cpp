@@ -151,7 +151,7 @@ void mantis::DatabaseUnit::disconnect() const
     }
 }
 
-void mantis::DatabaseUnit::migrate() const
+bool mantis::DatabaseUnit::migrate() const
 {
     // Create system tables as follows:
     // __tables for managing user tables & schema
@@ -168,7 +168,7 @@ void mantis::DatabaseUnit::migrate() const
         admin.name = "__admins";
         *sql << admin.to_sql();
 
-        // Create and manage other db tables, keeping track of access rules, schema, etc!
+        // Create and manage other db tables, keeping track of access rules, schema, etc.!
         SystemTable tables;
         tables.name = "__tables";
         tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
@@ -188,11 +188,14 @@ void mantis::DatabaseUnit::migrate() const
 
         // Enforce migration once settings object is created!
         MantisApp::instance().settings().migrate();
+
+        return true;
     }
     catch (std::exception& e)
     {
         Log::critical("Create System Tables Failed: {}", e.what());
     }
+    return false;
 }
 
 std::shared_ptr<soci::session> mantis::DatabaseUnit::session() const
@@ -213,26 +216,22 @@ bool mantis::DatabaseUnit::isConnected() const
     return sql->is_connected();
 }
 
-std::string mantis::DatabaseUnit::tmToISODate(const std::tm& t)
-{
-    char buffer[80];
-    const int length = soci::details::format_std_tm(t, buffer, sizeof(buffer));
-    std::string iso_string(buffer, length);
-    return iso_string;
-}
-
 void mantis::DatabaseUnit::writeCheckpoint() const
 {
-    try
+    // Enable this write checkpoint for SQLite databases ONLY
+    if (MantisApp::instance().dbType() == DbType::SQLITE)
     {
-        // Write out the WAL data to db file & truncate it
-        if (const auto sql = session(); sql->is_connected())
+        try
         {
-            *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+            // Write out the WAL data to db file & truncate it
+            if (const auto sql = session(); sql->is_connected())
+            {
+                *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+            }
         }
-    }
-    catch (std::exception& e)
-    {
-        Log::critical("Database Connection SOCI::Error: {}", e.what());
+        catch (std::exception& e)
+        {
+            Log::critical("Database Connection SOCI::Error: {}", e.what());
+        }
     }
 }

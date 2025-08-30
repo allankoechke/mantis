@@ -46,8 +46,9 @@ namespace mantis
 
         /**
          * @brief Run database migrations, creates the default system tables.
+         * @return `true` if migration completes successfully else `false`.
          */
-        void migrate() const;
+        bool migrate() const;
 
         /**
          * @brief Get access to a session from the pool
@@ -66,13 +67,6 @@ namespace mantis
          * @return Flag of the database connection
          */
         [[nodiscard]] bool isConnected() const;
-
-        /**
-         * @brief Convert c++ std::tm date/time value to ISO formatted string.
-         * @param t std::tm value
-         * @return ISO formatted datetime value
-         */
-        static std::string tmToISODate(const std::tm& t);
 
         const std::string __class_name__ = "mantis::DatabaseUnit";
 
