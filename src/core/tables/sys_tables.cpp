@@ -293,96 +293,16 @@ namespace mantis
             return;
         }
 
-        Log::debug("Create table, data = {}", body.dump());
-
-        // Create validator method
-        auto validateRequestBody = [&]() -> bool
-        {
-            if (trim(body.value("name", "")).empty())
-            {
-                response["status"] = 400;
-                response["error"] = "Table name is required";
-                response["data"] = json::object();
-
-                res.status = 400;
-                res.set_content(response.dump(), "application/json");
-                return false;
-            }
-
-            // Check that the type is either a view|base|auth type
-            auto type = trim(body.value("type", ""));
-            toLowerCase(type);
-            if (!(type == "view" || type == "base" || type == "auth"))
-            {
-                response["status"] = 400;
-                response["error"] = "Table type should be either 'base', 'view', or 'auth'";
-                response["data"] = json::object();
-
-                res.status = 400;
-                res.set_content(response.dump(), "application/json");
-                return false;
-            }
-
-            // If the table type is of view type, check that the SQL is passed in ...
-            if (type == "view")
-            {
-                if (trim(body.value("sql", "")).empty())
-                {
-                    response["status"] = 400;
-                    response["error"] = "Table of view type require an SQL Statement.";
-                    response["data"] = json::object();
-
-                    res.status = 400;
-                    res.set_content(response.dump(), "application/json");
-                    return false;
-                }
-            }
-            else
-            {
-                // Check fields if any is added
-                for (const auto& field : body.value("fields", std::vector<json>()))
-                {
-                    const auto name = trim(field.value("name", ""));
-                    if (name.empty())
-                    {
-                        response["status"] = 400;
-                        response["error"] = "One of the fields is missing a valid name";
-                        response["data"] = json::object();
-
-                        res.status = 400;
-                        res.set_content(response.dump(), "application/json");
-                        return false;
-                    }
-
-                    const auto field_type = trim(field.value("type", ""));
-                    if (field_type.empty())
-                    {
-                        response["status"] = 400;
-                        response["error"] = std::format("Field type `{}` for `{}` is empty!", field_type, name);
-                        response["data"] = json::object();
-
-                        res.status = 400;
-                        res.set_content(response.dump(), "application/json");
-                        return false;
-                    }
-                    if (!isValidFieldType(field_type))
-                    {
-                        response["status"] = 400;
-                        response["error"] = std::format("Field type `{}` for `{}` is not recognized!", field_type, name);
-                        response["data"] = json::object();
-
-                        res.status = 400;
-                        res.set_content(response.dump(), "application/json");
-                        return false;
-                    }
-                }
-            }
-
-            return true;
-        };
-
         // Validate JSON body
-        if (!validateRequestBody()) return;
+        const auto& validate_res = validateTableSchema(body);
+        if ( validate_res.has_value())
+        {
+            res.status = validate_res.value()["status"].get<int>();
+            res.set_content(validate_res.value().dump(), "application/json");
+
+            Log::critical("Failed to create table, reason: {}", validate_res.value().dump());
+            return;
+        }
 
         // Invoke create table method, return the result
         auto resp = create(body, json::object());
@@ -452,6 +372,8 @@ namespace mantis
             res.status = 500;
             return;
         }
+
+        // TODO Validate update body ...
 
         // Check that record exists before we continue ...
         if (!recordExists(id))

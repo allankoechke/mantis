@@ -139,6 +139,9 @@ namespace mantis
         static std::pair<bool, std::string> validatorConstraintCheck(const json& field, const json& entity);
         static std::pair<bool, std::string> viewTypeSQLCheck(const json& entity);
 
+        static std::optional<json> validateTableSchema(const json& entity);
+
+
         const std::string __class_name__ = "TableUnit";
     protected:
         std::string m_tableName;

@@ -225,4 +225,90 @@ namespace mantis
 
         return std::make_pair(true, "");
     }
+
+    std::optional<json> TableUnit::validateTableSchema(const json& entity)
+    {
+        json response;
+
+        if (!entity.contains("name") || entity["name"].is_null() || trim(entity.value("name", "")).empty())
+        {
+            response["status"] = 400;
+            response["error"] = "Table name is required";
+            response["data"] = json::object();
+            return response;
+        }
+
+        if (!entity.contains("type") || entity["type"].is_null())
+        {
+            response["status"] = 400;
+            response["error"] = "Table type is missing. Expected `base`, `view`, or `auth`.";
+            response["data"] = json::object();
+
+            return response;
+        }
+
+        // Check that the type is either a view|base|auth type
+        auto type = trim(entity.value("type", ""));
+        toLowerCase(type);
+        if (!(type == "view" || type == "base" || type == "auth"))
+        {
+            response["status"] = 400;
+            response["error"] = "Table type should be either `base`, `view`, or `auth`.";
+            response["data"] = json::object();
+
+            return response;
+        }
+
+        // If the table type is of view type, check that the SQL is passed in ...
+        if (type == "view")
+        {
+            const auto& [ok, err] = viewTypeSQLCheck(entity);
+            if (!ok)
+            {
+                response["status"] = 400;
+                response["error"] = err;
+                response["data"] = json::object();
+
+                return response;
+            }
+        }
+
+        else if (entity.contains("fields") && !entity["fields"].is_null())
+        {
+            // Check fields if any is added
+            for (const auto& field : entity.value("fields", std::vector<json>()))
+            {
+                if (!field.contains("name") || field["name"].is_null() || trim(field["name"].get<std::string>()).empty())
+                {
+                    response["status"] = 400;
+                    response["error"] = "One of the fields is missing a valid name";
+                    response["data"] = json::object();
+
+                    return response;
+                }
+
+                if (!field.contains("type") || field["type"].is_null() || trim(field["type"].get<std::string>()).empty())
+                {
+                    response["status"] = 400;
+                    response["error"] = std::format("Field type `{}` for `{}` is empty!",
+                        field["type"].get<std::string>(), field["name"].get<std::string>());
+                    response["data"] = json::object();
+
+                    return response;
+                }
+
+                if (!isValidFieldType(trim(field["type"].get<std::string>())))
+                {
+                    response["status"] = 400;
+                    response["error"] = std::format("Field type `{}` for `{}` is not recognized!",
+                        field["type"].get<std::string>(), field["name"].get<std::string>());
+                    response["data"] = json::object();
+
+                    return response;
+                }
+            }
+        }
+
+        return std::nullopt;
+    }
 }
