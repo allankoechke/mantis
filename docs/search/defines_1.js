@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['dump_5fresponse_0',['DUMP_RESPONSE',['../sys__tables_8h.html#a856bbb8e066d4eadf9eab687332ebbf2',1,'sys_tables.h']]]
+  ['mantis_5frequire_5finit_0',['MANTIS_REQUIRE_INIT',['../app_8cpp.html#a09267b1445177521b71b53f6f8bf3b27',1,'app.cpp']]]
 ];

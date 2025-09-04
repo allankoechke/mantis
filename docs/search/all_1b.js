@@ -1,6 +1,6 @@
 var searchData=
 [
-  ['table_0',['table',['../structmantis_1_1Table.html',1,'mantis::Table'],['../structmantis_1_1Table.html#a610dba40dfb0e82e58b6b83504568d16',1,'mantis::Table::Table()']]],
+  ['table_0',['table',['../structmantis_1_1Table.html#a610dba40dfb0e82e58b6b83504568d16',1,'mantis::Table::Table()'],['../structmantis_1_1Table.html',1,'mantis::Table']]],
   ['table_20creation_1',['During Table Creation',['../rest_api_rules.html#autotoc_md56',1,'']]],
   ['table_20relationships_2',['Multi-Table Relationships',['../rest_api_rules.html#autotoc_md72',1,'']]],
   ['table_20rules_3',['Updating Existing Table Rules',['../rest_api_rules.html#autotoc_md57',1,'']]],
@@ -16,20 +16,20 @@ var searchData=
   ['tables_5froutes_2ecpp_13',['tables_routes.cpp',['../tables__routes_8cpp.html',1,'']]],
   ['tables_5futils_2ecpp_14',['tables_utils.cpp',['../tables__utils_8cpp.html',1,'']]],
   ['tables_5fvalidation_2ecpp_15',['tables_validation.cpp',['../tables__validation_8cpp.html',1,'']]],
-  ['tabletype_16',['tabletype',['../classmantis_1_1TableUnit.html#aa1181122430ff57cc1d69bd93bb7f2e5',1,'mantis::TableUnit::tableType()'],['../namespacemantis.html#ab43b6b3436ac978b866169a6682d728d',1,'mantis::TableType'],['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4daf',1,'mantis::TableType']]],
-  ['tableunit_17',['tableunit',['../classmantis_1_1TableUnit.html',1,'mantis::TableUnit'],['../classmantis_1_1TableUnit.html#a6e8e0ba71ae56c483d130c454813572b',1,'mantis::TableUnit::TableUnit(std::string tableName, std::string tableId, std::string tableType=&quot;base&quot;)'],['../classmantis_1_1TableUnit.html#aa227fe9cbf2ce9c18d4f14ae162018c7',1,'mantis::TableUnit::TableUnit(const json &amp;schema=json::object())']]],
+  ['tabletype_16',['tabletype',['../classmantis_1_1TableUnit.html#aa1181122430ff57cc1d69bd93bb7f2e5',1,'mantis::TableUnit::tableType()'],['../namespacemantis.html#ada421b22d5ef647319dbe1f151ca4daf',1,'mantis::TableType'],['../namespacemantis.html#ab43b6b3436ac978b866169a6682d728d',1,'mantis::TableType']]],
+  ['tableunit_17',['tableunit',['../classmantis_1_1TableUnit.html#aa227fe9cbf2ce9c18d4f14ae162018c7',1,'mantis::TableUnit::TableUnit(const json &amp;schema=json::object())'],['../classmantis_1_1TableUnit.html#a6e8e0ba71ae56c483d130c454813572b',1,'mantis::TableUnit::TableUnit(std::string tableName, std::string tableId, std::string tableType=&quot;base&quot;)'],['../classmantis_1_1TableUnit.html',1,'mantis::TableUnit']]],
   ['tech_20stack_18',['🛠️ Tech Stack',['../index.html#autotoc_md154',1,'']]],
   ['test_20edge_20cases_19',['3. Test Edge Cases',['../rest_api_rules.html#autotoc_md66',1,'']]],
   ['testing_20',['🧪 Sync Testing',['../sync.html#autotoc_md133',1,'']]],
   ['testing_20access_20rules_21',['Testing Access Rules',['../rest_api_rules.html#autotoc_md62',1,'']]],
   ['testing_20in_20embedded_20context_22',['🧪 Testing in Embedded Context',['../embedding.html#autotoc_md110',1,'']]],
-  ['tmtoisodate_23',['tmToISODate',['../classmantis_1_1DatabaseUnit.html#ab7ff272cd61b8ced0603b9bc7d3b8633',1,'mantis::DatabaseUnit']]],
+  ['tmtostr_23',['tmToStr',['../namespacemantis.html#a8cd8688b947de5ab538aa285a49a5e18',1,'mantis']]],
   ['to_5fjson_24',['to_json',['../structmantis_1_1Field.html#a1a7dcdb9c31f25421ecaf71b14af6572',1,'mantis::Field::to_json()'],['../structmantis_1_1Table.html#acc92452ba2e6c3fe10468492f13f623c',1,'mantis::Table::to_json() const']]],
   ['to_5fsql_25',['to_sql',['../structmantis_1_1Table.html#a837ff767357a7e73b3e6550a3f9118c3',1,'mantis::Table']]],
   ['tolowercase_26',['toLowerCase',['../namespacemantis.html#acbd04202feeade10ac601e3bc4d00feb',1,'mantis']]],
   ['tosocitype_27',['tosocitype',['../structmantis_1_1Field.html#a21a47f45e40738182402dea9ecfd24ef',1,'mantis::Field::toSociType() const'],['../structmantis_1_1Field.html#acb556a5259b5eb673de65b6921e55416',1,'mantis::Field::toSociType(const FieldType &amp;f_type)']]],
   ['touppercase_28',['toUpperCase',['../namespacemantis.html#aa0aa0dffb82adecf81cc50947b7b7f1f',1,'mantis']]],
-  ['trace_29',['trace',['../namespacemantis.html#ada8131e8cb8fbce16294534a4a808d07a2d3e4144aa384b18849ab9a8abad74d6',1,'mantis::TRACE'],['../classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1',1,'mantis::LoggingUnit::trace()']]],
+  ['trace_29',['trace',['../classmantis_1_1LoggingUnit.html#a26670a051e71dda6eeb10ad79f2326a1',1,'mantis::LoggingUnit::trace()'],['../namespacemantis.html#ada8131e8cb8fbce16294534a4a808d07a2d3e4144aa384b18849ab9a8abad74d6',1,'mantis::TRACE']]],
   ['trace_5fclass_5fmethod_30',['TRACE_CLASS_METHOD',['../logging_8h.html#a558f262c132aae0f82c218213dd1ed0d',1,'logging.h']]],
   ['trace_5fmethod_31',['TRACE_METHOD',['../logging_8h.html#a3415e3e8dd3d16ea64aec8f0e9af4283',1,'logging.h']]],
   ['transport_20layer_20strong_32',['3. &lt;strong&gt;Transport Layer&lt;/strong&gt;',['../sync.html#autotoc_md128',1,'']]],
@@ -38,6 +38,7 @@ var searchData=
   ['tryparsejsonstr_35',['tryParseJsonStr',['../namespacemantis.html#a8ecebf53d24d9678f7005d0b4ee8da6d',1,'mantis']]],
   ['tt_20auth_20tt_36',['Authentication Context (&lt;tt&gt;auth.*&lt;/tt&gt;)',['../rest_api_rules.html#autotoc_md46',1,'']]],
   ['tt_20req_20tt_37',['Request Context (&lt;tt&gt;req.*&lt;/tt&gt;)',['../rest_api_rules.html#autotoc_md47',1,'']]],
-  ['type_38',['type',['../structmantis_1_1Table.html#aa9f7dfd1fc8933a7b4eaf4b7ffad1654',1,'mantis::Table::type'],['../structmantis_1_1Field.html#a988952d6db3de234c9471acb7c9e5ea3',1,'mantis::Field::type']]],
-  ['types_39',['Rule Types',['../rest_api_rules.html#autotoc_md44',1,'']]]
+  ['type_38',['type',['../structmantis_1_1Field.html#a988952d6db3de234c9471acb7c9e5ea3',1,'mantis::Field::type'],['../structmantis_1_1Table.html#aa9f7dfd1fc8933a7b4eaf4b7ffad1654',1,'mantis::Table::type']]],
+  ['type_5futils_2ecpp_39',['type_utils.cpp',['../type__utils_8cpp.html',1,'']]],
+  ['types_40',['Rule Types',['../rest_api_rules.html#autotoc_md44',1,'']]]
 ];

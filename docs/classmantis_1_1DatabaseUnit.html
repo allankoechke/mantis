@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.8</span>
    </div>
   </td>
  </tr>
@@ -94,7 +94,6 @@ $(document).ready(function(){initNavTree('classmantis_1_1DatabaseUnit.html','');
 <div class="header">
   <div class="summary">
 <a href="#pub-methods">Public Member Functions</a> &#124;
-<a href="#pub-static-methods">Static Public Member Functions</a> &#124;
 <a href="#pub-attribs">Public Attributes</a> &#124;
 <a href="classmantis_1_1DatabaseUnit-members.html">List of all members</a>  </div>
   <div class="headertitle"><div class="title">mantis::DatabaseUnit Class Reference</div></div>
@@ -118,9 +117,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a6b930d444ba72828d4118ffd15da8b95" id="r_a6b930d444ba72828d4118ffd15da8b95"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html#a6b930d444ba72828d4118ffd15da8b95">disconnect</a> () const</td></tr>
 <tr class="memdesc:a6b930d444ba72828d4118ffd15da8b95"><td class="mdescLeft">&#160;</td><td class="mdescRight">CLose all database connections and destroy connection pools.  <br /></td></tr>
 <tr class="separator:a6b930d444ba72828d4118ffd15da8b95"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aa8fe8dd2db156175c8313d798ff5e26c" id="r_aa8fe8dd2db156175c8313d798ff5e26c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html#aa8fe8dd2db156175c8313d798ff5e26c">migrate</a> () const</td></tr>
-<tr class="memdesc:aa8fe8dd2db156175c8313d798ff5e26c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run database migrations, creates the default system tables.  <br /></td></tr>
-<tr class="separator:aa8fe8dd2db156175c8313d798ff5e26c"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7e7d860c444dc7abfe5fd777bd1ebc2f" id="r_a7e7d860c444dc7abfe5fd777bd1ebc2f"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html#a7e7d860c444dc7abfe5fd777bd1ebc2f">migrate</a> () const</td></tr>
+<tr class="memdesc:a7e7d860c444dc7abfe5fd777bd1ebc2f"><td class="mdescLeft">&#160;</td><td class="mdescRight">Run database migrations, creates the default system tables.  <br /></td></tr>
+<tr class="separator:a7e7d860c444dc7abfe5fd777bd1ebc2f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a9751fb78fda4dd72c099533cde7174" id="r_a0a9751fb78fda4dd72c099533cde7174"><td class="memItemLeft" align="right" valign="top">std::shared_ptr&lt; soci::session &gt;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html#a0a9751fb78fda4dd72c099533cde7174">session</a> () const</td></tr>
 <tr class="memdesc:a0a9751fb78fda4dd72c099533cde7174"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get access to a session from the pool.  <br /></td></tr>
 <tr class="separator:a0a9751fb78fda4dd72c099533cde7174"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -129,12 +128,6 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af3180c7795cd7be570c15f2744578b7e" id="r_af3180c7795cd7be570c15f2744578b7e"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html#af3180c7795cd7be570c15f2744578b7e">isConnected</a> () const</td></tr>
 <tr class="memdesc:af3180c7795cd7be570c15f2744578b7e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Check if the database is connected.  <br /></td></tr>
 <tr class="separator:af3180c7795cd7be570c15f2744578b7e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-</table><table class="memberdecls">
-<tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
-Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ab7ff272cd61b8ced0603b9bc7d3b8633" id="r_ab7ff272cd61b8ced0603b9bc7d3b8633"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html#ab7ff272cd61b8ced0603b9bc7d3b8633">tmToISODate</a> (const std::tm &amp;t)</td></tr>
-<tr class="memdesc:ab7ff272cd61b8ced0603b9bc7d3b8633"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert c++ std::tm date/time value to ISO formatted string.  <br /></td></tr>
-<tr class="separator:ab7ff272cd61b8ced0603b9bc7d3b8633"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-attribs" name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -275,14 +268,14 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a id="aa8fe8dd2db156175c8313d798ff5e26c" name="aa8fe8dd2db156175c8313d798ff5e26c"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aa8fe8dd2db156175c8313d798ff5e26c">&#9670;&#160;</a></span>migrate()</h2>
+<a id="a7e7d860c444dc7abfe5fd777bd1ebc2f" name="a7e7d860c444dc7abfe5fd777bd1ebc2f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7e7d860c444dc7abfe5fd777bd1ebc2f">&#9670;&#160;</a></span>migrate()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::DatabaseUnit::migrate </td>
+          <td class="memname">bool mantis::DatabaseUnit::migrate </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -291,6 +284,7 @@ Public Attributes</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Run database migrations, creates the default system tables. </p>
+<dl class="section return"><dt>Returns</dt><dd><code>true</code> if migration completes successfully else <code>false</code>. </dd></dl>
 
 </div>
 </div>
@@ -311,41 +305,6 @@ Public Attributes</h2></td></tr>
 
 <p>Get access to a session from the pool. </p>
 <dl class="section return"><dt>Returns</dt><dd>A shared pointer to soci::session </dd></dl>
-
-</div>
-</div>
-<a id="ab7ff272cd61b8ced0603b9bc7d3b8633" name="ab7ff272cd61b8ced0603b9bc7d3b8633"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab7ff272cd61b8ced0603b9bc7d3b8633">&#9670;&#160;</a></span>tmToISODate()</h2>
-
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string mantis::DatabaseUnit::tmToISODate </td>
-          <td>(</td>
-          <td class="paramtype">const std::tm &amp;&#160;</td>
-          <td class="paramname"><em>t</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Convert c++ std::tm date/time value to ISO formatted string. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">t</td><td>std::tm value </td></tr>
-  </table>
-  </dd>
-</dl>
-<dl class="section return"><dt>Returns</dt><dd>ISO formatted datetime value </dd></dl>
 
 </div>
 </div>

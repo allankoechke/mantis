@@ -7,6 +7,7 @@ var classmantis_1_1MantisApp =
     [ "dataDir", "classmantis_1_1MantisApp.html#ac888ce270d5351648b7c93804c1fcb1e", null ],
     [ "db", "classmantis_1_1MantisApp.html#a3c6ccdd3c1704e22505ff8ad2e85f49c", null ],
     [ "dbType", "classmantis_1_1MantisApp.html#a756378e197e6f606105fcd209224de09", null ],
+    [ "dbTypeByName", "classmantis_1_1MantisApp.html#a7153c926c60a9c2dccf2db9e2157d381", null ],
     [ "ensureInitialized", "classmantis_1_1MantisApp.html#ac8de7abb94aa4517d5bf42ddb9301181", null ],
     [ "evaluator", "classmantis_1_1MantisApp.html#a42adcefe02694dd1df66e6e1d7fe0f5c", null ],
     [ "files", "classmantis_1_1MantisApp.html#a923417bf8d5bcd592d044b24e765ad18", null ],

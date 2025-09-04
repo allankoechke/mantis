@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.8</span>
    </div>
   </td>
  </tr>
@@ -331,6 +331,13 @@ Functions</h2></td></tr>
 <tr class="memitem:abefb7cd2f2074a44997f34b2362270ab" id="r_abefb7cd2f2074a44997f34b2362270ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab">verifyPassword</a> (const std::string &amp;password, const std::string &amp;stored_hash)</td></tr>
 <tr class="memdesc:abefb7cd2f2074a44997f34b2362270ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies user password if it matches the given hashed password.  <br /></td></tr>
 <tr class="separator:abefb7cd2f2074a44997f34b2362270ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8cd8688b947de5ab538aa285a49a5e18" id="r_a8cd8688b947de5ab538aa285a49a5e18"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a8cd8688b947de5ab538aa285a49a5e18">tmToStr</a> (const std::tm &amp;t)</td></tr>
+<tr class="memdesc:a8cd8688b947de5ab538aa285a49a5e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert c++ std::tm date/time value to ISO formatted string.  <br /></td></tr>
+<tr class="separator:a8cd8688b947de5ab538aa285a49a5e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a66e2fdaf6cab0cc99bb380f721592b79" id="r_a66e2fdaf6cab0cc99bb380f721592b79"><td class="memItemLeft" align="right" valign="top">std::tm&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a66e2fdaf6cab0cc99bb380f721592b79">strToTM</a> (const std::string &amp;value)</td></tr>
+<tr class="separator:a66e2fdaf6cab0cc99bb380f721592b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a634042b7708af2536b4a3978eba873f7" id="r_a634042b7708af2536b4a3978eba873f7"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a634042b7708af2536b4a3978eba873f7">dbDateToString</a> (const std::string &amp;dbType, const soci::row &amp;row, int index)</td></tr>
+<tr class="separator:a634042b7708af2536b4a3978eba873f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -762,6 +769,40 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>True if creation was successful. If the directory exists, it returns false. </dd></dl>
+
+</div>
+</div>
+<a id="a634042b7708af2536b4a3978eba873f7" name="a634042b7708af2536b4a3978eba873f7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a634042b7708af2536b4a3978eba873f7">&#9670;&#160;</a></span>dbDateToString()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::dbDateToString </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>dbType</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const soci::row &amp;&#160;</td>
+          <td class="paramname"><em>row</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>index</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1269,6 +1310,51 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>true or false value </dd></dl>
+
+</div>
+</div>
+<a id="a66e2fdaf6cab0cc99bb380f721592b79" name="a66e2fdaf6cab0cc99bb380f721592b79"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a66e2fdaf6cab0cc99bb380f721592b79">&#9670;&#160;</a></span>strToTM()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::tm mantis::strToTM </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>value</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a8cd8688b947de5ab538aa285a49a5e18" name="a8cd8688b947de5ab538aa285a49a5e18"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a8cd8688b947de5ab538aa285a49a5e18">&#9670;&#160;</a></span>tmToStr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::tmToStr </td>
+          <td>(</td>
+          <td class="paramtype">const std::tm &amp;&#160;</td>
+          <td class="paramname"><em>t</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Convert c++ std::tm date/time value to ISO formatted string. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">t</td><td>std::tm value </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>ISO formatted datetime value </dd></dl>
 
 </div>
 </div>

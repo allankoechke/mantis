@@ -1,0 +1,29 @@
+<map id="/home/runner/work/mantis/mantis/src/utils/type_utils.cpp" name="/home/runner/work/mantis/mantis/src/utils/type_utils.cpp">
+<area shape="rect" id="Node000001" title=" " alt="" coords="377,5,572,60"/>
+<area shape="rect" id="Node000002" href="$utils_8h.html" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="314,108,457,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="449,62,409,100,405,96,446,58"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="481,108,647,133"/>
+<area shape="poly" id="edge13_Node000001_Node000014" title=" " alt="" coords="504,58,544,96,540,100,500,62"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="5,181,64,207"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="319,136,210,156,78,184,77,179,209,151,318,131"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="88,181,179,207"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="346,136,188,180,187,175,344,131"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="203,181,275,207"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="363,136,276,178,274,173,361,131"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="299,181,365,207"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="379,135,351,172,347,169,374,132"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="390,181,487,207"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="396,132,424,169,420,172,392,135"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="512,181,597,207"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="414,131,515,173,513,178,412,136"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="622,181,709,207"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="431,131,609,176,608,181,430,136"/>
+<area shape="rect" id="Node000010" href="$logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="733,181,859,207"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="452,131,720,177,719,182,451,136"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="494,255,682,309"/>
+<area shape="poly" id="edge10_Node000010_Node000011" title=" " alt="" coords="769,209,665,252,663,247,767,204"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="707,262,885,302"/>
+<area shape="poly" id="edge11_Node000010_Node000012" title=" " alt="" coords="799,207,799,248,793,248,793,207"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="910,255,1069,309"/>
+<area shape="poly" id="edge12_Node000010_Node000013" title=" " alt="" coords="823,204,919,247,917,252,821,209"/>
+</map>

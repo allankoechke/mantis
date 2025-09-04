@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.7</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.8</span>
    </div>
   </td>
  </tr>
@@ -154,6 +154,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a756378e197e6f606105fcd209224de09" id="r_a756378e197e6f606105fcd209224de09"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a9b66d60c6176ce653dfa970027ec5e23">DbType</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a756378e197e6f606105fcd209224de09">dbType</a> () const</td></tr>
 <tr class="memdesc:a756378e197e6f606105fcd209224de09"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieves the active database type.  <br /></td></tr>
 <tr class="separator:a756378e197e6f606105fcd209224de09"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a7153c926c60a9c2dccf2db9e2157d381" id="r_a7153c926c60a9c2dccf2db9e2157d381"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a7153c926c60a9c2dccf2db9e2157d381">dbTypeByName</a> () const</td></tr>
+<tr class="memdesc:a7153c926c60a9c2dccf2db9e2157d381"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the current database type as a string type matching the soci::get_backend_name() response to allow using this without fetching database session instance.  <br /></td></tr>
+<tr class="separator:a7153c926c60a9c2dccf2db9e2157d381"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a308ad03844c435c4f90e11fe0b54a93f" id="r_a308ad03844c435c4f90e11fe0b54a93f"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a308ad03844c435c4f90e11fe0b54a93f">setDbType</a> (const <a class="el" href="namespacemantis.html#a9b66d60c6176ce653dfa970027ec5e23">DbType</a> &amp;<a class="el" href="classmantis_1_1MantisApp.html#a756378e197e6f606105fcd209224de09">dbType</a>)</td></tr>
 <tr class="separator:a308ad03844c435c4f90e11fe0b54a93f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac8de7abb94aa4517d5bf42ddb9301181" id="r_ac8de7abb94aa4517d5bf42ddb9301181"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#ac8de7abb94aa4517d5bf42ddb9301181">ensureInitialized</a> (const char *caller) const</td></tr>
@@ -502,6 +505,26 @@ Static Public Member Functions</h2></td></tr>
 
 <p>Retrieves the active database type. </p>
 <dl class="section return"><dt>Returns</dt><dd>Selected DatabaseType enum value. </dd></dl>
+
+</div>
+</div>
+<a id="a7153c926c60a9c2dccf2db9e2157d381" name="a7153c926c60a9c2dccf2db9e2157d381"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a7153c926c60a9c2dccf2db9e2157d381">&#9670;&#160;</a></span>dbTypeByName()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::MantisApp::dbTypeByName </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Get the current database type as a string type matching the soci::get_backend_name() response to allow using this without fetching database session instance. </p>
+<dl class="section return"><dt>Returns</dt><dd>string repr of the current db type </dd></dl>
 
 </div>
 </div>

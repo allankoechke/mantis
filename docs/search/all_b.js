@@ -23,7 +23,7 @@ var searchData=
   ['connectionpool_20',['connectionPool',['../classmantis_1_1DatabaseUnit.html#a8b8def11d322287cb3b6bb6d34104894',1,'mantis::DatabaseUnit']]],
   ['consistent_20field_20names_21',['2. Use Consistent Field Names',['../rest_api_rules.html#autotoc_md65',1,'']]],
   ['contentreader_22',['ContentReader',['../namespacemantis.html#aaa50fd85460aaa3bb537133b590bc818',1,'mantis']]],
-  ['context_23',['context',['../embedding.html#autotoc_md110',1,'🧪 Testing in Embedded Context'],['../classmantis_1_1Context.html',1,'mantis::Context'],['../classmantis_1_1Context.html#a1c7ef46b732661af4bde66ae05058e03',1,'mantis::Context::Context()'],['../classmantis_1_1HttpUnit.html#a64a686970eb86bb296a6b41205a09742',1,'mantis::HttpUnit::context()']]],
+  ['context_23',['context',['../embedding.html#autotoc_md110',1,'🧪 Testing in Embedded Context'],['../classmantis_1_1Context.html',1,'mantis::Context'],['../classmantis_1_1HttpUnit.html#a64a686970eb86bb296a6b41205a09742',1,'mantis::HttpUnit::context()'],['../classmantis_1_1Context.html#a1c7ef46b732661af4bde66ae05058e03',1,'mantis::Context::Context()']]],
   ['context_20tt_20auth_20tt_24',['Authentication Context (&lt;tt&gt;auth.*&lt;/tt&gt;)',['../rest_api_rules.html#autotoc_md46',1,'']]],
   ['context_20tt_20req_20tt_25',['Request Context (&lt;tt&gt;req.*&lt;/tt&gt;)',['../rest_api_rules.html#autotoc_md47',1,'']]],
   ['context_20variables_26',['Expression Context Variables',['../rest_api_rules.html#autotoc_md45',1,'']]],

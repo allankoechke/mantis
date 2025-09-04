@@ -2,6 +2,7 @@ var utils_8h =
 [
     [ "bcryptBase64Encode", "utils_8h.html#a9e23dffb248fc4160e5c6c09a594eae2", null ],
     [ "createDirs", "utils_8h.html#a7198d676b24903590c1462d7af4958a7", null ],
+    [ "dbDateToString", "utils_8h.html#a634042b7708af2536b4a3978eba873f7", null ],
     [ "dirFromPath", "utils_8h.html#ab35751b3a0762476bf6d955eacc1a6c1", null ],
     [ "generateReadableTimeId", "utils_8h.html#a3832564f3023e4b1683a1a9392f17bd8", null ],
     [ "generateSalt", "utils_8h.html#a73a3aa68eaf070b0dc152df95c6b91ad", null ],
@@ -14,6 +15,8 @@ var utils_8h =
     [ "sanitizeFilename", "utils_8h.html#a71d9b005929526118af08c2ed3f74e8e", null ],
     [ "splitString", "utils_8h.html#afb33333e17a1823a3d22b074c7bd6a6e", null ],
     [ "strToBool", "utils_8h.html#ac8290417ff7c03d59488e7c321ff05c7", null ],
+    [ "strToTM", "utils_8h.html#a66e2fdaf6cab0cc99bb380f721592b79", null ],
+    [ "tmToStr", "utils_8h.html#a8cd8688b947de5ab538aa285a49a5e18", null ],
     [ "toLowerCase", "utils_8h.html#acbd04202feeade10ac601e3bc4d00feb", null ],
     [ "toUpperCase", "utils_8h.html#aa0aa0dffb82adecf81cc50947b7b7f1f", null ],
     [ "trim", "utils_8h.html#a842ffce0f72c6aed85cdfa2c1f0615f5", null ],
