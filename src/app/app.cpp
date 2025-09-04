@@ -50,8 +50,6 @@ namespace mantis
 
         // Enable Multi Sinks
         Log::init();
-
-        Log::info("Mantis v{}", appVersion());
     }
 
     MantisApp::~MantisApp()
@@ -73,6 +71,8 @@ namespace mantis
     {
         // If we had init already, don't proceed!
         if (initialized) return;
+
+        Log::info("Initializing Mantis v{}", appVersion());
 
         // Set the initialized flag
         initialized = true;
@@ -127,6 +127,9 @@ namespace mantis
                      .nargs(1)
                      .default_value("0.0.0.0")
                      .help("<host> Server Host (default: 0.0.0.0)");
+        serve_command.add_argument("--poolSize")
+                     .scan<'i', int>()
+                     .help("<pool size> Size of database connection pools >= 1");
 
         // Admins subcommand with nested subcommands
         argparse::ArgumentParser admins_command("admins");
@@ -202,24 +205,35 @@ namespace mantis
 
         toLowerCase(db);
         if (db == "sqlite")
+        {
             setDbType(DbType::SQLITE);
+        }
 
-        else if (db == "mysql") setDbType(DbType::MYSQL);
+        else if (db == "mysql")
+        {
+            setDbType(DbType::MYSQL);
+        }
 
         else if (db == "psql" || db == "postgresql" || db == "postgres")
+        {
             setDbType(DbType::PSQL);
+        }
 
         else
+        {
             quit(-1, std::format("Backend Database `{}` is unsupported!", db));
+        }
 
-        [[maybe_unused]] auto x = MantisApp::instance().poolSize();
 
         // Initialize database connection & Migration
-        m_database->connect(m_dbType, connString);
+        if (!m_database->connect(m_dbType, connString))
+        {
+            // Connection to database failed
+            quit(-1, "Database connection failed, exiting!");
+        }
         if (!m_database->migrate())
         {
-            Log::critical("Database migration failed, see previous error!");
-            quit(-1, "Database migration failed, see previous error!");
+            quit(-1, "Database migration failed, exiting!");
         }
 
         if (!m_database->isConnected())
@@ -234,8 +248,12 @@ namespace mantis
             const auto host = serve_command.get<std::string>("--host");
             const auto port = serve_command.get<int>("--port");
 
+            int default_pool_size = m_dbType == DbType::SQLITE ? 2 : m_dbType == DbType::PSQL ? 10 : 1;
+            const auto pools = serve_command.present<int>("--poolSize").value_or(default_pool_size);
+
             setHost(host);
             setPort(port);
+            setPoolSize(pools > 0 ? pools : 1);
             m_toStartServer = true;
         }
         else if (program.is_subcommand_used("admins"))

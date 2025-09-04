@@ -253,8 +253,6 @@ bool mantis::HttpUnit::listen(const std::string& host, const int& port)
     // Launch logging/browser in separate thread after listen starts
     std::thread notifier([=]() -> void
     {
-        std::cout << std::endl;
-
         // Wait a little for the server to be fully ready
         std::this_thread::sleep_for(std::chrono::milliseconds(500));
         auto endpoint = std::format("{}:{}", host, port);

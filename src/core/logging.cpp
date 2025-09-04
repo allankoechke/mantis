@@ -8,17 +8,33 @@
 
 void mantis::LoggingUnit::setLogLevel(const LogLevel& level)
 {
+    const auto set_spdlog_level = [&](const spdlog::level::level_enum lvl)
+    {
+        const auto logger = spdlog::get("mantis_logger");
+        logger->set_level(lvl);
+
+        // Also set sink levels
+        for (const auto& sink : logger->sinks()) {
+            sink->set_level(lvl);
+        }
+    };
+
     switch (level)
     {
-    case LogLevel::TRACE: spdlog::set_level(spdlog::level::trace);
+    case LogLevel::TRACE:
+        set_spdlog_level(spdlog::level::trace);
         break;
-    case LogLevel::DEBUG: spdlog::set_level(spdlog::level::debug);
+    case LogLevel::DEBUG:
+        set_spdlog_level(spdlog::level::debug);
         break;
-    case LogLevel::INFO: spdlog::set_level(spdlog::level::info);
+    case LogLevel::INFO:
+        set_spdlog_level(spdlog::level::info);
         break;
-    case LogLevel::WARN: spdlog::set_level(spdlog::level::warn);
+    case LogLevel::WARN:
+        set_spdlog_level(spdlog::level::warn);
         break;
-    case LogLevel::CRITICAL: spdlog::set_level(spdlog::level::critical);
+    case LogLevel::CRITICAL:
+        set_spdlog_level(spdlog::level::critical);
         break;
     }
 }
@@ -26,11 +42,11 @@ void mantis::LoggingUnit::setLogLevel(const LogLevel& level)
 void mantis::LoggingUnit::init()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
-    console_sink->set_level(spdlog::level::trace);
+    console_sink->set_level(spdlog::level::info);
     console_sink->set_pattern("[%Y-%m-%d %H:%M:%S] [%-8l] %v");
 
-    const auto logger = std::make_shared<spdlog::logger>("multi_sink", console_sink);
-    logger->set_level(spdlog::level::trace);
+    const auto logger = std::make_shared<spdlog::logger>("mantis_logger", console_sink);
+    logger->set_level(spdlog::level::info);
 
     // Make `logger` the default logger
     spdlog::set_default_logger(logger);

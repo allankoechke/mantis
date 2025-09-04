@@ -90,13 +90,17 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
                         sql.set_query_context_logging_mode(soci::log_context::always);
                     else
                         sql.set_query_context_logging_mode(soci::log_context::on_error);
-#else
-                    Log::warn("Database Connection for '{}' has not been implemented yet!", conn_str);
-#endif
+
                     break;
+#else
+                    Log::warn("Database Connection for `PostgreSQL` has not been implemented yet!");
+                    return false;
+#endif
                 }
-            case DbType::MYSQL:
-                Log::warn("Database Connection for '{}' Not Implemented Yet!", conn_str);
+            case DbType::MYSQL: {
+                Log::warn("Database Connection for `MySQL` not implemented yet!");
+                return false;
+            }
 
             // For other DB types
             // Connect to the database URL, no checks here,
@@ -104,24 +108,28 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
             // TODO maybe add checks?
 
             default:
-                Log::warn("Database Connection for '{}' Not Implemented Yet!", conn_str);
+                Log::warn("Database Connection to `{}` Not Implemented Yet!", conn_str);
+                return false;
             }
         }
     }
 
     catch (const soci::soci_error& e)
     {
-        Log::critical("Database Connection SOCI::Error: {}", e.what());
+        Log::critical("Database Connection soci::error: {}", e.what());
+        return false;
     }
 
     catch (const std::exception& e)
     {
         Log::critical("Database Connection std::exception: {}", e.what());
+        return false;
     }
 
     catch (...)
     {
         Log::critical("Database Connection Failed: Unknown Error");
+        return false;
     }
 
     if (MantisApp::instance().dbType() == DbType::SQLITE)
@@ -130,7 +138,7 @@ bool mantis::DatabaseUnit::connect([[maybe_unused]] const DbType backend, const 
         writeCheckpoint();
     }
 
-    return false;
+    return true;
 }
 
 void mantis::DatabaseUnit::disconnect() const

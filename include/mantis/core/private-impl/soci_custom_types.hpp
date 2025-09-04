@@ -29,9 +29,9 @@ namespace soci {
      */
     template <>
     struct type_conversion<bool> {
-        typedef u_int16_t base_type;
+        typedef uint16_t base_type;
 
-        static void from_base(u_int16_t i, indicator ind, bool & b) {
+        static void from_base(uint16_t i, indicator ind, bool & b) {
             if (ind == i_null) {
                 b = false;
                 return;
@@ -39,7 +39,7 @@ namespace soci {
             b = (i != 0);
         }
 
-        static void to_base(const bool & b, u_int16_t & i, indicator & ind) {
+        static void to_base(const bool & b, uint16_t & i, indicator & ind) {
             i = b ? 1 : 0;
             ind = i_ok;
         }
