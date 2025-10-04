@@ -89,6 +89,16 @@ namespace mantis
         parseArgs(); // Parse args & start units
     }
 
+    int MantisApp::initAndRun()
+    {
+        // Initialize Mantis
+        init();
+
+        // If initialization succeeded, lets run our server
+        // and return the error code if it fails
+        return run();
+    }
+
     MantisApp& MantisApp::instance()
     {
         std::lock_guard<std::mutex> lock(s_mutex);

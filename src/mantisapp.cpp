@@ -24,4 +24,7 @@ int main(const int argc, char* argv[])
 
     // Run the http server listening loop
     return app.run();
+
+    // Alternatively, you can just do
+    // return initAndRun();
 }

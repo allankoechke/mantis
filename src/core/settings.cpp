@@ -74,7 +74,7 @@ namespace mantis
         }
     }
 
-    bool SettingsUnit::hasAccess(const Request& req, Response& res, Context& ctx)
+    bool SettingsUnit::hasAccess(const Request& req, Response& res, Context& ctx) const
     {
         TRACE_CLASS_METHOD()
 
