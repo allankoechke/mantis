@@ -103,6 +103,10 @@ int main(const int argc, char* argv[])
     mantis::MantisApp app(argc, argv);
     app.init();
     return app.run();
+    
+    // Or simply do ...
+    // mantis::MantisApp app(argc, argv);
+    // return app.initAndRun();
 }
 ```
 Check [/examples dir](/examples) for a working sample.
@@ -145,7 +149,7 @@ For full API Docs, check [https://docs.mantisapp.dev](https://allankoechke.githu
 
 * HTTP Server: [httplib-cpp](https://github.com/yhirose/cpp-httplib)
 * Database Layer: [SOCI - SQL lib](https://github.com/SOCI/soci)
-* ogging Layer: [spdlog](https://github.com/gabime/spdlog)
+* Logging Layer: [spdlog](https://github.com/gabime/spdlog)
 * Commandline Args: [Argparse](https://github.com/p-ranav/argparse)
 * JWT: [l8w8tjwt](https://github.com/GlitchedPolygons/l8w8jwt)
 * Password Hashing: [libbcrypt](https://github.com/rg3/libbcrypt)
