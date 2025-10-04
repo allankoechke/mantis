@@ -78,6 +78,11 @@ namespace mantis
         void init();
 
         /**
+         * @brief Convinience function to initialize Mantis and start the server
+         */
+        int initAndRun();
+
+        /**
          * @brief Retrieve existing application instance.
          * @return A reference to the existing application instance.
          */
