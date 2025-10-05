@@ -497,7 +497,7 @@ namespace mantis
         // Return if flag is reset
         if (!m_launchAdminPanel) return;
 
-        std::string url = std::format("http://localhost:{}/admin", m_port);
+        const std::string url = std::format("http://localhost:{}/admin", m_port);
 
 #ifdef _WIN32
         std::string command = "start " + url;
@@ -537,7 +537,7 @@ namespace mantis
         // This is the default secret key, override it through environment variable
         // MANTIS_JWT_SECRET, recommended to override this key
         // TODO add commandline input for overriding the key
-        return getEnvOrDefault("MANTIS_JWT_SECRET", "ed12086b9a609a5e410053b0541cb2d8da7087c1bb5e045962377d323ea6eb59");
+        return getEnvOrDefault("MANTIS_JWT_SECRET", "<our-very-secret-JWT-key>");
     }
 
     void MantisApp::ensureInitialized(const char* caller) const

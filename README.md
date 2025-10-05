@@ -118,6 +118,13 @@ You can also run `mantisapp` in a docker container. Check [using docker](doc/doc
 
 ---
 
+> NB: Set `MANTIS_JWT_SECRET` environment variable to override the JWT secret used by Mantis. Remember that, the same key has to be always used to validate JWT tokens.  
+> 
+> `export MANTIS_JWT_SECRET=<your JWT secret>` # Linux  
+> `set MANTIS_JWT_SECRET=<your JWT secret>`    # Windows
+
+---
+
 ## 📁 Project Structure
 
 ```

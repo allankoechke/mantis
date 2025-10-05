@@ -137,6 +137,9 @@ include(cmake/add-cmrc.cmake)
 # Include address sanitizer for Linux debug/releaseWithDebug builds
 include(cmake/add-asan.cmake)
 
+# Include duktape for ECMASCRIPT scripting in Mantis
+include(cmake/add-duktape.cmake)
+
 # Link to libs
 target_link_libraries(mantis
     PUBLIC
