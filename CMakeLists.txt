@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.2.8)
+project(mantisapp VERSION 0.2.9)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -8,6 +8,8 @@ set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5) # Chilbuff still on CMake 3.1
+
+option(MANTIS_BUILD_TESTS "Build tests" OFF)
 
 # Mantis Admin Dashboard Fetch Flags
 # Mantis Admin dashboard version to embed
@@ -95,17 +97,7 @@ add_library(mantis ${MANTIS_LIB_TYPE}
 )
 
 # Add httplib
-# Build static lib for httplib
-set(HTTPLIB_COMPILE OFF CACHE BOOL "")
-if(NOT WIN32)
-    set(HTTPLIB_REQUIRE_ZSTD TRUE)
-    include(cmake/FindZSTD.cmake)
-    find_package(zstd REQUIRED)
-
-    if(zstd_FOUND)
-        add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
-    endif()
-endif()
+include(cmake/add-httplib.cmake)
 
 # Disable
 if(WIN32)
@@ -122,10 +114,13 @@ else()
     set(SPDLOG_BUILD_SHARED OFF)
 endif()
 
+# Add SPDLOG subdir
 add_subdirectory(3rdParty/spdlog)
 
-# Add JSON, SOCI
+# Add JSON
 include(cmake/add-json.cmake)
+
+# Add SOCI
 include(cmake/add-soci.cmake)
 
 add_subdirectory(3rdParty/l8w8jwt)
@@ -139,25 +134,11 @@ include(cmake/add-bcrypt.cmake)
 # Add CMRC for bundling assets
 include(cmake/add-cmrc.cmake)
 
-if(CMAKE_BUILD_TYPE STREQUAL "Debug" OR CMAKE_BUILD_TYPE STREQUAL "RelWithDebInfo")
-    if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
-        message("Enabling Address Sanitizer")
-        include(cmake/asan.cmake)
-        set(ENABLE_ASAN ON)
+# Include address sanitizer for Linux debug/releaseWithDebug builds
+include(cmake/add-asan.cmake)
 
-        enable_asan_for_target(mantis)
-        enable_asan_for_target(mantisapp)
-    endif()
-endif()
-
-# Add to CMakeLists.txt
-option(MANTIS_BUILD_TESTS "Build tests" ON)
-
-if(MANTIS_BUILD_TESTS)
-    message("-- Enabling tests for mantis")
-    enable_testing()
-    add_subdirectory(tests)
-endif()
+# Include duktape for ECMASCRIPT scripting in Mantis
+include(cmake/add-duktape.cmake)
 
 # Link to libs
 target_link_libraries(mantis
@@ -190,61 +171,11 @@ if(WIN32)
     target_link_libraries(mantis PRIVATE bcrypt)
 endif()
 
-# Inject semantic versioning
-# Try to get the current Git commit hash
-execute_process(
-    COMMAND git rev-parse --short HEAD
-    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-    OUTPUT_VARIABLE GIT_COMMIT_HASH
-    OUTPUT_STRIP_TRAILING_WHITESPACE
-    ERROR_QUIET
-)
+# Check if Doxygen is installed, then build docs
+include(cmake/add-doxygen.cmake)
 
-# Suffix for pre-release or metadata (e.g., "-dev", "+gabcdef")
-set(MANTIS_VERSION_SUFFIX "-dev+g${GIT_COMMIT_HASH}")
-set(MANTIS_GIT_COMMIT "${GIT_COMMIT_HASH}")
+# Add SEMVER
+include(cmake/add-semver.cmake)
 
-# Fallback if not in a Git repo
-if(NOT GIT_COMMIT_HASH)
-    set(MANTIS_VERSION_SUFFIX "")
-    set(MANTIS_GIT_COMMIT "unknown")
-endif()
-
-# Add docs option, only if Doxygen is installed
-find_package(Doxygen)
-if(DOXYGEN_FOUND)
-    include(FetchContent)
-    FetchContent_Declare(
-        doxygen-awesome-css
-        URL https://github.com/jothepro/doxygen-awesome-css/archive/refs/heads/main.zip
-        DOWNLOAD_EXTRACT_TIMESTAMP TRUE
-    )
-    FetchContent_MakeAvailable(doxygen-awesome-css)
-
-    # Save the location the files were cloned into
-    # This allows us to get the path to doxygen-awesome.css
-    FetchContent_GetProperties(doxygen-awesome-css SOURCE_DIR AWESOME_CSS_DIR)
-
-    # Generate the Doxyfile
-    set(DOXYFILE_IN ${CMAKE_CURRENT_SOURCE_DIR}/doc/Doxyfile.in)
-    set(DOXYFILE_OUT ${CMAKE_CURRENT_BINARY_DIR}/Doxyfile)
-    set(DOXY_MAINPAGE ${CMAKE_SOURCE_DIR}/doc/QuickStart.md)
-    set(DOXYGEN_LOGO ${CMAKE_SOURCE_DIR}/assets/mantis.png)
-
-    configure_file(${DOXYFILE_IN} ${DOXYFILE_OUT} @ONLY)
-
-    add_custom_target(doc
-        COMMAND ${DOXYGEN_EXECUTABLE} ${DOXYGEN_OUT}
-        WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-        COMMENT "Generating API documentation with Doxygen"
-        VERBATIM
-    )
-
-    add_custom_command(TARGET doc POST_BUILD
-        COMMAND ${CMAKE_COMMAND} -E copy_directory
-        ${CMAKE_SOURCE_DIR}/assets
-        ${CMAKE_CURRENT_BINARY_DIR}/docs/html/assets
-    )
-else()
-    message("Doxygen not installed, skipping building docs")
-endif()
+# Add Tests
+include(cmake/add-tests.cmake)

@@ -16,3 +16,6 @@
 [submodule "3rdParty/cmrc"]
 	path = 3rdParty/cmrc
 	url = https://github.com/vector-of-bool/cmrc.git
+[submodule "3rdParty/dukglue"]
+	path = 3rdParty/dukglue
+	url = https://github.com/Aloshi/dukglue.git

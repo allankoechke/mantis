@@ -18,38 +18,24 @@
 - Minimal runtime footprint
 - SQLite as the default local database with optional PostgreSQL support in Linux.
 - Built-in authentication and access control
-- Auto-generated REST APIs
-- Pluggable sync layer (client-server) [WIP]
+- Auto-generated REST APIs from database Schema
 - Embeddable as a reusable C++ library
+- Lightweight bundled Admin Dashboard
+- Single app binary for portability (~11MB, 3MB compressed)
 
----
-
-## 📦 Features
-
-| Feature                          | Status         |
-|----------------------------------|----------------|
-| ✅ Modular C++ core library       | ✅ Completed  |
-| 🧩 Pluggable database interface   | 🟡 In Progress |
-| 🔐 Authentication (JWT/session)  | ✅ Completed    |
-| 📄 Auto API generation from schema | ✅ Completed    |
-| 🧱 System metadata tables         | ✅ Completed    |
-| 🔁 Client/server sync modes       | ⬜ Planned      |
-| 🔄 WebSocket sync support         | ⬜ Planned      |
-| 🧩 Middleware support             | ✅ Completed |
-| 💾 Static file serving            | ✅ Completed      |
-| 🚀 Docker-ready deployment        | ✅ Completed      |
-| 🧪 Unit + integration tests       | 🟡 In Progress     |
-| 📘 CLI + embeddable modes         | ✅ Completed |
-
----
+> [!WARNING]  
+> Mantis is still under active development and API might change as the project stablizes.
 
 ## 🛠️ Tech Stack
 
-- **Language**: C++
-- **Database**: SQLite (default), PSQL (Linux Only), MySQL (planned)
+- **Language**: C++20
+- **Compilers**: GCC
+- **Database**: SQLite (default), PSQL (Linux), MySQL(planned)
 - **Build System**: CMake
 - **Packaging**: Docker + CLI
 - **Sync**: WebSocket / REST delta sync (planned)
+
+---
 
 > NOTE: On windows, we use `mingw` not `MSVC` due to some feature incompatibility. For `mingw`, it requires at least `v13` with support for `std::format`.
 
@@ -57,15 +43,19 @@
 
 ## 🚀 Getting Started
 There are three ways to get started with Mantis. 
+1. Using pre-built binaries
+2. Building from source
+3. Embedding in another project
+4. Running in a docker container
 
-### 1. Using pre-built binaries
-Download pre-built binaries from our [release page](https://github.com/allankoechke/mantis/releases). First, download the zip package (~4mb) for the target platform and unzip it. With that, we can start the server as shown below;
+For any option taken, Mantis provides:
+- An Admin dashboard exposed at `http://localhost:7070/admin`
+- API endpoints exposed at `http://localhost:7070/api/v1/`
 
-```bash
-./build/mantisapp serve -p 7070
-```
+To access the admin dashboard, you will require to set up an admin user account. This is done via the commandline as detailed below:
+
 #### Creating Admin Login account
-To use the admin dashboard once we have started the server, we need to set up a new admin user account. From the embedded Admin dashboard interface, there is no provision for creating new user.
+To use the admin dashboard once we have started the server, we need to set up a new admin user account. From the embedded Admin dashboard interface, there is no provision for creating new user through the login panel, but admin users can be added later within the admin dashboard itself.
 
 We can achieve this easily through the command-line tool for mantisapp.
 
@@ -74,6 +64,13 @@ mantisapp admins --add john@doe.com
 ```
 
 You will be prompted to enter and confirm the password after which the user account can be used to sign into the admin dashboard.
+
+### 1. Using pre-built binaries
+Download pre-built binaries from our [release page](https://github.com/allankoechke/mantis/releases). First, download the zip package (~4mb) for the target platform and unzip it. With that, we can start the server as shown below;
+
+```bash
+./build/mantisapp serve -p 7070
+```
 
 ### 2. Building from source
 Why miss out on the fun? You can also clone the source setup your build environment and compile it all. Once compiled, the resultant binary can be executed just as the pre-compiled binary above.
@@ -103,6 +100,10 @@ int main(const int argc, char* argv[])
     mantis::MantisApp app(argc, argv);
     app.init();
     return app.run();
+    
+    // Or simply do ...
+    // mantis::MantisApp app(argc, argv);
+    // return app.initAndRun();
 }
 ```
 Check [/examples dir](/examples) for a working sample.
@@ -113,6 +114,29 @@ Check [/examples dir](/examples) for a working sample.
 You can also run `mantisapp` in a docker container. Check [using docker](doc/docker.md) docs for more information.  
 
 ---
+
+> NB: Set `MANTIS_JWT_SECRET` environment variable to override the JWT secret used by Mantis. Remember that, the same key has to be always used to validate JWT tokens.  
+> 
+> `export MANTIS_JWT_SECRET=<your JWT secret>` # Linux  
+> `set MANTIS_JWT_SECRET=<your JWT secret>`    # Windows
+
+---
+
+## Basic CMD Usage  
+
+Mantis works with many cmd options, allowing us to configure and set different options that work best with our setup. This includes but not limited to:
+- Selecting backend database: By default, SQLite is used but for Linux builds, you can also use PostgreSQL by providing the flags `--database PSQL --connection "dbname=<db> host=<host IP> port=<port> username=<db username> password=<db password>"`
+- Switching base command options, that is, `serve` to start HTTP server, `admins` to set up admin accounts, `sync` WIP and `migrate` WIP.
+- Providing debug info when running the server by setting the `--dev` mode flag.
+
+```
+mantisapp serve # Uses port 7070 by default
+mantisapp --dev serve --port 5000 --host 127.0.0.1
+mantisapp --dev admins --add admin@mantis.app # You will be prompted to enter password
+mantisapp --database PSQL --connection "dbname=mantis host=127.0.0.1 port=5432 username=postgres password=postgres" serve
+```
+
+For more detailed CMD options, check out the [docs](doc/01.cmd.md) on this topic.
 
 ## 📁 Project Structure
 
@@ -145,13 +169,14 @@ For full API Docs, check [https://docs.mantisapp.dev](https://allankoechke.githu
 
 * HTTP Server: [httplib-cpp](https://github.com/yhirose/cpp-httplib)
 * Database Layer: [SOCI - SQL lib](https://github.com/SOCI/soci)
-* ogging Layer: [spdlog](https://github.com/gabime/spdlog)
+* Logging Layer: [spdlog](https://github.com/gabime/spdlog)
 * Commandline Args: [Argparse](https://github.com/p-ranav/argparse)
 * JWT: [l8w8tjwt](https://github.com/GlitchedPolygons/l8w8jwt)
 * Password Hashing: [libbcrypt](https://github.com/rg3/libbcrypt)
 * JSON: [nlohmann::json](https://github.com/nlohmann/json)
+* Duktape/Dukglue: Ecmascript support for mantis scripting.
 
-All these dependencies are included in the project as source files or as git submodules under [3rdParty/](./3rdParty/) directory.
+All these dependencies are included in the project as source files or as git submodules under [3rdParty/](./3rdParty/) or [libs](libs) directory.
 
 ---
 
