@@ -4,7 +4,7 @@
 option(MANTIS_HAS_POSTGRESQL "Has PostgreSQL Backend Support" OFF)
 
 if(UNIX)
-    message("Adding PostgreSQL backend support ...")
+    message("-- Adding PostgreSQL backend support")
     set(MANTIS_HAS_POSTGRESQL ON CACHE BOOL "" FORCE)
     add_compile_definitions(MANTIS_HAS_POSTGRESQL=1)
 else(UNIX)

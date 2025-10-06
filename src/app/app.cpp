@@ -50,6 +50,9 @@ namespace mantis
 
         // Enable Multi Sinks
         Log::init();
+
+        // Create a default duk_context
+        m_dukCtx = duk_create_heap_default();
     }
 
     MantisApp::~MantisApp()
@@ -65,6 +68,9 @@ namespace mantis
             // Reset instance pointer
             s_instance = nullptr;
         }
+
+        // Destroy duk context
+        duk_destroy_heap(m_dukCtx);
     }
 
     void MantisApp::init()
@@ -384,6 +390,9 @@ namespace mantis
         m_opts = std::make_unique<argparse::ArgumentParser>();
         m_validators = std::make_unique<Validator>();
         m_files = std::make_unique<FileUnit>(); // depends on log()
+
+        // After creating all instances, let's init js methods
+        initJSEngine();
     }
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -490,6 +499,11 @@ namespace mantis
         return *m_files;
     }
 
+    duk_context* MantisApp::ctx() const
+    {
+        return m_dukCtx;
+    }
+
     void MantisApp::openBrowserOnStart() const
     {
         MANTIS_REQUIRE_INIT();
@@ -546,7 +560,6 @@ namespace mantis
         {
             std::cerr << "[MantisApp] Error: init() not called before use.\n";
             std::cerr << "  -> Called from: " << caller << "\n";
-            throw std::runtime_error("MantisApp::init() must be called before using this method");
             throw std::runtime_error("MantisApp::init() must be called before using this method");
         }
     }
@@ -719,5 +732,27 @@ namespace mantis
 
         std::cout << '\n';
         return password;
+    }
+
+    void MantisApp::initJSEngine()
+    {
+        MANTIS_REQUIRE_INIT();
+        TRACE_CLASS_METHOD()
+
+        dukglue_register_global(m_dukCtx, this, "app");
+        dukglue_register_function(m_dukCtx, &MantisApp::jwtSecretKey, "jwtSecretKey");
+        dukglue_register_function(m_dukCtx, &MantisApp::appVersion, "appVersion");
+
+        // Properties
+        dukglue_register_property(m_dukCtx, &MantisApp::host, &MantisApp::setHost, "host");
+        dukglue_register_property(m_dukCtx, &MantisApp::port, &MantisApp::setPort, "port");
+        dukglue_register_property(m_dukCtx, &MantisApp::poolSize, &MantisApp::setPoolSize, "poolSize");
+        dukglue_register_property(m_dukCtx, &MantisApp::publicDir, &MantisApp::setPublicDir, "publicDir");
+        dukglue_register_property(m_dukCtx, &MantisApp::dataDir, &MantisApp::setDataDir, "dataDir");
+        dukglue_register_property(m_dukCtx, &MantisApp::isDevMode, nullptr, "devMode");
+
+        // Methods
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
+        dukglue_register_method(m_dukCtx, &MantisApp::dbTypeByName, "dbType");
     }
 }

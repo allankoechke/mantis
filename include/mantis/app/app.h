@@ -16,6 +16,7 @@
 #include <filesystem>
 #include <argparse/argparse.hpp>
 #include <chrono>
+#include <dukglue/dukglue.h>
 
 #include "../core/expr_evaluator.h"
 
@@ -232,6 +233,8 @@ namespace mantis
         [[nodiscard]] SettingsUnit& settings() const;
         /// Get the file unit object
         [[nodiscard]] FileUnit& files() const;
+        /// Get the duktape context
+        [[nodiscard]] duk_context* ctx() const;
 
         /**
          * @brief Launch browser with the admin dashboard page. If all goes well, the default
@@ -279,6 +282,8 @@ namespace mantis
          */
         static std::string getUserValueSecurely(const std::string& prompt);
 
+        void initJSEngine();
+
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
 
@@ -310,6 +315,7 @@ namespace mantis
         std::unique_ptr<ExprEvaluator> m_exprEval;
         std::unique_ptr<SettingsUnit> m_settings;
         std::unique_ptr<FileUnit> m_files;
+        duk_context* m_dukCtx;  // For duktape context
     };
 }
 
