@@ -9,7 +9,7 @@
 #include <memory>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
-#include "private-impl/soci_custom_types.hpp"
+#include <mantis/core/private-impl/soci_custom_types.hpp>
 
 #include "../app/app.h"
 #include "logging.h"
