@@ -18,6 +18,7 @@
 #include <soci/row.h>
 
 #include "../core/logging.h"
+#include "dukglue/dukvalue.h"
 
 namespace mantis
 {
@@ -239,6 +240,7 @@ namespace mantis
                                  std::size_t maxLen = 50,
                                  std::size_t idLen = 12,
                                  std::string_view idSep = "_");
+    std::string sanitizeFilename_JSWrapper(const std::string& original);
 
     // ----------------------------------------------------------------- //
     // AUTH UTILS
@@ -250,6 +252,7 @@ namespace mantis
      * @return A base64 encoded salt value.
      */
     std::string bcryptBase64Encode(const unsigned char* data, size_t len);
+    std::string bcryptBase64EncodeStr(const std::string& data);
 
     /**
      * @brief Generates a salt to be used in hashing user passwords.
@@ -266,6 +269,7 @@ namespace mantis
      * @return A JSON object having `hash`, `salt` and `error` values.
      */
     json hashPassword(const std::string& password);
+    DukValue hashPasswordJS(const std::string& password);
 
     /**
      * @brief Verifies user password if it matches the given hashed password.
@@ -278,6 +282,7 @@ namespace mantis
      * @return JSON object indicating whether the verification was successful and an error value if any.
      */
     json verifyPassword(const std::string& password, const std::string& stored_hash);
+    DukValue verifyPasswordJS(const std::string& password, const std::string& stored_hash);
 
     // ----------------------------------------------------------------- //
     // AUTH UTILS
@@ -292,6 +297,7 @@ namespace mantis
     std::tm strToTM(const std::string& value);
     std::string dbDateToString(const std::string& dbType, const soci::row& row, int index);
 
+    void registerUtilsToDuktapeEngine();
 }
 
 #endif // MANTIS_UTILS_H

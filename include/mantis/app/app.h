@@ -320,6 +320,9 @@ namespace mantis
          */
         void loadScript(const std::string& relativePath) const;
 
+        std::string version_JSWrapper() const { return appVersion(); }
+        std::string jwtSecretKey_JSWrapper() const { return jwtSecretKey(); }
+
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
 
