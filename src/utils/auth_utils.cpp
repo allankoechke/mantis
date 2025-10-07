@@ -6,6 +6,9 @@
 #include <iomanip>
 #include <libbcrypt.h>
 
+#include "dukglue/dukvalue.h"
+#include "mantis/app/app.h"
+
 namespace mantis
 {
     static constexpr char BCRYPT_BASE64[] =
@@ -30,6 +33,11 @@ namespace mantis
         return out.substr(0, 22); // bcrypt wants 22-character base64 salt
     }
 
+
+    std::string bcryptBase64EncodeStr(const std::string& data)
+    {
+        return bcryptBase64Encode(reinterpret_cast<const unsigned char*>(data.c_str()), data.size());
+    }
 
     std::string generateSalt(const int cost)
     {
@@ -81,6 +89,21 @@ namespace mantis
         return response;
     }
 
+    DukValue hashPasswordJS(const std::string& password)
+    {
+        const auto p = hashPassword(password).dump();
+        const auto ctx = MantisApp::instance().ctx();
+
+        // Push the JSON string onto the stack
+        duk_push_string(ctx, p.c_str());
+
+        // Decode JSON (converts string to object on stack)
+        duk_json_decode(ctx, -1);
+
+        // Take the resulting object as a DukValue
+        return DukValue::take_from_stack(ctx);
+    }
+
     json verifyPassword(const std::string& password, const std::string& stored_hash)
     {
         json response{{"verified", false}, {"reason", ""}};
@@ -99,5 +122,20 @@ namespace mantis
         }
 
         return response;
+    }
+
+    DukValue verifyPasswordJS(const std::string& password, const std::string& stored_hash)
+    {
+        const auto p = verifyPassword(password, stored_hash).dump();
+        const auto ctx = MantisApp::instance().ctx();
+
+        // Push the JSON string onto the stack
+        duk_push_string(ctx, p.c_str());
+
+        // Decode JSON (converts string to object on stack)
+        duk_json_decode(ctx, -1);
+
+        // Take the resulting object as a DukValue
+        return DukValue::take_from_stack(ctx);
     }
 }

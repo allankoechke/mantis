@@ -7,7 +7,7 @@
 
 namespace mantis
 {
-    static duk_ret_t native_console_info(duk_context* ctx)
+    duk_ret_t DuktapeImpl::nativeConsoleInfo(duk_context* ctx)
     {
         duk_idx_t n = duk_get_top(ctx);
         std::cout << "[INFO] ";
@@ -19,7 +19,7 @@ namespace mantis
         return 0;
     }
 
-    static duk_ret_t native_console_trace(duk_context* ctx)
+    duk_ret_t DuktapeImpl::nativeConsoleTrace(duk_context* ctx)
     {
         duk_idx_t n = duk_get_top(ctx);
         std::cout << "[TRACE] ";
@@ -31,7 +31,7 @@ namespace mantis
         return 0;
     }
 
-    static duk_ret_t native_console_table(duk_context* ctx)
+    duk_ret_t DuktapeImpl::nativeConsoleTable(duk_context* ctx)
     {
         duk_idx_t n = duk_get_top(ctx);
         std::cout << "[TABLE] ";

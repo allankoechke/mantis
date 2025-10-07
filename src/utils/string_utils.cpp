@@ -209,4 +209,9 @@ namespace mantis
         const auto name = shorten(stem, max_size - maxLen);
         return ext.empty() ? std::format("{}{}{}", id, idSep, name) : std::format("{}{}{}{}", id, idSep, name, ext);
     }
+
+    std::string sanitizeFilename_JSWrapper(const std::string& original)
+    {
+        return sanitizeFilename(original);
+    }
 }

@@ -772,11 +772,13 @@ namespace mantis
     void MantisApp::initJSEngine()
     {
         MANTIS_REQUIRE_INIT();
-        TRACE_CLASS_METHOD()
+        TRACE_CLASS_METHOD();
 
+        // ---------------------------------------------- //
+        // Register `app` object
+        // ---------------------------------------------- //
+        // Register the singleton instance as a global
         dukglue_register_global(m_dukCtx, this, "app");
-        dukglue_register_function(m_dukCtx, &MantisApp::jwtSecretKey, "jwtSecretKey");
-        dukglue_register_function(m_dukCtx, &MantisApp::appVersion, "appVersion");
 
         // Properties
         dukglue_register_property(m_dukCtx, &MantisApp::host, &MantisApp::setHost, "host");
@@ -785,24 +787,31 @@ namespace mantis
         dukglue_register_property(m_dukCtx, &MantisApp::publicDir, &MantisApp::setPublicDir, "publicDir");
         dukglue_register_property(m_dukCtx, &MantisApp::dataDir, &MantisApp::setDataDir, "dataDir");
         dukglue_register_property(m_dukCtx, &MantisApp::isDevMode, nullptr, "devMode");
+        dukglue_register_property(m_dukCtx, &MantisApp::dbTypeByName, nullptr, "dbType");
+        dukglue_register_property(m_dukCtx, &MantisApp::jwtSecretKey_JSWrapper, nullptr, "secretKey");
+        dukglue_register_property(m_dukCtx, &MantisApp::version_JSWrapper, nullptr, "version");
 
-        // Methods
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
-        dukglue_register_method(m_dukCtx, &MantisApp::dbTypeByName, "dbType");
 
+        // ---------------------------------------------- //
+        // Register `console` object
+        // ---------------------------------------------- //
         // Create console object and register methods
         duk_push_object(m_dukCtx);
 
-        duk_push_c_function(m_dukCtx, native_console_info, DUK_VARARGS);
+        duk_push_c_function(m_dukCtx, &DuktapeImpl::nativeConsoleInfo, DUK_VARARGS);
         duk_put_prop_string(m_dukCtx, -2, "info");
 
-        duk_push_c_function(m_dukCtx, native_console_trace, DUK_VARARGS);
+        duk_push_c_function(m_dukCtx, &DuktapeImpl::nativeConsoleTrace, DUK_VARARGS);
         duk_put_prop_string(m_dukCtx, -2, "trace");
 
-        duk_push_c_function(m_dukCtx, native_console_info, DUK_VARARGS);
+        duk_push_c_function(m_dukCtx, &DuktapeImpl::nativeConsoleInfo, DUK_VARARGS);
         duk_put_prop_string(m_dukCtx, -2, "log");
 
         duk_put_global_string(m_dukCtx, "console");
+
+        // UTILS methods
+        registerUtilsToDuktapeEngine();
     }
 
     void MantisApp::loadStartScript() const

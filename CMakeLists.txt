@@ -31,7 +31,8 @@ else()
     set(BUILD_SHARED_LIBS FALSE)
     set(MANTIS_LIB_TYPE STATIC
             src/core/private-impl/duktape_custom_types.cpp
-            include/mantis/core/private-impl/duktape_custom_types.h)
+            include/mantis/core/private-impl/duktape_custom_types.h
+            src/utils/dukglue_utils_bindings.cpp)
 
     # For static builds, embed libstdgcc and libstdc++ to avoid binary loading fails
     # due to mismatch libstd* libs.
@@ -87,6 +88,7 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     src/utils/string_utils.cpp
     src/utils/path_utils.cpp
     src/utils/type_utils.cpp
+    src/utils/dukglue_utils_bindings.cpp
 
     include/mantis/core/private-impl/soci_custom_types.hpp
     include/mantis/app/config.hpp.in

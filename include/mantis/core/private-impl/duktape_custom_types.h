@@ -9,11 +9,15 @@
 
 namespace mantis
 {
-    static duk_ret_t native_console_info(duk_context* ctx);
+    class DuktapeImpl
+    {
+    public:
+        static duk_ret_t nativeConsoleInfo(duk_context* ctx);
 
-    static duk_ret_t native_console_trace(duk_context* ctx);
+        static duk_ret_t nativeConsoleTrace(duk_context* ctx);
 
-    static duk_ret_t native_console_table(duk_context* ctx);
+        static duk_ret_t nativeConsoleTable(duk_context* ctx);
+    };
 } // mantis
 
 #endif //MANTISAPP_DUKTAPE_CUSTOM_TYPES_H
