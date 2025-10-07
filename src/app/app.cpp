@@ -2,14 +2,16 @@
 // Created by allan on 16/05/2025.
 //
 
-#include "../../include/mantis/mantis.h"
-#include "../../include/mantis/core/settings.h"
+#include "mantis/mantis.h"
 #include <builtin_features.h>
 #include <mantis/app/config.hpp>
 #include <cmrc/cmrc.hpp>
 #include <format>
+#include <fstream>
 
+#include "mantis/core/settings.h"
 #include "mantis/core/fileunit.h"
+#include "mantis/core/private-impl/duktape_custom_types.h"
 
 /**
  * @brief Enforce `MantisApp` initialization before invoking member functions
@@ -78,21 +80,13 @@ namespace mantis
         // If we had init already, don't proceed!
         if (initialized) return;
 
-        Log::info("Initializing Mantis v{}", appVersion());
+        Log::info("Initializing Mantis, v{}", appVersion());
 
         // Set the initialized flag
         initialized = true;
 
-        // Set initial public directory
-        auto dir = dirFromPath("./public");
-        setPublicDir(dir);
-
-        // Set initial data directory
-        dir = dirFromPath("./data");
-        setDataDir(dir);
-
-        init_units(); // Initialize Units
         parseArgs(); // Parse args & start units
+        initJSEngine(); // Initialize JS engine
     }
 
     int MantisApp::initAndRun()
@@ -130,7 +124,10 @@ namespace mantis
                .help("<dir> Data directory (default: ./data)");
         program.add_argument("--publicDir")
                .nargs(1)
-               .help("<dir> Static files directory (default: ./public).");
+                .help("<dir> Static files directory (default: ./public).");
+        program.add_argument("--scriptsDir")
+               .nargs(1)
+               .help("<dir> JS script files directory (default: ./scripts).");
         program.add_argument("--dev").flag();
 
         // Serve subcommand
@@ -201,8 +198,9 @@ namespace mantis
         // Get main program args
         auto db = program.present<std::string>("--database").value_or("sqlite");
         const auto connString = program.present<std::string>("--connection").value_or("");
-        const auto dataDir = program.present<std::string>("--dataDir").value_or("./data");
-        const auto pubDir = program.present<std::string>("--publicDir").value_or("./public");
+        const auto dataDir = program.present<std::string>("--dataDir").value_or("data");
+        const auto pubDir = program.present<std::string>("--publicDir").value_or("public");
+        const auto scriptsDir = program.present<std::string>("--scriptsDir").value_or("scripts");
 
         // Set trace mode if flag is set
         if (program.get<bool>("--dev"))
@@ -212,13 +210,26 @@ namespace mantis
             m_isDevMode = true;
         }
 
-        // TODO validate directory paths
+        // If directory paths are not valid, we default back to the
+        // default directory for the respective items (`public`, `data` and `scripts`)
+        // relative to the application binary.
         const auto pub_dir = dirFromPath(pubDir);
-        setPublicDir(pub_dir);
+        setPublicDir(pub_dir.empty() ? dirFromPath("public") : pub_dir);
 
         const auto data_dir = dirFromPath(dataDir);
-        setDataDir(data_dir);
+        setDataDir(data_dir.empty()? dirFromPath("data") : data_dir);
 
+        const auto scripts_dir = dirFromPath(scriptsDir);
+        setScriptsDir(scripts_dir.empty() ? dirFromPath("scripts") : scripts_dir);
+
+        Log::info("Mantis Configured Paths:\n\t> Data Dir: {}\n\t> Public Dir: {}\n\t> Scripts Dir: {}",
+            data_dir, pub_dir, scripts_dir);
+
+        // Ensure objects are first created, taking into account the cmd args passed in
+        // esp. the directory paths
+        init_units();
+
+        // Convert db type to lowercase and set the db type
         toLowerCase(db);
         if (db == "sqlite")
         {
@@ -239,7 +250,6 @@ namespace mantis
         {
             quit(-1, std::format("Backend Database `{}` is unsupported!", db));
         }
-
 
         // Initialize database connection & Migration
         if (!m_database->connect(m_dbType, connString))
@@ -264,12 +274,15 @@ namespace mantis
             const auto host = serve_command.get<std::string>("--host");
             const auto port = serve_command.get<int>("--port");
 
-            int default_pool_size = m_dbType == DbType::SQLITE ? 2 : m_dbType == DbType::PSQL ? 10 : 1;
+            int default_pool_size = m_dbType == DbType::SQLITE ? 4 : m_dbType == DbType::PSQL ? 10 : 1;
             const auto pools = serve_command.present<int>("--poolSize").value_or(default_pool_size);
 
             setHost(host);
             setPort(port);
             setPoolSize(pools > 0 ? pools : 1);
+
+            // Set the serve flag to true, will be checked later before
+            // running the listen on port & host above.
             m_toStartServer = true;
         }
         else if (program.is_subcommand_used("admins"))
@@ -390,9 +403,6 @@ namespace mantis
         m_opts = std::make_unique<argparse::ArgumentParser>();
         m_validators = std::make_unique<Validator>();
         m_files = std::make_unique<FileUnit>(); // depends on log()
-
-        // After creating all instances, let's init js methods
-        initJSEngine();
     }
 
     int MantisApp::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -433,6 +443,9 @@ namespace mantis
 
         // Set server start time
         m_startTime = std::chrono::steady_clock::now();
+
+        // Load start script for Mantis
+        loadStartScript();
 
         // If server command is explicitly passed in, start listening,
         // else, exit!
@@ -680,6 +693,21 @@ namespace mantis
         m_dataDir = dir;
     }
 
+    std::string MantisApp::scriptsDir() const
+    {
+        MANTIS_REQUIRE_INIT();
+        return m_scriptsDir;
+    }
+
+    void MantisApp::setScriptsDir(const std::string& dir)
+    {
+        MANTIS_REQUIRE_INIT();
+        if (dir.empty())
+            return;
+
+        m_scriptsDir = dir;
+    }
+
     inline bool MantisApp::ensureDirsAreCreated() const
     {
         MANTIS_REQUIRE_INIT();
@@ -689,6 +717,13 @@ namespace mantis
 
         if (!createDirs(resolvePath(m_publicDir)))
             return false;
+
+        std::cout << "Scripts Dir: " << resolvePath(m_scriptsDir) << std::endl;
+        if (!createDirs(resolvePath(m_scriptsDir)))
+        {
+            std::cout << "Error creating scripts dir" << std::endl;
+            return false;
+        }
 
         return true;
     }
@@ -754,5 +789,57 @@ namespace mantis
         // Methods
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
         dukglue_register_method(m_dukCtx, &MantisApp::dbTypeByName, "dbType");
+
+        // Create console object and register methods
+        duk_push_object(m_dukCtx);
+
+        duk_push_c_function(m_dukCtx, native_console_info, DUK_VARARGS);
+        duk_put_prop_string(m_dukCtx, -2, "info");
+
+        duk_push_c_function(m_dukCtx, native_console_trace, DUK_VARARGS);
+        duk_put_prop_string(m_dukCtx, -2, "trace");
+
+        duk_push_c_function(m_dukCtx, native_console_info, DUK_VARARGS);
+        duk_put_prop_string(m_dukCtx, -2, "log");
+
+        duk_put_global_string(m_dukCtx, "console");
+    }
+
+    void MantisApp::loadStartScript() const
+    {
+        // Look for index.js as the entry point
+        const auto entryPoint = (fs::path(m_scriptsDir) / "index.mantis.js").string();
+        loadAndExecuteScript(entryPoint);
+    }
+
+    void MantisApp::loadAndExecuteScript(const std::string& filePath) const
+    {
+        if (!fs::exists(fs::path(filePath)))
+        {
+            Log::trace("Executing a file that does not exist, path `{}`", filePath);
+            return;
+        }
+
+        // If the file exists, lets load the contents and then execute
+        std::ifstream file(filePath);
+        std::stringstream buffer;
+        buffer << file.rdbuf();
+        std::string scriptContent = buffer.str();
+
+        try
+        {
+            dukglue_peval<void>(m_dukCtx, scriptContent.c_str());
+        }
+        catch (const DukErrorException& e)
+        {
+            Log::critical("Error loading file at {} \n\tError: {}", filePath, e.what());
+        }
+    }
+
+    void MantisApp::loadScript(const std::string& relativePath) const
+    {
+        // Construct full path relative to scripts directory
+        const auto fullPath = fs::path(m_scriptsDir) / relativePath;
+        loadAndExecuteScript(fullPath.string());
     }
 }

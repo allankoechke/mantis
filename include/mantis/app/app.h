@@ -170,6 +170,19 @@ namespace mantis
         void setDataDir(const std::string& dir);
 
         /**
+         * @brief Retrieves the scripts directory where JavaScript files are stored
+         * used for extending functionality in Mantis.
+         *
+         * @return MantisApp scripts directory.
+         */
+        [[nodiscard]] std::string scriptsDir() const;
+        /**
+         * @brief Update the scripts directory for MantisApp.
+         * @param dir New scripts directory.
+         */
+        void setScriptsDir(const std::string& dir);
+
+        /**
          * @brief Retrieves the active database type.
          * @return Selected DatabaseType enum value.
          */
@@ -282,7 +295,30 @@ namespace mantis
          */
         static std::string getUserValueSecurely(const std::string& prompt);
 
+        /**
+         * @brief Initialize JS engine and register Mantis functions to JS
+         */
         void initJSEngine();
+
+        /**
+         * @brief Load startup `.js` file `index.mantis.js` from the mantis
+         * scripts directory.
+         */
+        void loadStartScript() const;
+
+        /**
+         * @brief Load and execute a passed in file path for a `.js` file.
+         *
+         * @param filePath File path to load and execute
+         */
+        void loadAndExecuteScript(const std::string& filePath) const;
+
+        /**
+         * @brief Load a script file and execute it
+         *
+         * @param relativePath Relative file path to be loaded.
+         */
+        void loadScript(const std::string& relativePath) const;
 
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
@@ -292,6 +328,7 @@ namespace mantis
 
         std::string m_publicDir;
         std::string m_dataDir;
+        std::string m_scriptsDir;
         DbType m_dbType;
 
         // System uptime checkpoint

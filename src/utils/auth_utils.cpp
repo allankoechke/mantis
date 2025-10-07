@@ -14,13 +14,12 @@ namespace mantis
     std::string bcryptBase64Encode(const unsigned char* data, size_t len)
     {
         std::string out;
-        int c1, c2, c3;
 
         for (size_t i = 0; i < len;)
         {
-            c1 = data[i++];
-            c2 = (i < len) ? data[i++] : 0;
-            c3 = (i < len) ? data[i++] : 0;
+            const int c1 = data[i++];
+            const int c2 = (i < len) ? data[i++] : 0;
+            const int c3 = (i < len) ? data[i++] : 0;
 
             out += BCRYPT_BASE64[(c1 >> 2) & 0x3f];
             out += BCRYPT_BASE64[((c1 & 0x3) << 4) | ((c2 & 0xf0) >> 4)];

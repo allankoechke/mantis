@@ -29,7 +29,9 @@ if(MANTIS_SHARED_DEPS)
     message("-- Building Mantis dynamic libs")
 else()
     set(BUILD_SHARED_LIBS FALSE)
-    set(MANTIS_LIB_TYPE STATIC)
+    set(MANTIS_LIB_TYPE STATIC
+            src/core/private-impl/duktape_custom_types.cpp
+            include/mantis/core/private-impl/duktape_custom_types.h)
 
     # For static builds, embed libstdgcc and libstdc++ to avoid binary loading fails
     # due to mismatch libstd* libs.
@@ -94,6 +96,9 @@ add_library(mantis ${MANTIS_LIB_TYPE}
 
     src/core/fileunit.cpp
     include/mantis/core/fileunit.h
+
+    include/mantis/core/private-impl/duktape_custom_types.h
+    src/core/private-impl/duktape_custom_types.cpp
 )
 
 # Add httplib

@@ -16,10 +16,10 @@
 **Mantis** is a modular, lightweight C++ library designed to power modern backend systems in embedded devices, desktop tools, or standalone server deployments. Inspired by systems like PocketBase and Supabase, Mantis focuses on:
 
 - Minimal runtime footprint
-- SQLite as the default local database with optional PostgreSQL support in Linux.
-- Built-in authentication and access control
-- Auto-generated REST APIs from database Schema
-- Embeddable as a reusable C++ library
+- SQLite as the default local database (with optional MySQL/PSQL support)
+- Built-in authentication and access control: See [Auth Rules Docs](doc/03.rules.md)
+- Auto-generated REST APIs from database Schema: See [API Basics Docs](doc/02.api.md)
+- Embeddable as a reusable C++ library: See [Embedding Mantis Docs](doc/05.embedding.md)
 - Lightweight bundled Admin Dashboard
 - Single app binary for portability (~11MB, 3MB compressed)
 
@@ -179,6 +179,9 @@ For full API Docs, check [https://docs.mantisapp.dev](https://allankoechke.githu
 All these dependencies are included in the project as source files or as git submodules under [3rdParty/](./3rdParty/) or [libs](libs) directory.
 
 ---
+
+## YouTube Video?
+- [Mantis YouTube Playlist](https://youtube.com/playlist?list=PLsG0sKNmNpyQwsZuReuqo_nl_j4SdJoiJ&si=a9jFK4QjFJb06NAw)
 
 ## 🤝 Contributing
 
