@@ -224,6 +224,30 @@ bool mantis::DatabaseUnit::isConnected() const
     return sql->is_connected();
 }
 
+void mantis::DatabaseUnit::registerDuktapeMethods()
+{
+    const auto ctx = MantisApp::instance().ctx();
+
+    // DatabaseUnit methods
+    dukglue_register_property(ctx, &DatabaseUnit::isConnected, nullptr, "connected");
+    dukglue_register_method(ctx, &MantisApp::close, "session");
+
+    // soci::session methods
+    dukglue_register_method(ctx, &soci::session::close, "close");
+    dukglue_register_method(ctx, &soci::session::reconnect, "reconnect");
+    dukglue_register_property(ctx, &soci::session::is_connected, nullptr, "connected");
+    dukglue_register_method(ctx, &soci::session::begin, "begin");
+    dukglue_register_method(ctx, &soci::session::commit, "commit");
+    dukglue_register_method(ctx, &soci::session::rollback, "rollback");
+    dukglue_register_method(ctx, &soci::session::get_query, "getQuery");
+    dukglue_register_method(ctx, &soci::session::get_last_query, "getLastQuery");
+    dukglue_register_method(ctx, &soci::session::get_last_query_context, "getLastQueryContext");
+    dukglue_register_method(ctx, &soci::session::got_data, "gotData");
+    dukglue_register_method(ctx, &soci::session::get_last_insert_id, "getLastInsertId");
+    dukglue_register_method(ctx, &soci::session::get_backend_name, "getBackendName");
+    dukglue_register_method(ctx, &soci::session::empty_blob, "emptyBlob");
+}
+
 void mantis::DatabaseUnit::writeCheckpoint() const
 {
     // Enable this write checkpoint for SQLite databases ONLY

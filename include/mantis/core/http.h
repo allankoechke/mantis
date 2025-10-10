@@ -290,6 +290,18 @@ namespace mantis
          */
         static std::string hashMultipartMetadata(const httplib::FormData& data);
 
+        static void registerDuktapeMethods()
+        {
+            const auto ctx = MantisApp::instance().ctx();
+
+            // DatabaseUnit methods
+            dukglue_register_property(ctx, &DatabaseUnit::isConnected, nullptr, "connected");
+            dukglue_register_method(ctx, &MantisApp::close, "session");
+
+            // soci::session methods
+            dukglue_register_method(ctx, &soci::session::close, "close");
+        }
+
         const std::string _class_ = "mantis::HttpUnit";
 
     private:

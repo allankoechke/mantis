@@ -792,6 +792,12 @@ namespace mantis
         dukglue_register_property(m_dukCtx, &MantisApp::version_JSWrapper, nullptr, "version");
 
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "db");
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "http");
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "router");
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "validator");
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "settings");
+        dukglue_register_method(m_dukCtx, &MantisApp::close, "files");
 
         // ---------------------------------------------- //
         // Register `console` object
@@ -812,6 +818,9 @@ namespace mantis
 
         // UTILS methods
         registerUtilsToDuktapeEngine();
+
+        // DATABASE methods
+        DatabaseUnit::registerDuktapeMethods();
     }
 
     void MantisApp::loadStartScript() const
