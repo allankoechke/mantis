@@ -63,6 +63,8 @@ namespace mantis {
         /// @return JSON object having `success` and `error` values.
         json removeRoute(const json &table_data = json::object());
 
+        static void registerDuktapeMethods();
+
         const std::string __class_name__ = "mantis::Router";
 
     private:

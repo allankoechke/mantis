@@ -323,6 +323,17 @@ namespace mantis
         std::string version_JSWrapper() const { return appVersion(); }
         std::string jwtSecretKey_JSWrapper() const { return jwtSecretKey(); }
 
+        /**
+         * @brief Wrapper method to return `DatabaseUnit*` instead of
+         * `DatabaseUnit&` returned by @see db() method.
+         *
+         * @return DatabaseUnit instance pointer
+         */
+        DatabaseUnit* duk_db() const;
+
+        // Router methods
+        void addRoute(const std::string& method, const std::string& path, )
+
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
 

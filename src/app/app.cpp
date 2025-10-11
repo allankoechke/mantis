@@ -792,12 +792,13 @@ namespace mantis
         dukglue_register_property(m_dukCtx, &MantisApp::version_JSWrapper, nullptr, "version");
 
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
-        dukglue_register_method(m_dukCtx, &MantisApp::close, "db");
-        dukglue_register_method(m_dukCtx, &MantisApp::close, "http");
-        dukglue_register_method(m_dukCtx, &MantisApp::close, "router");
-        dukglue_register_method(m_dukCtx, &MantisApp::close, "validator");
-        dukglue_register_method(m_dukCtx, &MantisApp::close, "settings");
-        dukglue_register_method(m_dukCtx, &MantisApp::close, "files");
+        dukglue_register_method(m_dukCtx, &MantisApp::duk_db, "db");
+
+        // dukglue_register_method(m_dukCtx, &MantisApp::http, "http");
+        // dukglue_register_method(m_dukCtx, &MantisApp::router, "router");
+        // dukglue_register_method(m_dukCtx, &MantisApp::validators, "validator");
+        // dukglue_register_method(m_dukCtx, &MantisApp::settings, "settings");
+        // dukglue_register_method(m_dukCtx, &MantisApp::files, "files");
 
         // ---------------------------------------------- //
         // Register `console` object
@@ -821,6 +822,9 @@ namespace mantis
 
         // DATABASE methods
         DatabaseUnit::registerDuktapeMethods();
+
+        // HTTP methods
+        HttpUnit::registerDuktapeMethods();
     }
 
     void MantisApp::loadStartScript() const
@@ -859,5 +863,10 @@ namespace mantis
         // Construct full path relative to scripts directory
         const auto fullPath = fs::path(m_scriptsDir) / relativePath;
         loadAndExecuteScript(fullPath.string());
+    }
+
+    DatabaseUnit* MantisApp::duk_db() const
+    {
+        return m_database.get();
     }
 }
