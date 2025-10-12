@@ -327,6 +327,8 @@ void mantis::HttpUnit::registerDuktapeMethods()
     const auto ctx = MantisApp::instance().ctx();
 
     dukglue_register_method(ctx, &HttpUnit::close, "close");
+
+
 }
 
 std::string mantis::HttpUnit::decompressResponseBody(const std::string& body, const std::string& encoding)

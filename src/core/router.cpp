@@ -283,7 +283,7 @@ json mantis::Router::removeRoute(const json &table_data) {
 
 void mantis::Router::registerDuktapeMethods()
 {
-    const auto ctx = MantisApp::instance().ctx();
+    // const auto ctx = MantisApp::instance().ctx();
 
     // Router methods
     // dukglue_register_method(ctx, &Router::addRoute, "addRoute");

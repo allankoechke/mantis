@@ -124,7 +124,7 @@ namespace mantis
                .help("<dir> Data directory (default: ./data)");
         program.add_argument("--publicDir")
                .nargs(1)
-                .help("<dir> Static files directory (default: ./public).");
+               .help("<dir> Static files directory (default: ./public).");
         program.add_argument("--scriptsDir")
                .nargs(1)
                .help("<dir> JS script files directory (default: ./scripts).");
@@ -217,13 +217,13 @@ namespace mantis
         setPublicDir(pub_dir.empty() ? dirFromPath("public") : pub_dir);
 
         const auto data_dir = dirFromPath(dataDir);
-        setDataDir(data_dir.empty()? dirFromPath("data") : data_dir);
+        setDataDir(data_dir.empty() ? dirFromPath("data") : data_dir);
 
         const auto scripts_dir = dirFromPath(scriptsDir);
         setScriptsDir(scripts_dir.empty() ? dirFromPath("scripts") : scripts_dir);
 
         Log::info("Mantis Configured Paths:\n\t> Data Dir: {}\n\t> Public Dir: {}\n\t> Scripts Dir: {}",
-            data_dir, pub_dir, scripts_dir);
+                  data_dir, pub_dir, scripts_dir);
 
         // Ensure objects are first created, taking into account the cmd args passed in
         // esp. the directory paths
@@ -793,6 +793,8 @@ namespace mantis
 
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
         dukglue_register_method(m_dukCtx, &MantisApp::duk_db, "db");
+        dukglue_register_method_varargs(m_dukCtx, &MantisApp::addRoute, "addRoute");
+
 
         // dukglue_register_method(m_dukCtx, &MantisApp::http, "http");
         // dukglue_register_method(m_dukCtx, &MantisApp::router, "router");
@@ -868,5 +870,172 @@ namespace mantis
     DatabaseUnit* MantisApp::duk_db() const
     {
         return m_database.get();
+    }
+
+    duk_ret_t MantisApp::addRoute(duk_context* ctx)
+    {
+        // Get method (GET, POST, etc.) from argument 0
+        auto method = trim(duk_require_string(ctx, 0));
+        std::ranges::transform(method, method.begin(), ::toupper);
+        if (method.empty() ||
+            !(method == "GET" || method == "POST" || method == "PATCH" || method == "DELETE"))
+        {
+            duk_error(ctx, DUK_ERR_TYPE_ERROR,
+                      "addRoute expects request method of type `GET`, `POST`, `PATCH` or `DELETE` only!");
+            return DUK_RET_TYPE_ERROR;
+        }
+
+        // Get path from argument 1
+        const auto path = trim(duk_require_string(ctx, 1));
+        // TODO Catch wildcard paths as well?
+        if (path.empty() || path[0] != '/')
+        {
+            duk_error(ctx, DUK_ERR_TYPE_ERROR, "addRoute expects route paths to be valid and start with `/`!");
+            return DUK_RET_TYPE_ERROR;
+        }
+
+        // Get number of function arguments (everything after path)
+        duk_idx_t n = duk_get_top(ctx);
+        if (n < 3)
+        {
+            duk_error(ctx, DUK_ERR_TYPE_ERROR, "addRoute requires at least a handler function");
+            return DUK_RET_TYPE_ERROR;
+        }
+
+        // First function (argument 2) is the handler
+        if (!duk_is_callable(ctx, 2))
+        {
+            duk_error(ctx, DUK_ERR_TYPE_ERROR, "Argument 2 must be a callable handler function");
+            return DUK_RET_TYPE_ERROR;
+        }
+
+        duk_dup(ctx, 2);
+        DukValue handler = DukValue::take_from_stack(ctx);
+
+        // Remaining functions (arguments 3+) are middleware
+        std::vector<DukValue> middlewares;
+        for (duk_idx_t i = 3; i < n; i++)
+        {
+            if (!duk_is_callable(ctx, i))
+            {
+                duk_error(ctx, DUK_ERR_TYPE_ERROR, "All arguments after handler must be callable functions");
+                return DUK_RET_TYPE_ERROR;
+            }
+
+            duk_dup(ctx, i);
+            middlewares.push_back(DukValue::take_from_stack(ctx));
+        }
+
+        if (method == "GET")
+        {
+            m_http->Get(path, [this, ctx, handler, middlewares](
+                        const httplib::Request& req,
+                        httplib::Response& res,
+                        Context& context)
+                        {
+                            // Construct MantisRequest, MantisResponse objects
+                            MantisRequest ma_req{req, context};
+                            MantisResponse ma_resp{res};
+                            this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                        }, {}
+            );
+        }
+        else if (method == "POST")
+        {
+            m_http->Post(path, [this, ctx, handler, middlewares](
+                         const httplib::Request& req,
+                         httplib::Response& res,
+                         Context& context)
+                         {
+                             // Construct MantisRequest, MantisResponse objects
+                             MantisRequest ma_req{req, context};
+                             MantisResponse ma_resp{res};
+                             this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                         }, {}
+            );
+        }
+        else if (method == "PATCH")
+        {
+            m_http->Patch(path, [this, ctx, handler, middlewares](
+                          const httplib::Request& req,
+                          httplib::Response& res,
+                          Context& context)
+                          {
+                              // Construct MantisRequest, MantisResponse objects
+                              MantisRequest ma_req{req, context};
+                              MantisResponse ma_resp{res};
+                              this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                          }, {}
+            );
+        }
+        else if (method == "DELETE")
+        {
+            m_http->Delete(path, [this, ctx, handler, middlewares](
+                           const httplib::Request& req,
+                           httplib::Response& res,
+                           Context& context)
+                           {
+                               // Construct MantisRequest, MantisResponse objects
+                               MantisRequest ma_req{req, context};
+                               MantisResponse ma_resp{res};
+                               this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                           }, {}
+            );
+        }
+        else
+        {
+            duk_error(ctx, DUK_ERR_TYPE_ERROR, "Unsupported HTTP method: %s", method.c_str());
+            return DUK_RET_TYPE_ERROR;
+        }
+
+        return 0; // No return value
+    }
+
+    void MantisApp::executeRoute(duk_context* ctx, const DukValue& handler, const std::vector<DukValue>& middlewares,
+                                 MantisRequest& req, MantisResponse& res)
+    {
+        // Execute middleware functions first
+        for (const auto& middleware : middlewares)
+        {
+            try
+            {
+                // Call middleware: middleware(req, res, ctx)
+                // If middleware returns false, stop execution
+                const bool ok = dukglue_pcall_method<bool>(ctx, middleware, "call", &req, &res);
+
+                if (!ok)
+                {
+                    if (res.get_status() < 400) res.set_status(500); // If error code is not explicit
+                    return; // Middleware stopped the chain
+                }
+            }
+            catch (const DukException& e)
+            {
+                json response;
+                response["status"] = "ok";
+                response["data"] = json::object();
+                response["error"] = e.what();
+
+                res.set_status(500);
+                res.set_content(response.dump(), "application/json");
+
+                return;
+            }
+        }
+
+        // Execute the handler function
+        try
+        {
+            dukglue_pcall_method<void>(ctx, handler, "call", &req, &res);
+        }
+        catch (const DukException& e)
+        {
+            json response;
+            response["status"] = "ok";
+            response["data"] = json::object();
+            response["error"] = e.what();
+
+            res.send(response.dump(), "application/json", 500);
+        }
     }
 }
