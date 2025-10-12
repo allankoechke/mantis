@@ -11,6 +11,8 @@
 
 // For thread logger
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
+
+#include "mantis/core/private-impl/duktape_custom_types.h"
 #include "spdlog/sinks/ansicolor_sink.h"
 
 #define __file__ "core/http.cpp"
@@ -328,7 +330,8 @@ void mantis::HttpUnit::registerDuktapeMethods()
 
     dukglue_register_method(ctx, &HttpUnit::close, "close");
 
-
+    MantisResponse::registerDuktapeMethods();
+    MantisRequest::registerDuktapeMethods();
 }
 
 std::string mantis::HttpUnit::decompressResponseBody(const std::string& body, const std::string& encoding)

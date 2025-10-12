@@ -6,6 +6,8 @@
 
 #include "mantis/app/app.h"
 
+#define __file__ "duktape_response_wrapper.cpp"
+
 namespace mantis
 {
     MantisRequest::MantisRequest(const httplib::Request& _req, Context& _ctx)
@@ -86,6 +88,7 @@ namespace mantis
 
     bool MantisRequest::has_param(const std::string& key) const
     {
+        Log::trace("Has Param? {}", m_req.has_param(key));
         return m_req.has_param(key);
     }
 
@@ -106,8 +109,12 @@ namespace mantis
 
     void MantisRequest::registerDuktapeMethods()
     {
+        Log::trace("\nEntering MantisRequest::registerDuktapeMethods()");
+
         // Get Duktape Context
         const auto ctx = MantisApp::instance().ctx();
+
+        // dukglue_register_constructor<MantisRequest>(ctx, "MantisRequest");
 
         // Register Request methods
         dukglue_register_method(ctx, &MantisRequest::has_header, "hasHeader");

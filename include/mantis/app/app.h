@@ -372,8 +372,7 @@ namespace mantis
         void executeRoute(duk_context* ctx,
                           const DukValue& handler,
                           const std::vector<DukValue>& middlewares,
-                          MantisRequest& req,
-                          MantisResponse& res);
+                          MantisRequest& req, MantisResponse& res);
 
 
         // Store commandline args passed in, to be used in the init phase.

@@ -6,6 +6,8 @@
 
 #include "mantis/app/app.h"
 
+#define __file__ "duktape_response_wrapper.cpp"
+
 namespace mantis
 {
     MantisResponse::MantisResponse(httplib::Response& _resp) : m_res(_resp)

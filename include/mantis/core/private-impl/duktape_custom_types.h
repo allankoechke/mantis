@@ -26,6 +26,8 @@ namespace mantis
         const httplib::Request& m_req;
         Context& m_ctx;
 
+        const std::string __class_name__ = "mantis::MantisRequest";
+
     public:
         /**
          * @brief Wrapper class around the httplib Request object and
@@ -72,6 +74,8 @@ namespace mantis
     class MantisResponse
     {
         httplib::Response& m_res;
+
+        const std::string __class_name__ = "mantis::MantisResponse";
 
     public:
         MantisResponse(httplib::Response& _resp);

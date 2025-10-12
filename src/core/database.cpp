@@ -230,7 +230,7 @@ void mantis::DatabaseUnit::registerDuktapeMethods()
 
     // DatabaseUnit methods
     dukglue_register_property(ctx, &DatabaseUnit::isConnected, nullptr, "connected");
-    dukglue_register_method(ctx, &MantisApp::close, "session");
+    dukglue_register_method(ctx, &DatabaseUnit::session, "session");
 
     // soci::session methods
     dukglue_register_method(ctx, &soci::session::close, "close");

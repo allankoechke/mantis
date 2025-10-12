@@ -793,8 +793,11 @@ namespace mantis
 
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
         dukglue_register_method(m_dukCtx, &MantisApp::duk_db, "db");
-        dukglue_register_method_varargs(m_dukCtx, &MantisApp::addRoute, "addRoute");
 
+        MantisRequest::registerDuktapeMethods();
+        MantisResponse::registerDuktapeMethods();
+
+        dukglue_register_method_varargs(m_dukCtx, &MantisApp::addRoute, "addRoute");
 
         // dukglue_register_method(m_dukCtx, &MantisApp::http, "http");
         // dukglue_register_method(m_dukCtx, &MantisApp::router, "router");
@@ -826,7 +829,7 @@ namespace mantis
         DatabaseUnit::registerDuktapeMethods();
 
         // HTTP methods
-        HttpUnit::registerDuktapeMethods();
+        // HttpUnit::registerDuktapeMethods();
     }
 
     void MantisApp::loadStartScript() const
@@ -934,9 +937,9 @@ namespace mantis
                         Context& context)
                         {
                             // Construct MantisRequest, MantisResponse objects
-                            MantisRequest ma_req{req, context};
-                            MantisResponse ma_resp{res};
-                            this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                            MantisRequest ma_req(req, context);
+                            MantisResponse ma_res(res);
+                            this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
                         }, {}
             );
         }
@@ -948,9 +951,9 @@ namespace mantis
                          Context& context)
                          {
                              // Construct MantisRequest, MantisResponse objects
-                             MantisRequest ma_req{req, context};
-                             MantisResponse ma_resp{res};
-                             this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                             MantisRequest ma_req(req, context);
+                             MantisResponse ma_res(res);
+                             this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
                          }, {}
             );
         }
@@ -962,9 +965,9 @@ namespace mantis
                           Context& context)
                           {
                               // Construct MantisRequest, MantisResponse objects
-                              MantisRequest ma_req{req, context};
-                              MantisResponse ma_resp{res};
-                              this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                              MantisRequest ma_req(req, context);
+                              MantisResponse ma_res(res);
+                              this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
                           }, {}
             );
         }
@@ -976,9 +979,9 @@ namespace mantis
                            Context& context)
                            {
                                // Construct MantisRequest, MantisResponse objects
-                               MantisRequest ma_req{req, context};
-                               MantisResponse ma_resp{res};
-                               this->executeRoute(ctx, handler, middlewares, ma_req, ma_resp);
+                               MantisRequest ma_req(req, context);
+                               MantisResponse ma_res(res);
+                               this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
                            }, {}
             );
         }
@@ -999,9 +1002,9 @@ namespace mantis
         {
             try
             {
-                // Call middleware: middleware(req, res, ctx)
+                // Call middleware: middleware(req, res)
                 // If middleware returns false, stop execution
-                const bool ok = dukglue_pcall_method<bool>(ctx, middleware, "call", &req, &res);
+                const bool ok = dukglue_pcall<bool>(ctx, middleware, &req, &res);
 
                 if (!ok)
                 {
@@ -1019,6 +1022,8 @@ namespace mantis
                 res.set_status(500);
                 res.set_content(response.dump(), "application/json");
 
+                Log::critical("Error Executing Middleware: {}", e.what());
+
                 return;
             }
         }
@@ -1026,16 +1031,18 @@ namespace mantis
         // Execute the handler function
         try
         {
-            dukglue_pcall_method<void>(ctx, handler, "call", &req, &res);
+            dukglue_pcall<void>(ctx, handler, &req, &res);
         }
         catch (const DukException& e)
         {
             json response;
-            response["status"] = "ok";
+            response["status"] = 500;
             response["data"] = json::object();
             response["error"] = e.what();
 
             res.send(response.dump(), "application/json", 500);
+
+            Log::critical("Error Executing Route {} : {}", req.get_path(), e.what());
         }
     }
 }
