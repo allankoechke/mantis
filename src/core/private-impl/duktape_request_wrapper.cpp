@@ -109,32 +109,34 @@ namespace mantis
 
     void MantisRequest::registerDuktapeMethods()
     {
-        Log::trace("\nEntering MantisRequest::registerDuktapeMethods()");
-
         // Get Duktape Context
         const auto ctx = MantisApp::instance().ctx();
 
-        // dukglue_register_constructor<MantisRequest>(ctx, "MantisRequest");
-
         // Register Request methods
         dukglue_register_method(ctx, &MantisRequest::has_header, "hasHeader");
-        dukglue_register_method(ctx, &MantisRequest::get_header_value, "getHeaderValue");
-        dukglue_register_method(ctx, &MantisRequest::get_header_value_u64, "getHeaderValueU64");
-        dukglue_register_method(ctx, &MantisRequest::get_header_value_count, "getHeaderValueCount");
+        dukglue_register_method(ctx, &MantisRequest::get_header_value, "getHeader");
+        dukglue_register_method(ctx, &MantisRequest::get_header_value_u64, "getHeaderU64");
+        dukglue_register_method(ctx, &MantisRequest::get_header_value_count, "getHeaderCount");
         dukglue_register_method(ctx, &MantisRequest::set_header, "setHeader");
 
         dukglue_register_method(ctx, &MantisRequest::has_trailer, "hasTrailer");
-        dukglue_register_method(ctx, &MantisRequest::get_trailer_value, "getTrailerValue");
-        dukglue_register_method(ctx, &MantisRequest::get_trailer_value_count, "getTrailerValueCount");
+        dukglue_register_method(ctx, &MantisRequest::get_trailer_value, "getTrailer");
+        dukglue_register_method(ctx, &MantisRequest::get_trailer_value_count, "getTrailerCount");
 
+        // `req.hasParam("key")` -> return true/false
         dukglue_register_method(ctx, &MantisRequest::has_param, "hasParam");
-        dukglue_register_method(ctx, &MantisRequest::get_param_value, "getParamValue");
-        dukglue_register_method(ctx, &MantisRequest::get_param_value_count, "getParamValueCount");
-
+        // `req.getParam("key")` -> Return header value given the key
+        dukglue_register_method(ctx, &MantisRequest::get_param_value, "getParam");
+        // `req.getParamCount("key")` -> Return parameter value count
+        dukglue_register_method(ctx, &MantisRequest::get_param_value_count, "getParamCount");
+        // `req.isMultipartFormData()` -> Return true if request type is of Multipart/FormData
         dukglue_register_method(ctx, &MantisRequest::is_multipart_form_data, "isMultipartFormData");
 
+        // `req.body` -> Get request body data
         dukglue_register_property(ctx, &MantisRequest::get_body, nullptr, "body");
+        // `req.method` -> Get request method ('GET', 'POST', ...)
         dukglue_register_property(ctx, &MantisRequest::get_method, nullptr, "method");
+        // `req.path` -> Get request path value
         dukglue_register_property(ctx, &MantisRequest::get_path, nullptr, "path");
     }
 }

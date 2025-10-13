@@ -116,7 +116,11 @@ namespace mantis
         void set_file_content(const std::string& path, const std::string& content_type) const;
         void set_file_content(const std::string& path) const;
 
-        void send(const std::string& data = "", const std::string& content_type= "text/plain", int code = 200) const;
+        void send(const std::string& data = "", const std::string& content_type= "text/plain", int statusCode = 200) const;
+        void send_json(int statusCode = 200, const json& data = json::object()) const;
+        void send_text(int statusCode = 200, const std::string& data = "") const;
+        void send_html(int statusCode = 200, const std::string& data = "<p></p>") const;
+        void send_empty(int statusCode = 204) const;
 
         static void registerDuktapeMethods();
     };
