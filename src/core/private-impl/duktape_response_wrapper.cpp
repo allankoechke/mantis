@@ -134,25 +134,30 @@ namespace mantis
         m_res.set_file_content(path);
     }
 
-    void MantisResponse::send(const std::string& data, const std::string& content_type, const int code) const
+    void MantisResponse::send(int statusCode = 200, const std::string& data, const std::string& content_type) const
     {
         m_res.set_content(data, content_type);
-        m_res.status = code;
+        m_res.status = statusCode;
+    }
+
+    void MantisResponse::send_json_str(const int statusCode, const std::string& data) const
+    {
+        send(statusCode, data, "application/json");
     }
 
     void MantisResponse::send_text(const int statusCode, const std::string& data) const
     {
-        send(data, "text/plain", statusCode);
+        send(statusCode, data, "text/plain");
     }
 
     void MantisResponse::send_json(const int statusCode, const json& data) const
     {
-        send(data.dump(), "application/json", statusCode);
+        send(statusCode, data.dump(), "application/json");
     }
 
     void MantisResponse::send_html(const int statusCode, const std::string& data) const
     {
-        send(data, "application/json", statusCode);
+        send(statusCode, data, "application/json");
     }
 
     void MantisResponse::send_empty(const int statusCode) const
@@ -169,9 +174,9 @@ namespace mantis
         // Register Response methods
         // `res.hasHeader("Authorization")` -> return true/false
         dukglue_register_method(ctx, &MantisResponse::has_header, "hasHeader");
-        // `res.getHeader("Authorization")` -> Return Authorization value or default
-        // `res.getHeader("Authorization", "Default Value")` -> Return Authorization value or default
-        // `res.getHeader("Some Key", "Default Value", 0)` -> Return 'Some Key' value if exists of index '0' or default
+        // `res.getHeader("Authorization", "", 0)` -> Return Authorization value or default
+        // `res.getHeader("Authorization", "Default Value", 0)` -> Return Authorization value or default
+        // `res.getHeader("Some Key", "Default Value", 1)` -> Return 'Some Key' value if exists of index '1' or default
         dukglue_register_method(ctx, &MantisResponse::get_header_value, "getHeader");
         dukglue_register_method(ctx, &MantisResponse::get_header_value_u64, "getHeaderU64");
         // `res.getHeaderCount("key")` -> Count for header values given the header key
@@ -191,8 +196,16 @@ namespace mantis
         // `res.setFileContent("/foo/bar.txt")`
         dukglue_register_method(ctx, static_cast<void(MantisResponse::*)(const std::string&) const>(&MantisResponse::set_file_content), "setFileContent");
 
-        // `res.send("some data here", "text/plain", 201)`
+        // `res.send(200, "some data here", "text/plain")`
         dukglue_register_method(ctx, &MantisResponse::send, "send");
+        // `res.json(200, "{\"a\": 5}")`
+        dukglue_register_method(ctx, &MantisResponse::send_json_str, "json");
+        // `res.html(200, "<html> ... </html>")`
+        dukglue_register_method(ctx, &MantisResponse::send_html, "html");
+        // `res.text(200, "some text response")`
+        dukglue_register_method(ctx, &MantisResponse::send_text, "text");
+        // `res.empty(204)`
+        dukglue_register_method(ctx, &MantisResponse::send_empty, "empty");
 
         // `res.body = "Some Data"`
         // `res.body` -> returns `Some Data`

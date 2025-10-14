@@ -61,9 +61,15 @@ namespace mantis
 
         size_t get_trailer_value_count(const std::string& key) const;
 
-        bool has_param(const std::string& key) const;
-        std::string get_param_value(const std::string& key, size_t id) const;
-        size_t get_param_value_count(const std::string& key) const;
+        bool has_query_param(const std::string& key) const;
+        std::string get_query_param_value(const std::string& key) const;
+        std::string get_query_param_value(const std::string& key, size_t id) const;
+        size_t get_query_param_value_count(const std::string& key) const;
+
+        bool has_path_param(const std::string& key) const;
+        std::string get_path_param_value(const std::string& key) const;
+        std::string get_path_param_value(const std::string& key, size_t id) const;
+        size_t get_path_param_value_count(const std::string& key) const;
 
         bool is_multipart_form_data() const;
 
@@ -116,8 +122,9 @@ namespace mantis
         void set_file_content(const std::string& path, const std::string& content_type) const;
         void set_file_content(const std::string& path) const;
 
-        void send(const std::string& data = "", const std::string& content_type= "text/plain", int statusCode = 200) const;
+        void send(int statusCode, const std::string& data = "", const std::string& content_type= "text/plain") const;
         void send_json(int statusCode = 200, const json& data = json::object()) const;
+        void send_json_str(int statusCode, const std::string& data) const;
         void send_text(int statusCode = 200, const std::string& data = "") const;
         void send_html(int statusCode = 200, const std::string& data = "<p></p>") const;
         void send_empty(int statusCode = 204) const;

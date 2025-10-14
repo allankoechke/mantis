@@ -1040,7 +1040,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = e.what();
 
-            res.send(response.dump(), "application/json", 500);
+            res.send(500, response.dump(), "application/json");
 
             Log::critical("Error Executing Route {} : {}", req.get_path(), e.what());
         }
