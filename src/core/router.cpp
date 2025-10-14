@@ -13,7 +13,8 @@
 #include "mantis/core/settings.h"
 using json = nlohmann::json;
 
-#include<cmrc/cmrc.hpp>
+#include <cmrc/cmrc.hpp>
+#include <dukglue/dukglue.h>
 
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);
@@ -278,6 +279,15 @@ json mantis::Router::removeRoute(const json &table_data) {
 
     res["success"] = true;
     return res;
+}
+
+void mantis::Router::registerDuktapeMethods()
+{
+    // const auto ctx = MantisApp::instance().ctx();
+
+    // Router methods
+    // dukglue_register_method(ctx, &Router::addRoute, "addRoute");
+    // dukglue_register_method(ctx, &soci::session::close, "close");
 }
 
 bool mantis::Router::generateFileServingApi() const {

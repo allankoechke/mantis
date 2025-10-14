@@ -18,6 +18,7 @@
 #include <chrono>
 #include <dukglue/dukglue.h>
 
+#include "httplib.h"
 #include "../core/expr_evaluator.h"
 
 // For password management ... // TODO get a proper library
@@ -30,6 +31,9 @@
 
 namespace mantis
 {
+    class MantisResponse;
+    class MantisRequest;
+    class Context;
     namespace fs = std::filesystem;
 
     class DatabaseUnit;
@@ -323,6 +327,54 @@ namespace mantis
         std::string version_JSWrapper() const { return appVersion(); }
         std::string jwtSecretKey_JSWrapper() const { return jwtSecretKey(); }
 
+        /**
+         * @brief Wrapper method to return `DatabaseUnit*` instead of
+         * `DatabaseUnit&` returned by @see db() method.
+         *
+         * @return DatabaseUnit instance pointer
+         */
+        [[nodiscard]] DatabaseUnit* duk_db() const;
+
+        /**
+         * @brief Add HTTP route given the `method`, `path`, and
+         * at least one request handler and none or more middlewares.
+         * @param ctx duktape JS context
+         * @return Duktape return value (`duk_ret_t`)
+         *
+         * ```
+         * // Usage in JavaScript
+         * app.addRoute("GET", "/somepath/{args}", (req, res, ctx) {
+         *      // Request Body Here ...
+         * }, [
+         *      // One or More Middlewares
+         *      app.someFunc,
+         *      (req, res, ctx) {
+         *          // For each middleware, returning:
+         *          // - `true`: Middleware was successful, proceed to the next middleware/handler
+         *          // - `false`: Middleware failed, so return request to the user as an error
+         *          return true;
+         *      }
+         * ])
+         * ```
+         */
+        duk_ret_t addRoute(duk_context* ctx);
+
+        /**
+         * @brief Handles execution of handler & middlewares for JS bound requests
+         * through the @see addRoute() method call.
+         *
+         * @param ctx Duktape Context pointer
+         * @param handler Request Handler Method
+         * @param middlewares Request Middlewares to execute
+         * @param req MantisRequest instance
+         * @param res MantisResponse instance
+         */
+        void executeRoute(duk_context* ctx,
+                          const DukValue& handler,
+                          const std::vector<DukValue>& middlewares,
+                          MantisRequest& req, MantisResponse& res);
+
+
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
 
@@ -355,7 +407,7 @@ namespace mantis
         std::unique_ptr<ExprEvaluator> m_exprEval;
         std::unique_ptr<SettingsUnit> m_settings;
         std::unique_ptr<FileUnit> m_files;
-        duk_context* m_dukCtx;  // For duktape context
+        duk_context* m_dukCtx; // For duktape context
     };
 }
 

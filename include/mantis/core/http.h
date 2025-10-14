@@ -16,6 +16,7 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include <dukglue/dukglue.h>
 
 #include "logging.h"
 
@@ -290,6 +291,8 @@ namespace mantis
          */
         static std::string hashMultipartMetadata(const httplib::FormData& data);
 
+        static void registerDuktapeMethods();
+
         const std::string _class_ = "mantis::HttpUnit";
 
     private:
@@ -301,7 +304,7 @@ namespace mantis
          * @param encoding Encoding type
          * @return Uncompressed string data
          */
-        std::string decompressResponseBody(const std::string& body, const std::string& encoding);
+        static std::string decompressResponseBody(const std::string& body, const std::string& encoding);
 
         using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
 

@@ -68,6 +68,8 @@ namespace mantis
          */
         [[nodiscard]] bool isConnected() const;
 
+        static void registerDuktapeMethods();
+
         const std::string __class_name__ = "mantis::DatabaseUnit";
 
     private:
