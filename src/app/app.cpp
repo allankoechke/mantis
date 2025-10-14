@@ -791,19 +791,17 @@ namespace mantis
         dukglue_register_property(m_dukCtx, &MantisApp::jwtSecretKey_JSWrapper, nullptr, "secretKey");
         dukglue_register_property(m_dukCtx, &MantisApp::version_JSWrapper, nullptr, "version");
 
+        // `app.close()`
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
+        // `app.quit(1, "Just crashed?")`
+        dukglue_register_method(m_dukCtx, &MantisApp::quit_JSWrapper, "quit");
+        // `app.db()`
         dukglue_register_method(m_dukCtx, &MantisApp::duk_db, "db");
 
         MantisRequest::registerDuktapeMethods();
         MantisResponse::registerDuktapeMethods();
 
         dukglue_register_method_varargs(m_dukCtx, &MantisApp::addRoute, "addRoute");
-
-        // dukglue_register_method(m_dukCtx, &MantisApp::http, "http");
-        // dukglue_register_method(m_dukCtx, &MantisApp::router, "router");
-        // dukglue_register_method(m_dukCtx, &MantisApp::validators, "validator");
-        // dukglue_register_method(m_dukCtx, &MantisApp::settings, "settings");
-        // dukglue_register_method(m_dukCtx, &MantisApp::files, "files");
 
         // ---------------------------------------------- //
         // Register `console` object
@@ -869,6 +867,9 @@ namespace mantis
         const auto fullPath = fs::path(m_scriptsDir) / relativePath;
         loadAndExecuteScript(fullPath.string());
     }
+
+    void MantisApp::quit_JSWrapper(const int code, const std::string& msg)
+    { quit(code, msg); }
 
     DatabaseUnit* MantisApp::duk_db() const
     {

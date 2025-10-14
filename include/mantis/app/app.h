@@ -326,6 +326,7 @@ namespace mantis
 
         std::string version_JSWrapper() const { return appVersion(); }
         std::string jwtSecretKey_JSWrapper() const { return jwtSecretKey(); }
+        void quit_JSWrapper(const int code, const std::string& msg);;
 
         /**
          * @brief Wrapper method to return `DatabaseUnit*` instead of
@@ -343,12 +344,12 @@ namespace mantis
          *
          * ```
          * // Usage in JavaScript
-         * app.addRoute("GET", "/somepath/{args}", (req, res, ctx) {
+         * app.addRoute("GET", "/somepath/{args}", (req, res) {
          *      // Request Body Here ...
          * }, [
          *      // One or More Middlewares
          *      app.someFunc,
-         *      (req, res, ctx) {
+         *      (req, res) {
          *          // For each middleware, returning:
          *          // - `true`: Middleware was successful, proceed to the next middleware/handler
          *          // - `false`: Middleware failed, so return request to the user as an error
