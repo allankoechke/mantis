@@ -8,7 +8,6 @@
 #include <cmrc/cmrc.hpp>
 #include <format>
 #include <fstream>
-#include <optional>
 
 #include "mantis/core/settings.h"
 #include "mantis/core/fileunit.h"

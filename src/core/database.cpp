@@ -243,7 +243,7 @@ void mantis::DatabaseUnit::registerDuktapeMethods()
     dukglue_register_method(ctx, &soci::session::get_last_query, "getLastQuery");
     dukglue_register_method(ctx, &soci::session::get_last_query_context, "getLastQueryContext");
     dukglue_register_method(ctx, &soci::session::got_data, "gotData");
-    dukglue_register_method(ctx, &soci::session::get_last_insert_id, "getLastInsertId");
+    // dukglue_register_method(ctx, &soci::session::get_last_insert_id, "getLastInsertId");
     dukglue_register_method(ctx, &soci::session::get_backend_name, "getBackendName");
     dukglue_register_method(ctx, &soci::session::empty_blob, "emptyBlob");
 }
