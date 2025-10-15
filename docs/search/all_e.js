@@ -8,7 +8,7 @@ var searchData=
   ['fieldexists_5',['fieldExists',['../namespacemantis.html#a6f31a34926bcde11edb345d6831023ca',1,'mantis']]],
   ['fields_6',['fields',['../classmantis_1_1TableUnit.html#a6947d323372e453f19fefed4a0830c2a',1,'mantis::TableUnit::fields()'],['../structmantis_1_1Table.html#a02c4e1b4c341d940765e3aec51303c4e',1,'mantis::Table::fields']]],
   ['fieldtype_7',['FieldType',['../namespacemantis.html#a0f64f5fc9ae235bebf1922956b3a9e26',1,'mantis']]],
-  ['file_20handling_8',['📂 File Handling',['../index.html#autotoc_md169',1,'']]],
+  ['file_20handling_8',['📂 File Handling',['../index.html#autotoc_md178',1,'']]],
   ['file_20server_20strong_9',['6. &lt;strong&gt;Static File Server&lt;/strong&gt;',['../architecture.html#autotoc_md86',1,'']]],
   ['file_20serving_20endpoint_10',['File Serving Endpoint',['../files.html#autotoc_md140',1,'']]],
   ['file_20structure_20overview_11',['📁 File Structure Overview',['../architecture.html#autotoc_md95',1,'']]],
@@ -22,7 +22,8 @@ var searchData=
   ['filtering_20query_20parameters_20pending_19',['🎛️ Filtering &amp; Query Parameters [PENDING]',['../rest_api.html#autotoc_md32',1,'']]],
   ['find_20',['find',['../classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f',1,'mantis::Validator::find()'],['../classmantis_1_1RouteRegistry.html#ab296c9afa8887f22c2628bfd8a2116c3',1,'mantis::RouteRegistry::find()']]],
   ['findfieldbykey_21',['findFieldByKey',['../classmantis_1_1TableUnit.html#aeb0e1101b9c2be401432e8b641076eea',1,'mantis::TableUnit']]],
-  ['from_20source_22',['2. Building from Source',['../index.html#autotoc_md159',1,'']]],
+  ['from_20source_22',['2. Building from Source',['../index.html#autotoc_md168',1,'']]],
   ['fromjson_23',['fromJson',['../classmantis_1_1TableUnit.html#a6b42ede1de6b44bd8da8d4d4e6be7756',1,'mantis::TableUnit']]],
-  ['funclogger_24',['funclogger',['../classmantis_1_1FuncLogger.html#abbef031ee3e3e7518554d2040557378f',1,'mantis::FuncLogger::FuncLogger()'],['../classmantis_1_1FuncLogger.html',1,'mantis::FuncLogger']]]
+  ['funclogger_24',['funclogger',['../classmantis_1_1FuncLogger.html#abbef031ee3e3e7518554d2040557378f',1,'mantis::FuncLogger::FuncLogger()'],['../classmantis_1_1FuncLogger.html',1,'mantis::FuncLogger']]],
+  ['functions_25',['Utils (utility functions)',['../scripting.html#autotoc_md159',1,'']]]
 ];

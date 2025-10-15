@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.8</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
    </div>
   </td>
  </tr>
@@ -109,28 +109,31 @@ $(document).ready(function(){initNavTree('utils_8h.html',''); initResizable(); }
 <code>#include &lt;algorithm&gt;</code><br />
 <code>#include &lt;soci/row.h&gt;</code><br />
 <code>#include &quot;<a class="el" href="logging_8h_source.html">../core/logging.h</a>&quot;</code><br />
+<code>#include &quot;dukglue/dukvalue.h&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for utils.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="utils_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8h" id="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8h">
-<area shape="rect" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="288,5,483,60"/>
+<area shape="rect" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="341,5,536,60"/>
 <area shape="rect" title=" " alt="" coords="5,108,64,133"/>
-<area shape="poly" title=" " alt="" coords="289,59,78,110,77,105,287,54"/>
+<area shape="poly" title=" " alt="" coords="342,55,78,110,77,105,341,49"/>
 <area shape="rect" title=" " alt="" coords="88,108,179,133"/>
-<area shape="poly" title=" " alt="" coords="309,63,181,106,179,101,308,58"/>
+<area shape="poly" title=" " alt="" coords="346,63,188,107,186,102,345,57"/>
 <area shape="rect" title=" " alt="" coords="203,108,275,133"/>
-<area shape="poly" title=" " alt="" coords="342,62,272,103,269,99,339,58"/>
+<area shape="poly" title=" " alt="" coords="379,63,279,105,277,100,377,58"/>
 <area shape="rect" title=" " alt="" coords="299,108,365,133"/>
-<area shape="poly" title=" " alt="" coords="371,61,349,98,344,95,367,59"/>
+<area shape="poly" title=" " alt="" coords="408,62,359,101,356,97,404,58"/>
 <area shape="rect" title=" " alt="" coords="390,108,487,133"/>
-<area shape="poly" title=" " alt="" coords="404,59,426,95,422,98,399,61"/>
+<area shape="poly" title=" " alt="" coords="441,60,441,94,436,94,436,60"/>
 <area shape="rect" title=" " alt="" coords="512,108,597,133"/>
-<area shape="poly" title=" " alt="" coords="438,58,521,99,518,104,436,62"/>
+<area shape="poly" title=" " alt="" coords="476,58,529,97,526,102,473,62"/>
 <area shape="rect" title=" " alt="" coords="622,108,709,133"/>
-<area shape="poly" title=" " alt="" coords="472,58,616,102,614,107,470,63"/>
+<area shape="poly" title=" " alt="" coords="509,58,623,101,621,106,507,63"/>
 <area shape="rect" href="logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="733,108,859,133"/>
-<area shape="poly" title=" " alt="" coords="484,52,728,103,727,108,483,57"/>
+<area shape="poly" title=" " alt="" coords="537,55,736,102,734,107,536,60"/>
+<area shape="rect" title=" " alt="" coords="883,108,1034,133"/>
+<area shape="poly" title=" " alt="" coords="537,47,877,103,876,108,536,53"/>
 <area shape="rect" title=" " alt="" coords="494,181,682,236"/>
 <area shape="poly" title=" " alt="" coords="769,136,665,179,663,174,767,131"/>
 <area shape="rect" title=" " alt="" coords="707,189,885,229"/>
@@ -144,39 +147,41 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="utils_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8hdep" id="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2utils_2utils_8hdep">
-<area shape="rect" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="1795,5,1989,60"/>
+<area shape="rect" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="1904,5,2099,60"/>
 <area shape="rect" href="mantis_8h.html" title=" " alt="" coords="115,108,309,163"/>
-<area shape="poly" title=" " alt="" coords="1781,39,1042,63,626,84,454,97,323,111,310,113,309,107,322,105,453,91,626,79,1041,58,1781,34"/>
+<area shape="poly" title=" " alt="" coords="1890,39,1552,47,1099,62,651,83,464,96,323,111,310,113,309,107,322,105,464,90,650,77,1099,56,1552,42,1890,34"/>
 <area shape="rect" href="database_8cpp.html" title=" " alt="" coords="334,115,551,155"/>
-<area shape="poly" title=" " alt="" coords="1781,37,1557,41,1255,52,911,74,736,90,564,111,522,118,521,113,564,105,735,85,911,69,1255,47,1557,36,1781,32"/>
+<area shape="poly" title=" " alt="" coords="1890,36,1650,39,1321,49,945,72,752,89,564,111,522,118,521,113,564,105,752,84,944,66,1321,44,1650,34,1890,31"/>
 <area shape="rect" href="router_8cpp.html" title=" " alt="" coords="576,115,771,155"/>
-<area shape="poly" title=" " alt="" coords="1781,38,1592,43,1343,55,1065,77,784,111,746,118,745,113,784,105,1064,72,1343,50,1591,38,1781,33"/>
+<area shape="poly" title=" " alt="" coords="1890,37,1683,41,1408,52,1097,74,939,91,784,111,746,118,745,113,784,105,938,85,1097,69,1408,47,1683,36,1890,32"/>
 <area shape="rect" href="settings_8cpp.html" title=" " alt="" coords="795,115,1005,155"/>
-<area shape="poly" title=" " alt="" coords="1781,41,1439,63,1228,83,1018,111,978,118,977,113,1017,105,1228,78,1439,58,1781,36"/>
+<area shape="poly" title=" " alt="" coords="1891,40,1721,47,1503,60,1261,81,1018,111,978,118,977,113,1017,105,1260,76,1503,55,1721,42,1890,35"/>
 <area shape="rect" href="sys__tables_8cpp.html" title=" " alt="" coords="1029,108,1224,163"/>
-<area shape="poly" title=" " alt="" coords="1781,45,1531,69,1383,88,1236,111,1225,113,1224,108,1236,105,1382,83,1530,64,1780,40"/>
+<area shape="poly" title=" " alt="" coords="1890,43,1594,66,1415,85,1236,111,1225,113,1224,107,1236,105,1414,80,1593,60,1890,37"/>
 <area shape="rect" href="sys__tables__crud_8cpp.html" title=" " alt="" coords="1248,108,1443,163"/>
-<area shape="poly" title=" " alt="" coords="1781,53,1627,79,1455,111,1444,113,1442,108,1454,105,1626,73,1781,48"/>
+<area shape="poly" title=" " alt="" coords="1890,48,1687,74,1455,111,1443,113,1442,108,1454,105,1687,68,1890,43"/>
 <area shape="rect" href="tables_8cpp.html" title=" " alt="" coords="1467,108,1661,163"/>
-<area shape="poly" title=" " alt="" coords="1794,67,1650,110,1649,105,1793,62"/>
+<area shape="poly" title=" " alt="" coords="1891,61,1674,111,1662,113,1661,108,1673,105,1890,56"/>
 <area shape="rect" href="tables__auth_8cpp.html" title=" " alt="" coords="1685,108,1880,163"/>
-<area shape="poly" title=" " alt="" coords="1855,72,1813,110,1809,106,1851,68"/>
+<area shape="poly" title=" " alt="" coords="1933,68,1841,110,1839,106,1931,63"/>
 <area shape="rect" href="tables__crud_8cpp.html" title=" " alt="" coords="1904,108,2099,163"/>
-<area shape="poly" title=" " alt="" coords="1933,68,1975,106,1971,110,1929,72"/>
+<area shape="poly" title=" " alt="" coords="2004,74,2004,108,1999,108,1999,74"/>
 <area shape="rect" href="tables__routes_8cpp.html" title=" " alt="" coords="2123,108,2317,163"/>
-<area shape="poly" title=" " alt="" coords="1991,62,2135,105,2134,110,1990,67"/>
+<area shape="poly" title=" " alt="" coords="2072,63,2164,106,2162,110,2070,68"/>
 <area shape="rect" href="tables__utils_8cpp.html" title=" " alt="" coords="2341,108,2536,163"/>
-<area shape="poly" title=" " alt="" coords="2003,48,2158,73,2330,105,2342,108,2340,113,2329,111,2157,79,2003,53"/>
+<area shape="poly" title=" " alt="" coords="2113,56,2330,105,2342,108,2340,113,2329,111,2112,61"/>
 <area shape="rect" href="tables__validation_8cpp.html" title=" " alt="" coords="2560,108,2755,163"/>
-<area shape="poly" title=" " alt="" coords="2004,40,2254,64,2402,83,2548,105,2560,108,2559,113,2548,111,2401,88,2253,69,2003,45"/>
+<area shape="poly" title=" " alt="" coords="2113,43,2316,68,2548,105,2560,108,2559,113,2548,111,2315,74,2112,48"/>
 <area shape="rect" href="auth__utils_8cpp.html" title=" " alt="" coords="2779,108,2973,163"/>
-<area shape="poly" title=" " alt="" coords="2004,35,2346,57,2556,77,2767,105,2779,107,2778,113,2766,111,2556,82,2345,62,2003,41"/>
-<area shape="rect" href="path__utils_8cpp.html" title=" " alt="" coords="2997,108,3192,163"/>
-<area shape="poly" title=" " alt="" coords="2003,33,2191,38,2435,50,2710,72,2986,105,2998,107,2997,113,2985,111,2709,77,2435,56,2190,44,2003,38"/>
-<area shape="rect" href="string__utils_8cpp.html" title=" " alt="" coords="3216,108,3411,163"/>
-<area shape="poly" title=" " alt="" coords="2003,31,2225,34,2523,44,2862,67,3035,84,3204,105,3216,107,3215,113,3204,111,3035,89,2862,72,2523,50,2224,39,2003,36"/>
-<area shape="rect" href="type__utils_8cpp.html" title=" " alt="" coords="3435,108,3629,163"/>
-<area shape="poly" title=" " alt="" coords="2003,34,2724,58,3128,79,3296,91,3423,105,3435,107,3434,112,3422,111,3295,97,3128,84,2724,63,2003,39"/>
+<area shape="poly" title=" " alt="" coords="2113,37,2410,60,2588,80,2767,105,2779,107,2778,113,2766,111,2588,85,2409,66,2113,43"/>
+<area shape="rect" href="dukglue__utils__bindings_8cpp.html" title=" " alt="" coords="2997,108,3192,163"/>
+<area shape="poly" title=" " alt="" coords="2112,34,2282,41,2500,53,2742,74,2986,105,2998,107,2997,113,2985,111,2742,80,2499,59,2282,46,2112,39"/>
+<area shape="rect" href="path__utils_8cpp.html" title=" " alt="" coords="3216,108,3411,163"/>
+<area shape="poly" title=" " alt="" coords="2113,32,2317,36,2589,47,2895,69,3052,85,3204,105,3216,107,3215,113,3204,111,3051,91,2895,75,2589,53,2317,41,2113,37"/>
+<area shape="rect" href="string__utils_8cpp.html" title=" " alt="" coords="3435,108,3629,163"/>
+<area shape="poly" title=" " alt="" coords="2112,30,2351,32,2676,41,3048,64,3237,82,3423,105,3435,107,3434,113,3422,111,3237,87,3047,69,2676,47,2350,37,2112,36"/>
+<area shape="rect" href="type__utils_8cpp.html" title=" " alt="" coords="3653,108,3848,163"/>
+<area shape="poly" title=" " alt="" coords="2113,34,2444,42,2885,57,3322,78,3504,91,3642,105,3653,107,3653,112,3641,111,3503,96,3322,83,2885,62,2444,47,2112,39"/>
 <area shape="rect" href="app_8cpp.html" title=" " alt="" coords="5,218,200,258"/>
 <area shape="poly" title=" " alt="" coords="175,174,125,220,121,216,171,170"/>
 <area shape="rect" href="models_8cpp.html" title=" " alt="" coords="224,211,419,265"/>
@@ -238,18 +243,26 @@ Functions</h2></td></tr>
 <tr class="memitem:a71d9b005929526118af08c2ed3f74e8e" id="r_a71d9b005929526118af08c2ed3f74e8e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a71d9b005929526118af08c2ed3f74e8e">mantis::sanitizeFilename</a> (std::string_view original, std::size_t maxLen=50, std::size_t idLen=12, std::string_view idSep=&quot;_&quot;)</td></tr>
 <tr class="memdesc:a71d9b005929526118af08c2ed3f74e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize a filename and ensure uniqueness.  <br /></td></tr>
 <tr class="separator:a71d9b005929526118af08c2ed3f74e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb9883ad342a2828a282d3bd13f4910f" id="r_afb9883ad342a2828a282d3bd13f4910f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#afb9883ad342a2828a282d3bd13f4910f">mantis::sanitizeFilename_JSWrapper</a> (const std::string &amp;original)</td></tr>
+<tr class="separator:afb9883ad342a2828a282d3bd13f4910f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e23dffb248fc4160e5c6c09a594eae2" id="r_a9e23dffb248fc4160e5c6c09a594eae2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">mantis::bcryptBase64Encode</a> (const unsigned char *data, size_t len)</td></tr>
 <tr class="memdesc:a9e23dffb248fc4160e5c6c09a594eae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode a Salt string to bcrypt base64 format.  <br /></td></tr>
 <tr class="separator:a9e23dffb248fc4160e5c6c09a594eae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb45847f55aef56ed55a3e3c9df3e2df" id="r_aeb45847f55aef56ed55a3e3c9df3e2df"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aeb45847f55aef56ed55a3e3c9df3e2df">mantis::bcryptBase64EncodeStr</a> (const std::string &amp;data)</td></tr>
+<tr class="separator:aeb45847f55aef56ed55a3e3c9df3e2df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73a3aa68eaf070b0dc152df95c6b91ad" id="r_a73a3aa68eaf070b0dc152df95c6b91ad"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a73a3aa68eaf070b0dc152df95c6b91ad">mantis::generateSalt</a> (int cost=12)</td></tr>
 <tr class="memdesc:a73a3aa68eaf070b0dc152df95c6b91ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a salt to be used in hashing user passwords.  <br /></td></tr>
 <tr class="separator:a73a3aa68eaf070b0dc152df95c6b91ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23e98d8e10ea45122b69111f3016c2a4" id="r_a23e98d8e10ea45122b69111f3016c2a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a23e98d8e10ea45122b69111f3016c2a4">mantis::hashPassword</a> (const std::string &amp;password)</td></tr>
 <tr class="memdesc:a23e98d8e10ea45122b69111f3016c2a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Digests user password + a generated salt to yield a hashed password.  <br /></td></tr>
 <tr class="separator:a23e98d8e10ea45122b69111f3016c2a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89431b676eb32feb2351f494c866c43f" id="r_a89431b676eb32feb2351f494c866c43f"><td class="memItemLeft" align="right" valign="top">DukValue&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a89431b676eb32feb2351f494c866c43f">mantis::hashPasswordJS</a> (const std::string &amp;password)</td></tr>
+<tr class="separator:a89431b676eb32feb2351f494c866c43f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abefb7cd2f2074a44997f34b2362270ab" id="r_abefb7cd2f2074a44997f34b2362270ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab">mantis::verifyPassword</a> (const std::string &amp;password, const std::string &amp;stored_hash)</td></tr>
 <tr class="memdesc:abefb7cd2f2074a44997f34b2362270ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies user password if it matches the given hashed password.  <br /></td></tr>
 <tr class="separator:abefb7cd2f2074a44997f34b2362270ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf69d2243058d693142d2f58eff061d3" id="r_aaf69d2243058d693142d2f58eff061d3"><td class="memItemLeft" align="right" valign="top">DukValue&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aaf69d2243058d693142d2f58eff061d3">mantis::verifyPasswordJS</a> (const std::string &amp;password, const std::string &amp;stored_hash)</td></tr>
+<tr class="separator:aaf69d2243058d693142d2f58eff061d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd8688b947de5ab538aa285a49a5e18" id="r_a8cd8688b947de5ab538aa285a49a5e18"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a8cd8688b947de5ab538aa285a49a5e18">mantis::tmToStr</a> (const std::tm &amp;t)</td></tr>
 <tr class="memdesc:a8cd8688b947de5ab538aa285a49a5e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert c++ std::tm date/time value to ISO formatted string.  <br /></td></tr>
 <tr class="separator:a8cd8688b947de5ab538aa285a49a5e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -257,6 +270,8 @@ Functions</h2></td></tr>
 <tr class="separator:a66e2fdaf6cab0cc99bb380f721592b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a634042b7708af2536b4a3978eba873f7" id="r_a634042b7708af2536b4a3978eba873f7"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a634042b7708af2536b4a3978eba873f7">mantis::dbDateToString</a> (const std::string &amp;dbType, const soci::row &amp;row, int index)</td></tr>
 <tr class="separator:a634042b7708af2536b4a3978eba873f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d8355ab517396a1154c45a0aea1f96" id="r_a17d8355ab517396a1154c45a0aea1f96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a17d8355ab517396a1154c45a0aea1f96">mantis::registerUtilsToDuktapeEngine</a> ()</td></tr>
+<tr class="separator:a17d8355ab517396a1154c45a0aea1f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
 <a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
 <div class="textblock"><p>Collection of utility functions that are re-used across different files. </p>

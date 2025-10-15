@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.8</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
    </div>
   </td>
  </tr>
@@ -134,9 +134,9 @@ Public Member Functions</h2></td></tr>
 <div class="line"> </div>
 <div class="line"><span class="comment">// Retrieve values</span></div>
 <div class="line">std::optional key = ctx.<a class="code hl_function" href="classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95">get</a>&lt;std::string&gt;(<span class="stringliteral">&quot;key&quot;</span>);</div>
-<div class="ttc" id="aclassmantis_1_1Context_html"><div class="ttname"><a href="classmantis_1_1Context.html">mantis::Context</a></div><div class="ttdef"><b>Definition</b> http.h:59</div></div>
-<div class="ttc" id="aclassmantis_1_1Context_html_a39e0750e37539e811ea89c7b04620b95"><div class="ttname"><a href="classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95">mantis::Context::get</a></div><div class="ttdeci">std::optional&lt; T * &gt; get(const std::string &amp;key)</div><div class="ttdoc">Get context value given the key.</div><div class="ttdef"><b>Definition</b> http.h:91</div></div>
-<div class="ttc" id="aclassmantis_1_1Context_html_acba5e9d0fe8417b71f0e729a59724bc8"><div class="ttname"><a href="classmantis_1_1Context.html#acba5e9d0fe8417b71f0e729a59724bc8">mantis::Context::set</a></div><div class="ttdeci">void set(const std::string &amp;key, T value)</div><div class="ttdoc">Store a key-value data in the context.</div><div class="ttdef"><b>Definition</b> http.h:78</div></div>
+<div class="ttc" id="aclassmantis_1_1Context_html"><div class="ttname"><a href="classmantis_1_1Context.html">mantis::Context</a></div><div class="ttdef"><b>Definition</b> http.h:60</div></div>
+<div class="ttc" id="aclassmantis_1_1Context_html_a39e0750e37539e811ea89c7b04620b95"><div class="ttname"><a href="classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95">mantis::Context::get</a></div><div class="ttdeci">std::optional&lt; T * &gt; get(const std::string &amp;key)</div><div class="ttdoc">Get context value given the key.</div><div class="ttdef"><b>Definition</b> http.h:92</div></div>
+<div class="ttc" id="aclassmantis_1_1Context_html_acba5e9d0fe8417b71f0e729a59724bc8"><div class="ttname"><a href="classmantis_1_1Context.html#acba5e9d0fe8417b71f0e729a59724bc8">mantis::Context::set</a></div><div class="ttdeci">void set(const std::string &amp;key, T value)</div><div class="ttdoc">Store a key-value data in the context.</div><div class="ttdef"><b>Definition</b> http.h:79</div></div>
 </div><!-- fragment --><p>The value returned from the <code><a class="el" href="classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95" title="Get context value given the key.">get()</a></code> is a std::optional, meaning a std::nullopt if the key was not found. </p><div class="fragment"><div class="line">std::optional key = ctx.<a class="code hl_function" href="classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95">get</a>&lt;std::string&gt;(<span class="stringliteral">&quot;key&quot;</span>);</div>
 <div class="line"><span class="keywordflow">if</span>(key.has_value()) { .... }</div>
 </div><!-- fragment --><p>Additionally, we have a </p><dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1Context.html#ad1ddc69a1bad56269383d789b1ee1b55" title="Get context value given the key.">get_or()</a> method that takes in a key and a default value if the key is missing. This unlike </dd>

@@ -9,6 +9,7 @@ var searchData=
   ['validators_6',['validators',['../classmantis_1_1MantisApp.html#a9a945a51d82e62bb503860105882a9d4',1,'mantis::MantisApp']]],
   ['verifyjwttoken_7',['verifyJWTToken',['../classmantis_1_1JWT.html#a3726197917638e218df89c79d7a597ad',1,'mantis::JWT']]],
   ['verifypassword_8',['verifyPassword',['../namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab',1,'mantis']]],
-  ['viewtable_9',['ViewTable',['../structmantis_1_1ViewTable.html#ac62545c3c78665c023bcf3ae0c3645ea',1,'mantis::ViewTable']]],
-  ['viewtypesqlcheck_10',['viewTypeSQLCheck',['../classmantis_1_1TableUnit.html#ac5ccfe2d890673b0c1041829405497f1',1,'mantis::TableUnit']]]
+  ['verifypasswordjs_9',['verifyPasswordJS',['../namespacemantis.html#aaf69d2243058d693142d2f58eff061d3',1,'mantis']]],
+  ['viewtable_10',['ViewTable',['../structmantis_1_1ViewTable.html#ac62545c3c78665c023bcf3ae0c3645ea',1,'mantis::ViewTable']]],
+  ['viewtypesqlcheck_11',['viewTypeSQLCheck',['../classmantis_1_1TableUnit.html#ac5ccfe2d890673b0c1041829405497f1',1,'mantis::TableUnit']]]
 ];

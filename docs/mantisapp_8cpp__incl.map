@@ -1,28 +1,32 @@
 <map id="/home/runner/work/mantis/mantis/src/mantisapp.cpp" name="/home/runner/work/mantis/mantis/src/mantisapp.cpp">
-<area shape="rect" id="Node000001" title="Standalone mantisapp executable entrypoint." alt="" coords="286,5,480,45"/>
-<area shape="rect" id="Node000002" href="$app_8h.html" title="The main application for mantis." alt="" coords="304,93,462,133"/>
-<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="386,46,386,79,380,79,380,46"/>
-<area shape="rect" id="Node000003" title=" " alt="" coords="138,255,196,280"/>
-<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="304,120,223,126,136,138,61,156,34,169,16,183,9,197,11,208,20,219,36,229,79,245,125,256,123,262,77,251,33,234,17,223,6,211,4,196,12,180,31,164,60,151,135,133,222,121,303,115"/>
-<area shape="rect" id="Node000004" title=" " alt="" coords="26,181,90,207"/>
-<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="304,136,104,184,102,178,303,130"/>
-<area shape="rect" id="Node000005" title=" " alt="" coords="114,181,204,207"/>
-<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="330,136,206,179,204,174,329,131"/>
-<area shape="rect" id="Node000006" title=" " alt="" coords="228,181,396,207"/>
-<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="368,135,334,173,330,169,364,132"/>
-<area shape="rect" id="Node000007" title=" " alt="" coords="420,181,487,207"/>
-<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="402,132,436,169,432,173,398,135"/>
-<area shape="rect" id="Node000008" href="$expr__evaluator_8h.html" title="Expression Evaluator Unit for database access rules." alt="" coords="512,181,686,207"/>
-<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="436,131,555,174,554,179,434,136"/>
-<area shape="rect" id="Node000012" title=" " alt="" coords="710,181,794,207"/>
-<area shape="poly" id="edge12_Node000002_Node000012" title=" " alt="" coords="463,129,697,178,696,183,462,134"/>
-<area shape="rect" id="Node000013" title=" " alt="" coords="819,181,894,207"/>
-<area shape="poly" id="edge13_Node000002_Node000013" title=" " alt="" coords="463,123,618,146,806,179,805,184,617,151,462,128"/>
-<area shape="poly" id="edge8_Node000008_Node000003" title=" " alt="" coords="530,209,211,262,210,256,529,204"/>
-<area shape="rect" id="Node000009" title=" " alt="" coords="400,255,524,280"/>
-<area shape="poly" id="edge9_Node000008_Node000009" title=" " alt="" coords="578,209,497,251,495,246,576,204"/>
-<area shape="rect" id="Node000010" title=" " alt="" coords="548,255,650,280"/>
-<area shape="poly" id="edge10_Node000008_Node000010" title=" " alt="" coords="602,207,602,241,596,241,596,207"/>
-<area shape="rect" id="Node000011" title=" " alt="" coords="675,255,822,280"/>
-<area shape="poly" id="edge11_Node000008_Node000011" title=" " alt="" coords="624,204,713,246,710,251,622,209"/>
+<area shape="rect" id="Node000001" title="Standalone mantisapp executable entrypoint." alt="" coords="425,5,620,45"/>
+<area shape="rect" id="Node000002" href="$app_8h.html" title="The main application for mantis." alt="" coords="443,93,602,133"/>
+<area shape="poly" id="edge1_Node000001_Node000002" title=" " alt="" coords="525,46,525,79,520,79,520,46"/>
+<area shape="rect" id="Node000003" title=" " alt="" coords="276,255,335,280"/>
+<area shape="poly" id="edge2_Node000002_Node000003" title=" " alt="" coords="443,122,324,131,191,145,78,162,40,173,21,183,12,196,8,208,10,217,16,226,41,241,79,251,174,262,262,264,262,269,174,267,78,256,39,245,13,230,5,219,3,207,7,194,17,179,38,168,77,157,190,139,323,126,443,117"/>
+<area shape="rect" id="Node000004" title=" " alt="" coords="31,181,95,207"/>
+<area shape="poly" id="edge3_Node000002_Node000004" title=" " alt="" coords="444,128,292,150,109,184,108,179,292,145,443,123"/>
+<area shape="rect" id="Node000005" title=" " alt="" coords="119,181,209,207"/>
+<area shape="poly" id="edge4_Node000002_Node000005" title=" " alt="" coords="444,135,224,182,222,177,443,129"/>
+<area shape="rect" id="Node000006" title=" " alt="" coords="233,181,401,207"/>
+<area shape="poly" id="edge5_Node000002_Node000006" title=" " alt="" coords="475,136,362,179,360,174,473,131"/>
+<area shape="rect" id="Node000007" title=" " alt="" coords="425,181,492,207"/>
+<area shape="poly" id="edge6_Node000002_Node000007" title=" " alt="" coords="509,135,479,172,475,169,505,132"/>
+<area shape="rect" id="Node000008" title=" " alt="" coords="517,181,659,207"/>
+<area shape="poly" id="edge7_Node000002_Node000008" title=" " alt="" coords="541,132,572,169,568,172,537,135"/>
+<area shape="rect" id="Node000009" title=" " alt="" coords="683,181,759,207"/>
+<area shape="poly" id="edge8_Node000002_Node000009" title=" " alt="" coords="571,131,681,174,679,179,569,136"/>
+<area shape="rect" id="Node000010" href="$expr__evaluator_8h.html" title="Expression Evaluator Unit for database access rules." alt="" coords="783,181,958,207"/>
+<area shape="poly" id="edge9_Node000002_Node000010" title=" " alt="" coords="603,130,807,176,806,181,602,135"/>
+<area shape="rect" id="Node000014" title=" " alt="" coords="982,181,1066,207"/>
+<area shape="poly" id="edge14_Node000002_Node000014" title=" " alt="" coords="603,122,767,146,969,178,968,184,767,151,602,128"/>
+<area shape="rect" id="Node000015" title=" " alt="" coords="1091,181,1165,207"/>
+<area shape="poly" id="edge15_Node000002_Node000015" title=" " alt="" coords="603,119,813,141,1078,179,1077,184,813,146,602,124"/>
+<area shape="poly" id="edge10_Node000010_Node000003" title=" " alt="" coords="783,209,349,263,349,258,783,204"/>
+<area shape="rect" id="Node000011" title=" " alt="" coords="671,255,795,280"/>
+<area shape="poly" id="edge11_Node000010_Node000011" title=" " alt="" coords="850,209,769,251,767,246,848,204"/>
+<area shape="rect" id="Node000012" title=" " alt="" coords="819,255,922,280"/>
+<area shape="poly" id="edge12_Node000010_Node000012" title=" " alt="" coords="873,207,873,241,868,241,868,207"/>
+<area shape="rect" id="Node000013" title=" " alt="" coords="947,255,1093,280"/>
+<area shape="poly" id="edge13_Node000010_Node000013" title=" " alt="" coords="896,204,985,246,982,251,894,209"/>
 </map>

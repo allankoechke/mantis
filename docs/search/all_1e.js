@@ -4,5 +4,6 @@ var searchData=
   ['why_20embed_20mantis_1',['🔧 Why Embed Mantis?',['../embedding.html#autotoc_md101',1,'']]],
   ['wip_2',['🛠️ migrate Command *(WIP)*',['../cli.html#autotoc_md16',1,'']]],
   ['with_20files_3',['Creating Records with Files',['../files.html#autotoc_md141',1,'']]],
-  ['workflow_4',['⚙️ Sync Workflow',['../sync.html#autotoc_md125',1,'']]]
+  ['with_20javascript_4',['Extending Mantis with JavaScript',['../index.html#autotoc_md180',1,'']]],
+  ['workflow_5',['⚙️ Sync Workflow',['../sync.html#autotoc_md125',1,'']]]
 ];

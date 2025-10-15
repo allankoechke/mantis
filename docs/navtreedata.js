@@ -25,7 +25,7 @@
 var NAVTREE =
 [
   [ "Mantis App", "index.html", [
-    [ "Getting Started", "index.html", null ],
+    [ "Getting Started", "index.html", "index" ],
     [ "Setting Up Mantis", "setup.html", null ],
     [ "Command Line Usage", "cli.html", [
       [ "🧭 mantisapp CLI Reference", "cli.html#autotoc_md8", [
@@ -89,6 +89,20 @@ var NAVTREE =
     ] ],
     [ "Handling Files in Mantis", "files.html", null ],
     [ "Healthcheck Endpoint", "healthcheck.html", null ],
+    [ "Scripting in Mantis", "scripting.html", [
+      [ "Scripting", "scripting.html#autotoc_md151", [
+        [ "Application", "scripting.html#autotoc_md152", null ],
+        [ "Database", "scripting.html#autotoc_md153", [
+          [ "Session", "scripting.html#autotoc_md154", null ]
+        ] ],
+        [ "Requests", "scripting.html#autotoc_md155", [
+          [ "Middlewares", "scripting.html#autotoc_md156", null ],
+          [ "MantisRequest Methods/Properties", "scripting.html#autotoc_md157", null ],
+          [ "MantisResponse Methods/Properties", "scripting.html#autotoc_md158", null ]
+        ] ],
+        [ "Utils (utility functions)", "scripting.html#autotoc_md159", null ]
+      ] ]
+    ] ],
     [ "Namespaces", "namespaces.html", [
       [ "Namespace List", "namespaces.html", "namespaces_dup" ],
       [ "Namespace Members", "namespacemembers.html", [
@@ -124,9 +138,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classmantis_1_1SettingsUnit.html#a7a6b80cf6a4558b5e028d4e38479a5c7",
-"functions_h.html",
-"structmantis_1_1SystemTable.html"
+"classmantis_1_1MantisRequest.html#ad39f9a1acd4a31779169c544c738b26d",
+"classmantis_1_1TableUnit.html#ac91c5e403a165eb1134ffdd6d21abce6",
+"namespacemantis.html#a9b66d60c6176ce653dfa970027ec5e23a14498b83dd1667a0c78f4fdaf5afbf4b",
+"utils_8h.html#a23e98d8e10ea45122b69111f3016c2a4"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

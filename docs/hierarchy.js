@@ -8,6 +8,7 @@ var hierarchy =
       ] ]
     ] ],
     [ "mantis::DatabaseUnit", "classmantis_1_1DatabaseUnit.html", null ],
+    [ "mantis::DuktapeImpl", "classmantis_1_1DuktapeImpl.html", null ],
     [ "mantis::ExprEvaluator", "structmantis_1_1ExprEvaluator.html", null ],
     [ "mantis::Field", "structmantis_1_1Field.html", null ],
     [ "mantis::FileUnit", "classmantis_1_1FileUnit.html", null ],
@@ -19,6 +20,8 @@ var hierarchy =
     ] ],
     [ "mantis::LoggingUnit", "classmantis_1_1LoggingUnit.html", null ],
     [ "mantis::MantisApp", "classmantis_1_1MantisApp.html", null ],
+    [ "mantis::MantisRequest", "classmantis_1_1MantisRequest.html", null ],
+    [ "mantis::MantisResponse", "classmantis_1_1MantisResponse.html", null ],
     [ "mantis::RouteHandler", "structmantis_1_1RouteHandler.html", null ],
     [ "mantis::RouteKeyHash", "structmantis_1_1RouteKeyHash.html", null ],
     [ "mantis::Router", "classmantis_1_1Router.html", null ],

@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.8</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
    </div>
   </td>
  </tr>
@@ -120,6 +120,8 @@ Classes</h2></td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DatabaseUnit.html">DatabaseUnit</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Database Management Class.  <a href="classmantis_1_1DatabaseUnit.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1DuktapeImpl.html">DuktapeImpl</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmantis_1_1ExprEvaluator.html">ExprEvaluator</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct instance for handling evaluation of database access rules.  <a href="structmantis_1_1ExprEvaluator.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -142,6 +144,10 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisLoggerImpl.html">MantisLoggerImpl</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logger implementation for soci, allowing us to override the default logging behaviour with our own custom logger.  <a href="classmantis_1_1MantisLoggerImpl.html#details">More...</a><br /></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a></td></tr>
+<tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmantis_1_1RouteHandler.html">RouteHandler</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct encompassing the list of middlewares and the handler function registered to a specific route.  <a href="structmantis_1_1RouteHandler.html#details">More...</a><br /></td></tr>
@@ -319,18 +325,26 @@ Functions</h2></td></tr>
 <tr class="memitem:a71d9b005929526118af08c2ed3f74e8e" id="r_a71d9b005929526118af08c2ed3f74e8e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a71d9b005929526118af08c2ed3f74e8e">sanitizeFilename</a> (std::string_view original, std::size_t maxLen=50, std::size_t idLen=12, std::string_view idSep=&quot;_&quot;)</td></tr>
 <tr class="memdesc:a71d9b005929526118af08c2ed3f74e8e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Sanitize a filename and ensure uniqueness.  <br /></td></tr>
 <tr class="separator:a71d9b005929526118af08c2ed3f74e8e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:afb9883ad342a2828a282d3bd13f4910f" id="r_afb9883ad342a2828a282d3bd13f4910f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#afb9883ad342a2828a282d3bd13f4910f">sanitizeFilename_JSWrapper</a> (const std::string &amp;original)</td></tr>
+<tr class="separator:afb9883ad342a2828a282d3bd13f4910f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9e23dffb248fc4160e5c6c09a594eae2" id="r_a9e23dffb248fc4160e5c6c09a594eae2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9e23dffb248fc4160e5c6c09a594eae2">bcryptBase64Encode</a> (const unsigned char *data, size_t len)</td></tr>
 <tr class="memdesc:a9e23dffb248fc4160e5c6c09a594eae2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Encode a Salt string to bcrypt base64 format.  <br /></td></tr>
 <tr class="separator:a9e23dffb248fc4160e5c6c09a594eae2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aeb45847f55aef56ed55a3e3c9df3e2df" id="r_aeb45847f55aef56ed55a3e3c9df3e2df"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aeb45847f55aef56ed55a3e3c9df3e2df">bcryptBase64EncodeStr</a> (const std::string &amp;data)</td></tr>
+<tr class="separator:aeb45847f55aef56ed55a3e3c9df3e2df"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a73a3aa68eaf070b0dc152df95c6b91ad" id="r_a73a3aa68eaf070b0dc152df95c6b91ad"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a73a3aa68eaf070b0dc152df95c6b91ad">generateSalt</a> (int cost=12)</td></tr>
 <tr class="memdesc:a73a3aa68eaf070b0dc152df95c6b91ad"><td class="mdescLeft">&#160;</td><td class="mdescRight">Generates a salt to be used in hashing user passwords.  <br /></td></tr>
 <tr class="separator:a73a3aa68eaf070b0dc152df95c6b91ad"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a23e98d8e10ea45122b69111f3016c2a4" id="r_a23e98d8e10ea45122b69111f3016c2a4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a23e98d8e10ea45122b69111f3016c2a4">hashPassword</a> (const std::string &amp;password)</td></tr>
 <tr class="memdesc:a23e98d8e10ea45122b69111f3016c2a4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Digests user password + a generated salt to yield a hashed password.  <br /></td></tr>
 <tr class="separator:a23e98d8e10ea45122b69111f3016c2a4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a89431b676eb32feb2351f494c866c43f" id="r_a89431b676eb32feb2351f494c866c43f"><td class="memItemLeft" align="right" valign="top">DukValue&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a89431b676eb32feb2351f494c866c43f">hashPasswordJS</a> (const std::string &amp;password)</td></tr>
+<tr class="separator:a89431b676eb32feb2351f494c866c43f"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abefb7cd2f2074a44997f34b2362270ab" id="r_abefb7cd2f2074a44997f34b2362270ab"><td class="memItemLeft" align="right" valign="top"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#abefb7cd2f2074a44997f34b2362270ab">verifyPassword</a> (const std::string &amp;password, const std::string &amp;stored_hash)</td></tr>
 <tr class="memdesc:abefb7cd2f2074a44997f34b2362270ab"><td class="mdescLeft">&#160;</td><td class="mdescRight">Verifies user password if it matches the given hashed password.  <br /></td></tr>
 <tr class="separator:abefb7cd2f2074a44997f34b2362270ab"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaf69d2243058d693142d2f58eff061d3" id="r_aaf69d2243058d693142d2f58eff061d3"><td class="memItemLeft" align="right" valign="top">DukValue&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aaf69d2243058d693142d2f58eff061d3">verifyPasswordJS</a> (const std::string &amp;password, const std::string &amp;stored_hash)</td></tr>
+<tr class="separator:aaf69d2243058d693142d2f58eff061d3"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8cd8688b947de5ab538aa285a49a5e18" id="r_a8cd8688b947de5ab538aa285a49a5e18"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a8cd8688b947de5ab538aa285a49a5e18">tmToStr</a> (const std::tm &amp;t)</td></tr>
 <tr class="memdesc:a8cd8688b947de5ab538aa285a49a5e18"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convert c++ std::tm date/time value to ISO formatted string.  <br /></td></tr>
 <tr class="separator:a8cd8688b947de5ab538aa285a49a5e18"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -338,6 +352,8 @@ Functions</h2></td></tr>
 <tr class="separator:a66e2fdaf6cab0cc99bb380f721592b79"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a634042b7708af2536b4a3978eba873f7" id="r_a634042b7708af2536b4a3978eba873f7"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a634042b7708af2536b4a3978eba873f7">dbDateToString</a> (const std::string &amp;dbType, const soci::row &amp;row, int index)</td></tr>
 <tr class="separator:a634042b7708af2536b4a3978eba873f7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a17d8355ab517396a1154c45a0aea1f96" id="r_a17d8355ab517396a1154c45a0aea1f96"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a17d8355ab517396a1154c45a0aea1f96">registerUtilsToDuktapeEngine</a> ()</td></tr>
+<tr class="separator:a17d8355ab517396a1154c45a0aea1f96"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="var-members" name="var-members"></a>
 Variables</h2></td></tr>
@@ -744,6 +760,24 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aeb45847f55aef56ed55a3e3c9df3e2df" name="aeb45847f55aef56ed55a3e3c9df3e2df"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aeb45847f55aef56ed55a3e3c9df3e2df">&#9670;&#160;</a></span>bcryptBase64EncodeStr()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::bcryptBase64EncodeStr </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>data</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a7198d676b24903590c1462d7af4958a7" name="a7198d676b24903590c1462d7af4958a7"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a7198d676b24903590c1462d7af4958a7">&#9670;&#160;</a></span>createDirs()</h2>
 
@@ -1050,6 +1084,24 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a89431b676eb32feb2351f494c866c43f" name="a89431b676eb32feb2351f494c866c43f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a89431b676eb32feb2351f494c866c43f">&#9670;&#160;</a></span>hashPasswordJS()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DukValue mantis::hashPasswordJS </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>password</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="a974593393659a334c67ede9031616a13" name="a974593393659a334c67ede9031616a13"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a974593393659a334c67ede9031616a13">&#9670;&#160;</a></span>isValidFieldType()</h2>
 
@@ -1162,6 +1214,23 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="a17d8355ab517396a1154c45a0aea1f96" name="a17d8355ab517396a1154c45a0aea1f96"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a17d8355ab517396a1154c45a0aea1f96">&#9670;&#160;</a></span>registerUtilsToDuktapeEngine()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mantis::registerUtilsToDuktapeEngine </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
 <a id="abe97209493d2bc0086c3678010342477" name="abe97209493d2bc0086c3678010342477"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#abe97209493d2bc0086c3678010342477">&#9670;&#160;</a></span>resolvePath()</h2>
 
@@ -1240,6 +1309,24 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>Sanitized filename with appended unique ID. </dd></dl>
+
+</div>
+</div>
+<a id="afb9883ad342a2828a282d3bd13f4910f" name="afb9883ad342a2828a282d3bd13f4910f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#afb9883ad342a2828a282d3bd13f4910f">&#9670;&#160;</a></span>sanitizeFilename_JSWrapper()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::sanitizeFilename_JSWrapper </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>original</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
@@ -1509,6 +1596,34 @@ Variables</h2></td></tr>
   </dd>
 </dl>
 <dl class="section return"><dt>Returns</dt><dd>JSON object indicating whether the verification was successful and an error value if any. </dd></dl>
+
+</div>
+</div>
+<a id="aaf69d2243058d693142d2f58eff061d3" name="aaf69d2243058d693142d2f58eff061d3"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaf69d2243058d693142d2f58eff061d3">&#9670;&#160;</a></span>verifyPasswordJS()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">DukValue mantis::verifyPasswordJS </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>password</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>stored_hash</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
 
 </div>
 </div>
