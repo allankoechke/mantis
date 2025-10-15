@@ -97,13 +97,11 @@ You can also embed Mantis as a library in your own C++ project:
 
 int main(const int argc, char* argv[])
 {
-    mantis::MantisApp app(argc, argv);
-    app.init();
+    auto& app = mantis::MantisApp::create(argc, argv);
     return app.run();
     
-    // Or simply do ...
-    // mantis::MantisApp app(argc, argv);
-    // return app.initAndRun();
+    // Or simply
+    // return mantis::MantisApp::create(argc, argv).run()
 }
 ```
 Check [/examples dir](/examples) for a working sample.
@@ -121,6 +119,28 @@ You can also run `mantisapp` in a docker container. Check [using docker](doc/doc
 > `set MANTIS_JWT_SECRET=<your JWT secret>`    # Windows
 
 ---
+
+## Extending Mantis with JavaScript
+Mantis has a built-in lightweight JavaScript engine based on the `Duktape` library. This allows us to write scripts that will be evaluated to provide extensions to existing functionality.
+
+For adding routes for instance:
+
+```js
+app.addRoute("GET", "/someapi/method/:arg", function(req, res){
+    // Check if path params are available
+    if(req.hasPathParam("arg")) {
+        const arg = req.getPathParam("arg")
+        const db_connected = app.db().connected
+        res.sendJson(200, JSON.stringify({path: arg, connected: db_connected}))
+        return
+    }
+
+    // Or send response in this format
+    res.send(500, JSON.stringify({error: "Dummy Error"}), "application/json")
+})
+```
+
+Check more information at [Scripting Page](13.scripting.md).
 
 ## Basic CMD Usage  
 
