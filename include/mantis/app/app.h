@@ -69,29 +69,14 @@ namespace mantis
     class MantisApp
     {
     public:
-        /**
-         * @brief MantisApp constructor, creates a singleton instance if one is not created yet.
-         * @param argc Argument count.
-         * @param argv Argument values.
-         */
-        explicit MantisApp(int argc = 0, char** argv = nullptr);
         ~MantisApp();
-
-        /**
-         * @brief Run initialization actions for Mantis, ensuring all objects are initialized properly before use.
-         */
-        void init();
-
-        /**
-         * @brief Convinience function to initialize Mantis and start the server
-         */
-        int initAndRun();
 
         /**
          * @brief Retrieve existing application instance.
          * @return A reference to the existing application instance.
          */
         static MantisApp& instance();
+        static MantisApp& create(int argc, char** argv);
 
         /**
          * @brief Start the http server and start listening for requests.
@@ -205,21 +190,11 @@ namespace mantis
          * @param dbType New database type enum value.
          */
         void setDbType(const DbType& dbType);
-
         /**
          * @brief Retrieve the JWT secret key.
          * @return JWT Secret value.
          */
         static std::string jwtSecretKey();
-        /**
-         * @brief Syntactic method to enforce @see init() is run before any other executions.
-         *
-         * Since `init()` ensures all objects are initialized, this ensures we don't use null pointers.
-         *
-         * @param caller Caller function name.
-         */
-        void ensureInitialized(const char* caller) const;
-
         /**
          * Fetch the application version
          * @return Application version
@@ -273,15 +248,27 @@ namespace mantis
     private:
         const std::string __class_name__ = "mantis::MantisApp";
 
-        // Points to externally constructed instance (no ownership)
-        static MantisApp* s_instance;
-        static std::mutex s_mutex;
+        // Make class creation private to enforce
+        // singleton app pattern.
+        MantisApp();
 
         // Disable copying and moving
         MantisApp(const MantisApp&) = delete;
         MantisApp& operator=(const MantisApp&) = delete;
         MantisApp(MantisApp&&) = delete;
         MantisApp& operator=(MantisApp&&) = delete;
+
+        /**
+         * @brief Run initialization actions for Mantis, ensuring all objects are initialized properly before use.
+         */
+        void init(int argc, char** argv);
+
+        /**
+         * Creates static instance if not created yet and returns it.
+         *
+         * @return instance of the MantisApp class
+         */
+        static MantisApp& getInstanceImpl();
 
         // Private members
         void parseArgs(); ///> Parse command-line arguments
@@ -326,7 +313,7 @@ namespace mantis
 
         std::string version_JSWrapper() const { return appVersion(); }
         std::string jwtSecretKey_JSWrapper() const { return jwtSecretKey(); }
-        void quit_JSWrapper(const int code, const std::string& msg);;
+        void quit_JSWrapper(const int code, const std::string& msg);
 
         /**
          * @brief Wrapper method to return `DatabaseUnit*` instead of
@@ -380,7 +367,7 @@ namespace mantis
         std::vector<std::string> m_cmdArgs;
 
         // Hold state if the instance has be initialized already!
-        bool initialized = false;
+        std::atomic<bool> m_isCreated = false;
 
         std::string m_publicDir;
         std::string m_dataDir;
