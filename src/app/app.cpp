@@ -8,53 +8,26 @@
 #include <cmrc/cmrc.hpp>
 #include <format>
 #include <fstream>
+#include <optional>
 
 #include "mantis/core/settings.h"
 #include "mantis/core/fileunit.h"
 #include "mantis/core/private-impl/duktape_custom_types.h"
 
-/**
- * @brief Enforce `MantisApp` initialization before invoking member functions
- */
-#define MANTIS_REQUIRE_INIT() \
-    MantisApp::instance().ensureInitialized(__func__);
-
 #define __file__ "app/app.cpp"
 
 namespace mantis
 {
-    // -------------------------------------------------------------------------------- //
-    // Static member definitions
-    MantisApp* MantisApp::s_instance = nullptr;
-    std::mutex MantisApp::s_mutex;
-
-    // -------------------------------------------------------------------------------- //
-    MantisApp::MantisApp(const int argc, char** argv)
+    MantisApp::MantisApp()
         : m_dbType(DbType::SQLITE),
-          m_startTime(std::chrono::steady_clock::now())
+          m_startTime(std::chrono::steady_clock::now()),
+    m_dukCtx(duk_create_heap_default())
     {
-        std::lock_guard<std::mutex> lock(s_mutex);
-        if (s_instance)
-            throw std::runtime_error("MantisApp already instantiated, use MantisApp::instance() instead!");
-
-        // Assign `this` pointer to the instance
-        s_instance = this;
-
-        // Store cmd args into our member vector
-        m_cmdArgs.reserve(argc);
-        for (int i = 0; i < argc; ++i)
-        {
-            m_cmdArgs.emplace_back(argv[i]); // copy each string over
-        }
-
         // Initialize Default Features in cparse
         cparse::cparse_init();
 
         // Enable Multi Sinks
         Log::init();
-
-        // Create a default duk_context
-        m_dukCtx = duk_create_heap_default();
     }
 
     MantisApp::~MantisApp()
@@ -64,53 +37,57 @@ namespace mantis
         // Terminate any shared pointers
         close();
 
-        std::lock_guard<std::mutex> lock(s_mutex);
-        if (s_instance == this)
-        {
-            // Reset instance pointer
-            s_instance = nullptr;
-        }
-
         // Destroy duk context
         duk_destroy_heap(m_dukCtx);
     }
 
-    void MantisApp::init()
-    {
-        // If we had init already, don't proceed!
-        if (initialized) return;
-
+    void MantisApp::init(const int argc, char** argv) {
         Log::info("Initializing Mantis, v{}", appVersion());
 
-        // Set the initialized flag
-        initialized = true;
+        // Set that the object was created successfully, now initializing
+        m_isCreated = true;
+
+        // Store cmd args into our member vector
+        m_cmdArgs.reserve(argc);
+        for (int i = 0; i < argc; ++i)
+        {
+            m_cmdArgs.emplace_back(argv[i]); // copy each string over
+        }
 
         parseArgs(); // Parse args & start units
         initJSEngine(); // Initialize JS engine
     }
 
-    int MantisApp::initAndRun()
-    {
-        // Initialize Mantis
-        init();
-
-        // If initialization succeeded, lets run our server
-        // and return the error code if it fails
-        return run();
-    }
-
     MantisApp& MantisApp::instance()
     {
-        std::lock_guard<std::mutex> lock(s_mutex);
-        if (!s_instance)
-            throw std::runtime_error("MantisApp not yet instantiated");
-        return *s_instance;
+        auto& app_instance = getInstanceImpl();
+        if (!app_instance.m_isCreated)
+            throw std::runtime_error("MantisApp not created yet");
+
+        return app_instance;
+    }
+
+    MantisApp& MantisApp::create(const int argc, char** argv)
+    {
+        auto& app = getInstanceImpl();
+        if (app.m_isCreated)
+            throw std::runtime_error("MantisApp already created, use MantisApp::instance() instead.");
+
+        // Initialize the app with passed in args
+        app.init(argc, argv);
+
+        // Return the instance
+        return app;
+    }
+
+    MantisApp& MantisApp::getInstanceImpl()
+    {
+        static MantisApp s_instance;
+        return s_instance;
     }
 
     void MantisApp::parseArgs()
     {
-        MANTIS_REQUIRE_INIT();
-
         // Main program parser with global arguments
         argparse::ArgumentParser program("mantisapp", appVersion());
         program.add_argument("--database", "-d")
@@ -420,8 +397,6 @@ namespace mantis
 
     void MantisApp::close()
     {
-        MANTIS_REQUIRE_INIT();
-
         // Destroy instance objects
         if (m_files) m_files.reset();
         if (m_validators) m_validators.reset();
@@ -436,8 +411,6 @@ namespace mantis
 
     int MantisApp::run()
     {
-        MANTIS_REQUIRE_INIT();
-
         if (!m_router->initialize())
             quit(-1, "Failed to initialize router!");
 
@@ -460,55 +433,46 @@ namespace mantis
 
     DatabaseUnit& MantisApp::db() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_database;
     }
 
     LoggingUnit& MantisApp::log() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_logger;
     }
 
     HttpUnit& MantisApp::http() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_http;
     }
 
     argparse::ArgumentParser& MantisApp::cmd() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_opts;
     }
 
     Router& MantisApp::router() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_router;
     }
 
     Validator& MantisApp::validators() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_validators;
     }
 
     ExprEvaluator& MantisApp::evaluator() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_exprEval;
     }
 
     SettingsUnit& MantisApp::settings() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_settings;
     }
 
     FileUnit& MantisApp::files() const
     {
-        MANTIS_REQUIRE_INIT();
         return *m_files;
     }
 
@@ -519,8 +483,6 @@ namespace mantis
 
     void MantisApp::openBrowserOnStart() const
     {
-        MANTIS_REQUIRE_INIT();
-
         // Return if flag is reset
         if (!m_launchAdminPanel) return;
 
@@ -554,27 +516,15 @@ namespace mantis
 
     void MantisApp::setDbType(const DbType& dbType)
     {
-        MANTIS_REQUIRE_INIT();
         m_dbType = dbType;
     }
 
     std::string MantisApp::jwtSecretKey()
     {
-        MANTIS_REQUIRE_INIT();
         // This is the default secret key, override it through environment variable
         // MANTIS_JWT_SECRET, recommended to override this key
         // TODO add commandline input for overriding the key
         return getEnvOrDefault("MANTIS_JWT_SECRET", "<our-very-secret-JWT-key>");
-    }
-
-    void MantisApp::ensureInitialized(const char* caller) const
-    {
-        if (!initialized)
-        {
-            std::cerr << "[MantisApp] Error: init() not called before use.\n";
-            std::cerr << "  -> Called from: " << caller << "\n";
-            throw std::runtime_error("MantisApp::init() must be called before using this method");
-        }
     }
 
     std::string MantisApp::appVersion()
@@ -599,14 +549,11 @@ namespace mantis
 
     DbType MantisApp::dbType() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_dbType;
     }
 
     std::string MantisApp::dbTypeByName() const
     {
-        MANTIS_REQUIRE_INIT();
-
         switch (m_dbType)
         {
         case DbType::SQLITE: return "sqlite3";
@@ -618,13 +565,11 @@ namespace mantis
 
     int MantisApp::port() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_port;
     }
 
     void MantisApp::setPort(const int& port)
     {
-        MANTIS_REQUIRE_INIT();
         if (port < 0 || port > 65535)
             return;
 
@@ -634,13 +579,11 @@ namespace mantis
 
     std::string MantisApp::host() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_host;
     }
 
     void MantisApp::setHost(const std::string& host)
     {
-        MANTIS_REQUIRE_INIT();
         if (host.empty())
             return;
 
@@ -650,13 +593,11 @@ namespace mantis
 
     int MantisApp::poolSize() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_poolSize;
     }
 
     void MantisApp::setPoolSize(const int& pool_size)
     {
-        MANTIS_REQUIRE_INIT();
         if (pool_size <= 0)
             return;
 
@@ -665,13 +606,11 @@ namespace mantis
 
     std::string MantisApp::publicDir() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_publicDir;
     }
 
     void MantisApp::setPublicDir(const std::string& dir)
     {
-        MANTIS_REQUIRE_INIT();
         if (dir.empty())
             return;
 
@@ -680,13 +619,11 @@ namespace mantis
 
     std::string MantisApp::dataDir() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_dataDir;
     }
 
     void MantisApp::setDataDir(const std::string& dir)
     {
-        MANTIS_REQUIRE_INIT();
         if (dir.empty())
             return;
 
@@ -695,13 +632,11 @@ namespace mantis
 
     std::string MantisApp::scriptsDir() const
     {
-        MANTIS_REQUIRE_INIT();
         return m_scriptsDir;
     }
 
     void MantisApp::setScriptsDir(const std::string& dir)
     {
-        MANTIS_REQUIRE_INIT();
         if (dir.empty())
             return;
 
@@ -710,7 +645,6 @@ namespace mantis
 
     inline bool MantisApp::ensureDirsAreCreated() const
     {
-        MANTIS_REQUIRE_INIT();
         // Data Directory
         if (!createDirs(resolvePath(m_dataDir)))
             return false;
@@ -730,7 +664,6 @@ namespace mantis
 
     std::string MantisApp::getUserValueSecurely(const std::string& prompt)
     {
-        MANTIS_REQUIRE_INIT();
         std::string password;
         Log::info("{}", prompt);
         std::cout << " [Type In] > ";
@@ -771,7 +704,6 @@ namespace mantis
 
     void MantisApp::initJSEngine()
     {
-        MANTIS_REQUIRE_INIT();
         TRACE_CLASS_METHOD();
 
         // ---------------------------------------------- //
@@ -791,19 +723,17 @@ namespace mantis
         dukglue_register_property(m_dukCtx, &MantisApp::jwtSecretKey_JSWrapper, nullptr, "secretKey");
         dukglue_register_property(m_dukCtx, &MantisApp::version_JSWrapper, nullptr, "version");
 
+        // `app.close()`
         dukglue_register_method(m_dukCtx, &MantisApp::close, "close");
+        // `app.quit(1, "Just crashed?")`
+        dukglue_register_method(m_dukCtx, &MantisApp::quit_JSWrapper, "quit");
+        // `app.db()`
         dukglue_register_method(m_dukCtx, &MantisApp::duk_db, "db");
 
         MantisRequest::registerDuktapeMethods();
         MantisResponse::registerDuktapeMethods();
 
         dukglue_register_method_varargs(m_dukCtx, &MantisApp::addRoute, "addRoute");
-
-        // dukglue_register_method(m_dukCtx, &MantisApp::http, "http");
-        // dukglue_register_method(m_dukCtx, &MantisApp::router, "router");
-        // dukglue_register_method(m_dukCtx, &MantisApp::validators, "validator");
-        // dukglue_register_method(m_dukCtx, &MantisApp::settings, "settings");
-        // dukglue_register_method(m_dukCtx, &MantisApp::files, "files");
 
         // ---------------------------------------------- //
         // Register `console` object
@@ -869,6 +799,9 @@ namespace mantis
         const auto fullPath = fs::path(m_scriptsDir) / relativePath;
         loadAndExecuteScript(fullPath.string());
     }
+
+    void MantisApp::quit_JSWrapper(const int code, const std::string& msg)
+    { quit(code, msg); }
 
     DatabaseUnit* MantisApp::duk_db() const
     {

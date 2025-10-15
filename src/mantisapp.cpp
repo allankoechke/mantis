@@ -16,15 +16,8 @@
 int main(const int argc, char* argv[])
 {
     // Create `MantisApp` instance with the passed in arguments
-    mantis::MantisApp app(argc, argv);
-
-    // Initialize the app, this ensures all `Mantis` units are
-    // initialized and running.
-    app.init();
+    auto& app = mantis::MantisApp::create(argc, argv);
 
     // Run the http server listening loop
     return app.run();
-
-    // Alternatively, you can just do
-    // return initAndRun();
 }
