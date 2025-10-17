@@ -7,6 +7,7 @@
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/utils/utils.h"
 #include "../../../include/mantis/core/router.h"
+#include "mantis/core/jwt.h"
 
 #define __file__ "core/tables/sys_tables.cpp"
 
@@ -34,18 +35,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}", "GET", basePath);
             MantisApp::instance().http().Get(
                 basePath,
-                [this](const Request& req, Response& res, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res)-> void
                 {
-                    fetchRecords(req, res, ctx);
+                    fetchRecords(req, res);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -54,18 +55,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}/:id", "GET", basePath);
             MantisApp::instance().http().Get(
                 basePath + "/:id",
-                [this](const Request& req, Response& res, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res)-> void
                 {
-                    fetchRecord(req, res, ctx);
+                    fetchRecord(req, res);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -74,18 +75,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}", "POST", basePath);
             MantisApp::instance().http().Post(
                 basePath,
-                [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                 {
-                    createRecord(req, res, reader, ctx);
+                    createRecord(req, res, reader);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -94,18 +95,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}/:id", "PATCH", basePath);
             MantisApp::instance().http().Patch(
                 basePath + "/:id",
-                [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                 {
-                    updateRecord(req, res, reader, ctx);
+                    updateRecord(req, res, reader);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -114,18 +115,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}/:id", "DELETE", basePath);
             MantisApp::instance().http().Delete(
                 basePath + "/:id",
-                [this](const Request& req, Response& res, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res)-> void
                 {
-                    deleteRecord(req, res, ctx);
+                    deleteRecord(req, res);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -134,9 +135,9 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
             MantisApp::instance().http().Post(
                 basePath + "/auth-with-password",
-                [this](const Request& req, Response& res, Context& ctx) -> void
+                [this](MantisRequest& req, MantisResponse& res) -> void
                 {
-                    authWithEmailAndPassword(req, res, ctx);
+                    authWithEmailAndPassword(req, res);
                 }
             );
 
@@ -158,7 +159,7 @@ namespace mantis
         }
     }
 
-    void SysTablesUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::fetchRecord(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
@@ -166,15 +167,14 @@ namespace mantis
         json response;
 
         // Get the path param ID value, return 400 error if its invalid
-        const auto id = req.path_params.at("id");
+        const auto id = req.getPathParamValue("id");
         if (id.empty())
         {
             response["status"] = 400;
             response["error"] = "Record ID is required";
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 400;
+            res.sendJson(400, response);
             return;
         }
 
@@ -187,8 +187,7 @@ namespace mantis
                 response["error"] = "";
                 response["data"] = resp.value();
 
-                res.set_content(response.dump(), "application/json");
-                res.status = 200;
+                res.sendJson(200, response);
                 return;
             }
 
@@ -197,9 +196,7 @@ namespace mantis
             response["error"] = "Item Not Found";
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 404;
-            return;
+                res.sendJson(404, response);
         }
         catch (const std::exception& e)
         {
@@ -207,9 +204,7 @@ namespace mantis
             response["error"] = e.what();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
-            return;
+                res.sendJson(500, response);
         }
 
         catch (...)
@@ -218,13 +213,11 @@ namespace mantis
             response["error"] = "Unknown Error";
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
-            return;
+                res.sendJson(500, response);
         }
     }
 
-    void SysTablesUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::fetchRecords(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
@@ -237,8 +230,7 @@ namespace mantis
             response["status"] = 200;
             response["error"] = "";
 
-            res.status = 200;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(200, response);
         }
 
         catch (const std::exception& e)
@@ -247,8 +239,7 @@ namespace mantis
             response["status"] = 500;
             response["error"] = e.what();
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
         }
 
         catch (...)
@@ -257,12 +248,11 @@ namespace mantis
             response["status"] = 500;
             response["error"] = "Internal Server Error";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
         }
     }
 
-    void SysTablesUnit::createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
+    void SysTablesUnit::createRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)
     {
         TRACE_CLASS_METHOD()
 
@@ -288,18 +278,15 @@ namespace mantis
             response["error"] = std::format("Error parsing Table Schema: {}", e.what());
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
+                res.sendJson(500, response);
             return;
         }
 
         // Validate JSON body
         const auto& validate_res = validateTableSchema(body);
-        if ( validate_res.has_value())
+        if (validate_res.has_value())
         {
-            res.status = validate_res.value()["status"].get<int>();
-            res.set_content(validate_res.value().dump(), "application/json");
-
+            res.sendJson(validate_res.value()["status"].get<int>(), validate_res.value());
             Log::critical("Failed to create table, reason: {}", validate_res.value().dump());
             return;
         }
@@ -313,8 +300,7 @@ namespace mantis
             response["error"] = err;
             response["data"] = json::object();
 
-            res.status = status;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(status, response);
 
             Log::critical("Failed to create table, reason: {}", resp.dump());
             return;
@@ -324,17 +310,16 @@ namespace mantis
         response["error"] = "";
         response["data"] = resp.at("data");
 
-        res.status = 201;
-        res.set_content(response.dump(), "application/json");
+                res.sendJson(201, response);
     }
 
-    void SysTablesUnit::updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
+    void SysTablesUnit::updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)
     {
         TRACE_CLASS_METHOD()
 
         json body, response;
         // Extract request ID and check that it's not empty
-        const auto id = req.path_params.at("id");
+        const auto id = req.getPathParamValue("id");
 
         // For empty IDs, return 400, BAD REQUEST
         if (id.empty())
@@ -343,8 +328,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Table ID is required!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(400, response);
             return;
         }
 
@@ -367,9 +351,8 @@ namespace mantis
             response["status"] = 500;
             response["error"] = std::format("Error parsing table schema: {}", e.what());
             response["data"] = json::object();
-
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
+            
+                res.sendJson(500, response);
             return;
         }
 
@@ -382,8 +365,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = std::format("Record with id = `{}` was not found.", id);
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(404, response);
             return;
         }
 
@@ -395,9 +377,8 @@ namespace mantis
             response["status"] = status;
             response["error"] = err;
             response["data"] = json::object();
-
-            res.set_content(response.dump(), "application/json");
-            res.status = status;
+            
+                res.sendJson(status, response);
 
             Log::critical("Failed to update table, id = {}, reason: {}", id, respObj.dump());
             return;
@@ -412,24 +393,22 @@ namespace mantis
         response["error"] = "";
         response["data"] = record;
 
-        res.status = 200;
-        res.set_content(response.dump(), "application/json");
+                res.sendJson(200, response);
     }
 
-    void SysTablesUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::deleteRecord(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
-        const auto id = req.path_params.at("id");
+        const auto id = req.getPathParamValue("id");
         json response;
         if (id.empty())
         {
             response["status"] = 400;
             response["error"] = "Record ID is required";
             response["data"] = json::object();
-
-            res.set_content(response.dump(), "application/json");
-            res.status = 400;
+            
+                res.sendJson(400, response);
             return;
         }
 
@@ -442,8 +421,7 @@ namespace mantis
                 response["error"] = "Could not delete record";
                 response["data"] = json::object();
 
-                res.set_content(response.dump(), "application/json");
-                res.status = 500;
+                res.sendJson(500, response);
                 return;
             }
         }
@@ -453,29 +431,26 @@ namespace mantis
             response["error"] = e.what();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
+                res.sendJson(500, response);
             return;
         }
-
-        res.set_content("", "application/json");
-        res.status = 204;
+        
+                res.sendEmpty();
     }
 
-    void SysTablesUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
+    void SysTablesUnit::authWithEmailAndPassword(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
         json body, response;
-        try { body = json::parse(req.body); }
+        try { body = json::parse(req.getBody()); }
         catch (const std::exception& e)
         {
             response["status"] = 500;
             response["data"] = json::object();
             response["error"] = "Could not parse request body! ";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
             return;
         }
 
@@ -492,8 +467,9 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Admin user `email` is missing!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+
+                res.sendJson(400, response);
+                res.sendJson(400, response);
             return;
         }
 
@@ -503,8 +479,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Admin user `password` is missing!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+                res.sendJson(400, response);
             return;
         }
 
@@ -523,8 +498,7 @@ namespace mantis
                 response["data"] = json::object();
                 response["error"] = "No user found matching given email/password combination.";
 
-                res.status = 404;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(404, response);
                 return;
             }
 
@@ -545,9 +519,7 @@ namespace mantis
                     response["data"] = "";
                     response["error"] = err;
 
-                    res.status = 500;
-                    res.set_content(response.dump(), "application/json");
-
+                    res.sendJson(500, response);
                     return;
                 }
 
@@ -559,8 +531,7 @@ namespace mantis
                 response["data"] = data;
                 response["error"] = "";
 
-                res.status = 200;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(200, response);
                 // Log::info("Login Successful, user: {}", response.dump());
                 return;
             }
@@ -569,9 +540,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "No user found matching given email/password combination.";
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(404, response);
             Log::warn("No user found for given email/password combination. Reason: {}",
                       resp.value("error", ""));
         }
@@ -582,9 +551,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = e.what();
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(500, response);
             Log::critical("Error Processing Request: {}", e.what());
         }
         catch (...)
@@ -593,18 +560,17 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Internal Server Error";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(500, response);
             Log::critical("Error on admin login: Unknown Error");
         }
     }
 
-    bool SysTablesUnit::hasAccess(const Request& req, Response& res, Context& ctx)
+    bool SysTablesUnit::hasAccess(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
         // Get the auth var from the context, resort to empty object if it's not set.
-        auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
+        auto auth = req.getOr<json>("auth", json::object());
 
         // fetch auth token
         const auto& token = auth.value("token", "");
@@ -615,9 +581,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Auth token missing";
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
@@ -630,40 +594,35 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = resp.value("error", "");
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
         // Extract and verify that the id and table data is provided, else,
         // return an error
-        const auto _id = resp.value("id", "");
-        const auto _table = resp.value("table", "");
-        // Log::trace("After Auth: id = {}, table = {}", _id, _table);
+        const auto auth_user_id = resp.value("id", "");
+        const auto auth_table = resp.value("table", "");
 
-        if (_id.empty() || _table.empty())
+        if (auth_user_id.empty() || auth_table.empty())
         {
             json response;
             response["status"] = 403;
             response["data"] = json::object();
             response["error"] = "Auth token missing user id or table name";
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
         // Query for user with given ID, this info will be populated to the
         // expression evaluator args as well as available through
         // the session context, queried by:
-        //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
-        //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
+        //  ` req.get<json>("auth").value("id", ""); // returns the user ID
+        //  ` req.get<json>("auth").value("name", ""); // returns the user's name
         auto sql = MantisApp::instance().db().session();
         soci::row row;
         std::string query = "SELECT id, email, created, updated FROM __admins WHERE id = :id LIMIT 1";
-        *sql << query, soci::use(_id), soci::into(row);
+        *sql << query, soci::use(auth_user_id), soci::into(row);
 
         // Return 404 if user was not found
         if (!sql->got_data())
@@ -673,9 +632,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Auth id was not found.";
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(404, response);
             return REQUEST_HANDLED;
         }
 
@@ -704,8 +661,8 @@ namespace mantis
 
             // Enrich auth object with auth information
             auth["type"] = "user";
-            auth["id"] = _id;
-            auth["table"] = _table;
+            auth["id"] = auth_user_id;
+            auth["table"] = auth_table;
 
             // Populate auth obj with user details ...
             for (const auto& [key, value] : user.items())
@@ -715,21 +672,18 @@ namespace mantis
         }
         catch (const std::exception& e)
         {
-            Log::critical("Error parsing logged user: {}", e.what());
-
             json response;
             response["status"] = 500;
             response["data"] = json::object();
             response["error"] = "Internal Server Error while parsing user record!";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(500, response);
+            Log::critical("Error parsing logged user: {}", e.what());
             return REQUEST_HANDLED;
         }
 
         // Update context data
-        ctx.set("auth", auth);
+        req.set("auth", auth);
 
         const auto table_name = auth.value("table", "");
         // Log::trace("Auth table is: {}", table_name);
@@ -748,9 +702,7 @@ namespace mantis
         response["data"] = json::object();
         response["error"] = "Admin auth required to access this resource.";
 
-        res.status = 403;
-        res.set_content(response.dump(), "application/json");
-
+        res.sendJson(403, response);
         return REQUEST_HANDLED;
     }
 } // mantis

@@ -100,6 +100,9 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     src/core/private-impl/duktape_custom_types.cpp
     src/core/private-impl/duktape_request_wrapper.cpp
     src/core/private-impl/duktape_response_wrapper.cpp
+
+    include/mantis/core/context_store.h
+    src/core/context_store.cpp
 )
 
 # Add httplib

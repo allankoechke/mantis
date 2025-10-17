@@ -12,7 +12,7 @@ namespace mantis
 {
     MantisRequest::MantisRequest(const httplib::Request& _req)
         : m_req(_req),
-          m_ctx(Context{})
+          m_store(ContextStore{})
     {
     }
 
@@ -21,19 +21,9 @@ namespace mantis
         return m_req.method;
     }
 
-    void MantisRequest::setMethod(const std::string& m) const
-    {
-        // m_req.method = m;
-    }
-
     std::string MantisRequest::getPath() const
     {
         return m_req.path;
-    }
-
-    void MantisRequest::setPath(const std::string& p) const
-    {
-        // m_req.path = p;
     }
 
     std::string mantis::MantisRequest::getBody() const
@@ -41,9 +31,24 @@ namespace mantis
         return m_req.body;
     }
 
-    void MantisRequest::setBody(const std::string& b) const
+    std::string MantisRequest::getRemoteAddr() const
     {
-        // m_req.body = b;
+        return m_req.remote_addr;
+    }
+
+    int MantisRequest::getRemotePort() const
+    {
+        return m_req.remote_port;
+    }
+
+    std::string MantisRequest::getLocalAddr() const
+    {
+        return m_req.local_addr;
+    }
+
+    int MantisRequest::getLocalPort() const
+    {
+        return m_req.local_port;
     }
 
     bool MantisRequest::hasHeader(const std::string& key) const
@@ -66,11 +71,6 @@ namespace mantis
         return m_req.get_header_value_count(key);
     }
 
-    void MantisRequest::setHeader(const std::string& key, const std::string& val)
-    {
-        // m_req.set_header(key, val);
-    }
-
     bool MantisRequest::hasTrailer(const std::string& key) const
     {
         return m_req.has_trailer(key);
@@ -86,9 +86,13 @@ namespace mantis
         return m_req.get_trailer_value_count(key);
     }
 
+    httplib::Match MantisRequest::matches() const
+    {
+        return m_req.matches;
+    }
+
     bool MantisRequest::hasQueryParam(const std::string& key) const
     {
-        Log::trace("Has Param? {}", m_req.has_param(key));
         return m_req.has_param(key);
     }
 
@@ -97,7 +101,7 @@ namespace mantis
         return m_req.get_param_value(key);
     }
 
-    std::string MantisRequest::getQueryParamValue(const std::string& key, size_t id) const
+    std::string MantisRequest::getQueryParamValue(const std::string& key, const size_t id) const
     {
         return m_req.get_param_value(key, id);
     }
@@ -107,6 +111,10 @@ namespace mantis
         return m_req.get_param_value_count(key);
     }
 
+    bool MantisRequest::hasPathParams() const
+    {
+        return !m_req.path_params.empty();
+    }
 
     bool MantisRequest::hasPathParam(const std::string& key) const
     {
@@ -114,14 +122,6 @@ namespace mantis
     }
 
     std::string MantisRequest::getPathParamValue(const std::string& key) const
-    {
-        if (m_req.path_params.contains(key))
-            return m_req.path_params.at(key);
-
-        return "";
-    }
-
-    std::string MantisRequest::getPathParamValue(const std::string& key, size_t id) const
     {
         if (m_req.path_params.contains(key))
             return m_req.path_params.at(key);
@@ -157,8 +157,6 @@ namespace mantis
         dukglue_register_method(ctx, &MantisRequest::getHeaderValueU64, "getHeaderU64");
         // `req.getHeaderCount("key")` -> Count for header values given the header key
         dukglue_register_method(ctx, &MantisRequest::getHeaderValueCount, "getHeaderCount");
-        // req.setHeader("Cow", "Cow Value")
-        dukglue_register_method(ctx, &MantisRequest::setHeader, "setHeader");
 
         dukglue_register_method(ctx, &MantisRequest::hasTrailer, "hasTrailer");
         dukglue_register_method(ctx, &MantisRequest::getTrailerValue, "getTrailer");
@@ -191,35 +189,48 @@ namespace mantis
         dukglue_register_property(ctx, &MantisRequest::getMethod, nullptr, "method");
         // `req.path` -> Get request path value
         dukglue_register_property(ctx, &MantisRequest::getPath, nullptr, "path");
+        // `req.remoteAddr`
+        dukglue_register_property(ctx, &MantisRequest::getRemoteAddr, nullptr, "remoteAddr");
+        // `req.remotePort`
+        dukglue_register_property(ctx, &MantisRequest::getRemotePort, nullptr, "remotePort");
+        // `req.localAddr`
+        dukglue_register_property(ctx, &MantisRequest::getLocalAddr, nullptr, "localAddr");
+        // `req.localPort`
+        dukglue_register_property(ctx, &MantisRequest::getLocalPort, nullptr, "localPort");
 
 
         // `req.hasKey("key")` -> return true if key is in the context store
         dukglue_register_method(ctx, &MantisRequest::hasKey, "hasKey");
         // `req.set("key", value)` // Store in the context store the given key and value. Note only int, float, double, str
-        dukglue_register_method(ctx, &MantisRequest::set, "set");
+        dukglue_register_method(ctx, &MantisRequest::set_duk, "set");
         // `req.get("key")`
-        dukglue_register_method(ctx, &MantisRequest::get, "get");
+        dukglue_register_method(ctx, &MantisRequest::get_duk, "get");
         // `req.getOr("key", default_value)`
-        dukglue_register_method(ctx, &MantisRequest::getOr, "getOr");
+        dukglue_register_method(ctx, &MantisRequest::getOr_duk, "getOr");
     }
 
     bool MantisRequest::hasKey(const std::string& key) const
     {
-        return m_ctx.hasKey(key);
+        return m_store.hasKey(key);
     }
 
-    DukValue MantisRequest::get(const std::string& key)
+    std::string MantisRequest::getBearerTokenAuth() const
     {
-        return m_ctx.get(key);
+        return get_bearer_token_auth(m_req);
     }
 
-    DukValue MantisRequest::getOr(const std::string& key, const DukValue& default_value)
+    DukValue MantisRequest::get_duk(const std::string& key)
     {
-        return m_ctx.getOr(key, default_value);
+        return m_store.get_duk(key);
     }
 
-    void MantisRequest::set(const std::string& key, const DukValue& value)
+    DukValue MantisRequest::getOr_duk(const std::string& key, const DukValue& default_value)
     {
-        m_ctx.set(key, value);
+        return m_store.getOr_duk(key, default_value);
+    }
+
+    void MantisRequest::set_duk(const std::string& key, const DukValue& value)
+    {
+        m_store.set_duk(key, value);
     }
 }

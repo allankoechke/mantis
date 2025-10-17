@@ -140,11 +140,6 @@ namespace mantis
         m_res.status = statusCode;
     }
 
-    void MantisResponse::sendJsonStr(const int statusCode, const std::string& data) const
-    {
-        send(statusCode, data, "application/json");
-    }
-
     void MantisResponse::sendText(const int statusCode, const std::string& data) const
     {
         send(statusCode, data, "text/plain");
@@ -153,6 +148,26 @@ namespace mantis
     void MantisResponse::sendJson(const int statusCode, const json& data) const
     {
         send(statusCode, data.dump(), "application/json");
+    }
+
+    void MantisResponse::sendJson(const int statusCode, const DukValue& data) const
+    {
+        const auto ctx = MantisApp::instance().ctx();
+
+        if (data.type() == DukValue::OBJECT)
+        {
+            data.push();
+            const char* json_str = duk_json_encode(ctx, -1);
+            nlohmann::json json_obj = nlohmann::json::parse(json_str);
+            duk_pop(ctx);
+
+            sendJson(statusCode, json_obj);
+            return;
+        }
+
+        // Unsupported type - throw error
+        Log::warn("Could not parse data to JSON");
+        duk_error(ctx, DUK_ERR_TYPE_ERROR, "Could not parse data to JSON");
     }
 
     void MantisResponse::sendHtml(const int statusCode, const std::string& data) const
@@ -173,50 +188,50 @@ namespace mantis
 
         // Register Response methods
         // `res.hasHeader("Authorization")` -> return true/false
-        dukglue_register_method(ctx, &MantisResponse::has_header, "hasHeader");
+        dukglue_register_method(ctx, &MantisResponse::hasHeader, "hasHeader");
         // `res.getHeader("Authorization", "", 0)` -> Return Authorization value or default
         // `res.getHeader("Authorization", "Default Value", 0)` -> Return Authorization value or default
         // `res.getHeader("Some Key", "Default Value", 1)` -> Return 'Some Key' value if exists of index '1' or default
-        dukglue_register_method(ctx, &MantisResponse::get_header_value, "getHeader");
-        dukglue_register_method(ctx, &MantisResponse::get_header_value_u64, "getHeaderU64");
+        dukglue_register_method(ctx, &MantisResponse::getHeaderValue, "getHeader");
+        dukglue_register_method(ctx, &MantisResponse::getHeaderValueU64, "getHeaderU64");
         // `res.getHeaderCount("key")` -> Count for header values given the header key
-        dukglue_register_method(ctx, &MantisResponse::get_header_value_count, "getHeaderCount");
+        dukglue_register_method(ctx, &MantisResponse::getHeaderValueCount, "getHeaderCount");
         // res.setHeader("Cow", "Cow Value")
-        dukglue_register_method(ctx, &MantisResponse::set_header, "setHeader");
+        dukglue_register_method(ctx, &MantisResponse::setHeader, "setHeader");
 
-        dukglue_register_method(ctx, &MantisResponse::has_trailer, "hasTrailer");
-        dukglue_register_method(ctx, &MantisResponse::get_trailer_value, "getTrailer");
-        dukglue_register_method(ctx, &MantisResponse::get_trailer_value_count, "getTrailerCount");
+        dukglue_register_method(ctx, &MantisResponse::hasTrailer, "hasTrailer");
+        dukglue_register_method(ctx, &MantisResponse::getTrailerValue, "getTrailer");
+        dukglue_register_method(ctx, &MantisResponse::getTrailerValueCount, "getTrailerCount");
 
         // `res.redirect("http://some-url.com", 302)`
-        dukglue_register_method(ctx, &MantisResponse::set_redirect, "redirect");
+        dukglue_register_method(ctx, &MantisResponse::setRedirect, "redirect");
 
         // `res.setContent("something here", "text/plain")`
-        dukglue_register_method(ctx, static_cast<void(MantisResponse::*)(const std::string&, const std::string&) const>(&MantisResponse::set_content), "setContent");
+        dukglue_register_method(ctx, static_cast<void(MantisResponse::*)(const std::string&, const std::string&) const>(&MantisResponse::setContent), "setContent");
         // `res.setFileContent("/foo/bar.txt")`
-        dukglue_register_method(ctx, static_cast<void(MantisResponse::*)(const std::string&) const>(&MantisResponse::set_file_content), "setFileContent");
+        dukglue_register_method(ctx, static_cast<void(MantisResponse::*)(const std::string&) const>(&MantisResponse::setFileContent), "setFileContent");
 
         // `res.send(200, "some data here", "text/plain")`
         dukglue_register_method(ctx, &MantisResponse::send, "send");
         // `res.json(200, "{\"a\": 5}")`
-        dukglue_register_method(ctx, &MantisResponse::send_json_str, "json");
+        dukglue_register_method(ctx, static_cast<void(MantisResponse::*)(int, const DukValue&) const>(&MantisResponse::sendJson), "json");
         // `res.html(200, "<html> ... </html>")`
-        dukglue_register_method(ctx, &MantisResponse::send_html, "html");
+        dukglue_register_method(ctx, &MantisResponse::sendHtml, "html");
         // `res.text(200, "some text response")`
-        dukglue_register_method(ctx, &MantisResponse::send_text, "text");
+        dukglue_register_method(ctx, &MantisResponse::sendText, "text");
         // `res.empty(204)`
-        dukglue_register_method(ctx, &MantisResponse::send_empty, "empty");
+        dukglue_register_method(ctx, &MantisResponse::sendEmpty, "empty");
 
         // `res.body = "Some Data"`
         // `res.body` -> returns `Some Data`
-        dukglue_register_property(ctx, &MantisResponse::get_body, &MantisResponse::set_body, "body");
+        dukglue_register_property(ctx, &MantisResponse::getBody, &MantisResponse::setBody, "body");
         // `res.status` (get or set status data)
-        dukglue_register_property(ctx, &MantisResponse::get_status, &MantisResponse::set_status, "status");
+        dukglue_register_property(ctx, &MantisResponse::getStatus, &MantisResponse::setStatus, "status");
         // `res.version` (get or set version value)
-        dukglue_register_property(ctx, &MantisResponse::get_version, &MantisResponse::set_version, "version");
+        dukglue_register_property(ctx, &MantisResponse::getVersion, &MantisResponse::setVersion, "version");
         // `res.location` (get or set redirect location value)
-        dukglue_register_property(ctx, &MantisResponse::get_location, &MantisResponse::set_location, "location");
+        dukglue_register_property(ctx, &MantisResponse::getLocation, &MantisResponse::setLocation, "location");
         // `res.reason` (get or set reason value)
-        dukglue_register_property(ctx, &MantisResponse::get_reason, &MantisResponse::set_reason, "reason");
+        dukglue_register_property(ctx, &MantisResponse::getReason, &MantisResponse::setReason, "reason");
     }
 }

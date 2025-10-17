@@ -33,7 +33,6 @@ namespace mantis
 {
     class MantisResponse;
     class MantisRequest;
-    class Context;
     namespace fs = std::filesystem;
 
     class DatabaseUnit;

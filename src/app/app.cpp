@@ -12,6 +12,7 @@
 #include "mantis/core/settings.h"
 #include "mantis/core/fileunit.h"
 #include "mantis/core/private-impl/duktape_custom_types.h"
+#include "mantis/core/http.h"
 
 #define __file__ "app/app.cpp"
 
@@ -927,7 +928,7 @@ namespace mantis
 
                 if (!ok)
                 {
-                    if (res.get_status() < 400) res.set_status(500); // If error code is not explicit
+                    if (res.getStatus() < 400) res.setStatus(500); // If error code is not explicit
                     return; // Middleware stopped the chain
                 }
             }
@@ -938,11 +939,8 @@ namespace mantis
                 response["data"] = json::object();
                 response["error"] = e.what();
 
-                res.set_status(500);
-                res.set_content(response.dump(), "application/json");
-
+                res.sendJson(500, response);
                 Log::critical("Error Executing Middleware: {}", e.what());
-
                 return;
             }
         }
@@ -959,9 +957,8 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = e.what();
 
-            res.send(500, response.dump(), "application/json");
-
-            Log::critical("Error Executing Route {} : {}", req.get_path(), e.what());
+            res.sendJson(500, response);
+            Log::critical("Error Executing Route {} : {}", req.getPath(), e.what());
         }
     }
 }

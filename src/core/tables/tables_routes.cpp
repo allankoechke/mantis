@@ -28,18 +28,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}", "GET", basePath);
             MantisApp::instance().http().Get(
                 basePath,
-                [this](const Request& req, Response& res, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res)-> void
                 {
-                    fetchRecords(req, res, ctx);
+                    fetchRecords(req, res);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -48,18 +48,18 @@ namespace mantis
             Log::debug("Creating route: [{:>6}] {}{}", "GET/1", basePath, "/:id");
             MantisApp::instance().http().Get(
                 basePath + "/:id",
-                [this](const Request& req, Response& res, Context& ctx)-> void
+                [this](MantisRequest& req, MantisResponse& res)-> void
                 {
-                    fetchRecord(req, res, ctx);
+                    fetchRecord(req, res);
                 },
                 {
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return getAuthToken(req, res, ctx);
+                        return getAuthToken(req, res);
                     },
-                    [this](const Request& req, Response& res, Context& ctx)-> bool
+                    [this](MantisRequest& req, MantisResponse& res)-> bool
                     {
-                        return hasAccess(req, res, ctx);
+                        return hasAccess(req, res);
                     }
                 }
             );
@@ -70,19 +70,18 @@ namespace mantis
                 // Add Record
                 Log::debug("Creating route: [{:>6}] {}", "POST", basePath);
                 MantisApp::instance().http().Post(
-                    basePath, [this](const Request& req, Response& res, const ContentReader& reader,
-                                     Context& ctx)-> void
+                    basePath, [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                     {
-                        createRecord(req, res, reader, ctx);
+                        createRecord(req, res, reader);
                     },
                     {
-                        [this](const Request& req, Response& res, Context& ctx)-> bool
+                        [](MantisRequest& req, MantisResponse& res)-> bool
                         {
-                            return getAuthToken(req, res, ctx);
+                            return getAuthToken(req, res);
                         },
-                        [this](const Request& req, Response& res, Context& ctx)-> bool
+                        [this](MantisRequest& req, MantisResponse& res)-> bool
                         {
-                            return hasAccess(req, res, ctx);
+                            return hasAccess(req, res);
                         }
                     }
                 );
@@ -91,18 +90,18 @@ namespace mantis
                 Log::debug("Creating route: [{:>6}] {}{}", "PATCH", basePath, "/:id");
                 MantisApp::instance().http().Patch(
                     basePath + "/:id",
-                    [this](const Request& req, Response& res, const ContentReader& reader, Context& ctx)-> void
+                    [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                     {
-                        updateRecord(req, res, reader, ctx);
+                        updateRecord(req, res, reader);
                     },
                     {
-                        [this](const Request& req, Response& res, Context& ctx)-> bool
+                        [](MantisRequest& req, MantisResponse& res)-> bool
                         {
-                            return getAuthToken(req, res, ctx);
+                            return getAuthToken(req, res);
                         },
-                        [this](const Request& req, Response& res, Context& ctx)-> bool
+                        [this](MantisRequest& req, MantisResponse& res)-> bool
                         {
-                            return hasAccess(req, res, ctx);
+                            return hasAccess(req, res);
                         }
                     }
                 );
@@ -111,18 +110,18 @@ namespace mantis
                 Log::debug("Creating route: [{:>6}] {}{}", "DELETE", basePath, "/:id");
                 MantisApp::instance().http().Delete(
                     basePath + "/:id",
-                    [this](const Request& req, Response& res, Context& ctx)-> void
+                    [this](MantisRequest& req, MantisResponse& res)-> void
                     {
-                        deleteRecord(req, res, ctx);
+                        deleteRecord(req, res);
                     },
                     {
-                        [this](const Request& req, Response& res, Context& ctx)-> bool
+                        [](MantisRequest& req, MantisResponse& res)-> bool
                         {
-                            return getAuthToken(req, res, ctx);
+                            return getAuthToken(req, res);
                         },
-                        [this](const Request& req, Response& res, Context& ctx)-> bool
+                        [this](MantisRequest& req, MantisResponse& res)-> bool
                         {
-                            return hasAccess(req, res, ctx);
+                            return hasAccess(req, res);
                         }
                     }
                 );
@@ -135,9 +134,9 @@ namespace mantis
                 Log::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
                 MantisApp::instance().http().Post(
                     basePath + "/auth-with-password",
-                    [this](const Request& req, Response& res, Context& ctx) -> void
+                    [this](MantisRequest& req, MantisResponse& res) -> void
                     {
-                        authWithEmailAndPassword(req, res, ctx);
+                        authWithEmailAndPassword(req, res);
                     }
                 );
             }
@@ -160,12 +159,12 @@ namespace mantis
         }
     }
 
-    void TableUnit::fetchRecord(const Request& req, Response& res, Context& ctx)
+    void TableUnit::fetchRecord(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
         // Extract request ID and check that it's not empty
-        const auto id = req.path_params.at("id");
+        const auto id = req.getPathParamValue("id");
 
         json response;
         if (id.empty())
@@ -174,8 +173,7 @@ namespace mantis
             response["error"] = "Record ID is required";
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 400;
+            res.sendJson(400, response);
             return;
         }
 
@@ -190,8 +188,7 @@ namespace mantis
                 response["error"] = "";
                 response["data"] = resp.value();
 
-                res.set_content(response.dump(), "application/json");
-                res.status = 200;
+                res.sendJson(200, response);
                 return;
             }
 
@@ -199,8 +196,7 @@ namespace mantis
             response["error"] = "Item Not Found";
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 404;
+            res.sendJson(404, response);
         }
 
         // For any server errors, send it back to the client
@@ -211,8 +207,7 @@ namespace mantis
             response["error"] = e.what();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
+            res.sendJson(500, response);
         }
 
         catch (...)
@@ -221,12 +216,11 @@ namespace mantis
             response["error"] = "Unknown Error";
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 500;
+            res.sendJson(500, response);
         }
     }
 
-    void TableUnit::fetchRecords(const Request& req, Response& res, Context& ctx)
+    void TableUnit::fetchRecords(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD()
 
@@ -238,15 +232,15 @@ namespace mantis
         pagination["recordCount"] = 0; // Total records
         pagination["countPages"] = true; // Whether to calculate number of pages
 
-        if (req.has_param("perPage") && !req.get_param_value("perPage").empty())
-            pagination["perPage"] = std::stoi(req.get_param_value("perPage"));
+        if (req.hasQueryParam("perPage") && !req.getQueryParamValue("perPage").empty())
+            pagination["perPage"] = std::stoi(req.getQueryParamValue("perPage"));
 
-        if (req.has_param("pageIndex") && !req.get_param_value("pageIndex").empty())
-            pagination["pageIndex"] = std::stoi(req.get_param_value("pageIndex"));
+        if (req.hasQueryParam("pageIndex") && !req.getQueryParamValue("pageIndex").empty())
+            pagination["pageIndex"] = std::stoi(req.getQueryParamValue("pageIndex"));
 
-        if (req.has_param("countPages") && !req.get_param_value("countPages").empty())
+        if (req.hasQueryParam("countPages") && !req.getQueryParamValue("countPages").empty())
         {
-            const std::string value = req.get_param_value("countPages");
+            const std::string value = req.getQueryParamValue("countPages");
             pagination["countPages"] = value.empty() ? true : strToBool(value);
         }
 
@@ -262,8 +256,7 @@ namespace mantis
                 response["status"] = 400;
                 response["error"] = err;
 
-                res.status = 400;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(400, response);
             }
 
             response["data"] = resp["data"];
@@ -271,8 +264,7 @@ namespace mantis
             response["status"] = 200;
             response["error"] = "";
 
-            res.status = 200;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(200, response);
         }
 
         catch (const std::exception& e)
@@ -281,8 +273,7 @@ namespace mantis
             response["status"] = 500;
             response["error"] = e.what();
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(500, response);
         }
 
         catch (...)
@@ -291,12 +282,11 @@ namespace mantis
             response["status"] = 500;
             response["error"] = "Internal Server Error";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(500, response);
         }
     }
 
-    void TableUnit::createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
+    void TableUnit::createRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)
     {
         TRACE_CLASS_METHOD()
 
@@ -305,7 +295,7 @@ namespace mantis
         json files_to_save{};
         std::vector<httplib::FormData> files;
 
-        if (req.is_multipart_form_data())
+        if (req.isMultipartFormData())
         {
             // Handle file upload using content receiver pattern
             reader(
@@ -340,8 +330,7 @@ namespace mantis
                         response["error"] = std::format("Unknown field `{}` for file type upload!", file.name);
                         response["data"] = json::object();
 
-                        res.set_content(response.dump(), "application/json");
-                        res.status = 400;
+                        res.sendJson(400, response);
                         return;
                     }
 
@@ -352,8 +341,7 @@ namespace mantis
                         response["error"] = std::format("Field `{}` is not of type `file` or `files`!", file.name);
                         response["data"] = json::object();
 
-                        res.set_content(response.dump(), "application/json");
-                        res.status = 400;
+                        res.sendJson(400, response);
                         return;
                     }
 
@@ -398,8 +386,7 @@ namespace mantis
                             response["error"] = e.what();
                             response["data"] = json::object();
 
-                            res.status = 500;
-                            res.set_content(response.dump(), "application/json");
+                            res.sendJson(500, response);
                             return;
                         }
                     }
@@ -434,8 +421,7 @@ namespace mantis
                                         response["error"] = std::format("Error parsing field `{}`, expected an array!",
                                                                         file.name);
 
-                                        res.status = 400;
-                                        res.set_content(response.dump(), "application/json");
+                                        res.sendJson(400, response);
                                         return;
                                     }
 
@@ -463,8 +449,7 @@ namespace mantis
                                 response["data"] = json::object();
                                 response["error"] = e.what();
 
-                                res.status = 500;
-                                res.set_content(response.dump(), "application/json");
+                                res.sendJson(500, response);
                                 Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
                                               file.content);
                                 return;
@@ -477,8 +462,7 @@ namespace mantis
                         response["data"] = json::object();
                         response["error"] = e.what();
 
-                        res.status = 500;
-                        res.set_content(response.dump(), "application/json");
+                        res.sendJson(500, response);
                         Log::critical("Error parsing field data: {}", e.what());
                         return;
                     }
@@ -507,8 +491,7 @@ namespace mantis
                 response["error"] = e.what();
                 response["data"] = json::object();
 
-                res.set_content(response.dump(), "application/json");
-                res.status = 400;
+                res.sendJson(400, response);
                 return;
             }
         }
@@ -521,9 +504,7 @@ namespace mantis
             response["error"] = resp.value();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 400;
-
+            res.sendJson(400, response);
             Log::critical("Error Validating Request Body: {}", resp.value());
             return;
         };
@@ -552,8 +533,7 @@ namespace mantis
                 response["data"] = json::object();
                 response["error"] = "Error writing files, hash mismatch!";
 
-                res.status = 500;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
                 return;
             }
 
@@ -573,8 +553,7 @@ namespace mantis
                 response["error"] = "Failed to save file: " + file.filename;
                 response["data"] = json::object();
 
-                res.status = 500;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
 
                 // Remove any written files
                 for (const auto& f : saved_files)
@@ -596,8 +575,7 @@ namespace mantis
             response["error"] = respObj.at("error").get<std::string>();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = status;
+            res.sendJson(status, response);
 
             for (const auto& f : saved_files)
             {
@@ -627,17 +605,16 @@ namespace mantis
         response["error"] = "";
         response["data"] = record;
 
-        res.status = 201;
-        res.set_content(response.dump(), "application/json");
+        res.sendJson(201, response);
     }
 
-    void TableUnit::updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx)
+    void TableUnit::updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)
     {
         TRACE_CLASS_METHOD()
 
         json body, response;
         // Extract request ID and check that it's not empty
-        const auto id = req.path_params.at("id");
+        const auto id = req.getPathParamValue("id");
 
         // For empty IDs, return 400, BAD REQUEST
         if (id.empty())
@@ -646,8 +623,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Record ID is required!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(400, response);
             return;
         }
         // Check that record exists before we continue ...
@@ -657,8 +633,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Record with id " + id + " was not found.";
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(404, response);
             return;
         }
 
@@ -666,7 +641,7 @@ namespace mantis
         json files_to_save{};
         std::vector<httplib::FormData> files;
 
-        if (req.is_multipart_form_data())
+        if (req.isMultipartFormData())
         {
             // Handle file upload using content receiver pattern
             reader(
@@ -700,8 +675,7 @@ namespace mantis
                         response["error"] = std::format("Unknown field `{}` for file type upload!", file.name);
                         response["data"] = json::object();
 
-                        res.set_content(response.dump(), "application/json");
-                        res.status = 400;
+                        res.sendJson(400, response);
                         return;
                     }
 
@@ -712,8 +686,7 @@ namespace mantis
                         response["error"] = std::format("Field `{}` is not of type `file` or `files`!", file.name);
                         response["data"] = json::object();
 
-                        res.set_content(response.dump(), "application/json");
-                        res.status = 400;
+                        res.sendJson(400, response);
                         return;
                     }
 
@@ -758,8 +731,7 @@ namespace mantis
                             response["error"] = e.what();
                             response["data"] = json::object();
 
-                            res.status = 500;
-                            res.set_content(response.dump(), "application/json");
+                            res.sendJson(500, response);
                             return;
                         }
                     }
@@ -794,8 +766,7 @@ namespace mantis
                                         response["error"] = std::format("Error parsing field `{}`, expected an array!",
                                                                         file.name);
 
-                                        res.status = 400;
-                                        res.set_content(response.dump(), "application/json");
+                                        res.sendJson(400, response);
                                         return;
                                     }
 
@@ -824,8 +795,7 @@ namespace mantis
                                 response["data"] = json::object();
                                 response["error"] = e.what();
 
-                                res.status = 500;
-                                res.set_content(response.dump(), "application/json");
+                                res.sendJson(500, response);
                                 Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
                                               file.content);
                                 return;
@@ -838,8 +808,7 @@ namespace mantis
                         response["data"] = json::object();
                         response["error"] = e.what();
 
-                        res.status = 500;
-                        res.set_content(response.dump(), "application/json");
+                        res.sendJson(500, response);
                         Log::critical("Error parsing field data: {}", e.what());
                         return;
                     }
@@ -864,8 +833,7 @@ namespace mantis
                 response["error"] = e.what();
                 response["data"] = json::object();
 
-                res.set_content(response.dump(), "application/json");
-                res.status = 400;
+                res.sendJson(400, response);
                 return;
             }
         }
@@ -877,9 +845,7 @@ namespace mantis
             response["error"] = resp.value();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = 400;
-
+            res.sendJson(400, response);
             Log::critical("Error Validating Field: {}", resp.value());
             return;
         };
@@ -908,8 +874,7 @@ namespace mantis
                 response["data"] = json::object();
                 response["error"] = "Error writing files, hash mismatch!";
 
-                res.status = 500;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
                 return;
             }
 
@@ -929,8 +894,7 @@ namespace mantis
                 response["error"] = "Failed to save file: " + file.filename;
                 response["data"] = json::object();
 
-                res.status = 500;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(500, response);
 
                 // Remove any written files
                 for (const auto& f : saved_files)
@@ -954,8 +918,7 @@ namespace mantis
             response["error"] = respObj.at("error").get<std::string>();
             response["data"] = json::object();
 
-            res.set_content(response.dump(), "application/json");
-            res.status = status;
+            res.sendJson(status, response);
 
             for (const auto& f : saved_files)
             {
@@ -985,16 +948,15 @@ namespace mantis
         response["error"] = "";
         response["data"] = record;
 
-        res.status = 200;
-        res.set_content(response.dump(), "application/json");
+        res.sendJson(200, response);
     }
 
-    void TableUnit::deleteRecord(const Request& req, Response& res, Context& ctx)
+    void TableUnit::deleteRecord(MantisRequest& req, MantisResponse& res)
     {
-        Log::trace("Deleting record, endpoint {}", req.path);
+        Log::trace("Deleting record, endpoint {}", req.getPath());
 
         // Extract request ID and check that it's not empty
-        const auto id = req.path_params.at("id");
+        const auto id = req.getPathParamValue("id");
 
         // For empty IDs, return 400, BAD REQUEST
         if (id.empty())
@@ -1004,8 +966,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Record ID is required!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(400, response);
             return;
         }
 
@@ -1017,8 +978,7 @@ namespace mantis
 
             // If all went well, lets return Status OK response
             // no need of a body here
-            res.status = 204;
-            res.set_content("", "application/json");
+            res.sendEmpty();
         }
         catch (const std::exception& e)
         {
@@ -1027,8 +987,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = e.what();
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(404, response);
         }
     }
 }

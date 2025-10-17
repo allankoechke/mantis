@@ -6,26 +6,26 @@
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../../include/mantis/utils/utils.h"
+#include "mantis/core/jwt.h"
 #include "mantis/core/router.h"
 
 #define __file__ "core/tables/tables_auth.cpp"
 
 namespace mantis
 {
-    void TableUnit::authWithEmailAndPassword(const Request& req, Response& res, Context& ctx)
+    void TableUnit::authWithEmailAndPassword(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD();
 
         json body, response;
-        try { body = json::parse(req.body); }
+        try { body = json::parse(req.getBody()); }
         catch (const std::exception& e)
         {
             response["status"] = 500;
             response["data"] = json::object();
             response["error"] = "Could not parse request body! ";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(500, response);
             return;
         }
 
@@ -36,8 +36,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "User email is missing!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(400, response);
             return;
         }
 
@@ -47,8 +46,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "User password is missing!";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(400, response);
             return;
         }
 
@@ -70,8 +68,7 @@ namespace mantis
                 response["data"] = json::object();
                 response["error"] = "No user found matching given email/password combination.";
 
-                res.status = 404;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(404, response);
                 return;
             }
 
@@ -93,8 +90,7 @@ namespace mantis
                     response["data"] = json::object();
                     response["error"] = err;
 
-                    res.status = 500;
-                    res.set_content(response.dump(), "application/json");
+                    res.sendJson(500, response);
                     return;
                 }
 
@@ -106,8 +102,7 @@ namespace mantis
                 response["data"] = data;
                 response["error"] = "";
 
-                res.status = 200;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(200, response);
                 return;
             }
 
@@ -115,8 +110,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "No user found matching given email/password combination.";
 
-            res.status = 404;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(404, response);
             Log::warn("No user found for given email/password combination. Reason: {}",
                       resp.value("error", ""));
         }
@@ -126,9 +120,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = e.what();
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(500, response);
             Log::critical("Error Processing Request: {}", e.what());
         }
         catch (...)
@@ -137,25 +129,22 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Internal Server Error";
 
-            res.status = 500;
-            res.set_content(response.dump(), "application/json");
-
+            res.sendJson(500, response);
             Log::critical("Internal Server Error");
         }
     }
 
-    void TableUnit::resetPassword(const Request& req, Response& res, Context& ctx)
+    void TableUnit::resetPassword(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD();
 
         [[maybe_unused]] auto sql = MantisApp::instance().db().session();
 
-        Log::trace("Resetting password on record, endpoint {}", req.path);
-        res.status = 200;
-        res.set_content(req.body, "application/json");
+        Log::trace("Resetting password on record, endpoint {}", req.getPath());
+        //res.sendJson(200, req);
     }
 
-    bool TableUnit::getAuthToken(const Request& req, [[maybe_unused]] Response& res, Context& ctx)
+    bool TableUnit::getAuthToken(MantisRequest& req, [[maybe_unused]] MantisResponse& res)
     {
         // If we have an auth header, extract it into the ctx, else
         // add a guest user type. The auth if present, should have
@@ -166,37 +155,40 @@ namespace mantis
         auth["id"] = nullptr;
         auth["table"] = nullptr;
 
-        if (req.has_header("Authorization"))
+        if (req.hasHeader("Authorization"))
         {
-            const auto token = get_bearer_token_auth(req);
+            const auto token = req.getBearerTokenAuth();
             auth["token"] = trim(token);
             auth["type"] = "user";
         }
 
         // Update the context
-        ctx.set("auth", auth);
+        req.set("auth", auth);
         return REQUEST_PENDING;
     }
 
-    bool TableUnit::hasAccess(const Request& req, Response& res, Context& ctx)
+    bool TableUnit::hasAccess(MantisRequest& req, MantisResponse& res)
     {
         TRACE_CLASS_METHOD();
 
         // Get the auth var from the context, resort to empty object if it's not set.
-        auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
+        // auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
+        auto auth = req.getOr<json>("auth", json::object());
 
         // Store rule, depending on the request type
         std::string rule;
-        if (req.method == "GET")
+        if (req.getMethod() == "GET")
         {
             // Check if we are fetching single record using the ID
             // empty params means we are listing through the endpoint
-            if (req.path_params.empty()) rule = m_listRule;
-            else rule = m_getRule;
+            if (req.hasPathParams())
+                rule = m_listRule;
+            else
+                rule = m_getRule;
         }
-        else if (req.method == "POST") rule = m_addRule;
-        else if (req.method == "PATCH") rule = m_updateRule;
-        else if (req.method == "DELETE") rule = m_deleteRule;
+        else if (req.getMethod() == "POST") rule = m_addRule;
+        else if (req.getMethod() == "PATCH") rule = m_updateRule;
+        else if (req.getMethod() == "DELETE") rule = m_deleteRule;
         else
         {
             json response;
@@ -204,8 +196,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Unsupported method";
 
-            res.status = 400;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(400, response);
             return REQUEST_HANDLED;
         }
 
@@ -225,17 +216,23 @@ namespace mantis
                 resp.value("verified", false))
             {
                 // Ensure that, we only enter this block if `id` and `table` keys have a valid string data
-                if ((!resp["id"].is_null() && !resp["id"].empty())
-                    && (!resp["table"].is_null() && !resp["table"].empty()))
+                if (!resp["id"].is_null() &&
+                    !resp["id"].empty() &&
+                    !resp["table"].is_null() &&
+                    !resp["table"].empty())
                 {
-                    const auto _id = resp["id"].is_null() ? "" : resp.value("id", "");
-                    const auto _table = resp["table"].is_null() ? "" : resp.value("table", "");
+                    const auto _id = resp["id"].is_null()
+                                         ? ""
+                                         : resp.value("id", "");
+                    const auto _table = resp["table"].is_null()
+                                            ? ""
+                                            : resp.value("table", "");
 
                     // Query for user with given ID, this info will be populated to the
                     // expression evaluator args as well as available through
                     // the session context, queried by:
-                    //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
-                    //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
+                    //  ` req.get<json>("auth").value("id", ""); // returns the user ID
+                    //  ` req.get<json>("auth").value("name", ""); // returns the user's name
                     auto sql = MantisApp::instance().db().session();
                     soci::row r;
                     std::string query = "SELECT * FROM " + _table + " WHERE id = :id LIMIT 1";
@@ -265,7 +262,7 @@ namespace mantis
                         auth.erase("password");
 
                         // Update context data
-                        ctx.set("auth", auth);
+                        req.set("auth", auth);
 
                         // Add `auth` data to the TokenMap
                         vars["auth"] = MantisApp::instance().evaluator().jsonToTokenMap(auth);
@@ -276,15 +273,17 @@ namespace mantis
 
         // Request Token Map
         TokenMap reqMap;
-        reqMap["ip"] = req.remote_addr;
-        reqMap["port"] = req.remote_port;
+        reqMap["remoteAddr"] = req.getRemoteAddr();
+        reqMap["remotePort"] = req.getRemotePort();
+        reqMap["localAddr"] = req.getLocalAddr();
+        reqMap["localPort"] = req.getLocalPort();
 
         try
         {
-            if (req.method == "POST" && !req.body.empty())
+            if (req.getMethod() == "POST" && !req.getMethod().empty())
             {
                 // Parse request body and add it to the request TokenMap
-                auto request = json::parse(req.body);
+                auto request = json::parse(req.getMethod());
                 reqMap["body"] = MantisApp::instance().evaluator().jsonToTokenMap(request);
             }
         }
@@ -313,8 +312,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Admin auth required to access this resource.";
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
@@ -331,8 +329,7 @@ namespace mantis
         response["data"] = json::object();
         response["error"] = "Access denied!";
 
-        res.status = 403;
-        res.set_content(response.dump(), "application/json");
+        res.sendJson(403, response);
         return REQUEST_HANDLED;
     }
 }

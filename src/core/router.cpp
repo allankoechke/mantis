@@ -21,7 +21,8 @@ CMRC_DECLARE(mantis);
 
 #define __file__ "core/router.cpp"
 
-mantis::Router::Router() {
+mantis::Router::Router()
+{
     // Create admin table object, we'll use it to get JSON rep for use in
     // the TableUnit construction. Similar to what we do when creating routes.
     AdminTable admin;
@@ -41,7 +42,8 @@ mantis::Router::Router() {
     m_tableRoutes->setRouteDisplayName("tables");
 }
 
-bool mantis::Router::initialize() {
+bool mantis::Router::initialize()
+{
     if (!generateTableCrudApis())
         return false;
 
@@ -60,44 +62,54 @@ bool mantis::Router::initialize() {
     return true;
 }
 
-bool mantis::Router::listen() const {
-    try {
+bool mantis::Router::listen() const
+{
+    try
+    {
         // Quick hack to mute `This method can be made static` warning on CLion
         [[maybe_unused]] auto s = m_routes.size();
         return MantisApp::instance().http().listen(MantisApp::instance().host(), MantisApp::instance().port());
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e)
+    {
         Log::critical("Failed to start server: {}", e.what());
     }
-    catch (...) {
+    catch (...)
+    {
         Log::critical("Failed to start server: Unknown Error");
     }
 
     return false;
 }
 
-void mantis::Router::close() {
+void mantis::Router::close()
+{
     MantisApp::instance().http().close();
     m_routes.clear();
 }
 
-json mantis::Router::addRoute(const std::string &table) {
+json mantis::Router::addRoute(const std::string& table)
+{
     TRACE_CLASS_METHOD()
 
-    if (trim(table).empty()) {
+    if (trim(table).empty())
+    {
         json res;
         res["success"] = false;
         res["error"] = "Table name can't be empty";
         return res;
     }
 
-    try {
+    try
+    {
         const auto sql = MantisApp::instance().db().session();
 
         soci::row row;
         const std::string query = "SELECT id, name, type, schema, has_api FROM __tables WHERE name = :name";
         *sql << query, soci::use(table), soci::into(row);
 
-        if (!sql->got_data()) {
+        if (!sql->got_data())
+        {
             json res;
             res["success"] = false;
             res["error"] = "No table found with the name " + table;
@@ -110,7 +122,8 @@ json mantis::Router::addRoute(const std::string &table) {
         const auto hasApi = row.get<bool>("has_api");
 
         // If `hasApi` is set, schema is valid, then, add API endpoints
-        if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty())) {
+        if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty()))
+        {
             // We need to persist this instance, else it'll be cleaned up causing a crash
             const auto tableUnit = std::make_shared<TableUnit>(schema);
             tableUnit->setTableName(name);
@@ -121,7 +134,9 @@ json mantis::Router::addRoute(const std::string &table) {
 
             m_routes.push_back(tableUnit);
         }
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e)
+    {
         json res;
         res["success"] = false;
         res["error"] = e.what();
@@ -134,29 +149,34 @@ json mantis::Router::addRoute(const std::string &table) {
     return res;
 }
 
-json mantis::Router::updateRoute(const json &table_data) {
+json mantis::Router::updateRoute(const json& table_data)
+{
     TRACE_CLASS_METHOD()
 
     json res;
     res["success"] = false;
     res["error"] = "";
 
-    if (table_data.is_null() || table_data.empty()) {
+    if (table_data.is_null() || table_data.empty())
+    {
         res["error"] = "Table data can't be empty!";
         return res;
     }
 
-    if (!table_data.contains("new_name") || table_data["new_name"].is_null() || table_data["new_name"].empty()) {
+    if (!table_data.contains("new_name") || table_data["new_name"].is_null() || table_data["new_name"].empty())
+    {
         res["error"] = "Table new name can't be null/empty!";
         return res;
     }
 
-    if (!table_data.contains("old_name") || table_data["old_name"].is_null() || table_data["old_name"].empty()) {
+    if (!table_data.contains("old_name") || table_data["old_name"].is_null() || table_data["old_name"].empty())
+    {
         res["error"] = "Table old name can't be null/empty!";
         return res;
     }
 
-    if (!table_data.contains("old_type") || table_data["old_type"].is_null() || table_data["old_type"].empty()) {
+    if (!table_data.contains("old_type") || table_data["old_type"].is_null() || table_data["old_type"].empty())
+    {
         res["error"] = "Table type is required!";
         return res;
     }
@@ -166,11 +186,13 @@ json mantis::Router::updateRoute(const json &table_data) {
     const auto table_type = table_data.at("old_type").get<std::string>();
 
     // Let's find and remove existing object
-    const auto it = std::ranges::find_if(m_routes, [&](const auto &route) {
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
+    {
         return route->tableName() == table_old_name;
     });
 
-    if (it == m_routes.end()) {
+    if (it == m_routes.end())
+    {
         res["error"] = "TableUnit for " + table_old_name + " not found!";
         return res;
     }
@@ -180,13 +202,15 @@ json mantis::Router::updateRoute(const json &table_data) {
     MantisApp::instance().http().routeRegistry().remove("GET", basePath);
     MantisApp::instance().http().routeRegistry().remove("GET", basePath + "/:id");
 
-    if (table_type != "view") {
+    if (table_type != "view")
+    {
         MantisApp::instance().http().routeRegistry().remove("POST", basePath);
         MantisApp::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
         MantisApp::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
     }
 
-    if (table_type == "auth") {
+    if (table_type == "auth")
+    {
         MantisApp::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
     }
 
@@ -196,7 +220,8 @@ json mantis::Router::updateRoute(const json &table_data) {
     return addRoute(table_name);
 }
 
-mantis::json mantis::Router::updateRouteCache(const json &table_data) {
+mantis::json mantis::Router::updateRouteCache(const json& table_data)
+{
     TRACE_CLASS_METHOD()
 
     json res;
@@ -207,11 +232,13 @@ mantis::json mantis::Router::updateRouteCache(const json &table_data) {
     const auto table_name = table_data.at("name").get<std::string>();
 
     // Let's find and remove existing object
-    const auto it = std::ranges::find_if(m_routes, [&](const auto &route) {
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
+    {
         return route->tableName() == table_name;
     });
 
-    if (it == m_routes.end()) {
+    if (it == m_routes.end())
+    {
         res["error"] = "TableUnit for " + table_name + " not found!";
         return res;
     }
@@ -223,24 +250,28 @@ mantis::json mantis::Router::updateRouteCache(const json &table_data) {
     return res;
 }
 
-json mantis::Router::removeRoute(const json &table_data) {
+json mantis::Router::removeRoute(const json& table_data)
+{
     TRACE_CLASS_METHOD()
 
     json res;
     res["success"] = false;
     res["error"] = "";
 
-    if (table_data.is_null() || table_data.empty()) {
+    if (table_data.is_null() || table_data.empty())
+    {
         res["error"] = "Table data can't be empty!";
         return res;
     }
 
-    if (!table_data.contains("name") || table_data["name"].is_null() || table_data["name"].empty()) {
+    if (!table_data.contains("name") || table_data["name"].is_null() || table_data["name"].empty())
+    {
         res["error"] = "Table name can't be null/empty!";
         return res;
     }
 
-    if (!table_data.contains("type") || table_data["type"].is_null() || table_data["type"].empty()) {
+    if (!table_data.contains("type") || table_data["type"].is_null() || table_data["type"].empty())
+    {
         res["error"] = "Table type is required!";
         return res;
     }
@@ -249,11 +280,13 @@ json mantis::Router::removeRoute(const json &table_data) {
     const auto table_type = table_data.at("type").get<std::string>();
 
     // Let's find and remove existing object
-    const auto it = std::ranges::find_if(m_routes, [&](const auto &route) {
+    const auto it = std::ranges::find_if(m_routes, [&](const auto& route)
+    {
         return route->tableName() == table_name;
     });
 
-    if (it == m_routes.end()) {
+    if (it == m_routes.end())
+    {
         res["error"] = "TableUnit not found!";
         return res;
     }
@@ -264,13 +297,15 @@ json mantis::Router::removeRoute(const json &table_data) {
     MantisApp::instance().http().routeRegistry().remove("GET", basePath);
     MantisApp::instance().http().routeRegistry().remove("GET", basePath + "/:id");
 
-    if (table_type != "view") {
+    if (table_type != "view")
+    {
         MantisApp::instance().http().routeRegistry().remove("POST", basePath);
         MantisApp::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
         MantisApp::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
     }
 
-    if (table_type == "auth") {
+    if (table_type == "auth")
+    {
         MantisApp::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
     }
 
@@ -283,40 +318,39 @@ json mantis::Router::removeRoute(const json &table_data) {
 
 void mantis::Router::registerDuktapeMethods()
 {
-    // const auto ctx = MantisApp::instance().ctx();
-
-    // Router methods
-    // dukglue_register_method(ctx, &Router::addRoute, "addRoute");
-    // dukglue_register_method(ctx, &soci::session::close, "close");
 }
 
-bool mantis::Router::generateFileServingApi() const {
+bool mantis::Router::generateFileServingApi() const
+{
     TRACE_CLASS_METHOD()
 
-    try {
+    try
+    {
         MantisApp::instance().http().Get(
             "/api/files/:table/:filename",
-            [this](const Request &req, Response &res, [[maybe_unused]] Context &ctx) {
-                const auto table_name = req.path_params.at("table");
-                const auto file_name = req.path_params.at("filename");
+            [](const MantisRequest& req, MantisResponse& res)
+            {
+                const auto table_name = req.getPathParamValue("table");
+                const auto file_name = req.getPathParamValue("filename");
 
-                if (table_name.empty() || file_name.empty()) {
+                if (table_name.empty() || file_name.empty())
+                {
                     json response;
                     response["error"] = "Table name and file name are required!";
                     response["status"] = "400";
                     response["data"] = json::object();
 
-                    res.status = 400;
-                    res.set_content(response, "application/json");
+                    res.sendJson(400, response);
                     return;
                 }
 
                 const auto fileMgr = MantisApp::instance().files();
                 if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
-                    path_opt.has_value()) {
+                    path_opt.has_value())
+                {
                     // Return requested file
-                    res.set_file_content(path_opt.value());
-                    res.status = 200;
+                    res.setStatus(200);
+                    res.setFileContent(path_opt.value());
                     return;
                 }
 
@@ -325,20 +359,22 @@ bool mantis::Router::generateFileServingApi() const {
                 response["status"] = "404";
                 response["data"] = json::object();
 
-                res.status = 404;
-                res.set_content(response, "application/json");
+                res.sendJson(404, response);
             }
         );
 
         return true;
-    } catch (std::exception &e) {
+    }
+    catch (std::exception& e)
+    {
         Log::critical("Error creating file serving endpoint: {}", e.what());
     }
 
     return false;
 }
 
-bool mantis::Router::generateTableCrudApis() {
+bool mantis::Router::generateTableCrudApis()
+{
     TRACE_CLASS_METHOD()
 
     const auto sql = MantisApp::instance().db().session();
@@ -346,14 +382,16 @@ bool mantis::Router::generateTableCrudApis() {
     // id created updated schema has_api
     const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
 
-    for (const auto &row: rs) {
+    for (const auto& row : rs)
+    {
         const auto id = row.get<std::string>("id");
         const auto name = row.get<std::string>("name");
         const auto type = row.get<std::string>("type");
         const auto hasApi = row.get<bool>("has_api");
 
         // If `hasApi` is set, schema is valid, then, add API endpoints
-        if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty())) {
+        if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty()))
+        {
             // We need to persist this instance, else it'll be cleaned up causing a crash
             const auto tableUnit = std::make_shared<TableUnit>(schema);
             tableUnit->setTableName(name);
@@ -369,48 +407,55 @@ bool mantis::Router::generateTableCrudApis() {
     return true;
 }
 
-bool mantis::Router::generateMiscEndpoints() const {
+bool mantis::Router::generateMiscEndpoints() const
+{
     TRACE_CLASS_METHOD()
     // Add /health for server health check
-    MantisApp::instance().http().Get("/api/v1/health", [](const auto &req, auto &res, auto &ctx) {
-        // Compute system uptime and send to user
-        const auto &start_time = MantisApp::instance().startTime();
-        auto uptime = std::chrono::duration_cast<std::chrono::seconds>(
-            std::chrono::steady_clock::now() - start_time).count();
+    MantisApp::instance().http().Get("/api/v1/health",
+                                     [](MantisRequest& req, const MantisResponse& res)
+                                     {
+                                         // Compute system uptime and send to user
+                                         const auto& start_time = MantisApp::instance().startTime();
+                                         auto uptime = std::chrono::duration_cast<std::chrono::seconds>(
+                                             std::chrono::steady_clock::now() - start_time).count();
 
-        json response;
-        response["status"] = "ok";
-        response["uptime"] = uptime;
-
-        res.status = 200;
-        res.set_content(response.dump(), "application/json");
-    });
+                                         json response;
+                                         response["status"] = "ok";
+                                         response["uptime"] = uptime;
+                                         res.sendJson(200, response);
+                                     });
 
     return true;
 }
 
-bool mantis::Router::generateAdminCrudApis() const {
+bool mantis::Router::generateAdminCrudApis() const
+{
     TRACE_CLASS_METHOD()
 
-    try {
+    try
+    {
         // Setup routes for the admin users fetch/create/update/delete
-        if (!m_adminTable->setupRoutes()) {
+        if (!m_adminTable->setupRoutes())
+        {
             Log::critical("Failed to setup admin table routes");
             return false;
         }
 
         // Setup routes to manage database tables fetch/create/update/delete
-        if (!m_tableRoutes->setupRoutes()) {
+        if (!m_tableRoutes->setupRoutes())
+        {
             Log::critical("Failed to setup database table routes");
             return false;
         }
 
-        if (!MantisApp::instance().settings().setupRoutes()) {
+        if (!MantisApp::instance().settings().setupRoutes())
+        {
             Log::critical("Failed to setup settings routes");
             return false;
         }
 
-        auto getMimeType = [this](const std::string &path) -> std::string {
+        auto getMimeType = [](const std::string& path) -> std::string
+        {
             if (path.ends_with(".js")) return "application/javascript";
             if (path.ends_with(".css")) return "text/css";
             if (path.ends_with(".html")) return "text/html";
@@ -422,51 +467,64 @@ bool mantis::Router::generateAdminCrudApis() const {
 
         MantisApp::instance().http().Get(
             R"(/admin(.*))",
-            [getMimeType](const Request &req, Response &res, [[maybe_unused]] Context ctx) {
-                try {
+            [getMimeType](MantisRequest& req, MantisResponse& res)
+            {
+                try
+                {
                     const auto fs = cmrc::mantis::get_filesystem();
-                    std::string path = req.matches[1];
+                    std::string path = req.matches()[1];
 
                     // Normalize the path
-                    if (path.empty() || path == "/") {
+                    if (path.empty() || path == "/")
+                    {
                         path = "/qrc/index.html";
-                    } else {
+                    }
+                    else
+                    {
                         path = std::format("/qrc{}", path);
                     }
 
-                    if (!fs.exists(path)) {
+                    if (!fs.exists(path))
+                    {
                         Log::trace("{} path does not exists", path);
 
                         // fallback to index.html for React routes
                         path = "/qrc/index.html";
                     }
 
-                    try {
-                        res.status = 200;
+                    try
+                    {
                         const auto file = fs.open(path);
                         const auto mime = getMimeType(path);
-                        // Log::trace("File: {}, size: {}, mime: {}", path, file.size(), mime);
-                        res.set_content(file.begin(), file.size(), mime);
-                    } catch (const std::exception &e) {
-                        Log::critical("Error processing /admin response: {}", e.what());
-                        res.status = 404;
-
+                        res.setContent(file.begin(), file.size(), mime);
+                        res.setStatus(200);
+                    }
+                    catch (const std::exception& e)
+                    {
                         const auto file = fs.open("/qrc/404.html");
                         const auto mime = getMimeType("404.html");
-                        res.set_content(file.begin(), file.size(), mime);
+
+                        res.setContent(file.begin(), file.size(), mime);
+                        res.setStatus(404);
+                        Log::critical("Error processing /admin response: {}", e.what());
                     }
-                } catch (const std::exception &e) {
-                    res.status = 500;
+                }
+                catch (const std::exception& e)
+                {
+                    res.setStatus(500);
                     Log::critical("Error processing /admin request: {}", e.what());
                 }
             });
 
         // Add /public static file serving directory
-        if (!MantisApp::instance().http().server().set_mount_point("/", MantisApp::instance().publicDir())) {
+        if (!MantisApp::instance().http().server().set_mount_point("/", MantisApp::instance().publicDir()))
+        {
             Log::critical("Failed to setup mount point directory for '/' at '{}'", MantisApp::instance().publicDir());
             return false;
         }
-    } catch (const std::exception &e) {
+    }
+    catch (const std::exception& e)
+    {
         Log::critical("Error creating admin routes: ", e.what());
         return false;
     }
