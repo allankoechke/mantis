@@ -14,122 +14,122 @@ namespace mantis
     {
     }
 
-    int MantisResponse::get_status() const
+    int MantisResponse::getStatus() const
     {
         return m_res.status;
     }
 
-    void MantisResponse::set_status(const int s)
+    void MantisResponse::setStatus(const int s)
     {
         m_res.status = s;
     }
 
-    std::string MantisResponse::get_version() const
+    std::string MantisResponse::getVersion() const
     {
         return m_res.version;
     }
 
-    void MantisResponse::set_version(const std::string& b)
+    void MantisResponse::setVersion(const std::string& b)
     {
         m_res.version = b;
     }
 
-    std::string MantisResponse::get_body() const
+    std::string MantisResponse::getBody() const
     {
         return m_res.body;
     }
 
-    void MantisResponse::set_body(const std::string& b)
+    void MantisResponse::setBody(const std::string& b)
     {
         m_res.body = b;
     }
 
-    std::string MantisResponse::get_location() const
+    std::string MantisResponse::getLocation() const
     {
         return m_res.location;
     }
 
-    void MantisResponse::set_location(const std::string& b)
+    void MantisResponse::setLocation(const std::string& b)
     {
         m_res.location = b;
     }
 
-    std::string MantisResponse::get_reason() const
+    std::string MantisResponse::getReason() const
     {
         return m_res.reason;
     }
 
-    void MantisResponse::set_reason(const std::string& b)
+    void MantisResponse::setReason(const std::string& b)
     {
         m_res.reason = b;
     }
 
-    bool MantisResponse::has_header(const std::string& key) const
+    bool MantisResponse::hasHeader(const std::string& key) const
     {
         return m_res.has_header(key);
     }
 
-    std::string MantisResponse::get_header_value(const std::string& key, const char* def, size_t id) const
+    std::string MantisResponse::getHeaderValue(const std::string& key, const char* def, size_t id) const
     {
         return m_res.get_header_value(key, def, id);
     }
 
-    size_t MantisResponse::get_header_value_u64(const std::string& key, size_t def, size_t id) const
+    size_t MantisResponse::getHeaderValueU64(const std::string& key, size_t def, size_t id) const
     {
         return m_res.get_header_value_u64(key, def, id);
     }
 
-    size_t MantisResponse::get_header_value_count(const std::string& key) const
+    size_t MantisResponse::getHeaderValueCount(const std::string& key) const
     {
         return m_res.get_header_value_count(key);
     }
 
-    void MantisResponse::set_header(const std::string& key, const std::string& val) const
+    void MantisResponse::setHeader(const std::string& key, const std::string& val) const
     {
         m_res.set_header(key, val);
     }
 
-    bool MantisResponse::has_trailer(const std::string& key) const
+    bool MantisResponse::hasTrailer(const std::string& key) const
     {
         return m_res.has_trailer(key);
     }
 
-    std::string MantisResponse::get_trailer_value(const std::string& key, size_t id) const
+    std::string MantisResponse::getTrailerValue(const std::string& key, size_t id) const
     {
         return m_res.get_trailer_value(key, id);
     }
 
-    size_t MantisResponse::get_trailer_value_count(const std::string& key) const
+    size_t MantisResponse::getTrailerValueCount(const std::string& key) const
     {
         return m_res.get_trailer_value_count(key);
     }
 
-    void MantisResponse::set_redirect(const std::string& url, int status) const
+    void MantisResponse::setRedirect(const std::string& url, int status) const
     {
         m_res.set_redirect(url, status);
     }
 
-    void MantisResponse::set_content(const char* s, size_t n, const std::string& content_type) const
+    void MantisResponse::setContent(const char* s, size_t n, const std::string& content_type) const
     {
         m_res.set_content(s, n, content_type);
     }
 
-    void MantisResponse::set_content(const std::string& s, const std::string& content_type) const
+    void MantisResponse::setContent(const std::string& s, const std::string& content_type) const
     {
         m_res.set_content(s, content_type);
     }
 
-    void MantisResponse::set_content(std::string&& s, const std::string& content_type) const
+    void MantisResponse::setContent(std::string&& s, const std::string& content_type) const
     {
         m_res.set_content(s, content_type);
     }
 
-    void MantisResponse::set_file_content(const std::string& path, const std::string& content_type) const
+    void MantisResponse::setFileContent(const std::string& path, const std::string& content_type) const
     {
         m_res.set_file_content(path, content_type);
     }
 
-    void MantisResponse::set_file_content(const std::string& path) const
+    void MantisResponse::setFileContent(const std::string& path) const
     {
         m_res.set_file_content(path);
     }
@@ -140,27 +140,27 @@ namespace mantis
         m_res.status = statusCode;
     }
 
-    void MantisResponse::send_json_str(const int statusCode, const std::string& data) const
+    void MantisResponse::sendJsonStr(const int statusCode, const std::string& data) const
     {
         send(statusCode, data, "application/json");
     }
 
-    void MantisResponse::send_text(const int statusCode, const std::string& data) const
+    void MantisResponse::sendText(const int statusCode, const std::string& data) const
     {
         send(statusCode, data, "text/plain");
     }
 
-    void MantisResponse::send_json(const int statusCode, const json& data) const
+    void MantisResponse::sendJson(const int statusCode, const json& data) const
     {
         send(statusCode, data.dump(), "application/json");
     }
 
-    void MantisResponse::send_html(const int statusCode, const std::string& data) const
+    void MantisResponse::sendHtml(const int statusCode, const std::string& data) const
     {
         send(statusCode, data, "application/json");
     }
 
-    void MantisResponse::send_empty(const int statusCode) const
+    void MantisResponse::sendEmpty(const int statusCode) const
     {
         m_res.set_content(std::string{}, std::string{});
         m_res.status = statusCode;

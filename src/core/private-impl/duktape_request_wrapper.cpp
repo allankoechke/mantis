@@ -10,131 +10,134 @@
 
 namespace mantis
 {
-    MantisRequest::MantisRequest(const httplib::Request& _req, Context& _ctx)
+    MantisRequest::MantisRequest(const httplib::Request& _req)
         : m_req(_req),
-          m_ctx(_ctx)
+          m_ctx(Context{})
     {
     }
 
-    std::string MantisRequest::get_method() const
+    std::string MantisRequest::getMethod() const
     {
         return m_req.method;
     }
 
-    void MantisRequest::set_method(const std::string& m) const
+    void MantisRequest::setMethod(const std::string& m) const
     {
         // m_req.method = m;
     }
 
-    std::string MantisRequest::get_path() const
+    std::string MantisRequest::getPath() const
     {
         return m_req.path;
     }
 
-    void MantisRequest::set_path(const std::string& p) const
+    void MantisRequest::setPath(const std::string& p) const
     {
         // m_req.path = p;
     }
 
-    std::string mantis::MantisRequest::get_body() const
+    std::string mantis::MantisRequest::getBody() const
     {
         return m_req.body;
     }
 
-    void MantisRequest::set_body(const std::string& b) const
+    void MantisRequest::setBody(const std::string& b) const
     {
         // m_req.body = b;
     }
 
-    bool MantisRequest::has_header(const std::string& key) const
+    bool MantisRequest::hasHeader(const std::string& key) const
     {
         return m_req.has_header(key);
     }
 
-    std::string MantisRequest::get_header_value(const std::string& key, const char* def, size_t id) const
+    std::string MantisRequest::getHeaderValue(const std::string& key, const char* def, size_t id) const
     {
         return m_req.get_header_value(key, def, id);
     }
 
-    size_t MantisRequest::get_header_value_u64(const std::string& key, size_t def, size_t id) const
+    size_t MantisRequest::getHeaderValueU64(const std::string& key, size_t def, size_t id) const
     {
         return m_req.get_header_value_u64(key, def, id);
     }
 
-    size_t MantisRequest::get_header_value_count(const std::string& key) const
+    size_t MantisRequest::getHeaderValueCount(const std::string& key) const
     {
         return m_req.get_header_value_count(key);
     }
 
-    void MantisRequest::set_header(const std::string& key, const std::string& val)
+    void MantisRequest::setHeader(const std::string& key, const std::string& val)
     {
         // m_req.set_header(key, val);
     }
 
-    bool MantisRequest::has_trailer(const std::string& key) const
+    bool MantisRequest::hasTrailer(const std::string& key) const
     {
         return m_req.has_trailer(key);
     }
 
-    std::string MantisRequest::get_trailer_value(const std::string& key, size_t id) const
+    std::string MantisRequest::getTrailerValue(const std::string& key, size_t id) const
     {
         return m_req.get_trailer_value(key, id);
     }
 
-    size_t MantisRequest::get_trailer_value_count(const std::string& key) const
+    size_t MantisRequest::getTrailerValueCount(const std::string& key) const
     {
         return m_req.get_trailer_value_count(key);
     }
 
-    bool MantisRequest::has_query_param(const std::string& key) const
+    bool MantisRequest::hasQueryParam(const std::string& key) const
     {
         Log::trace("Has Param? {}", m_req.has_param(key));
         return m_req.has_param(key);
     }
 
-    std::string MantisRequest::get_query_param_value(const std::string& key) const
+    std::string MantisRequest::getQueryParamValue(const std::string& key) const
     {
         return m_req.get_param_value(key);
     }
 
-    std::string MantisRequest::get_query_param_value(const std::string& key, size_t id) const
+    std::string MantisRequest::getQueryParamValue(const std::string& key, size_t id) const
     {
         return m_req.get_param_value(key, id);
     }
 
-    size_t MantisRequest::get_query_param_value_count(const std::string& key) const
+    size_t MantisRequest::getQueryParamValueCount(const std::string& key) const
     {
         return m_req.get_param_value_count(key);
     }
 
 
-    bool MantisRequest::has_path_param(const std::string& key) const
+    bool MantisRequest::hasPathParam(const std::string& key) const
     {
         return m_req.path_params.contains(key);
     }
 
-    std::string MantisRequest::get_path_param_value(const std::string& key) const
+    std::string MantisRequest::getPathParamValue(const std::string& key) const
     {
         if (m_req.path_params.contains(key))
             return m_req.path_params.at(key);
+
         return "";
     }
 
-    std::string MantisRequest::get_path_param_value(const std::string& key, size_t id) const
+    std::string MantisRequest::getPathParamValue(const std::string& key, size_t id) const
     {
         if (m_req.path_params.contains(key))
             return m_req.path_params.at(key);
+
         return "";
     }
 
-    size_t MantisRequest::get_path_param_value_count(const std::string& key) const
+    size_t MantisRequest::getPathParamValueCount(const std::string& key) const
     {
         if (m_req.path_params.contains(key))
             return m_req.path_params.at(key).size();
+
         return 0;
     }
 
-    bool MantisRequest::is_multipart_form_data() const
+    bool MantisRequest::isMultipartFormData() const
     {
         return m_req.is_multipart_form_data();
     }
@@ -146,43 +149,77 @@ namespace mantis
 
         // Register Request methods
         // `req.hasHeader("Authorization")` -> return true/false
-        dukglue_register_method(ctx, &MantisRequest::has_header, "hasHeader");
+        dukglue_register_method(ctx, &MantisRequest::hasHeader, "hasHeader");
         // `req.getHeader("Authorization", "", 0)` -> Return Authorization value or default
         // `req.getHeader("Authorization", "Default Value", 0)` -> Return Authorization value or default
         // `req.getHeader("Some Key", "Default Value", 1)` -> Return 'Some Key' value if exists of index '1' or default
-        dukglue_register_method(ctx, &MantisRequest::get_header_value, "getHeader");
-        dukglue_register_method(ctx, &MantisRequest::get_header_value_u64, "getHeaderU64");
+        dukglue_register_method(ctx, &MantisRequest::getHeaderValue, "getHeader");
+        dukglue_register_method(ctx, &MantisRequest::getHeaderValueU64, "getHeaderU64");
         // `req.getHeaderCount("key")` -> Count for header values given the header key
-        dukglue_register_method(ctx, &MantisRequest::get_header_value_count, "getHeaderCount");
+        dukglue_register_method(ctx, &MantisRequest::getHeaderValueCount, "getHeaderCount");
         // req.setHeader("Cow", "Cow Value")
-        dukglue_register_method(ctx, &MantisRequest::set_header, "setHeader");
+        dukglue_register_method(ctx, &MantisRequest::setHeader, "setHeader");
 
-        dukglue_register_method(ctx, &MantisRequest::has_trailer, "hasTrailer");
-        dukglue_register_method(ctx, &MantisRequest::get_trailer_value, "getTrailer");
-        dukglue_register_method(ctx, &MantisRequest::get_trailer_value_count, "getTrailerCount");
+        dukglue_register_method(ctx, &MantisRequest::hasTrailer, "hasTrailer");
+        dukglue_register_method(ctx, &MantisRequest::getTrailerValue, "getTrailer");
+        dukglue_register_method(ctx, &MantisRequest::getTrailerValueCount, "getTrailerCount");
 
         // `req.hasQueryParam("key")` -> return true/false
-        dukglue_register_method(ctx, &MantisRequest::has_query_param, "hasQueryParam");
+        dukglue_register_method(ctx, &MantisRequest::hasQueryParam, "hasQueryParam");
         // `req.getQueryParam("key")` -> Return header value given the key
-        dukglue_register_method(ctx, static_cast<std::string(MantisRequest::*)(const std::string&) const>(&MantisRequest::get_query_param_value), "getQueryParam");
+        dukglue_register_method(
+            ctx, static_cast<std::string(MantisRequest::*)(const std::string&) const>(&
+                MantisRequest::getQueryParamValue), "getQueryParam");
         // `req.getQueryParamCount("key")` -> Return parameter value count
-        dukglue_register_method(ctx, &MantisRequest::get_query_param_value_count, "getQueryParamCount");
+        dukglue_register_method(ctx, &MantisRequest::getQueryParamValueCount, "getQueryParamCount");
 
         // `req.hasPathParam("key")` -> return true/false
-        dukglue_register_method(ctx, &MantisRequest::has_path_param, "hasPathParam");
+        dukglue_register_method(ctx, &MantisRequest::hasPathParam, "hasPathParam");
         // `req.getPathParam("key")` -> Return header value given the key
-        dukglue_register_method(ctx, static_cast<std::string(MantisRequest::*)(const std::string&) const>(&MantisRequest::get_path_param_value), "getPathParam");
+        dukglue_register_method(
+            ctx, static_cast<std::string(MantisRequest::*)(const std::string&) const>(&
+                MantisRequest::getPathParamValue), "getPathParam");
         // `req.getPathParamCount("key")` -> Return parameter value count
-        dukglue_register_method(ctx, &MantisRequest::get_path_param_value_count, "getPathParamCount");
+        dukglue_register_method(ctx, &MantisRequest::getPathParamValueCount, "getPathParamCount");
 
         // `req.isMultipartFormData()` -> Return true if request type is of Multipart/FormData
-        dukglue_register_method(ctx, &MantisRequest::is_multipart_form_data, "isMultipartFormData");
+        dukglue_register_method(ctx, &MantisRequest::isMultipartFormData, "isMultipartFormData");
 
         // `req.body` -> Get request body data
-        dukglue_register_property(ctx, &MantisRequest::get_body, nullptr, "body");
+        dukglue_register_property(ctx, &MantisRequest::getBody, nullptr, "body");
         // `req.method` -> Get request method ('GET', 'POST', ...)
-        dukglue_register_property(ctx, &MantisRequest::get_method, nullptr, "method");
+        dukglue_register_property(ctx, &MantisRequest::getMethod, nullptr, "method");
         // `req.path` -> Get request path value
-        dukglue_register_property(ctx, &MantisRequest::get_path, nullptr, "path");
+        dukglue_register_property(ctx, &MantisRequest::getPath, nullptr, "path");
+
+
+        // `req.hasKey("key")` -> return true if key is in the context store
+        dukglue_register_method(ctx, &MantisRequest::hasKey, "hasKey");
+        // `req.set("key", value)` // Store in the context store the given key and value. Note only int, float, double, str
+        dukglue_register_method(ctx, &MantisRequest::set, "set");
+        // `req.get("key")`
+        dukglue_register_method(ctx, &MantisRequest::get, "get");
+        // `req.getOr("key", default_value)`
+        dukglue_register_method(ctx, &MantisRequest::getOr, "getOr");
+    }
+
+    bool MantisRequest::hasKey(const std::string& key) const
+    {
+        return m_ctx.hasKey(key);
+    }
+
+    DukValue MantisRequest::get(const std::string& key)
+    {
+        return m_ctx.get(key);
+    }
+
+    DukValue MantisRequest::getOr(const std::string& key, const DukValue& default_value)
+    {
+        return m_ctx.getOr(key, default_value);
+    }
+
+    void MantisRequest::set(const std::string& key, const DukValue& value)
+    {
+        m_ctx.set(key, value);
     }
 }

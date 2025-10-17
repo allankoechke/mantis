@@ -20,7 +20,7 @@ namespace mantis
     MantisApp::MantisApp()
         : m_dbType(DbType::SQLITE),
           m_startTime(std::chrono::steady_clock::now()),
-    m_dukCtx(duk_create_heap_default())
+          m_dukCtx(duk_create_heap_default())
     {
         // Initialize Default Features in cparse
         cparse::cparse_init();
@@ -40,7 +40,8 @@ namespace mantis
         duk_destroy_heap(m_dukCtx);
     }
 
-    void MantisApp::init(const int argc, char** argv) {
+    void MantisApp::init(const int argc, char** argv)
+    {
         Log::info("Initializing Mantis, v{}", appVersion());
 
         // Set that the object was created successfully, now initializing
@@ -800,7 +801,9 @@ namespace mantis
     }
 
     void MantisApp::quit_JSWrapper(const int code, const std::string& msg)
-    { quit(code, msg); }
+    {
+        quit(code, msg);
+    }
 
     DatabaseUnit* MantisApp::duk_db() const
     {
@@ -864,56 +867,40 @@ namespace mantis
         if (method == "GET")
         {
             m_http->Get(path, [this, ctx, handler, middlewares](
-                        const httplib::Request& req,
-                        httplib::Response& res,
-                        Context& context)
+                        MantisRequest& req,
+                        MantisResponse& res)
                         {
-                            // Construct MantisRequest, MantisResponse objects
-                            MantisRequest ma_req(req, context);
-                            MantisResponse ma_res(res);
-                            this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                            this->executeRoute(ctx, handler, middlewares, req, res);
                         }, {}
             );
         }
         else if (method == "POST")
         {
             m_http->Post(path, [this, ctx, handler, middlewares](
-                         const httplib::Request& req,
-                         httplib::Response& res,
-                         Context& context)
+                         MantisRequest& req,
+                         MantisResponse& res)
                          {
-                             // Construct MantisRequest, MantisResponse objects
-                             MantisRequest ma_req(req, context);
-                             MantisResponse ma_res(res);
-                             this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                             this->executeRoute(ctx, handler, middlewares, req, res);
                          }, {}
             );
         }
         else if (method == "PATCH")
         {
             m_http->Patch(path, [this, ctx, handler, middlewares](
-                          const httplib::Request& req,
-                          httplib::Response& res,
-                          Context& context)
+                          MantisRequest& req,
+                          MantisResponse& res)
                           {
-                              // Construct MantisRequest, MantisResponse objects
-                              MantisRequest ma_req(req, context);
-                              MantisResponse ma_res(res);
-                              this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                              this->executeRoute(ctx, handler, middlewares, req, res);
                           }, {}
             );
         }
         else if (method == "DELETE")
         {
             m_http->Delete(path, [this, ctx, handler, middlewares](
-                           const httplib::Request& req,
-                           httplib::Response& res,
-                           Context& context)
+                           MantisRequest& req,
+                           MantisResponse& res)
                            {
-                               // Construct MantisRequest, MantisResponse objects
-                               MantisRequest ma_req(req, context);
-                               MantisResponse ma_res(res);
-                               this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                               this->executeRoute(ctx, handler, middlewares, req, res);
                            }, {}
             );
         }

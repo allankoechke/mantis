@@ -20,11 +20,19 @@ namespace mantis
         static duk_ret_t nativeConsoleTable(duk_context* ctx);
     };
 
-    // Subclass httplib::Request
+    /**
+     * @brief A wrapper class around `httplib::Request` offering a
+     * consistent API and allowing for easy wrapper methods compatible
+     * with `Duktape` API requirements for scripting.
+     *
+     * Additionally, `MantisRequest` adds a context object for storing
+     * some `key`-`value` data for sharing across middlewares and
+     * request handlers.
+     */
     class MantisRequest
     {
         const httplib::Request& m_req;
-        Context& m_ctx;
+        Context m_ctx;
 
         const std::string __class_name__ = "mantis::MantisRequest";
 
@@ -34,49 +42,57 @@ namespace mantis
          * our context library.
          *
          * @param _req httplib::Request& object
-         * @param _ctx mantis::Context& object
          */
-        MantisRequest(const httplib::Request& _req, Context& _ctx);
+        explicit MantisRequest(const httplib::Request& _req);
 
         // Add getters/setters for public members
-        std::string get_method() const;
-        void set_method(const std::string& m) const;
+        std::string getMethod() const;
+        void setMethod(const std::string& m) const;
 
-        std::string get_path() const;
-        void set_path(const std::string& p) const;
+        std::string getPath() const;
+        void setPath(const std::string& p) const;
 
-        std::string get_body() const;
-        void set_body(const std::string& b) const;
+        std::string getBody() const;
+        void setBody(const std::string& b) const;
 
-        bool has_header(const std::string& key) const;
-        std::string get_header_value(const std::string& key, const char* def, size_t id) const;
+        bool hasHeader(const std::string& key) const;
+        std::string getHeaderValue(const std::string& key, const char* def, size_t id) const;
 
-        size_t get_header_value_u64(const std::string& key, size_t def, size_t id) const;
-        size_t get_header_value_count(const std::string& key) const;
+        size_t getHeaderValueU64(const std::string& key, size_t def, size_t id) const;
+        size_t getHeaderValueCount(const std::string& key) const;
 
-        void set_header(const std::string& key, const std::string& val);
+        void setHeader(const std::string& key, const std::string& val);
 
-        bool has_trailer(const std::string& key) const;
-        std::string get_trailer_value(const std::string& key, size_t id) const;
+        bool hasTrailer(const std::string& key) const;
+        std::string getTrailerValue(const std::string& key, size_t id) const;
 
-        size_t get_trailer_value_count(const std::string& key) const;
+        size_t getTrailerValueCount(const std::string& key) const;
 
-        bool has_query_param(const std::string& key) const;
-        std::string get_query_param_value(const std::string& key) const;
-        std::string get_query_param_value(const std::string& key, size_t id) const;
-        size_t get_query_param_value_count(const std::string& key) const;
+        bool hasQueryParam(const std::string& key) const;
+        std::string getQueryParamValue(const std::string& key) const;
+        std::string getQueryParamValue(const std::string& key, size_t id) const;
+        size_t getQueryParamValueCount(const std::string& key) const;
 
-        bool has_path_param(const std::string& key) const;
-        std::string get_path_param_value(const std::string& key) const;
-        std::string get_path_param_value(const std::string& key, size_t id) const;
-        size_t get_path_param_value_count(const std::string& key) const;
-
-        bool is_multipart_form_data() const;
-
+        bool hasPathParam(const std::string& key) const;
+        std::string getPathParamValue(const std::string& key) const;
+        std::string getPathParamValue(const std::string& key, size_t id) const;
+        size_t getPathParamValueCount(const std::string& key) const;
+        bool isMultipartFormData() const;
         static void registerDuktapeMethods();
+
+    private:
+        // Context Methods for setting and getting context values
+        bool hasKey(const std::string& key) const;
+        DukValue get(const std::string& key);
+        DukValue getOr(const std::string& key, const DukValue& default_value);
+        void set(const std::string& key, const DukValue& value);
     };
 
-    // Subclass httplib::Response
+    /**
+     * @brief A wrapper class around `httplib::Response` offering a
+     * consistent API and allowing for easy wrapper methods compatible
+     * with `Duktape` API requirements for scripting.
+     */
     class MantisResponse
     {
         httplib::Response& m_res;
@@ -84,50 +100,59 @@ namespace mantis
         const std::string __class_name__ = "mantis::MantisResponse";
 
     public:
-        MantisResponse(httplib::Response& _resp);
-        ~MantisResponse() { }
+        explicit MantisResponse(httplib::Response& _resp);
+        ~MantisResponse() = default;
 
-        int get_status() const;
-        void set_status(int s);
+        ///> Get Response Status Code
+        [[nodiscard]] int getStatus() const;
+        ///> Set Response Status Code
+        void setStatus(int s);
 
-        std::string get_version() const;
-        void set_version(const std::string& b);
+        [[nodiscard]] std::string getVersion() const;
+        void setVersion(const std::string& b);
 
-        std::string get_body() const;
-        void set_body(const std::string& b);
+        ///> Get Response Body
+        [[nodiscard]] std::string getBody() const;
+        ///> Set Response Body
+        void setBody(const std::string& b);
 
-        std::string get_location() const;
-        void set_location(const std::string& b);
+        ///> Get Response redirect location
+        [[nodiscard]] std::string getLocation() const;
+        ///> Set Response redirect location
+        void setLocation(const std::string& b);
 
-        std::string get_reason() const;
-        void set_reason(const std::string& b);
+        [[nodiscard]] std::string getReason() const;
+        void setReason(const std::string& b);
 
-        bool has_header(const std::string& key) const;
+        ///> Check if response has a given header set
+        [[nodiscard]] bool hasHeader(const std::string& key) const;
+        ///> Get Response header with given header `key`, with an optional default value `def` and index `id` if it's an array
+        std::string getHeaderValue(const std::string& key, const char* def = "", size_t id = 0) const;
+        ///> Same as @see getHeaderValue() but returns responses as `u64`
+        [[nodiscard]] size_t getHeaderValueU64(const std::string& key, size_t def = 0, size_t id = 0) const;
+        ///> Get count of the values in a given header entry defined by `key`.
+        [[nodiscard]] size_t getHeaderValueCount(const std::string& key) const;
+        ///> Set header value with given `key` and `val`
+        void setHeader(const std::string& key, const std::string& val) const;
 
-        std::string get_header_value(const std::string& key, const char* def = "", size_t id = 0) const;
-        size_t get_header_value_u64(const std::string& key, size_t def = 0, size_t id = 0) const;
+        [[nodiscard]] bool hasTrailer(const std::string& key) const;
+        [[nodiscard]] std::string getTrailerValue(const std::string& key, size_t id = 0) const;
+        [[nodiscard]] size_t getTrailerValueCount(const std::string& key) const;
 
-        size_t get_header_value_count(const std::string& key) const;
-        void set_header(const std::string& key, const std::string& val) const;
+        void setRedirect(const std::string& url, int status = httplib::StatusCode::Found_302) const;
+        void setContent(const char* s, size_t n, const std::string& content_type) const;
+        void setContent(const std::string& s, const std::string& content_type) const;
+        void setContent(std::string&& s, const std::string& content_type) const;
 
-        bool has_trailer(const std::string& key) const;
-        std::string get_trailer_value(const std::string& key, size_t id = 0) const;
-        size_t get_trailer_value_count(const std::string& key) const;
-
-        void set_redirect(const std::string& url, int status = httplib::StatusCode::Found_302) const;
-        void set_content(const char* s, size_t n, const std::string& content_type) const;
-        void set_content(const std::string& s, const std::string& content_type) const;
-        void set_content(std::string&& s, const std::string& content_type) const;
-
-        void set_file_content(const std::string& path, const std::string& content_type) const;
-        void set_file_content(const std::string& path) const;
+        void setFileContent(const std::string& path, const std::string& content_type) const;
+        void setFileContent(const std::string& path) const;
 
         void send(int statusCode, const std::string& data = "", const std::string& content_type= "text/plain") const;
-        void send_json(int statusCode = 200, const json& data = json::object()) const;
-        void send_json_str(int statusCode, const std::string& data) const;
-        void send_text(int statusCode = 200, const std::string& data = "") const;
-        void send_html(int statusCode = 200, const std::string& data = "<p></p>") const;
-        void send_empty(int statusCode = 204) const;
+        void sendJson(int statusCode = 200, const json& data = json::object()) const;
+        void sendJsonStr(int statusCode, const std::string& data) const; // TODO Switch to DukValue for JSON types
+        void sendText(int statusCode = 200, const std::string& data = "") const;
+        void sendHtml(int statusCode = 200, const std::string& data = "<p></p>") const;
+        void sendEmpty(int statusCode = 204) const;
 
         static void registerDuktapeMethods();
     };

@@ -19,9 +19,16 @@
 #include <dukglue/dukglue.h>
 
 #include "logging.h"
+#include "mantis/app/app.h"
+#include "private-impl/duktape_custom_types.h"
 
 #define REQUEST_HANDLED false
 #define REQUEST_PENDING true
+
+namespace mantis
+{
+    class MantisApp;
+}
 
 namespace mantis
 {
@@ -45,6 +52,15 @@ namespace mantis
      *
      * // Retrieve values
      * std::optional key = ctx.get<std::string>("key");
+     *
+     * // From scripting using JS
+     * req.set("key", 5") // INT/DOUBLE/FLOATS ...
+     * req.set("key2", { a: 5, b: 7}) // Objects/JSON
+     * req.set("valid", true) // BOOLs
+     *
+     * req.get("key") // -> Return 5
+     * req.get("nothing") // -> undefined
+     * req.getOr("nothing", "Default Value")
      * @endcode
      *
      * The value returned from the `get()` is a std::optional, meaning a std::nullopt if the key was not found.
@@ -67,6 +83,13 @@ namespace mantis
          * @brief Convenience method for dumping context data for debugging.
          */
         void dump();
+
+        /**
+         *
+         * @param key Key to check in context store
+         * @return `true` if key exists, else, `false`
+         */
+        bool hasKey(const std::string& key) const;
 
         /**
          * @brief Store a key-value data in the context
@@ -105,7 +128,7 @@ namespace mantis
          * @return Value or default value
          */
         template <typename T>
-        T& get_or(const std::string& key, T default_value)
+        T& getOr(const std::string& key, T default_value)
         {
             if (const auto it = data.find(key); it == data.end())
             {
@@ -113,25 +136,40 @@ namespace mantis
             }
             return std::any_cast<T&>(data.at(key));
         }
+
+        DukValue get(const std::string& key);
+
+        /**
+         * Get value from context store if available or return default_value instead.
+         *
+         * @param key Key to check in the store
+         * @param default_value Default value to pass if missing
+         * @return Value of type `DukValue` corresponding to found value or default value
+         */
+        DukValue getOr(const std::string& key, DukValue default_value);
+
+        /**
+         * @brief Store a value in store with given `key` and `value`
+         *
+         * @param key Key to store in context store
+         * @param value Value to correspond to given `key`
+         */
+        void set(const std::string& key, const DukValue& value);
     };
 
-    ///> Shorthand for httplib::Request
-    using Request = httplib::Request;
 
-    ///> Shorthand for httplib::Response
-    using Response = httplib::Response;
-
-    ///> Shorthand for httplib::ContentReader
-    using ContentReader = httplib::ContentReader;
+    ///> Middleware shorthand for the content reader
+    using MantisContentReader = httplib::ContentReader;
 
     ///> Middleware shorthand for the function
-    using Middleware = std::function<bool(const Request&, Response&, Context&)>;
+    using MiddlewareFunc = std::function<bool(MantisRequest&, MantisResponse&)>;
 
     ///> Route Handler function shorthand
-    using RouteHandlerFunc = std::function<void(const httplib::Request&, httplib::Response&, Context&)>;
+    using RouteHandlerFunc = std::function<void(MantisRequest&, MantisResponse&)>;
 
     ///> Route Handler function with content reader shorthand
-    using RouteHandlerFuncWithContentReader = std::function<void(const httplib::Request&, httplib::Response&, const httplib::ContentReader&, Context&)>;
+    using RouteHandlerFuncWithContentReader = std::function<void(MantisRequest&, MantisResponse&,
+                                                                 const MantisContentReader&)>;
 
     ///> Syntactic sugar for request method which is a std::string
     using Method = std::string;
@@ -160,7 +198,7 @@ namespace mantis
      */
     struct RouteHandler
     {
-        std::vector<Middleware> middlewares; ///> List of @see Middlewares for a route.
+        std::vector<MiddlewareFunc> middlewares; ///> List of @see Middlewares for a route.
         std::variant<RouteHandlerFunc, RouteHandlerFuncWithContentReader> handler; ///> Handler function for a route
     };
 
@@ -184,7 +222,7 @@ namespace mantis
         void add(const std::string& method,
                  const std::string& path,
                  RouteHandlerFunc handler,
-                 const std::vector<Middleware>& middlewares);
+                 const std::vector<MiddlewareFunc>& middlewares);
         /**
          * @brief Add new route to the registry.
          *
@@ -196,7 +234,7 @@ namespace mantis
         void add(const std::string& method,
                  const std::string& path,
                  RouteHandlerFuncWithContentReader handler,
-                 const std::vector<Middleware>& middlewares);
+                 const std::vector<MiddlewareFunc>& middlewares);
         /**
          * @brief Find a route in the registry matching given method and route.
          *
@@ -233,27 +271,27 @@ namespace mantis
 
         void Get(const std::string& path,
                  const RouteHandlerFunc& handler,
-                 std::initializer_list<Middleware> middlewares = {});
+                 std::initializer_list<MiddlewareFunc> middlewares = {});
 
         void Post(const std::string& path,
                   const RouteHandlerFunc& handler,
-                  std::initializer_list<Middleware> middlewares = {});
+                  std::initializer_list<MiddlewareFunc> middlewares = {});
 
         void Post(const std::string& path,
                   const RouteHandlerFuncWithContentReader& handler,
-                  std::initializer_list<Middleware> middlewares = {});
+                  std::initializer_list<MiddlewareFunc> middlewares = {});
 
         void Patch(const std::string& path,
                    const RouteHandlerFunc& handler,
-                   std::initializer_list<Middleware> middlewares = {});
+                   std::initializer_list<MiddlewareFunc> middlewares = {});
 
         void Patch(const std::string& path,
                    const RouteHandlerFuncWithContentReader& handler,
-                   std::initializer_list<Middleware> middlewares = {});
+                   std::initializer_list<MiddlewareFunc> middlewares = {});
 
         void Delete(const std::string& path,
                     const RouteHandlerFunc& handler,
-                    std::initializer_list<Middleware> middlewares = {});
+                    std::initializer_list<MiddlewareFunc> middlewares = {});
 
         /**
          * @brief Bind to a port and start listening for requests.
@@ -268,8 +306,6 @@ namespace mantis
          * @brief Close the HTTP server connection
          */
         void close();
-
-        static Context& context();
 
         /**
          * @brief Fetch the underlying route registry, check @see RouteRegistry.
@@ -306,8 +342,6 @@ namespace mantis
          */
         static std::string decompressResponseBody(const std::string& body, const std::string& encoding);
 
-        using Method = void (httplib::Server::*)(const std::string&, const httplib::Server::Handler&);
-
         template <typename HandlerType>
         using MethodBinder = std::function<void(const std::string&, HandlerType)>;
 
@@ -315,20 +349,16 @@ namespace mantis
                    const std::string& method,
                    const std::string& path,
                    const RouteHandlerFunc& handler,
-                   std::initializer_list<Middleware> middlewares);
+                   std::initializer_list<MiddlewareFunc> middlewares);
 
         void route(const MethodBinder<httplib::Server::HandlerWithContentReader>& bind_method,
                    const std::string& method,
                    const std::string& path,
                    const RouteHandlerFuncWithContentReader& handler,
-                   std::initializer_list<Middleware> middlewares);
-
-        template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
-        template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+                   std::initializer_list<MiddlewareFunc> middlewares);
 
         httplib::Server svr;
         RouteRegistry registry;
-        thread_local static Context current_context;
     };
 }
 
