@@ -41,7 +41,7 @@ namespace mantis
         duk_destroy_heap(m_dukCtx);
     }
 
-    void MantisApp::init(const int argc, char** argv)
+    void MantisApp::init(const int argc, char* argv[])
     {
         Log::info("Initializing Mantis, v{}", appVersion());
 

@@ -9,7 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5) # Chilbuff still on CMake 3.1
 
-option(MANTIS_BUILD_TESTS "Build tests" OFF)
+option(MANTIS_BUILD_TESTS "Build tests" ON)
 
 # Mantis Admin Dashboard Fetch Flags
 # Mantis Admin dashboard version to embed

@@ -1,10 +1,13 @@
 //
 // Created by allan on 18/06/2025.
 //
-#include "test_access_permissions_base.h"
+#include <catch2/catch_all.hpp>
+
+#include "nlohmann/json.hpp"
 
 // Delete Rule Tests
-TEST_F(AccessPermissionTest, DeleteRule_AllowsAdminOnly) {
+TEST_CASE("AccessPermissionTest, DeleteRule_AllowsAdminOnly", "[integration]")
+{
     // const std::string admin_token = createAdminAndGetToken();
     // const std::string user_token = createUserAndGetToken("user@test.com");
     //
@@ -24,7 +27,8 @@ TEST_F(AccessPermissionTest, DeleteRule_AllowsAdminOnly) {
     // EXPECT_EQ(delete_result->status, 204);
 }
 
-TEST_F(AccessPermissionTest, DeleteRule_DeniesRegularUsers) {
+TEST_CASE("AccessPermissionTest, DeleteRule_DeniesRegularUsers", "[integration]")
+{
     // const std::string user_token = createUserAndGetToken("user@test.com");
     // const httplib::Headers headers = {{"Authorization", "Bearer " + user_token}};
     //
@@ -42,15 +46,18 @@ TEST_F(AccessPermissionTest, DeleteRule_DeniesRegularUsers) {
 }
 
 // Complex Rule Expression Tests
-TEST_F(AccessPermissionTest, ComplexRules_MultipleConditions) {
+TEST_CASE("AccessPermissionTest, ComplexRules_MultipleConditions", "[integration]")
+{
     // Test table with complex rule: "auth.table == 'users' && auth.verified == true"
     nlohmann::json complex_table = {
         {"name", "verified_only"},
         {"type", "base"},
         {"listRule", "auth.table == 'users' && auth.verified == true"},
-        {"fields", nlohmann::json::array({
-            {{"name", "content"}, {"type", "string"}, {"required", true}}
-        })}
+        {
+            "fields", nlohmann::json::array({
+                {{"name", "content"}, {"type", "string"}, {"required", true}}
+            })
+        }
     };
 
     // client->Post("/api/v1/tables", complex_table.dump(), "application/json");
@@ -63,16 +70,18 @@ TEST_F(AccessPermissionTest, ComplexRules_MultipleConditions) {
     // EXPECT_EQ(result->status, 403);
 }
 
-TEST_F(AccessPermissionTest, EmptyRule_RequiresAdminAccess)
+TEST_CASE("AccessPermissionTest, EmptyRule_RequiresAdminAccess", "[integration]")
 {
     // Test table with empty rule (should default to admin-only access)
     nlohmann::json admin_table = {
         {"name", "admin_only"},
         {"type", "base"},
-        {"listRule", ""},  // Empty rule
-        {"fields", nlohmann::json::array({
-            {{"name", "secret"}, {"type", "string"}, {"required", true}}
-        })}
+        {"listRule", ""}, // Empty rule
+        {
+            "fields", nlohmann::json::array({
+                {{"name", "secret"}, {"type", "string"}, {"required", true}}
+            })
+        }
     };
 
     // client->Post("/api/v1/tables", admin_table.dump(), "application/json");

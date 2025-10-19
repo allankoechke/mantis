@@ -2,10 +2,11 @@
 // Created by allan on 19/06/2025.
 //
 
-#include "test_access_permissions_base.h"
+#include <catch2/catch_all.hpp>
 
 // Get Rule Tests
-TEST_F(AccessPermissionTest, GetRule_AllowsOwnerAccess) {
+TEST_CASE("AccessPermissionTest, GetRule_AllowsOwnerAccess", "[integration]")
+{
     // const std::string token = createUserAndGetToken("owner@test.com");
     //
     // // Create a record first
@@ -24,7 +25,8 @@ TEST_F(AccessPermissionTest, GetRule_AllowsOwnerAccess) {
     // EXPECT_EQ(get_result->status, 200);
 }
 
-TEST_F(AccessPermissionTest, GetRule_DeniesNonOwnerAccess) {
+TEST_CASE("AccessPermissionTest, GetRule_DeniesNonOwnerAccess", "[integration]")
+{
     // const std::string owner_token = createUserAndGetToken("owner@test.com");
     // const std::string other_token = createUserAndGetToken("other@test.com");
     //

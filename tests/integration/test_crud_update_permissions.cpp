@@ -1,10 +1,11 @@
 //
 // Created by allan on 18/06/2025.
 //
-#include "test_access_permissions_base.h"
+#include <catch2/catch_all.hpp>
 
 // Update Rule Tests
-TEST_F(AccessPermissionTest, UpdateRule_AllowsOwnerUpdates) {
+TEST_CASE("AccessPermissionTest, UpdateRule_AllowsOwnerUpdates", "[integration]")
+{
     // const std::string token = createUserAndGetToken("updater@test.com");
     // httplib::Headers headers = {{"Authorization", "Bearer " + token}};
     //
@@ -24,7 +25,8 @@ TEST_F(AccessPermissionTest, UpdateRule_AllowsOwnerUpdates) {
     // EXPECT_EQ(update_result->status, 200);
 }
 
-TEST_F(AccessPermissionTest, UpdateRule_DeniesNonOwnerUpdates) {
+TEST_CASE("AccessPermissionTest, UpdateRule_DeniesNonOwnerUpdates", "[integration]")
+{
     // std::string owner_token = createUserAndGetToken("owner@test.com");
     // std::string other_token = createUserAndGetToken("other@test.com");
     //

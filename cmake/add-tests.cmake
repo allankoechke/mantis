@@ -1,5 +1,5 @@
 if(MANTIS_BUILD_TESTS)
     message("-- Enabling tests for mantis")
     enable_testing()
-    add_subdirectory(tests)
+    add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/tests)
 endif()

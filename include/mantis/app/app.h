@@ -69,7 +69,6 @@ namespace mantis
     {
     public:
         ~MantisApp();
-
         /**
          * @brief Retrieve existing application instance.
          * @return A reference to the existing application instance.
@@ -260,7 +259,7 @@ namespace mantis
         /**
          * @brief Run initialization actions for Mantis, ensuring all objects are initialized properly before use.
          */
-        void init(int argc, char** argv);
+        void init(int argc = 0, char* argv[] = {});
 
         /**
          * Creates static instance if not created yet and returns it.

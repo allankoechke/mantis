@@ -1,9 +1,11 @@
 //
 // Created by allan on 18/06/2025.
 //
-#include "test_access_permissions_base.h"
+#include <catch2/catch_all.hpp>
 
-void AccessPermissionTest::cleanupTestData() const
+#include "nlohmann/json.hpp"
+
+TEST_CASE("AccessPermissionTest::cleanupTestData()", "[integration]")
 {
     // Delete test tables and data created by this test
     // client->Delete("/api/v1/tables/test_permissions");
@@ -11,7 +13,7 @@ void AccessPermissionTest::cleanupTestData() const
     // etc.
 }
 
-void AccessPermissionTest::createTestTableWithRules() const
+TEST_CASE("AccessPermissionTest::createTestTableWithRules", "[integration]")
 {
     // Create a table with specific access rules for testing
     const nlohmann::json table_schema = {
@@ -33,13 +35,12 @@ void AccessPermissionTest::createTestTableWithRules() const
     //     table_schema.dump(), "application/json");
 }
 
-[[nodiscard]]
-std::string AccessPermissionTest::createUserAndGetToken(const std::string& email) const
+TEST_CASE("AccessPermissionTest::createUserAndGetToken", "[integration]")
 {
     // Create user
     const nlohmann::json user = {
         {"name", "Test User"},
-        {"email", email},
+        {"email", "email"}, // EMAIL?
         {"password", "testpass123"}
     };
 
@@ -52,11 +53,9 @@ std::string AccessPermissionTest::createUserAndGetToken(const std::string& email
     //
     // auto response = nlohmann::json::parse(auth_result->body);
     // return response["data"]["token"].get<std::string>();
-    return "";
 }
 
-[[nodiscard]]
-std::string AccessPermissionTest::createAdminAndGetToken() const
+TEST_CASE("AccessPermissionTest::createAdminAndGetToken", "[integration]")
 {
     // Create admin user
     const nlohmann::json admin = {
@@ -74,5 +73,4 @@ std::string AccessPermissionTest::createAdminAndGetToken() const
     //
     // auto response = nlohmann::json::parse(auth_result->body);
     // return response["data"]["token"].get<std::string>();
-    return "";
 }

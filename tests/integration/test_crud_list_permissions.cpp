@@ -1,11 +1,11 @@
 //
 // Created by allan on 19/06/2025.
 //
-#include <gtest/gtest.h>
-#include "test_access_permissions_base.h"
+#include <catch2/catch_all.hpp>
 
 // List Rule Tests
-TEST_F(AccessPermissionTest, ListRule_AllowsAuthorizedUsers) {
+TEST_CASE("AccessPermissionTest, ListRule_AllowsAuthorizedUsers", "[integration]")
+{
     // const std::string token = createUserAndGetToken("user@test.com");
     //
     // const httplib::Headers headers = {{"Authorization", "Bearer " + token}};
@@ -16,7 +16,8 @@ TEST_F(AccessPermissionTest, ListRule_AllowsAuthorizedUsers) {
     // EXPECT_EQ(response["status"], 200);
 }
 
-TEST_F(AccessPermissionTest, ListRule_DeniesUnauthorizedUsers) {
+TEST_CASE("AccessPermissionTest, ListRule_DeniesUnauthorizedUsers", "[integration]")
+{
     // Try to access without token
     // auto result = client->Get("/api/v1/test_permissions");
     //
@@ -26,7 +27,8 @@ TEST_F(AccessPermissionTest, ListRule_DeniesUnauthorizedUsers) {
     // EXPECT_FALSE(response["error"].get<std::string>().empty());
 }
 
-TEST_F(AccessPermissionTest, ListRule_DeniesWrongUserType) {
+TEST_CASE("AccessPermissionTest, ListRule_DeniesWrongUserType", "[integration]")
+{
     // const std::string admin_token = createAdminAndGetToken();
     //
     // const httplib::Headers headers = {{"Authorization", "Bearer " + admin_token}};
