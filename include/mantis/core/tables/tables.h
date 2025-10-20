@@ -11,7 +11,6 @@
 #include "../models/models.h"
 #include "../http.h"
 #include "../crud/crud.h"
-#include "../jwt.h"
 #include "../../app/app.h"
 
 namespace mantis
@@ -38,15 +37,15 @@ namespace mantis
         virtual ~TableUnit() override = default;
 
         // CRUD endpoints handlers
-        virtual void fetchRecord(const Request& req, Response& res, Context& ctx);
-        virtual void fetchRecords(const Request& req, Response& res, Context& ctx);
-        virtual void createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx);
-        virtual void updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx);
-        virtual void deleteRecord(const Request& req, Response& res, Context& ctx);
+        virtual void fetchRecord(MantisRequest& req, MantisResponse& res);
+        virtual void fetchRecords(MantisRequest& req, MantisResponse& res);
+        virtual void createRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader);
+        virtual void updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader);
+        virtual void deleteRecord(MantisRequest& req, MantisResponse& res);
 
         // Auth Routes Handlers
-        virtual void authWithEmailAndPassword(const Request& req, Response& res, Context& ctx);
-        virtual void resetPassword(const Request& req, Response& res, Context& ctx);
+        virtual void authWithEmailAndPassword(MantisRequest& req, MantisResponse& res);
+        virtual void resetPassword(MantisRequest& req, MantisResponse& res);
 
         // Router setup
         virtual bool setupRoutes();
@@ -55,8 +54,8 @@ namespace mantis
         void setRouteDisplayName(const std::string& routeName);
 
         // Middleware
-        static bool getAuthToken(const Request& req, Response& res, Context& ctx);
-        virtual bool hasAccess(const Request& req, Response& res, Context& ctx);
+        static bool getAuthToken(MantisRequest& req, MantisResponse& res);
+        virtual bool hasAccess(MantisRequest& req, MantisResponse& res);
 
         // Getters
         std::string tableName();

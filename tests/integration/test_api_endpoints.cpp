@@ -10,7 +10,7 @@ class APITest : public ::testing::Test {
 protected:
     void SetUp() override {
         // Just create the HTTP client - server is already running
-        client = std::make_unique<httplib::Client>("http://localhost:8081");
+        client = std::make_unique<httplib::Client>("http://localhost:7075");
 
         // Clean up any test data from previous tests
         // cleanupTestData();

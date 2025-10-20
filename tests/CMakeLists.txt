@@ -29,26 +29,14 @@ if(NOT GTest_FOUND)
     add_library(GTest::gmock_main ALIAS gmock_main)
 endif()
 
-# Create test executable
-add_executable(mantis_tests
+file(GLOB TEST_FILES
         main.cpp
-        test_environment.h
-        unit/test_database.cpp
-        unit/test_jwt.cpp
-        unit/test_models.cpp
-        integration/test_api_endpoints.cpp
-        integration/test_auth_flow.cpp
-        integration/test_access_permissions_base.cpp
-        integration/test_crud_add_permissions.cpp
-        integration/test_crud_get_permissions.cpp
-        integration/test_crud_delete_permissions.cpp
-        integration/test_crud_list_permissions.cpp
-        integration/test_crud_update_permissions.cpp
+        unit/*.cpp
+        integration/*.cpp
 )
 
-# Link libraries
-target_link_libraries(mantis_tests
-        PRIVATE
+add_executable(mantisapp_tests ${TEST_FILES})
+target_link_libraries(mantisapp_tests PRIVATE
         mantis
         GTest::gtest
         GTest::gtest_main
@@ -56,26 +44,30 @@ target_link_libraries(mantis_tests
 )
 
 if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
-    message("Enabling Address Sanitizer")
+    message("-- Enabling Address Sanitizer")
     include(${CMAKE_CURRENT_SOURCE_DIR}/../cmake/asan.cmake)
     include(../cmake/asan.cmake)
     set(ENABLE_ASAN ON)
 
-    enable_asan_for_target(mantis_tests)
+    enable_asan_for_target(mantisapp_tests)
 endif()
 
 # Include directories
-target_include_directories(mantis_tests
+target_include_directories(mantisapp_tests
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
+target_compile_definitions(mantisapp_tests PRIVATE
+        TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
+)
+
 if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(mantis_tests PRIVATE
+    target_compile_options(mantisapp_tests PRIVATE
             -Wa,-mbig-obj  # Tell assembler to handle large objects
     )
 endif()
 
 # Register tests with CTest
 include(GoogleTest)
-add_test(NAME all_mantis_tests COMMAND mantis_tests)
+add_test(NAME all_mantisapp_tests COMMAND mantisapp_tests)

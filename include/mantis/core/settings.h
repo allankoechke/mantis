@@ -43,7 +43,7 @@ namespace mantis
          * @param ctx HTTP context
          * @return `true` if access is granted, else, `false`
          */
-        bool hasAccess([[maybe_unused]] const Request& req, Response& res, Context& ctx) const;
+        bool hasAccess([[maybe_unused]] MantisRequest& req, MantisResponse& res) const;
 
         // Getter sections
         /**

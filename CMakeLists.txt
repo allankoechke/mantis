@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.2.9)
+project(mantisapp VERSION 0.2.10)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -9,7 +9,7 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_POLICY_VERSION_MINIMUM 3.5) # Chilbuff still on CMake 3.1
 
-option(MANTIS_BUILD_TESTS "Build tests" OFF)
+option(MANTIS_BUILD_TESTS "Build tests" ON)
 
 # Mantis Admin Dashboard Fetch Flags
 # Mantis Admin dashboard version to embed
@@ -100,6 +100,9 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     src/core/private-impl/duktape_custom_types.cpp
     src/core/private-impl/duktape_request_wrapper.cpp
     src/core/private-impl/duktape_response_wrapper.cpp
+
+    include/mantis/core/context_store.h
+    src/core/context_store.cpp
 )
 
 # Add httplib

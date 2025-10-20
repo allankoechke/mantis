@@ -151,10 +151,17 @@ void mantis::DatabaseUnit::disconnect() const
     // Close all sessions in the pool
     for (std::size_t i = 0; i < pool_size; ++i)
     {
-        if (soci::session& sess = m_connPool->at(i); sess.is_connected())
+        try
         {
-            // Check if session is connected
-            sess.close();
+            if (soci::session& sess = m_connPool->at(i); sess.is_connected())
+            {
+                // Check if session is connected
+                sess.close();
+            }
+        }
+        catch (const soci::soci_error& e)
+        {
+            Log::critical("Database disconnection soci::error at index `{}`: {}", i, e.what());
         }
     }
 }

@@ -9,6 +9,7 @@
 #include <soci/soci.h>
 #include <mantis/core/database.h>
 
+#include "mantis/core/jwt.h"
 #include "mantis/core/tables/tables.h"
 #include "mantis/utils/utils.h"
 
@@ -74,12 +75,12 @@ namespace mantis
         }
     }
 
-    bool SettingsUnit::hasAccess(const Request& req, Response& res, Context& ctx) const
+    bool SettingsUnit::hasAccess(MantisRequest &req, MantisResponse& res) const
     {
         TRACE_CLASS_METHOD()
 
         // Get the auth var from the context, resort to empty object if it's not set.
-        auto& auth = ctx.get_or<json>("auth", json::object());
+        auto& auth = req.getOr<json>("auth", json::object());
 
         // Ensure auth object is present in the request's context
         if (auth.empty())
@@ -89,8 +90,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Auth token missing";
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
@@ -102,8 +102,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Auth token missing";
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
@@ -119,8 +118,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = resp.value("error", "");
 
-            res.status = 403;
-            res.set_content(response.dump(), "application/json");
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
@@ -136,8 +134,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Auth token missing user id or table name";
 
-            res.status = 403;
-            res.set_content(resp.dump(), "application/json");
+            res.sendJson(403, response);
             return REQUEST_HANDLED;
         }
 
@@ -159,9 +156,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Auth id was not found.";
 
-            res.status = 404;
-            res.set_content(resp.dump(), "application/json");
-
+            res.sendJson(404, response);
             return REQUEST_HANDLED;
         }
 
@@ -179,8 +174,7 @@ namespace mantis
         response["data"] = json::object();
         response["error"] = "Admin auth required to access this resource.";
 
-        res.status = 403;
-        res.set_content(response.dump(), "application/json");
+        res.sendJson(403, response);
         return REQUEST_HANDLED;
     }
 
@@ -214,7 +208,7 @@ namespace mantis
         // Set up settings get & update endpoints
         MantisApp::instance().http().Get(
             "/api/v1/settings/config",
-            [this](const Request& req, Response& res, Context ctx)
+            [this](MantisRequest &req, MantisResponse& res)
             {
                 // If we have a cached config object ...
                 if (!m_configs.empty())
@@ -226,8 +220,7 @@ namespace mantis
                     response["data"] = m_configs;
                     response["data"]["mantisVersion"] = MantisApp::appVersion();
 
-                    res.status = 200;
-                    res.set_content(response.dump(), "application/json");
+                    res.sendJson(200, response);
                     return;
                 }
 
@@ -251,8 +244,7 @@ namespace mantis
                     response["data"] = settings;
                     response["data"]["mantisVersion"] = MantisApp::appVersion();
 
-                    res.status = 200;
-                    res.set_content(response.dump(), "application/json");
+                    res.sendJson(200, response);
                     return;
                 }
 
@@ -261,29 +253,28 @@ namespace mantis
                 response["error"] = "Settings object not found!";
                 response["data"] = json::object();
 
-                res.status = 404;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(404, response);
             }, {
-                [this](const Request& req, Response& res, Context& ctx)-> bool
+                [](MantisRequest &req, MantisResponse& res)-> bool
                 {
-                    return TableUnit::getAuthToken(req, res, ctx);
+                    return TableUnit::getAuthToken(req, res);
                 },
-                [this](const Request& req, Response& res, Context& ctx)-> bool
+                [this](MantisRequest &req, MantisResponse& res)-> bool
                 {
-                    return hasAccess(req, res, ctx);
+                    return hasAccess(req, res);
                 }
             });
 
         // Update settings config
         MantisApp::instance().http().Patch(
             "/api/v1/settings/config",
-            [this](const Request& req, Response& res, [[maybe_unused]] Context ctx)
+            [this](MantisRequest &req, MantisResponse& res)
             {
                 // Parse request body
                 json body = json::object();
                 try
                 {
-                    body = json::parse(req.body);
+                    body = json::parse(req.getBody());
                 }
                 catch (const std::exception& e)
                 {
@@ -292,8 +283,7 @@ namespace mantis
                     response["error"] = "Could not parse request body, expected JSON!";
                     response["data"] = json::object();
 
-                    res.status = 400;
-                    res.set_content(response.dump(), "application/json");
+                    res.sendJson(400, response);
                     return;
                 }
 
@@ -347,16 +337,15 @@ namespace mantis
                 response["data"] = m_configs;
                 response["data"]["mantisVersion"] = MantisApp::appVersion();
 
-                res.status = 200;
-                res.set_content(response.dump(), "application/json");
+                res.sendJson(200, response);
             }, {
-                [this](const Request& req, Response& res, Context& ctx)-> bool
+                [](MantisRequest &req, MantisResponse& res)-> bool
                 {
-                    return TableUnit::getAuthToken(req, res, ctx);
+                    return TableUnit::getAuthToken(req, res);
                 },
-                [this](const Request& req, Response& res, Context& ctx)-> bool
+                [this](MantisRequest &req, MantisResponse& res)-> bool
                 {
-                    return hasAccess(req, res, ctx);
+                    return hasAccess(req, res);
                 }
             });
     }

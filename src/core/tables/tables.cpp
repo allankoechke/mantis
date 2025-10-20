@@ -19,7 +19,9 @@ namespace mantis
           m_tableType(std::move(tableType)),
           m_listRule(Rule{}),
           m_getRule(Rule{}), m_addRule(Rule{}),
-          m_updateRule(Rule{}), m_deleteRule(Rule{}) {}
+          m_updateRule(Rule{}), m_deleteRule(Rule{})
+    {
+    }
 
     TableUnit::TableUnit(
         const json& schema)
@@ -155,4 +157,4 @@ namespace mantis
     {
         m_deleteRule = rule;
     }
-  }
+}

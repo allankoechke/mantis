@@ -12,6 +12,7 @@
 #include "mantis/core/settings.h"
 #include "mantis/core/fileunit.h"
 #include "mantis/core/private-impl/duktape_custom_types.h"
+#include "mantis/core/http.h"
 
 #define __file__ "app/app.cpp"
 
@@ -20,7 +21,7 @@ namespace mantis
     MantisApp::MantisApp()
         : m_dbType(DbType::SQLITE),
           m_startTime(std::chrono::steady_clock::now()),
-    m_dukCtx(duk_create_heap_default())
+          m_dukCtx(duk_create_heap_default())
     {
         // Initialize Default Features in cparse
         cparse::cparse_init();
@@ -40,7 +41,8 @@ namespace mantis
         duk_destroy_heap(m_dukCtx);
     }
 
-    void MantisApp::init(const int argc, char** argv) {
+    void MantisApp::init(const int argc, char* argv[])
+    {
         Log::info("Initializing Mantis, v{}", appVersion());
 
         // Set that the object was created successfully, now initializing
@@ -800,7 +802,9 @@ namespace mantis
     }
 
     void MantisApp::quit_JSWrapper(const int code, const std::string& msg)
-    { quit(code, msg); }
+    {
+        quit(code, msg);
+    }
 
     DatabaseUnit* MantisApp::duk_db() const
     {
@@ -864,56 +868,40 @@ namespace mantis
         if (method == "GET")
         {
             m_http->Get(path, [this, ctx, handler, middlewares](
-                        const httplib::Request& req,
-                        httplib::Response& res,
-                        Context& context)
+                        MantisRequest& req,
+                        MantisResponse& res)
                         {
-                            // Construct MantisRequest, MantisResponse objects
-                            MantisRequest ma_req(req, context);
-                            MantisResponse ma_res(res);
-                            this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                            this->executeRoute(ctx, handler, middlewares, req, res);
                         }, {}
             );
         }
         else if (method == "POST")
         {
             m_http->Post(path, [this, ctx, handler, middlewares](
-                         const httplib::Request& req,
-                         httplib::Response& res,
-                         Context& context)
+                         MantisRequest& req,
+                         MantisResponse& res)
                          {
-                             // Construct MantisRequest, MantisResponse objects
-                             MantisRequest ma_req(req, context);
-                             MantisResponse ma_res(res);
-                             this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                             this->executeRoute(ctx, handler, middlewares, req, res);
                          }, {}
             );
         }
         else if (method == "PATCH")
         {
             m_http->Patch(path, [this, ctx, handler, middlewares](
-                          const httplib::Request& req,
-                          httplib::Response& res,
-                          Context& context)
+                          MantisRequest& req,
+                          MantisResponse& res)
                           {
-                              // Construct MantisRequest, MantisResponse objects
-                              MantisRequest ma_req(req, context);
-                              MantisResponse ma_res(res);
-                              this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                              this->executeRoute(ctx, handler, middlewares, req, res);
                           }, {}
             );
         }
         else if (method == "DELETE")
         {
             m_http->Delete(path, [this, ctx, handler, middlewares](
-                           const httplib::Request& req,
-                           httplib::Response& res,
-                           Context& context)
+                           MantisRequest& req,
+                           MantisResponse& res)
                            {
-                               // Construct MantisRequest, MantisResponse objects
-                               MantisRequest ma_req(req, context);
-                               MantisResponse ma_res(res);
-                               this->executeRoute(ctx, handler, middlewares, ma_req, ma_res);
+                               this->executeRoute(ctx, handler, middlewares, req, res);
                            }, {}
             );
         }
@@ -940,7 +928,7 @@ namespace mantis
 
                 if (!ok)
                 {
-                    if (res.get_status() < 400) res.set_status(500); // If error code is not explicit
+                    if (res.getStatus() < 400) res.setStatus(500); // If error code is not explicit
                     return; // Middleware stopped the chain
                 }
             }
@@ -951,11 +939,8 @@ namespace mantis
                 response["data"] = json::object();
                 response["error"] = e.what();
 
-                res.set_status(500);
-                res.set_content(response.dump(), "application/json");
-
+                res.sendJson(500, response);
                 Log::critical("Error Executing Middleware: {}", e.what());
-
                 return;
             }
         }
@@ -972,9 +957,8 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = e.what();
 
-            res.send(500, response.dump(), "application/json");
-
-            Log::critical("Error Executing Route {} : {}", req.get_path(), e.what());
+            res.sendJson(500, response);
+            Log::critical("Error Executing Route {} : {}", req.getPath(), e.what());
         }
     }
 }

@@ -28,15 +28,15 @@ namespace mantis
 
         bool setupRoutes() override;
 
-        void fetchRecord(const Request& req, Response& res, Context& ctx) override;
-        void fetchRecords(const Request& req, Response& res, Context& ctx) override;
-        void createRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx) override;
-        void updateRecord(const Request& req, Response& res, const ContentReader& reader, Context& ctx) override;
-        void deleteRecord(const Request& req, Response& res, Context& ctx) override;
+        void fetchRecord(MantisRequest& req, MantisResponse& res) override;
+        void fetchRecords(MantisRequest& req, MantisResponse& res) override;
+        void createRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader) override;
+        void updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader) override;
+        void deleteRecord(MantisRequest& req, MantisResponse& res) override;
 
         // Auth Routes Handlers
-        void authWithEmailAndPassword(const Request& req, Response& res, Context& ctx) override;
-        bool hasAccess(const Request& req, Response& res, Context& ctx) override;
+        void authWithEmailAndPassword(MantisRequest& req, MantisResponse& res) override;
+        bool hasAccess(MantisRequest& req, MantisResponse& res) override;
 
         json create(const json& entity, const json& opts) override;
         std::optional<json> read(const std::string& id, const json& opts) override;
