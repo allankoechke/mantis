@@ -13,21 +13,21 @@
 
 // Core components
 #include "core/database.h"
+#include "core/expr_evaluator.h"
 #include "core/http.h"
 #include "core/logging.h"
 #include "core/router.h"
-#include "core/expr_evaluator.h"
 
 // CRUD and JWT
-#include "core/crud/crud.h"
 #include "core/jwt.h"
+#include "core/crud/crud.h"
 
 // Models and data structures
 #include "core/models/models.h"
 
 // Table operations
-#include "core/tables/tables.h"
 #include "core/tables/sys_tables.h"
+#include "core/tables/tables.h"
 
 // For convenience to using json,
 // lets include it here

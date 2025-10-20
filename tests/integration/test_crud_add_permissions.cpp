@@ -1,10 +1,10 @@
 //
 // Created by allan on 18/06/2025.
 //
-#include <catch2/catch_all.hpp>
+#include "test_access_permissions_base.h"
 
 // Add Rule Tests
-TEST_CASE("AccessPermissionTest, AddRule_AllowsAuthorizedUsers", "[integration]") {
+TEST_F(AccessPermissionTest, AddRule_AllowsAuthorizedUsers) {
     // const std::string token = createUserAndGetToken("creator@test.com");
     //
     // const nlohmann::json record = {{"title", "New Record"}, {"user_id", "creator123"}};
@@ -18,7 +18,7 @@ TEST_CASE("AccessPermissionTest, AddRule_AllowsAuthorizedUsers", "[integration]"
     // EXPECT_EQ(response["status"], 201);
 }
 
-TEST_CASE("AccessPermissionTest, AddRule_DeniesGuestUsers", "[integration]") {
+TEST_F(AccessPermissionTest, AddRule_DeniesGuestUsers) {
     // const nlohmann::json record = {{"title", "Unauthorized Record"}, {"user_id", "guest123"}};
     //
     // auto result = client->Post("/api/v1/test_permissions",

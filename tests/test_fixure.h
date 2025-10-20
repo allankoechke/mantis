@@ -5,6 +5,9 @@
 #ifndef MANTISAPP_TEST_FIXTURE_H
 #define MANTISAPP_TEST_FIXTURE_H
 
+// #define CATCH_CONFIG_NOSTDOUT
+// #include <catch2/catch_test_macros.hpp>
+
 #include <thread>
 #include <chrono>
 #include <httplib.h>

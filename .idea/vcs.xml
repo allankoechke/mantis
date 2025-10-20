@@ -19,5 +19,7 @@
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/spdlog" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tests/cmake-build-relwithdebinfo-wsl/_deps/catch2-src" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/tests/cmake-build-relwithdebinfo/_deps/catch2-src" vcs="Git" />
   </component>
 </project>

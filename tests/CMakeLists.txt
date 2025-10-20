@@ -1,16 +1,33 @@
 cmake_minimum_required(VERSION 3.14)
 
-include(FetchContent)
-FetchContent_Declare(
-        Catch2
-        GIT_REPOSITORY https://github.com/catchorg/Catch2.git
-        GIT_TAG v3.6.0 # pick a stable version
-)
-FetchContent_MakeAvailable(Catch2)
+# Try to find GTest first
+find_package(GTest QUIET)
 
-include(CTest)
-include(Catch)
-enable_testing()
+if(NOT GTest_FOUND)
+    # If not found, fetch it using FetchContent
+    include(FetchContent)
+
+    FetchContent_Declare(
+            googletest
+            GIT_REPOSITORY https://github.com/google/googletest.git
+            GIT_TAG        v1.14.0  # Use latest stable version
+    )
+
+    # For Windows: Prevent overriding the parent project's compiler/linker settings
+    set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
+
+    # Don't build gmock/gtest apps
+    set(BUILD_GMOCK ON CACHE BOOL "" FORCE)
+    set(INSTALL_GTEST OFF CACHE BOOL "" FORCE)
+
+    FetchContent_MakeAvailable(googletest)
+
+    # Create aliases to match find_package targets
+    add_library(GTest::gtest ALIAS gtest)
+    add_library(GTest::gtest_main ALIAS gtest_main)
+    add_library(GTest::gmock ALIAS gmock)
+    add_library(GTest::gmock_main ALIAS gmock_main)
+endif()
 
 file(GLOB TEST_FILES
         main.cpp
@@ -21,7 +38,9 @@ file(GLOB TEST_FILES
 add_executable(mantisapp_tests ${TEST_FILES})
 target_link_libraries(mantisapp_tests PRIVATE
         mantis
-        Catch2::Catch2WithMain
+        GTest::gtest
+        GTest::gtest_main
+        GTest::gmock_main
 )
 
 if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
@@ -49,4 +68,6 @@ if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
     )
 endif()
 
-catch_discover_tests(mantisapp_tests)
+# Register tests with CTest
+include(GoogleTest)
+add_test(NAME all_mantisapp_tests COMMAND mantisapp_tests)

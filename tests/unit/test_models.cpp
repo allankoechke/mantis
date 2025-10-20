@@ -1,22 +1,22 @@
 //
 // Created by allan on 18/06/2025.
 //
-#include <catch2/catch_all.hpp>
+#include <gtest/gtest.h>
 #include "mantis/core/models/models.h"
 
-TEST_CASE("FieldTest, CreateFieldWithValidation", "[unit]") {
+TEST(FieldTest, CreateFieldWithValidation) {
     mantis::Field field("email", mantis::FieldType::STRING, true, false);
     field.regexPattern = "^[\\w\\.-]+@[\\w\\.-]+\\.[a-zA-Z]{2,}$";
 
     auto json_repr = field.to_json();
-    REQUIRE(json_repr["name"] == "email");
-    REQUIRE(json_repr["type"] == "string");
-    REQUIRE(json_repr["required"]);
-    REQUIRE_FALSE(json_repr["primaryKey"]);
+    EXPECT_EQ(json_repr["name"], "email");
+    EXPECT_EQ(json_repr["type"], "string");
+    EXPECT_TRUE(json_repr["required"]);
+    EXPECT_FALSE(json_repr["primaryKey"]);
 }
 
-TEST_CASE("TableTest, BaseFieldsExist", "[unit]") {
-    REQUIRE(mantis::fieldExists(mantis::TableType::Base, "id"));
-    REQUIRE(mantis::fieldExists(mantis::TableType::Base, "created"));
-    REQUIRE(mantis::fieldExists(mantis::TableType::Base, "updated"));
+TEST(TableTest, BaseFieldsExist) {
+    EXPECT_TRUE(mantis::fieldExists(mantis::TableType::Base, "id"));
+    EXPECT_TRUE(mantis::fieldExists(mantis::TableType::Base, "created"));
+    EXPECT_TRUE(mantis::fieldExists(mantis::TableType::Base, "updated"));
 }

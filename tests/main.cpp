@@ -1,9 +1,14 @@
 //
 // Created by allan on 19/06/2025.
 //
-
-#define CATCH_CONFIG_RUNNER
-#include <catch2/catch_all.hpp>
+// #define CATCH_CONFIG_NOSTDOUT
+// #include <catch2/catch_test_macros.hpp>
+//
+// #define CATCH_CONFIG_RUNNER
+// #include <catch2/catch_all.hpp>
+#include <gtest/gtest.h>
+#include <iostream>
+#include <fstream>
 #include "test_fixure.h"
 
 namespace fs = std::filesystem;
@@ -31,6 +36,8 @@ fs::path getBaseDir()
 
 int main(int argc, char* argv[])
 {
+    // Setup directories for tests, for each, create a unique directory
+    // in which we will use for current tests then later tear it down.
     const auto baseDir = getBaseDir();
     const auto scriptingDir = (fs::path(TEST_SOURCE_DIR) / "scripting").string();
     const auto dataDir = (baseDir / "data").string();
@@ -41,12 +48,14 @@ int main(int argc, char* argv[])
         "--dataDir", const_cast<char*>(dataDir.c_str()),
         "--publicDir", const_cast<char*>(publicDir.c_str()),
         "--scriptsDir", const_cast<char*>(scriptingDir.c_str()),
-        "--dev",
         "serve", "--port", "7075", "--host", "0.0.0.0"
     };
 
+    // Catch::Session session;
+    // session.configData().noCapture = true;
+
     // Setup Db, Server, etc.
-    auto& tFix = TestFixture::instance(15, testArgs2);
+    auto& tFix = TestFixture::instance(14, testArgs2);
 
     // Spawn a new thread to run the
     auto serverThread = std::thread([&tFix]()
@@ -65,7 +74,8 @@ int main(int argc, char* argv[])
     // Wait or perform tests
     std::this_thread::sleep_for(std::chrono::seconds(2));
 
-    const int result = Catch::Session().run(argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
+    const int result = RUN_ALL_TESTS(); // Catch::Session().run(argc, argv);
 
     // Clean up files, data, etc.
     tFix.teardownOnce(baseDir);
