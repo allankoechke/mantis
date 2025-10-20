@@ -1,38 +1,6 @@
-//
-// Created by allan on 19/06/2025.
-//
-// #define CATCH_CONFIG_NOSTDOUT
-// #include <catch2/catch_test_macros.hpp>
-//
-// #define CATCH_CONFIG_RUNNER
-// #include <catch2/catch_all.hpp>
 #include <gtest/gtest.h>
 #include <iostream>
-#include <fstream>
 #include "test_fixure.h"
-
-namespace fs = std::filesystem;
-
-fs::path getBaseDir()
-{
-    // Base test directory for files and SQLite data
-#ifdef _WIN32
-    auto base_path = fs::temp_directory_path() / "mantisapp_tests" / mantis::generateShortId();
-#else
-    auto base_path = fs::path("/tmp") / "mantisapp_tests" / mantis::generateShortId();
-#endif
-
-    try
-    {
-        fs::create_directories(base_path);
-    }
-    catch (const std::exception& e)
-    {
-        std::cerr << "[FS Create] " << e.what() << std::endl;
-    }
-
-    return base_path;
-}
 
 int main(int argc, char* argv[])
 {
