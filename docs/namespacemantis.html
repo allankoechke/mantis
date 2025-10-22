@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
    </div>
   </td>
  </tr>
@@ -113,7 +113,7 @@ Classes</h2></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmantis_1_1BaseTable.html">BaseTable</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1Context.html">Context</a></td></tr>
+<tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1ContextStore.html">ContextStore</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1CrudInterface.html">CrudInterface</a></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -146,8 +146,10 @@ Classes</h2></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Logger implementation for soci, allowing us to override the default logging behaviour with our own custom logger.  <a href="classmantis_1_1MantisLoggerImpl.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A wrapper class around <code>httplib::Request</code> offering a consistent API and allowing for easy wrapper methods compatible with <code>Duktape</code> API requirements for scripting.  <a href="classmantis_1_1MantisRequest.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">class &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a></td></tr>
+<tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">A wrapper class around <code>httplib::Response</code> offering a consistent API and allowing for easy wrapper methods compatible with <code>Duktape</code> API requirements for scripting.  <a href="classmantis_1_1MantisResponse.html#details">More...</a><br /></td></tr>
 <tr class="separator:"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:"><td class="memItemLeft" align="right" valign="top">struct &#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="structmantis_1_1RouteHandler.html">RouteHandler</a></td></tr>
 <tr class="memdesc:"><td class="mdescLeft">&#160;</td><td class="mdescRight">Struct encompassing the list of middlewares and the handler function registered to a specific route.  <a href="structmantis_1_1RouteHandler.html#details">More...</a><br /></td></tr>
@@ -182,42 +184,30 @@ Typedefs</h2></td></tr>
 <tr class="memitem:a0255780f56da02614156f7ef7cd3d3a3" id="r_a0255780f56da02614156f7ef7cd3d3a3"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> = nlohmann::json</td></tr>
 <tr class="memdesc:a0255780f56da02614156f7ef7cd3d3a3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Shorten JSON namespace.  <br /></td></tr>
 <tr class="separator:a0255780f56da02614156f7ef7cd3d3a3"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac1bd0141aa9c3099361994a0671e0426" id="r_ac1bd0141aa9c3099361994a0671e0426"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a> = httplib::Request</td></tr>
-<tr class="memdesc:ac1bd0141aa9c3099361994a0671e0426"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
-<p>&zwj;Shorthand for httplib::Request </p>
+<tr class="memitem:aba50551cb617f7e81a536483d1c65734" id="r_aba50551cb617f7e81a536483d1c65734"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aba50551cb617f7e81a536483d1c65734">MantisContentReader</a> = httplib::ContentReader</td></tr>
+<tr class="memdesc:aba50551cb617f7e81a536483d1c65734"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Middleware shorthand for the content reader </p>
 </blockquote>
  <br /></td></tr>
-<tr class="separator:ac1bd0141aa9c3099361994a0671e0426"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab479ce37673306cc47470b59938943fd" id="r_ab479ce37673306cc47470b59938943fd"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a> = httplib::Response</td></tr>
-<tr class="memdesc:ab479ce37673306cc47470b59938943fd"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
-<p>&zwj;Shorthand for httplib::Response </p>
-</blockquote>
- <br /></td></tr>
-<tr class="separator:ab479ce37673306cc47470b59938943fd"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aaa50fd85460aaa3bb537133b590bc818" id="r_aaa50fd85460aaa3bb537133b590bc818"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#aaa50fd85460aaa3bb537133b590bc818">ContentReader</a> = httplib::ContentReader</td></tr>
-<tr class="memdesc:aaa50fd85460aaa3bb537133b590bc818"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
-<p>&zwj;Shorthand for httplib::ContentReader </p>
-</blockquote>
- <br /></td></tr>
-<tr class="separator:aaa50fd85460aaa3bb537133b590bc818"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6d3d5118a8179c910b59702d812f66f" id="r_ac6d3d5118a8179c910b59702d812f66f"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">Middleware</a> = std::function&lt; bool(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a> &amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a> &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
-<tr class="memdesc:ac6d3d5118a8179c910b59702d812f66f"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<tr class="separator:aba50551cb617f7e81a536483d1c65734"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a45ed150d6251b4de0ddb121e9bc4a64e" id="r_a45ed150d6251b4de0ddb121e9bc4a64e"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a45ed150d6251b4de0ddb121e9bc4a64e">MiddlewareFunc</a> = std::function&lt; bool(<a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a> &amp;, <a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:a45ed150d6251b4de0ddb121e9bc4a64e"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Middleware shorthand for the function </p>
 </blockquote>
  <br /></td></tr>
-<tr class="separator:ac6d3d5118a8179c910b59702d812f66f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a50b9322f657f315b48e4c64a46b3a1f1" id="r_a50b9322f657f315b48e4c64a46b3a1f1"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">RouteHandlerFunc</a> = std::function&lt; void(const httplib::Request &amp;, httplib::Response &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
-<tr class="memdesc:a50b9322f657f315b48e4c64a46b3a1f1"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<tr class="separator:a45ed150d6251b4de0ddb121e9bc4a64e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9105c1ec4261d0e829224e8316392938" id="r_a9105c1ec4261d0e829224e8316392938"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9105c1ec4261d0e829224e8316392938">RouteHandlerFunc</a> = std::function&lt; void(<a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a> &amp;, <a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:a9105c1ec4261d0e829224e8316392938"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Route Handler function shorthand </p>
 </blockquote>
  <br /></td></tr>
-<tr class="separator:a50b9322f657f315b48e4c64a46b3a1f1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a11862d7f473e670e73f32411830d2ebc" id="r_a11862d7f473e670e73f32411830d2ebc"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">RouteHandlerFuncWithContentReader</a> = std::function&lt; void(const httplib::Request &amp;, httplib::Response &amp;, const httplib::ContentReader &amp;, <a class="el" href="classmantis_1_1Context.html">Context</a> &amp;)&gt;</td></tr>
-<tr class="memdesc:a11862d7f473e670e73f32411830d2ebc"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<tr class="separator:a9105c1ec4261d0e829224e8316392938"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ada22fc2f702542da388d3d5b8ce5af2d" id="r_ada22fc2f702542da388d3d5b8ce5af2d"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#ada22fc2f702542da388d3d5b8ce5af2d">RouteHandlerFuncWithContentReader</a> = std::function&lt; void(<a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a> &amp;, <a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a> &amp;, const <a class="el" href="namespacemantis.html#aba50551cb617f7e81a536483d1c65734">MantisContentReader</a> &amp;)&gt;</td></tr>
+<tr class="memdesc:ada22fc2f702542da388d3d5b8ce5af2d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Route Handler function with content reader shorthand </p>
 </blockquote>
  <br /></td></tr>
-<tr class="separator:a11862d7f473e670e73f32411830d2ebc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="separator:ada22fc2f702542da388d3d5b8ce5af2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9bc3b7f3cc6ad769ae30df2670712b95" id="r_a9bc3b7f3cc6ad769ae30df2670712b95"><td class="memItemLeft" align="right" valign="top">using&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="namespacemantis.html#a9bc3b7f3cc6ad769ae30df2670712b95">Method</a> = std::string</td></tr>
 <tr class="memdesc:a9bc3b7f3cc6ad769ae30df2670712b95"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
 <p>&zwj;Syntactic sugar for request method which is a std::string </p>
@@ -366,25 +356,6 @@ Variables</h2></td></tr>
 <div class="textblock"><p><a class="el" href="router_8h.html">router.h</a> </p>
 <p><a class="el" href="classmantis_1_1Router.html" title="Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.">Router</a> file for higher level route registration and removal * </p>
 </div><h2 class="groupheader">Typedef Documentation</h2>
-<a id="aaa50fd85460aaa3bb537133b590bc818" name="aaa50fd85460aaa3bb537133b590bc818"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aaa50fd85460aaa3bb537133b590bc818">&#9670;&#160;</a></span>ContentReader</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#aaa50fd85460aaa3bb537133b590bc818">mantis::ContentReader</a> = typedef httplib::ContentReader</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p><blockquote class="doxtable">
-<p>&zwj;Shorthand for httplib::ContentReader </p>
-</blockquote>
-</p>
-
-</div>
-</div>
 <a id="a0255780f56da02614156f7ef7cd3d3a3" name="a0255780f56da02614156f7ef7cd3d3a3"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a0255780f56da02614156f7ef7cd3d3a3">&#9670;&#160;</a></span>json</h2>
 
@@ -430,6 +401,25 @@ Variables</h2></td></tr>
 
 </div>
 </div>
+<a id="aba50551cb617f7e81a536483d1c65734" name="aba50551cb617f7e81a536483d1c65734"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba50551cb617f7e81a536483d1c65734">&#9670;&#160;</a></span>MantisContentReader</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">using <a class="el" href="namespacemantis.html#aba50551cb617f7e81a536483d1c65734">mantis::MantisContentReader</a> = typedef httplib::ContentReader</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><blockquote class="doxtable">
+<p>&zwj;Middleware shorthand for the content reader </p>
+</blockquote>
+</p>
+
+</div>
+</div>
 <a id="a9bc3b7f3cc6ad769ae30df2670712b95" name="a9bc3b7f3cc6ad769ae30df2670712b95"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#a9bc3b7f3cc6ad769ae30df2670712b95">&#9670;&#160;</a></span>Method</h2>
 
@@ -449,14 +439,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ac6d3d5118a8179c910b59702d812f66f" name="ac6d3d5118a8179c910b59702d812f66f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6d3d5118a8179c910b59702d812f66f">&#9670;&#160;</a></span>Middleware</h2>
+<a id="a45ed150d6251b4de0ddb121e9bc4a64e" name="a45ed150d6251b4de0ddb121e9bc4a64e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a45ed150d6251b4de0ddb121e9bc4a64e">&#9670;&#160;</a></span>MiddlewareFunc</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#ac6d3d5118a8179c910b59702d812f66f">mantis::Middleware</a> = typedef std::function&lt;bool(const <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">Request</a>&amp;, <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">Response</a>&amp;, <a class="el" href="classmantis_1_1Context.html">Context</a>&amp;)&gt;</td>
+          <td class="memname">using <a class="el" href="namespacemantis.html#a45ed150d6251b4de0ddb121e9bc4a64e">mantis::MiddlewareFunc</a> = typedef std::function&lt;bool(<a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a>&amp;, <a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a>&amp;)&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -487,52 +477,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="ac1bd0141aa9c3099361994a0671e0426" name="ac1bd0141aa9c3099361994a0671e0426"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac1bd0141aa9c3099361994a0671e0426">&#9670;&#160;</a></span>Request</h2>
+<a id="a9105c1ec4261d0e829224e8316392938" name="a9105c1ec4261d0e829224e8316392938"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a9105c1ec4261d0e829224e8316392938">&#9670;&#160;</a></span>RouteHandlerFunc</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#ac1bd0141aa9c3099361994a0671e0426">mantis::Request</a> = typedef httplib::Request</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p><blockquote class="doxtable">
-<p>&zwj;Shorthand for httplib::Request </p>
-</blockquote>
-</p>
-
-</div>
-</div>
-<a id="ab479ce37673306cc47470b59938943fd" name="ab479ce37673306cc47470b59938943fd"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab479ce37673306cc47470b59938943fd">&#9670;&#160;</a></span>Response</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#ab479ce37673306cc47470b59938943fd">mantis::Response</a> = typedef httplib::Response</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-<p><blockquote class="doxtable">
-<p>&zwj;Shorthand for httplib::Response </p>
-</blockquote>
-</p>
-
-</div>
-</div>
-<a id="a50b9322f657f315b48e4c64a46b3a1f1" name="a50b9322f657f315b48e4c64a46b3a1f1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a50b9322f657f315b48e4c64a46b3a1f1">&#9670;&#160;</a></span>RouteHandlerFunc</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#a50b9322f657f315b48e4c64a46b3a1f1">mantis::RouteHandlerFunc</a> = typedef std::function&lt;void(const httplib::Request&amp;, httplib::Response&amp;, <a class="el" href="classmantis_1_1Context.html">Context</a>&amp;)&gt;</td>
+          <td class="memname">using <a class="el" href="namespacemantis.html#a9105c1ec4261d0e829224e8316392938">mantis::RouteHandlerFunc</a> = typedef std::function&lt;void(<a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a>&amp;, <a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a>&amp;)&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">
@@ -544,14 +496,14 @@ Variables</h2></td></tr>
 
 </div>
 </div>
-<a id="a11862d7f473e670e73f32411830d2ebc" name="a11862d7f473e670e73f32411830d2ebc"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a11862d7f473e670e73f32411830d2ebc">&#9670;&#160;</a></span>RouteHandlerFuncWithContentReader</h2>
+<a id="ada22fc2f702542da388d3d5b8ce5af2d" name="ada22fc2f702542da388d3d5b8ce5af2d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ada22fc2f702542da388d3d5b8ce5af2d">&#9670;&#160;</a></span>RouteHandlerFuncWithContentReader</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">using <a class="el" href="namespacemantis.html#a11862d7f473e670e73f32411830d2ebc">mantis::RouteHandlerFuncWithContentReader</a> = typedef std::function&lt;void(const httplib::Request&amp;, httplib::Response&amp;, const httplib::ContentReader&amp;, <a class="el" href="classmantis_1_1Context.html">Context</a>&amp;)&gt;</td>
+          <td class="memname">using <a class="el" href="namespacemantis.html#ada22fc2f702542da388d3d5b8ce5af2d">mantis::RouteHandlerFuncWithContentReader</a> = typedef std::function&lt;void(<a class="el" href="classmantis_1_1MantisRequest.html">MantisRequest</a>&amp;, <a class="el" href="classmantis_1_1MantisResponse.html">MantisResponse</a>&amp;, const <a class="el" href="namespacemantis.html#aba50551cb617f7e81a536483d1c65734">MantisContentReader</a>&amp;)&gt;</td>
         </tr>
       </table>
 </div><div class="memdoc">

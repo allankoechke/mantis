@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
    </div>
   </td>
  </tr>
@@ -137,6 +137,11 @@ Request Context (&lt;tt&gt;req.*&lt;/tt&gt;)</h3>
 <div class="fragment"><div class="line">req.body.title      // Field from request JSON body</div>
 <div class="line">req.body.user_id    // Field from request JSON body</div>
 <div class="line">// ... any other fields in the request</div>
+<div class="line"> </div>
+<div class="line">req.remoteAddr      // Request remote address</div>
+<div class="line">req.remotePort      // Request remote port</div>
+<div class="line">req.localAddr       // Request local address</div>
+<div class="line">req.localPort       // Request local port</div>
 </div><!-- fragment --><h2><a class="anchor" id="autotoc_md48"></a>
 cparse Expression Evaluation</h2>
 <p>Mantis uses the <b>cparse</b> library for expression evaluation. The <code>ExprEvaluator</code> class converts JSON data to cparse <code>TokenMap</code> format and evaluates boolean expressions.</p>

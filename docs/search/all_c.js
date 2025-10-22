@@ -14,9 +14,9 @@ var searchData=
   ['debug_11',['debug',['../namespacemantis.html#ada8131e8cb8fbce16294534a4a808d07adc30ec20708ef7b0f641ef78b7880a15',1,'mantis::DEBUG'],['../classmantis_1_1LoggingUnit.html#ad402cd3c384fba6c7de3d39833642c7e',1,'mantis::LoggingUnit::debug()']]],
   ['default_20behavior_12',['Default Behavior',['../rest_api_rules.html#autotoc_md58',1,'']]],
   ['defaultvalue_13',['defaultValue',['../structmantis_1_1Field.html#a54a03c9cf1ad66e397799085ead4300f',1,'mantis::Field']]],
-  ['delete_14',['Delete',['../classmantis_1_1HttpUnit.html#ae3dd364da35ffd0f4ab1239a27b1baf6',1,'mantis::HttpUnit']]],
+  ['delete_14',['Delete',['../classmantis_1_1HttpUnit.html#a338be16efdc5cef0e99576988c57911b',1,'mantis::HttpUnit']]],
   ['deletedir_15',['deleteDir',['../classmantis_1_1FileUnit.html#a2223a3c2f48d058ffa13f45e6429f28b',1,'mantis::FileUnit']]],
-  ['deleterecord_16',['deleterecord',['../classmantis_1_1SysTablesUnit.html#a76df36a08e51fcf7d1b2407231b161ba',1,'mantis::SysTablesUnit::deleteRecord()'],['../classmantis_1_1TableUnit.html#a9dc6e429a2012ec9371333bb118710f9',1,'mantis::TableUnit::deleteRecord()']]],
+  ['deleterecord_16',['deleterecord',['../classmantis_1_1SysTablesUnit.html#a171c61fda019f70f83cd33799d07c621',1,'mantis::SysTablesUnit::deleteRecord()'],['../classmantis_1_1TableUnit.html#ac5e4b9a57f9f45b86c8fcb0d8b86e909',1,'mantis::TableUnit::deleteRecord()']]],
   ['deleterule_17',['deleterule',['../structmantis_1_1Table.html#a7fb0265e9965afc8efc649ec17d87848',1,'mantis::Table::deleteRule'],['../classmantis_1_1TableUnit.html#ae1818aa842d78e7180e756c2fef4f339',1,'mantis::TableUnit::deleteRule()']]],
   ['deleting_20files_18',['Deleting Files',['../files.html#autotoc_md143',1,'']]],
   ['denied_20issues_19',['Access Denied Issues',['../rest_api_rules.html#autotoc_md69',1,'']]],
@@ -37,6 +37,6 @@ var searchData=
   ['duktape_5frequest_5fwrapper_2ecpp_34',['duktape_request_wrapper.cpp',['../duktape__request__wrapper_8cpp.html',1,'']]],
   ['duktape_5fresponse_5fwrapper_2ecpp_35',['duktape_response_wrapper.cpp',['../duktape__response__wrapper_8cpp.html',1,'']]],
   ['duktapeimpl_36',['DuktapeImpl',['../classmantis_1_1DuktapeImpl.html',1,'mantis']]],
-  ['dump_37',['dump',['../classmantis_1_1Context.html#a01a68a55163e1cc12b94dadabdc9cb68',1,'mantis::Context']]],
+  ['dump_37',['dump',['../classmantis_1_1ContextStore.html#aeec644aff0b727b5eb6593b2ba57f583',1,'mantis::ContextStore']]],
   ['during_20table_20creation_38',['During Table Creation',['../rest_api_rules.html#autotoc_md56',1,'']]]
 ];

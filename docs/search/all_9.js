@@ -5,7 +5,7 @@ var searchData=
   ['access_20denied_20issues_2',['Access Denied Issues',['../rest_api_rules.html#autotoc_md69',1,'']]],
   ['access_20rules_3',['access rules',['../rest_api_rules.html',1,'API Access Rules'],['../rest_api_rules.html#autotoc_md62',1,'Testing Access Rules']]],
   ['account_4',['Creating an Admin Account',['../index.html#autotoc_md167',1,'']]],
-  ['add_5',['add',['../classmantis_1_1RouteRegistry.html#a96e231cf5873f8623c0c151aa7d15e06',1,'mantis::RouteRegistry::add(const std::string &amp;method, const std::string &amp;path, RouteHandlerFunc handler, const std::vector&lt; Middleware &gt; &amp;middlewares)'],['../classmantis_1_1RouteRegistry.html#a0e3b559b8167bcdda1a13a9ad0a09967',1,'mantis::RouteRegistry::add(const std::string &amp;method, const std::string &amp;path, RouteHandlerFuncWithContentReader handler, const std::vector&lt; Middleware &gt; &amp;middlewares)']]],
+  ['add_5',['add',['../classmantis_1_1RouteRegistry.html#a6b9b45d774a959296af799f02f349207',1,'mantis::RouteRegistry::add(const std::string &amp;method, const std::string &amp;path, RouteHandlerFunc handler, const std::vector&lt; MiddlewareFunc &gt; &amp;middlewares)'],['../classmantis_1_1RouteRegistry.html#a8a2331636e466457ca5f7bdc4ddd68df',1,'mantis::RouteRegistry::add(const std::string &amp;method, const std::string &amp;path, RouteHandlerFuncWithContentReader handler, const std::vector&lt; MiddlewareFunc &gt; &amp;middlewares)']]],
   ['addroute_6',['addRoute',['../classmantis_1_1Router.html#ad5d799c151f8b21c14c60394981a486b',1,'mantis::Router']]],
   ['addrule_7',['addrule',['../structmantis_1_1Table.html#add1ff1cfecb2cc33d31d527216519c02',1,'mantis::Table::addRule'],['../classmantis_1_1TableUnit.html#a12bfe98febac9396247cc1ec7b48a117',1,'mantis::TableUnit::addRule()']]],
   ['admin_20account_8',['Creating an Admin Account',['../index.html#autotoc_md167',1,'']]],
@@ -45,6 +45,6 @@ var searchData=
   ['authentication_20rules_42',['Basic Authentication Rules',['../rest_api_rules.html#autotoc_md51',1,'']]],
   ['authfields_43',['authFields',['../namespacemantis.html#ae8dcbb097cdc416930dd35769b16a066',1,'mantis']]],
   ['authtable_44',['authtable',['../structmantis_1_1AuthTable.html',1,'mantis::AuthTable'],['../structmantis_1_1AuthTable.html#aed0b48264d27c1a1591d50f326148073',1,'mantis::AuthTable::AuthTable()']]],
-  ['authwithemailandpassword_45',['authwithemailandpassword',['../classmantis_1_1SysTablesUnit.html#a49501e4cc70f90cef6d37a517716e0e3',1,'mantis::SysTablesUnit::authWithEmailAndPassword()'],['../classmantis_1_1TableUnit.html#ae445375361e16d089810ea4973dd8278',1,'mantis::TableUnit::authWithEmailAndPassword()']]],
+  ['authwithemailandpassword_45',['authwithemailandpassword',['../classmantis_1_1SysTablesUnit.html#a801cf32d32663b4a50dc204bcaaa894e',1,'mantis::SysTablesUnit::authWithEmailAndPassword()'],['../classmantis_1_1TableUnit.html#a05b11b30cd59e38686b240f13e43d8f5',1,'mantis::TableUnit::authWithEmailAndPassword()']]],
   ['autogeneratepattern_46',['autoGeneratePattern',['../structmantis_1_1Field.html#a63bccc2d0c2146130373fd582445960f',1,'mantis::Field']]]
 ];

@@ -12,6 +12,6 @@ var searchData=
   ['m_5ftabletype_9',['m_tableType',['../classmantis_1_1TableUnit.html#ada79e8d2bffba4eff2149b420c9bf0ba',1,'mantis::TableUnit']]],
   ['m_5fupdaterule_10',['m_updateRule',['../classmantis_1_1TableUnit.html#a57116b731108d56f363c64c19d8f7233',1,'mantis::TableUnit']]],
   ['maxvalue_11',['maxValue',['../structmantis_1_1Field.html#ad496d0536289284983f1ff5d7329660f',1,'mantis::Field']]],
-  ['middlewares_12',['middlewares',['../structmantis_1_1RouteHandler.html#aaae7b01834451a8bcf6069bf6ebe8d0e',1,'mantis::RouteHandler']]],
+  ['middlewares_12',['middlewares',['../structmantis_1_1RouteHandler.html#a5dce51fa142309f969f46102809a43c4',1,'mantis::RouteHandler']]],
   ['minvalue_13',['minValue',['../structmantis_1_1Field.html#a7664414ec62af78c7d278177bb7d2a78',1,'mantis::Field']]]
 ];

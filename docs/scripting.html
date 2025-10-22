@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
    </div>
   </td>
  </tr>
@@ -196,23 +196,31 @@ Middlewares</h3>
 <h3><a class="anchor" id="autotoc_md157"></a>
 MantisRequest Methods/Properties</h3>
 <ul>
-<li><code>req.hasHeader("Authorization")</code> -&gt; return true/false</li>
-<li><code>req.getHeader("Authorization", "", 0)</code> -&gt; Return Authorization value or default // <code>req.getHeader("Authorization", "Default Value", 0)</code> -&gt; Return Authorization value or default // <code>req.getHeader("Some Key", "Default Value", 1)</code> -&gt; Return 'Some Key' value if exists of index '1' or default</li>
-<li><code>req.getHeaderCount("key")</code> -&gt; Count for header values given the header key</li>
+<li><code>req.hasHeader("Authorization")</code>: return true/false</li>
+<li><code>req.getHeader("Authorization", "", 0)</code>: Return Authorization value or default</li>
+<li><code>req.getHeaderCount("key")</code>: Count for header values given the header key</li>
 <li><code>req.setHeader("Cow", "Cow Value")</code></li>
 <li><code>req.hasTrailer</code></li>
 <li><code>req.getTrailer</code></li>
 <li><code>req.getTrailerCount</code></li>
-<li><code>req.hasQueryParam("key")</code> -&gt; return true/false</li>
-<li><code>req.getQueryParam("key")</code> -&gt; Return header value given the key</li>
-<li><code>req.getQueryParamCount("key")</code> -&gt; Return parameter value count</li>
-<li><code>req.hasPathParam("key")</code> -&gt; return true/false</li>
-<li><code>req.getPathParam("key")</code> -&gt; Return header value given the key</li>
-<li><code>req.getPathParamCount("key")</code> -&gt; Return parameter value count</li>
-<li><code>req.isMultipartFormData()</code> -&gt; Return true if request type is of Multipart/FormData</li>
-<li><code>req.body</code> -&gt; Get request body data</li>
-<li><code>req.method</code> -&gt; Get request method ('GET', 'POST', ...)</li>
-<li><code>req.path</code> -&gt; Get request path value</li>
+<li><code>req.hasQueryParam("key")</code>: return true/false</li>
+<li><code>req.getQueryParam("key")</code>: Return header value given the key</li>
+<li><code>req.getQueryParamCount("key")</code>: Return parameter value count</li>
+<li><code>req.hasPathParam("key")</code>: return true/false</li>
+<li><code>req.getPathParam("key")</code>: Return header value given the key</li>
+<li><code>req.getPathParamCount("key")</code>: Return parameter value count</li>
+<li><code>req.isMultipartFormData()</code>: Return true if request type is of Multipart/FormData</li>
+<li><code>req.body</code>: Get request body data</li>
+<li><code>req.method</code>: Get request method ('GET', 'POST', ...)</li>
+<li><code>req.path</code>: Get request path value</li>
+<li><code>req.remoteAddr</code>: Remote request address</li>
+<li><code>req.remotePort</code>: Remote request port</li>
+<li><code>req.localAddr</code>: Local request address</li>
+<li><code>req.localPort</code>: Local request port</li>
+<li><code>req.hasKey("key")</code>: Returns true if the context store contains the given key.</li>
+<li><code>req.set("key", value)</code>: Store in the context store the given key and value. Note only <code>int</code>, <code>float</code>, <code>double</code>, <code>strings</code> and <code>objects</code> are supported for now.</li>
+<li><code>req.get("key")</code>: Get a value from the context store given the <code>key</code>.</li>
+<li><code>req.getOr("key", "default value")</code>: Returns a value if <code>key</code> is in the context store else the default value.</li>
 </ul>
 <h3><a class="anchor" id="autotoc_md158"></a>
 MantisResponse Methods/Properties</h3>

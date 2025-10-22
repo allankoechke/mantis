@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
    </div>
   </td>
  </tr>
@@ -100,86 +100,138 @@ $(document).ready(function(){initNavTree('classmantis_1_1MantisResponse.html',''
 </div><!--header-->
 <div class="contents">
 
+<p>A wrapper class around <code>httplib::Response</code> offering a consistent API and allowing for easy wrapper methods compatible with <code>Duktape</code> API requirements for scripting.  
+ <a href="classmantis_1_1MantisResponse.html#details">More...</a></p>
+
 <p><code>#include &lt;<a class="el" href="duktape__custom__types_8h_source.html">duktape_custom_types.h</a>&gt;</code></p>
 <table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-methods" name="pub-methods"></a>
 Public Member Functions</h2></td></tr>
 <tr class="memitem:ae786788d8e44a88653051814cea2a4d1" id="r_ae786788d8e44a88653051814cea2a4d1"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ae786788d8e44a88653051814cea2a4d1">MantisResponse</a> (httplib::Response &amp;_resp)</td></tr>
 <tr class="separator:ae786788d8e44a88653051814cea2a4d1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a0ef6ecb9dc9007d200c7e44e82c57a34" id="r_a0ef6ecb9dc9007d200c7e44e82c57a34"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a0ef6ecb9dc9007d200c7e44e82c57a34">~MantisResponse</a> ()</td></tr>
-<tr class="separator:a0ef6ecb9dc9007d200c7e44e82c57a34"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3d9b658df1169a7324e0ceecc03eff8a" id="r_a3d9b658df1169a7324e0ceecc03eff8a"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a3d9b658df1169a7324e0ceecc03eff8a">get_status</a> () const</td></tr>
-<tr class="separator:a3d9b658df1169a7324e0ceecc03eff8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a2304e2cf7f791d80c81ed9af053126c1" id="r_a2304e2cf7f791d80c81ed9af053126c1"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a2304e2cf7f791d80c81ed9af053126c1">set_status</a> (int s)</td></tr>
-<tr class="separator:a2304e2cf7f791d80c81ed9af053126c1"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aafb27705d5dcece26ea07c83af71108f" id="r_aafb27705d5dcece26ea07c83af71108f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#aafb27705d5dcece26ea07c83af71108f">get_version</a> () const</td></tr>
-<tr class="separator:aafb27705d5dcece26ea07c83af71108f"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a4d389e5c02c9e09ca2a38f76f1609f25" id="r_a4d389e5c02c9e09ca2a38f76f1609f25"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a4d389e5c02c9e09ca2a38f76f1609f25">set_version</a> (const std::string &amp;b)</td></tr>
-<tr class="separator:a4d389e5c02c9e09ca2a38f76f1609f25"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a269c7bc8623878cec2cb58a4f0e8e26e" id="r_a269c7bc8623878cec2cb58a4f0e8e26e"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a269c7bc8623878cec2cb58a4f0e8e26e">get_body</a> () const</td></tr>
-<tr class="separator:a269c7bc8623878cec2cb58a4f0e8e26e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a32cbc0b3614aaf6a280e62870d25d3d7" id="r_a32cbc0b3614aaf6a280e62870d25d3d7"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a32cbc0b3614aaf6a280e62870d25d3d7">set_body</a> (const std::string &amp;b)</td></tr>
-<tr class="separator:a32cbc0b3614aaf6a280e62870d25d3d7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:adbc124f97dc08412ac48682c09e26430" id="r_adbc124f97dc08412ac48682c09e26430"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#adbc124f97dc08412ac48682c09e26430">get_location</a> () const</td></tr>
-<tr class="separator:adbc124f97dc08412ac48682c09e26430"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae34434d8e0f83f6e7b6e56054c12ba21" id="r_ae34434d8e0f83f6e7b6e56054c12ba21"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ae34434d8e0f83f6e7b6e56054c12ba21">set_location</a> (const std::string &amp;b)</td></tr>
-<tr class="separator:ae34434d8e0f83f6e7b6e56054c12ba21"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af937ab50a80b299f41d406ca57efd2f2" id="r_af937ab50a80b299f41d406ca57efd2f2"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#af937ab50a80b299f41d406ca57efd2f2">get_reason</a> () const</td></tr>
-<tr class="separator:af937ab50a80b299f41d406ca57efd2f2"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af4676d96dbbddcec350a1dac49fc4674" id="r_af4676d96dbbddcec350a1dac49fc4674"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#af4676d96dbbddcec350a1dac49fc4674">set_reason</a> (const std::string &amp;b)</td></tr>
-<tr class="separator:af4676d96dbbddcec350a1dac49fc4674"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a6f27f81c3011e895f10fd2a845052c9d" id="r_a6f27f81c3011e895f10fd2a845052c9d"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a6f27f81c3011e895f10fd2a845052c9d">has_header</a> (const std::string &amp;key) const</td></tr>
-<tr class="separator:a6f27f81c3011e895f10fd2a845052c9d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a651c72af71c38995f77e19b644c00ea8" id="r_a651c72af71c38995f77e19b644c00ea8"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a651c72af71c38995f77e19b644c00ea8">get_header_value</a> (const std::string &amp;key, const char *def=&quot;&quot;, size_t id=0) const</td></tr>
-<tr class="separator:a651c72af71c38995f77e19b644c00ea8"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac6425f35853089ae7a1af6cd8d51ee5b" id="r_ac6425f35853089ae7a1af6cd8d51ee5b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ac6425f35853089ae7a1af6cd8d51ee5b">get_header_value_u64</a> (const std::string &amp;key, size_t def=0, size_t id=0) const</td></tr>
-<tr class="separator:ac6425f35853089ae7a1af6cd8d51ee5b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:acf7ab0bcac74762bfab0164765d5d39a" id="r_acf7ab0bcac74762bfab0164765d5d39a"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#acf7ab0bcac74762bfab0164765d5d39a">get_header_value_count</a> (const std::string &amp;key) const</td></tr>
-<tr class="separator:acf7ab0bcac74762bfab0164765d5d39a"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a96919f4f651a4173f2c92814110eef42" id="r_a96919f4f651a4173f2c92814110eef42"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a96919f4f651a4173f2c92814110eef42">set_header</a> (const std::string &amp;key, const std::string &amp;val) const</td></tr>
-<tr class="separator:a96919f4f651a4173f2c92814110eef42"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a528f32b820a5a72d828f45116965b408" id="r_a528f32b820a5a72d828f45116965b408"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a528f32b820a5a72d828f45116965b408">has_trailer</a> (const std::string &amp;key) const</td></tr>
-<tr class="separator:a528f32b820a5a72d828f45116965b408"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac3a58d00b1b2ce5fdd81eb77eb806f8b" id="r_ac3a58d00b1b2ce5fdd81eb77eb806f8b"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ac3a58d00b1b2ce5fdd81eb77eb806f8b">get_trailer_value</a> (const std::string &amp;key, size_t id=0) const</td></tr>
-<tr class="separator:ac3a58d00b1b2ce5fdd81eb77eb806f8b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec2e5445f6344790447d9fde5eae8d79" id="r_aec2e5445f6344790447d9fde5eae8d79"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#aec2e5445f6344790447d9fde5eae8d79">get_trailer_value_count</a> (const std::string &amp;key) const</td></tr>
-<tr class="separator:aec2e5445f6344790447d9fde5eae8d79"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af14018654332f4e2867a4df32634853b" id="r_af14018654332f4e2867a4df32634853b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#af14018654332f4e2867a4df32634853b">set_redirect</a> (const std::string &amp;url, int status=httplib::StatusCode::Found_302) const</td></tr>
-<tr class="separator:af14018654332f4e2867a4df32634853b"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a8ec8fc3971c4641f80bc5468f6eed50e" id="r_a8ec8fc3971c4641f80bc5468f6eed50e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a8ec8fc3971c4641f80bc5468f6eed50e">set_content</a> (const char *s, size_t n, const std::string &amp;content_type) const</td></tr>
-<tr class="separator:a8ec8fc3971c4641f80bc5468f6eed50e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ab5256512bd57b381add4423337e1fe81" id="r_ab5256512bd57b381add4423337e1fe81"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ab5256512bd57b381add4423337e1fe81">set_content</a> (const std::string &amp;s, const std::string &amp;content_type) const</td></tr>
-<tr class="separator:ab5256512bd57b381add4423337e1fe81"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a349e0a2788cc76f12070796e8920c8bf" id="r_a349e0a2788cc76f12070796e8920c8bf"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a349e0a2788cc76f12070796e8920c8bf">set_content</a> (std::string &amp;&amp;s, const std::string &amp;content_type) const</td></tr>
-<tr class="separator:a349e0a2788cc76f12070796e8920c8bf"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3c8a48a20cd3e82c3aa87de720760b5d" id="r_a3c8a48a20cd3e82c3aa87de720760b5d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a3c8a48a20cd3e82c3aa87de720760b5d">set_file_content</a> (const std::string &amp;path, const std::string &amp;content_type) const</td></tr>
-<tr class="separator:a3c8a48a20cd3e82c3aa87de720760b5d"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a869477d5296856e4bead02d9de55bfce" id="r_a869477d5296856e4bead02d9de55bfce"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a869477d5296856e4bead02d9de55bfce">set_file_content</a> (const std::string &amp;path) const</td></tr>
-<tr class="separator:a869477d5296856e4bead02d9de55bfce"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a2347cc2fa5695936ddc089692ac58ec5" id="r_a2347cc2fa5695936ddc089692ac58ec5"><td class="memItemLeft" align="right" valign="top">&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a2347cc2fa5695936ddc089692ac58ec5">~MantisResponse</a> ()=default</td></tr>
+<tr class="separator:a2347cc2fa5695936ddc089692ac58ec5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a37e07db3cfcdc48d0b26638c106d07e2" id="r_a37e07db3cfcdc48d0b26638c106d07e2"><td class="memItemLeft" align="right" valign="top">int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a37e07db3cfcdc48d0b26638c106d07e2">getStatus</a> () const</td></tr>
+<tr class="memdesc:a37e07db3cfcdc48d0b26638c106d07e2"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Get Response Status Code </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a37e07db3cfcdc48d0b26638c106d07e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4f32711a67b7b1cf40233d057eab2002" id="r_a4f32711a67b7b1cf40233d057eab2002"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a4f32711a67b7b1cf40233d057eab2002">setStatus</a> (int s)</td></tr>
+<tr class="memdesc:a4f32711a67b7b1cf40233d057eab2002"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Set Response Status Code </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a4f32711a67b7b1cf40233d057eab2002"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a1fa8bbdd84db16ca70cb0d3899bcca30" id="r_a1fa8bbdd84db16ca70cb0d3899bcca30"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a1fa8bbdd84db16ca70cb0d3899bcca30">getVersion</a> () const</td></tr>
+<tr class="separator:a1fa8bbdd84db16ca70cb0d3899bcca30"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4397e27ab86905d11ef9d2e8ff092fa9" id="r_a4397e27ab86905d11ef9d2e8ff092fa9"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a4397e27ab86905d11ef9d2e8ff092fa9">setVersion</a> (const std::string &amp;b)</td></tr>
+<tr class="separator:a4397e27ab86905d11ef9d2e8ff092fa9"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4c2e669a686f63e8f80c406c7d0f1e82" id="r_a4c2e669a686f63e8f80c406c7d0f1e82"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a4c2e669a686f63e8f80c406c7d0f1e82">getBody</a> () const</td></tr>
+<tr class="memdesc:a4c2e669a686f63e8f80c406c7d0f1e82"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Get Response Body </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a4c2e669a686f63e8f80c406c7d0f1e82"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae4587a778e5ea74013ed403a4a7ea766" id="r_ae4587a778e5ea74013ed403a4a7ea766"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ae4587a778e5ea74013ed403a4a7ea766">setBody</a> (const std::string &amp;b)</td></tr>
+<tr class="memdesc:ae4587a778e5ea74013ed403a4a7ea766"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Set Response Body </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:ae4587a778e5ea74013ed403a4a7ea766"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5ff04bf7d61224bae89ea545e437e590" id="r_a5ff04bf7d61224bae89ea545e437e590"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a5ff04bf7d61224bae89ea545e437e590">getLocation</a> () const</td></tr>
+<tr class="memdesc:a5ff04bf7d61224bae89ea545e437e590"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Get Response redirect location </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a5ff04bf7d61224bae89ea545e437e590"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab36263e7e0835440831bb9edfab3abb5" id="r_ab36263e7e0835440831bb9edfab3abb5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ab36263e7e0835440831bb9edfab3abb5">setLocation</a> (const std::string &amp;b)</td></tr>
+<tr class="memdesc:ab36263e7e0835440831bb9edfab3abb5"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Set Response redirect location </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:ab36263e7e0835440831bb9edfab3abb5"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad6f4ba2ba32cc0d8cb88b0e55f7aeded" id="r_ad6f4ba2ba32cc0d8cb88b0e55f7aeded"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ad6f4ba2ba32cc0d8cb88b0e55f7aeded">getReason</a> () const</td></tr>
+<tr class="separator:ad6f4ba2ba32cc0d8cb88b0e55f7aeded"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aba0de6fec59bdefaebcc4ef18b229ddc" id="r_aba0de6fec59bdefaebcc4ef18b229ddc"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#aba0de6fec59bdefaebcc4ef18b229ddc">setReason</a> (const std::string &amp;b)</td></tr>
+<tr class="separator:aba0de6fec59bdefaebcc4ef18b229ddc"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ad690dde73bc0257ad98e33a8912e3488" id="r_ad690dde73bc0257ad98e33a8912e3488"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ad690dde73bc0257ad98e33a8912e3488">hasHeader</a> (const std::string &amp;key) const</td></tr>
+<tr class="memdesc:ad690dde73bc0257ad98e33a8912e3488"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Check if response has a given header set </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:ad690dde73bc0257ad98e33a8912e3488"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a29f3585e4c2caa1005faf66afb6c947d" id="r_a29f3585e4c2caa1005faf66afb6c947d"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a29f3585e4c2caa1005faf66afb6c947d">getHeaderValue</a> (const std::string &amp;key, const char *def=&quot;&quot;, size_t id=0) const</td></tr>
+<tr class="memdesc:a29f3585e4c2caa1005faf66afb6c947d"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Get Response header with given header <code>key</code>, with an optional default value <code>def</code> and index <code>id</code> if it's an array </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:a29f3585e4c2caa1005faf66afb6c947d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab3e16b7ec5c269633cad9316e8a35e2b" id="r_ab3e16b7ec5c269633cad9316e8a35e2b"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ab3e16b7ec5c269633cad9316e8a35e2b">getHeaderValueU64</a> (const std::string &amp;key, size_t def=0, size_t id=0) const</td></tr>
+<tr class="memdesc:ab3e16b7ec5c269633cad9316e8a35e2b"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Same as </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:ab3e16b7ec5c269633cad9316e8a35e2b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:aaa3eae8a0433cde1b8d8c515754cfbb7" id="r_aaa3eae8a0433cde1b8d8c515754cfbb7"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#aaa3eae8a0433cde1b8d8c515754cfbb7">getHeaderValueCount</a> (const std::string &amp;key) const</td></tr>
+<tr class="memdesc:aaa3eae8a0433cde1b8d8c515754cfbb7"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Get count of the values in a given header entry defined by <code>key</code>. </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:aaa3eae8a0433cde1b8d8c515754cfbb7"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adc86f7286121f7be115a6f43a6c233d8" id="r_adc86f7286121f7be115a6f43a6c233d8"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#adc86f7286121f7be115a6f43a6c233d8">setHeader</a> (const std::string &amp;key, const std::string &amp;val) const</td></tr>
+<tr class="memdesc:adc86f7286121f7be115a6f43a6c233d8"><td class="mdescLeft">&#160;</td><td class="mdescRight"><blockquote class="doxtable">
+<p>&zwj;Set header value with given <code>key</code> and <code>val</code> </p>
+</blockquote>
+ <br /></td></tr>
+<tr class="separator:adc86f7286121f7be115a6f43a6c233d8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a85a48b414f010d11434a04794fb8c792" id="r_a85a48b414f010d11434a04794fb8c792"><td class="memItemLeft" align="right" valign="top">bool&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a85a48b414f010d11434a04794fb8c792">hasTrailer</a> (const std::string &amp;key) const</td></tr>
+<tr class="separator:a85a48b414f010d11434a04794fb8c792"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a07ab6a1a1efc65d7198a218f8c3d577f" id="r_a07ab6a1a1efc65d7198a218f8c3d577f"><td class="memItemLeft" align="right" valign="top">std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a07ab6a1a1efc65d7198a218f8c3d577f">getTrailerValue</a> (const std::string &amp;key, size_t id=0) const</td></tr>
+<tr class="separator:a07ab6a1a1efc65d7198a218f8c3d577f"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a6fbcd015c3de332dc8ec06c75a2b3a5a" id="r_a6fbcd015c3de332dc8ec06c75a2b3a5a"><td class="memItemLeft" align="right" valign="top">size_t&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a6fbcd015c3de332dc8ec06c75a2b3a5a">getTrailerValueCount</a> (const std::string &amp;key) const</td></tr>
+<tr class="separator:a6fbcd015c3de332dc8ec06c75a2b3a5a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a13256c1cac5baf6349e41eb0aa58505d" id="r_a13256c1cac5baf6349e41eb0aa58505d"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a13256c1cac5baf6349e41eb0aa58505d">setRedirect</a> (const std::string &amp;url, int status=httplib::StatusCode::Found_302) const</td></tr>
+<tr class="separator:a13256c1cac5baf6349e41eb0aa58505d"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab2e7b7f755064b900883528ac085d97e" id="r_ab2e7b7f755064b900883528ac085d97e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ab2e7b7f755064b900883528ac085d97e">setContent</a> (const char *s, size_t n, const std::string &amp;content_type) const</td></tr>
+<tr class="separator:ab2e7b7f755064b900883528ac085d97e"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae8867ee86f02bbb531039936677e9340" id="r_ae8867ee86f02bbb531039936677e9340"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ae8867ee86f02bbb531039936677e9340">setContent</a> (const std::string &amp;s, const std::string &amp;content_type) const</td></tr>
+<tr class="separator:ae8867ee86f02bbb531039936677e9340"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:adf29f58749b35132ea0977cc8783ac54" id="r_adf29f58749b35132ea0977cc8783ac54"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#adf29f58749b35132ea0977cc8783ac54">setContent</a> (std::string &amp;&amp;s, const std::string &amp;content_type) const</td></tr>
+<tr class="separator:adf29f58749b35132ea0977cc8783ac54"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a40fe35c31a0945a1e3bca959e25b7fc0" id="r_a40fe35c31a0945a1e3bca959e25b7fc0"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a40fe35c31a0945a1e3bca959e25b7fc0">setFileContent</a> (const std::string &amp;path, const std::string &amp;content_type) const</td></tr>
+<tr class="separator:a40fe35c31a0945a1e3bca959e25b7fc0"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace60bbb2c6360b4c05b9cabd6e137011" id="r_ace60bbb2c6360b4c05b9cabd6e137011"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ace60bbb2c6360b4c05b9cabd6e137011">setFileContent</a> (const std::string &amp;path) const</td></tr>
+<tr class="separator:ace60bbb2c6360b4c05b9cabd6e137011"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a3b1c4520f72a929fd20631ae7f10113c" id="r_a3b1c4520f72a929fd20631ae7f10113c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a3b1c4520f72a929fd20631ae7f10113c">send</a> (int statusCode, const std::string &amp;data=&quot;&quot;, const std::string &amp;content_type=&quot;text/plain&quot;) const</td></tr>
 <tr class="separator:a3b1c4520f72a929fd20631ae7f10113c"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aef1f2b3d5a3bec673751e88e8d9a4376" id="r_aef1f2b3d5a3bec673751e88e8d9a4376"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#aef1f2b3d5a3bec673751e88e8d9a4376">send_json</a> (int statusCode=200, const <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &amp;data=json::object()) const</td></tr>
-<tr class="separator:aef1f2b3d5a3bec673751e88e8d9a4376"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a51ed8c51e670789283c7dfea1cbd6c58" id="r_a51ed8c51e670789283c7dfea1cbd6c58"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a51ed8c51e670789283c7dfea1cbd6c58">send_json_str</a> (int statusCode, const std::string &amp;data) const</td></tr>
-<tr class="separator:a51ed8c51e670789283c7dfea1cbd6c58"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a3b3a4347da3c3de2335dc2fcf57f7627" id="r_a3b3a4347da3c3de2335dc2fcf57f7627"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a3b3a4347da3c3de2335dc2fcf57f7627">send_text</a> (int statusCode=200, const std::string &amp;data=&quot;&quot;) const</td></tr>
-<tr class="separator:a3b3a4347da3c3de2335dc2fcf57f7627"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a17b6c79484d49614224f96d5cf326ce4" id="r_a17b6c79484d49614224f96d5cf326ce4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a17b6c79484d49614224f96d5cf326ce4">send_html</a> (int statusCode=200, const std::string &amp;data=&quot;&lt;p&gt;&lt;/p&gt;&quot;) const</td></tr>
-<tr class="separator:a17b6c79484d49614224f96d5cf326ce4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:af1e413f981ce3e13bff32e1697182b8a" id="r_af1e413f981ce3e13bff32e1697182b8a"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#af1e413f981ce3e13bff32e1697182b8a">send_empty</a> (int statusCode=204) const</td></tr>
-<tr class="separator:af1e413f981ce3e13bff32e1697182b8a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a73cb70ef0c820824a2d98189e7b50c86" id="r_a73cb70ef0c820824a2d98189e7b50c86"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a73cb70ef0c820824a2d98189e7b50c86">sendJson</a> (int statusCode=200, const <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &amp;data=json::object()) const</td></tr>
+<tr class="separator:a73cb70ef0c820824a2d98189e7b50c86"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3389a009b4931a73e34d3d2a3a7dfcfa" id="r_a3389a009b4931a73e34d3d2a3a7dfcfa"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a3389a009b4931a73e34d3d2a3a7dfcfa">sendJson</a> (int statusCode, const DukValue &amp;data) const</td></tr>
+<tr class="separator:a3389a009b4931a73e34d3d2a3a7dfcfa"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ac1d48aaba3edcfc6808a2e3565ce8724" id="r_ac1d48aaba3edcfc6808a2e3565ce8724"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ac1d48aaba3edcfc6808a2e3565ce8724">sendText</a> (int statusCode=200, const std::string &amp;data=&quot;&quot;) const</td></tr>
+<tr class="separator:ac1d48aaba3edcfc6808a2e3565ce8724"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a3d0a299e27324dc1cabc66275773aa1b" id="r_a3d0a299e27324dc1cabc66275773aa1b"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a3d0a299e27324dc1cabc66275773aa1b">sendHtml</a> (int statusCode=200, const std::string &amp;data=&quot;&lt;p&gt;&lt;/p&gt;&quot;) const</td></tr>
+<tr class="separator:a3d0a299e27324dc1cabc66275773aa1b"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ace940f938520ffbdb32733e3b77e7cdd" id="r_ace940f938520ffbdb32733e3b77e7cdd"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#ace940f938520ffbdb32733e3b77e7cdd">sendEmpty</a> (int statusCode=204) const</td></tr>
+<tr class="separator:ace940f938520ffbdb32733e3b77e7cdd"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a id="pub-static-methods" name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a2efbe6521ca2f4d361327b6454bf3050" id="r_a2efbe6521ca2f4d361327b6454bf3050"><td class="memItemLeft" align="right" valign="top">static void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisResponse.html#a2efbe6521ca2f4d361327b6454bf3050">registerDuktapeMethods</a> ()</td></tr>
 <tr class="separator:a2efbe6521ca2f4d361327b6454bf3050"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table>
-<h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
+<a name="details" id="details"></a><h2 class="groupheader">Detailed Description</h2>
+<div class="textblock"><p>A wrapper class around <code>httplib::Response</code> offering a consistent API and allowing for easy wrapper methods compatible with <code>Duktape</code> API requirements for scripting. </p>
+</div><h2 class="groupheader">Constructor &amp; Destructor Documentation</h2>
 <a id="ae786788d8e44a88653051814cea2a4d1" name="ae786788d8e44a88653051814cea2a4d1"></a>
 <h2 class="memtitle"><span class="permalink"><a href="#ae786788d8e44a88653051814cea2a4d1">&#9670;&#160;</a></span>MantisResponse()</h2>
 
 <div class="memitem">
 <div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
       <table class="memname">
         <tr>
           <td class="memname">mantis::MantisResponse::MantisResponse </td>
@@ -189,12 +241,17 @@ Static Public Member Functions</h2></td></tr>
           <td></td>
         </tr>
       </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">explicit</span></span>  </td>
+  </tr>
+</table>
 </div><div class="memdoc">
 
 </div>
 </div>
-<a id="a0ef6ecb9dc9007d200c7e44e82c57a34" name="a0ef6ecb9dc9007d200c7e44e82c57a34"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a0ef6ecb9dc9007d200c7e44e82c57a34">&#9670;&#160;</a></span>~MantisResponse()</h2>
+<a id="a2347cc2fa5695936ddc089692ac58ec5" name="a2347cc2fa5695936ddc089692ac58ec5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a2347cc2fa5695936ddc089692ac58ec5">&#9670;&#160;</a></span>~MantisResponse()</h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -211,7 +268,7 @@ Static Public Member Functions</h2></td></tr>
       </table>
   </td>
   <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">inline</span></span>  </td>
+<span class="mlabels"><span class="mlabel">default</span></span>  </td>
   </tr>
 </table>
 </div><div class="memdoc">
@@ -219,14 +276,14 @@ Static Public Member Functions</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Member Function Documentation</h2>
-<a id="a269c7bc8623878cec2cb58a4f0e8e26e" name="a269c7bc8623878cec2cb58a4f0e8e26e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a269c7bc8623878cec2cb58a4f0e8e26e">&#9670;&#160;</a></span>get_body()</h2>
+<a id="a4c2e669a686f63e8f80c406c7d0f1e82" name="a4c2e669a686f63e8f80c406c7d0f1e82"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4c2e669a686f63e8f80c406c7d0f1e82">&#9670;&#160;</a></span>getBody()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string mantis::MantisResponse::get_body </td>
+          <td class="memname">std::string mantis::MantisResponse::getBody </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -234,16 +291,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Get Response Body </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="a651c72af71c38995f77e19b644c00ea8" name="a651c72af71c38995f77e19b644c00ea8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a651c72af71c38995f77e19b644c00ea8">&#9670;&#160;</a></span>get_header_value()</h2>
+<a id="a29f3585e4c2caa1005faf66afb6c947d" name="a29f3585e4c2caa1005faf66afb6c947d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a29f3585e4c2caa1005faf66afb6c947d">&#9670;&#160;</a></span>getHeaderValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string mantis::MantisResponse::get_header_value </td>
+          <td class="memname">std::string mantis::MantisResponse::getHeaderValue </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -268,16 +330,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Get Response header with given header <code>key</code>, with an optional default value <code>def</code> and index <code>id</code> if it's an array </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="acf7ab0bcac74762bfab0164765d5d39a" name="acf7ab0bcac74762bfab0164765d5d39a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#acf7ab0bcac74762bfab0164765d5d39a">&#9670;&#160;</a></span>get_header_value_count()</h2>
+<a id="aaa3eae8a0433cde1b8d8c515754cfbb7" name="aaa3eae8a0433cde1b8d8c515754cfbb7"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aaa3eae8a0433cde1b8d8c515754cfbb7">&#9670;&#160;</a></span>getHeaderValueCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t mantis::MantisResponse::get_header_value_count </td>
+          <td class="memname">size_t mantis::MantisResponse::getHeaderValueCount </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em></td><td>)</td>
@@ -286,16 +353,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Get count of the values in a given header entry defined by <code>key</code>. </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="ac6425f35853089ae7a1af6cd8d51ee5b" name="ac6425f35853089ae7a1af6cd8d51ee5b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac6425f35853089ae7a1af6cd8d51ee5b">&#9670;&#160;</a></span>get_header_value_u64()</h2>
+<a id="ab3e16b7ec5c269633cad9316e8a35e2b" name="ab3e16b7ec5c269633cad9316e8a35e2b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab3e16b7ec5c269633cad9316e8a35e2b">&#9670;&#160;</a></span>getHeaderValueU64()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t mantis::MantisResponse::get_header_value_u64 </td>
+          <td class="memname">size_t mantis::MantisResponse::getHeaderValueU64 </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -320,16 +392,44 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Same as </p>
+</blockquote>
+</p>
+<dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1MantisResponse.html#a29f3585e4c2caa1005faf66afb6c947d" title="‍Get Response header with given header key, with an optional default value def and index id if it&#39;s a...">getHeaderValue()</a> but returns responses as <code>u64</code> </dd></dl>
+
 </div>
 </div>
-<a id="adbc124f97dc08412ac48682c09e26430" name="adbc124f97dc08412ac48682c09e26430"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#adbc124f97dc08412ac48682c09e26430">&#9670;&#160;</a></span>get_location()</h2>
+<a id="a5ff04bf7d61224bae89ea545e437e590" name="a5ff04bf7d61224bae89ea545e437e590"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a5ff04bf7d61224bae89ea545e437e590">&#9670;&#160;</a></span>getLocation()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string mantis::MantisResponse::get_location </td>
+          <td class="memname">std::string mantis::MantisResponse::getLocation </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><blockquote class="doxtable">
+<p>&zwj;Get Response redirect location </p>
+</blockquote>
+</p>
+
+</div>
+</div>
+<a id="ad6f4ba2ba32cc0d8cb88b0e55f7aeded" name="ad6f4ba2ba32cc0d8cb88b0e55f7aeded"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad6f4ba2ba32cc0d8cb88b0e55f7aeded">&#9670;&#160;</a></span>getReason()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">std::string mantis::MantisResponse::getReason </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -339,14 +439,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af937ab50a80b299f41d406ca57efd2f2" name="af937ab50a80b299f41d406ca57efd2f2"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af937ab50a80b299f41d406ca57efd2f2">&#9670;&#160;</a></span>get_reason()</h2>
+<a id="a37e07db3cfcdc48d0b26638c106d07e2" name="a37e07db3cfcdc48d0b26638c106d07e2"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a37e07db3cfcdc48d0b26638c106d07e2">&#9670;&#160;</a></span>getStatus()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string mantis::MantisResponse::get_reason </td>
+          <td class="memname">int mantis::MantisResponse::getStatus </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -354,33 +454,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Get Response Status Code </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="a3d9b658df1169a7324e0ceecc03eff8a" name="a3d9b658df1169a7324e0ceecc03eff8a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3d9b658df1169a7324e0ceecc03eff8a">&#9670;&#160;</a></span>get_status()</h2>
+<a id="a07ab6a1a1efc65d7198a218f8c3d577f" name="a07ab6a1a1efc65d7198a218f8c3d577f"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a07ab6a1a1efc65d7198a218f8c3d577f">&#9670;&#160;</a></span>getTrailerValue()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">int mantis::MantisResponse::get_status </td>
-          <td>(</td>
-          <td class="paramname"></td><td>)</td>
-          <td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="ac3a58d00b1b2ce5fdd81eb77eb806f8b" name="ac3a58d00b1b2ce5fdd81eb77eb806f8b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ac3a58d00b1b2ce5fdd81eb77eb806f8b">&#9670;&#160;</a></span>get_trailer_value()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">std::string mantis::MantisResponse::get_trailer_value </td>
+          <td class="memname">std::string mantis::MantisResponse::getTrailerValue </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -401,14 +489,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aec2e5445f6344790447d9fde5eae8d79" name="aec2e5445f6344790447d9fde5eae8d79"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aec2e5445f6344790447d9fde5eae8d79">&#9670;&#160;</a></span>get_trailer_value_count()</h2>
+<a id="a6fbcd015c3de332dc8ec06c75a2b3a5a" name="a6fbcd015c3de332dc8ec06c75a2b3a5a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a6fbcd015c3de332dc8ec06c75a2b3a5a">&#9670;&#160;</a></span>getTrailerValueCount()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">size_t mantis::MantisResponse::get_trailer_value_count </td>
+          <td class="memname">size_t mantis::MantisResponse::getTrailerValueCount </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em></td><td>)</td>
@@ -419,14 +507,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aafb27705d5dcece26ea07c83af71108f" name="aafb27705d5dcece26ea07c83af71108f"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aafb27705d5dcece26ea07c83af71108f">&#9670;&#160;</a></span>get_version()</h2>
+<a id="a1fa8bbdd84db16ca70cb0d3899bcca30" name="a1fa8bbdd84db16ca70cb0d3899bcca30"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a1fa8bbdd84db16ca70cb0d3899bcca30">&#9670;&#160;</a></span>getVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">std::string mantis::MantisResponse::get_version </td>
+          <td class="memname">std::string mantis::MantisResponse::getVersion </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>
@@ -436,14 +524,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a6f27f81c3011e895f10fd2a845052c9d" name="a6f27f81c3011e895f10fd2a845052c9d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a6f27f81c3011e895f10fd2a845052c9d">&#9670;&#160;</a></span>has_header()</h2>
+<a id="ad690dde73bc0257ad98e33a8912e3488" name="ad690dde73bc0257ad98e33a8912e3488"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ad690dde73bc0257ad98e33a8912e3488">&#9670;&#160;</a></span>hasHeader()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool mantis::MantisResponse::has_header </td>
+          <td class="memname">bool mantis::MantisResponse::hasHeader </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em></td><td>)</td>
@@ -452,16 +540,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Check if response has a given header set </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="a528f32b820a5a72d828f45116965b408" name="a528f32b820a5a72d828f45116965b408"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a528f32b820a5a72d828f45116965b408">&#9670;&#160;</a></span>has_trailer()</h2>
+<a id="a85a48b414f010d11434a04794fb8c792" name="a85a48b414f010d11434a04794fb8c792"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a85a48b414f010d11434a04794fb8c792">&#9670;&#160;</a></span>hasTrailer()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">bool mantis::MantisResponse::has_trailer </td>
+          <td class="memname">bool mantis::MantisResponse::hasTrailer </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em></td><td>)</td>
@@ -531,14 +624,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af1e413f981ce3e13bff32e1697182b8a" name="af1e413f981ce3e13bff32e1697182b8a"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af1e413f981ce3e13bff32e1697182b8a">&#9670;&#160;</a></span>send_empty()</h2>
+<a id="ace940f938520ffbdb32733e3b77e7cdd" name="ace940f938520ffbdb32733e3b77e7cdd"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace940f938520ffbdb32733e3b77e7cdd">&#9670;&#160;</a></span>sendEmpty()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::send_empty </td>
+          <td class="memname">void mantis::MantisResponse::sendEmpty </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>statusCode</em> = <code>204</code></td><td>)</td>
@@ -549,14 +642,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a17b6c79484d49614224f96d5cf326ce4" name="a17b6c79484d49614224f96d5cf326ce4"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a17b6c79484d49614224f96d5cf326ce4">&#9670;&#160;</a></span>send_html()</h2>
+<a id="a3d0a299e27324dc1cabc66275773aa1b" name="a3d0a299e27324dc1cabc66275773aa1b"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3d0a299e27324dc1cabc66275773aa1b">&#9670;&#160;</a></span>sendHtml()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::send_html </td>
+          <td class="memname">void mantis::MantisResponse::sendHtml </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>statusCode</em> = <code>200</code>, </td>
@@ -577,14 +670,42 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="aef1f2b3d5a3bec673751e88e8d9a4376" name="aef1f2b3d5a3bec673751e88e8d9a4376"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#aef1f2b3d5a3bec673751e88e8d9a4376">&#9670;&#160;</a></span>send_json()</h2>
+<a id="a3389a009b4931a73e34d3d2a3a7dfcfa" name="a3389a009b4931a73e34d3d2a3a7dfcfa"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a3389a009b4931a73e34d3d2a3a7dfcfa">&#9670;&#160;</a></span>sendJson() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::send_json </td>
+          <td class="memname">void mantis::MantisResponse::sendJson </td>
+          <td>(</td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>statusCode</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">const DukValue &amp;&#160;</td>
+          <td class="paramname"><em>data</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td> const</td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+</div>
+</div>
+<a id="a73cb70ef0c820824a2d98189e7b50c86" name="a73cb70ef0c820824a2d98189e7b50c86"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a73cb70ef0c820824a2d98189e7b50c86">&#9670;&#160;</a></span>sendJson() <span class="overload">[2/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mantis::MantisResponse::sendJson </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>statusCode</em> = <code>200</code>, </td>
@@ -605,42 +726,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a51ed8c51e670789283c7dfea1cbd6c58" name="a51ed8c51e670789283c7dfea1cbd6c58"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a51ed8c51e670789283c7dfea1cbd6c58">&#9670;&#160;</a></span>send_json_str()</h2>
+<a id="ac1d48aaba3edcfc6808a2e3565ce8724" name="ac1d48aaba3edcfc6808a2e3565ce8724"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ac1d48aaba3edcfc6808a2e3565ce8724">&#9670;&#160;</a></span>sendText()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::send_json_str </td>
-          <td>(</td>
-          <td class="paramtype">int&#160;</td>
-          <td class="paramname"><em>statusCode</em>, </td>
-        </tr>
-        <tr>
-          <td class="paramkey"></td>
-          <td></td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>data</em>&#160;</td>
-        </tr>
-        <tr>
-          <td></td>
-          <td>)</td>
-          <td></td><td> const</td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="a3b3a4347da3c3de2335dc2fcf57f7627" name="a3b3a4347da3c3de2335dc2fcf57f7627"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3b3a4347da3c3de2335dc2fcf57f7627">&#9670;&#160;</a></span>send_text()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void mantis::MantisResponse::send_text </td>
+          <td class="memname">void mantis::MantisResponse::sendText </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>statusCode</em> = <code>200</code>, </td>
@@ -661,14 +754,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a32cbc0b3614aaf6a280e62870d25d3d7" name="a32cbc0b3614aaf6a280e62870d25d3d7"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a32cbc0b3614aaf6a280e62870d25d3d7">&#9670;&#160;</a></span>set_body()</h2>
+<a id="ae4587a778e5ea74013ed403a4a7ea766" name="ae4587a778e5ea74013ed403a4a7ea766"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4587a778e5ea74013ed403a4a7ea766">&#9670;&#160;</a></span>setBody()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_body </td>
+          <td class="memname">void mantis::MantisResponse::setBody </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>b</em></td><td>)</td>
@@ -677,16 +770,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Set Response Body </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="a8ec8fc3971c4641f80bc5468f6eed50e" name="a8ec8fc3971c4641f80bc5468f6eed50e"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a8ec8fc3971c4641f80bc5468f6eed50e">&#9670;&#160;</a></span>set_content() <span class="overload">[1/3]</span></h2>
+<a id="ab2e7b7f755064b900883528ac085d97e" name="ab2e7b7f755064b900883528ac085d97e"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab2e7b7f755064b900883528ac085d97e">&#9670;&#160;</a></span>setContent() <span class="overload">[1/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_content </td>
+          <td class="memname">void mantis::MantisResponse::setContent </td>
           <td>(</td>
           <td class="paramtype">const char *&#160;</td>
           <td class="paramname"><em>s</em>, </td>
@@ -713,14 +811,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="ab5256512bd57b381add4423337e1fe81" name="ab5256512bd57b381add4423337e1fe81"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ab5256512bd57b381add4423337e1fe81">&#9670;&#160;</a></span>set_content() <span class="overload">[2/3]</span></h2>
+<a id="ae8867ee86f02bbb531039936677e9340" name="ae8867ee86f02bbb531039936677e9340"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ae8867ee86f02bbb531039936677e9340">&#9670;&#160;</a></span>setContent() <span class="overload">[2/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_content </td>
+          <td class="memname">void mantis::MantisResponse::setContent </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>s</em>, </td>
@@ -741,14 +839,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a349e0a2788cc76f12070796e8920c8bf" name="a349e0a2788cc76f12070796e8920c8bf"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a349e0a2788cc76f12070796e8920c8bf">&#9670;&#160;</a></span>set_content() <span class="overload">[3/3]</span></h2>
+<a id="adf29f58749b35132ea0977cc8783ac54" name="adf29f58749b35132ea0977cc8783ac54"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adf29f58749b35132ea0977cc8783ac54">&#9670;&#160;</a></span>setContent() <span class="overload">[3/3]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_content </td>
+          <td class="memname">void mantis::MantisResponse::setContent </td>
           <td>(</td>
           <td class="paramtype">std::string &amp;&amp;&#160;</td>
           <td class="paramname"><em>s</em>, </td>
@@ -769,14 +867,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a869477d5296856e4bead02d9de55bfce" name="a869477d5296856e4bead02d9de55bfce"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a869477d5296856e4bead02d9de55bfce">&#9670;&#160;</a></span>set_file_content() <span class="overload">[1/2]</span></h2>
+<a id="ace60bbb2c6360b4c05b9cabd6e137011" name="ace60bbb2c6360b4c05b9cabd6e137011"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ace60bbb2c6360b4c05b9cabd6e137011">&#9670;&#160;</a></span>setFileContent() <span class="overload">[1/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_file_content </td>
+          <td class="memname">void mantis::MantisResponse::setFileContent </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>path</em></td><td>)</td>
@@ -787,14 +885,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a3c8a48a20cd3e82c3aa87de720760b5d" name="a3c8a48a20cd3e82c3aa87de720760b5d"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a3c8a48a20cd3e82c3aa87de720760b5d">&#9670;&#160;</a></span>set_file_content() <span class="overload">[2/2]</span></h2>
+<a id="a40fe35c31a0945a1e3bca959e25b7fc0" name="a40fe35c31a0945a1e3bca959e25b7fc0"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a40fe35c31a0945a1e3bca959e25b7fc0">&#9670;&#160;</a></span>setFileContent() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_file_content </td>
+          <td class="memname">void mantis::MantisResponse::setFileContent </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>path</em>, </td>
@@ -815,14 +913,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a96919f4f651a4173f2c92814110eef42" name="a96919f4f651a4173f2c92814110eef42"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a96919f4f651a4173f2c92814110eef42">&#9670;&#160;</a></span>set_header()</h2>
+<a id="adc86f7286121f7be115a6f43a6c233d8" name="adc86f7286121f7be115a6f43a6c233d8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#adc86f7286121f7be115a6f43a6c233d8">&#9670;&#160;</a></span>setHeader()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_header </td>
+          <td class="memname">void mantis::MantisResponse::setHeader </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>key</em>, </td>
@@ -841,16 +939,44 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Set header value with given <code>key</code> and <code>val</code> </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="ae34434d8e0f83f6e7b6e56054c12ba21" name="ae34434d8e0f83f6e7b6e56054c12ba21"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae34434d8e0f83f6e7b6e56054c12ba21">&#9670;&#160;</a></span>set_location()</h2>
+<a id="ab36263e7e0835440831bb9edfab3abb5" name="ab36263e7e0835440831bb9edfab3abb5"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#ab36263e7e0835440831bb9edfab3abb5">&#9670;&#160;</a></span>setLocation()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_location </td>
+          <td class="memname">void mantis::MantisResponse::setLocation </td>
+          <td>(</td>
+          <td class="paramtype">const std::string &amp;&#160;</td>
+          <td class="paramname"><em>b</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p><blockquote class="doxtable">
+<p>&zwj;Set Response redirect location </p>
+</blockquote>
+</p>
+
+</div>
+</div>
+<a id="aba0de6fec59bdefaebcc4ef18b229ddc" name="aba0de6fec59bdefaebcc4ef18b229ddc"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#aba0de6fec59bdefaebcc4ef18b229ddc">&#9670;&#160;</a></span>setReason()</h2>
+
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">void mantis::MantisResponse::setReason </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>b</em></td><td>)</td>
@@ -861,32 +987,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="af4676d96dbbddcec350a1dac49fc4674" name="af4676d96dbbddcec350a1dac49fc4674"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af4676d96dbbddcec350a1dac49fc4674">&#9670;&#160;</a></span>set_reason()</h2>
+<a id="a13256c1cac5baf6349e41eb0aa58505d" name="a13256c1cac5baf6349e41eb0aa58505d"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a13256c1cac5baf6349e41eb0aa58505d">&#9670;&#160;</a></span>setRedirect()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_reason </td>
-          <td>(</td>
-          <td class="paramtype">const std::string &amp;&#160;</td>
-          <td class="paramname"><em>b</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-</div><div class="memdoc">
-
-</div>
-</div>
-<a id="af14018654332f4e2867a4df32634853b" name="af14018654332f4e2867a4df32634853b"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#af14018654332f4e2867a4df32634853b">&#9670;&#160;</a></span>set_redirect()</h2>
-
-<div class="memitem">
-<div class="memproto">
-      <table class="memname">
-        <tr>
-          <td class="memname">void mantis::MantisResponse::set_redirect </td>
+          <td class="memname">void mantis::MantisResponse::setRedirect </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>url</em>, </td>
@@ -907,14 +1015,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a2304e2cf7f791d80c81ed9af053126c1" name="a2304e2cf7f791d80c81ed9af053126c1"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a2304e2cf7f791d80c81ed9af053126c1">&#9670;&#160;</a></span>set_status()</h2>
+<a id="a4f32711a67b7b1cf40233d057eab2002" name="a4f32711a67b7b1cf40233d057eab2002"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4f32711a67b7b1cf40233d057eab2002">&#9670;&#160;</a></span>setStatus()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_status </td>
+          <td class="memname">void mantis::MantisResponse::setStatus </td>
           <td>(</td>
           <td class="paramtype">int&#160;</td>
           <td class="paramname"><em>s</em></td><td>)</td>
@@ -923,16 +1031,21 @@ Static Public Member Functions</h2></td></tr>
       </table>
 </div><div class="memdoc">
 
+<p><blockquote class="doxtable">
+<p>&zwj;Set Response Status Code </p>
+</blockquote>
+</p>
+
 </div>
 </div>
-<a id="a4d389e5c02c9e09ca2a38f76f1609f25" name="a4d389e5c02c9e09ca2a38f76f1609f25"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a4d389e5c02c9e09ca2a38f76f1609f25">&#9670;&#160;</a></span>set_version()</h2>
+<a id="a4397e27ab86905d11ef9d2e8ff092fa9" name="a4397e27ab86905d11ef9d2e8ff092fa9"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a4397e27ab86905d11ef9d2e8ff092fa9">&#9670;&#160;</a></span>setVersion()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname">void mantis::MantisResponse::set_version </td>
+          <td class="memname">void mantis::MantisResponse::setVersion </td>
           <td>(</td>
           <td class="paramtype">const std::string &amp;&#160;</td>
           <td class="paramname"><em>b</em></td><td>)</td>

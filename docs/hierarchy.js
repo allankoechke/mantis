@@ -1,6 +1,6 @@
 var hierarchy =
 [
-    [ "mantis::Context", "classmantis_1_1Context.html", null ],
+    [ "mantis::ContextStore", "classmantis_1_1ContextStore.html", null ],
     [ "mantis::CrudInterface< T >", "classmantis_1_1CrudInterface.html", null ],
     [ "mantis::CrudInterface< json >", "classmantis_1_1CrudInterface.html", [
       [ "mantis::TableUnit", "classmantis_1_1TableUnit.html", [

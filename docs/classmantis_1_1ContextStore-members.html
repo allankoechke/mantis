@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.9</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
    </div>
   </td>
  </tr>
@@ -66,7 +66,7 @@ $(function() {
 </div>
 <script type="text/javascript">
 /* @license magnet:?xt=urn:btih:d3d9a9a6595521f9666a5e94cc830dab83b65699&amp;dn=expat.txt MIT */
-$(document).ready(function(){initNavTree('classmantis_1_1Context.html',''); initResizable(); });
+$(document).ready(function(){initNavTree('classmantis_1_1ContextStore.html',''); initResizable(); });
 /* @license-end */
 </script>
 <div id="doc-content">
@@ -92,17 +92,21 @@ $(document).ready(function(){initNavTree('classmantis_1_1Context.html',''); init
 </div>
 
 <div class="header">
-  <div class="headertitle"><div class="title">mantis::Context Member List</div></div>
+  <div class="headertitle"><div class="title">mantis::ContextStore Member List</div></div>
 </div><!--header-->
 <div class="contents">
 
-<p>This is the complete list of members for <a class="el" href="classmantis_1_1Context.html">mantis::Context</a>, including all inherited members.</p>
+<p>This is the complete list of members for <a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a>, including all inherited members.</p>
 <table class="directory">
-  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1Context.html#a1c7ef46b732661af4bde66ae05058e03">Context</a>()=default</td><td class="entry"><a class="el" href="classmantis_1_1Context.html">mantis::Context</a></td><td class="entry"></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classmantis_1_1Context.html#a01a68a55163e1cc12b94dadabdc9cb68">dump</a>()</td><td class="entry"><a class="el" href="classmantis_1_1Context.html">mantis::Context</a></td><td class="entry"></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1Context.html#a39e0750e37539e811ea89c7b04620b95">get</a>(const std::string &amp;key)</td><td class="entry"><a class="el" href="classmantis_1_1Context.html">mantis::Context</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="odd"><td class="entry"><a class="el" href="classmantis_1_1Context.html#ad1ddc69a1bad56269383d789b1ee1b55">get_or</a>(const std::string &amp;key, T default_value)</td><td class="entry"><a class="el" href="classmantis_1_1Context.html">mantis::Context</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
-  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1Context.html#acba5e9d0fe8417b71f0e729a59724bc8">set</a>(const std::string &amp;key, T value)</td><td class="entry"><a class="el" href="classmantis_1_1Context.html">mantis::Context</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#a68a3b303c0ac23a3aaa79ac2064669f5">ContextStore</a>()=default</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#aeec644aff0b727b5eb6593b2ba57f583">dump</a>()</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#a51abd97091737ffd300b24431a987e2e">get</a>(const std::string &amp;key)</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#a822af71b92408ab3d021904dce32e3fa">get_duk</a>(const std::string &amp;key)</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#aa12d49908b0fc6cea481b46413389fbe">getOr</a>(const std::string &amp;key, T default_value)</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#a2b7b25f50e95a7965ebffc6a76c0537f">getOr_duk</a>(const std::string &amp;key, DukValue default_value)</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#aa93a0a4bb5212f65cbe24715812a1ca0">hasKey</a>(const std::string &amp;key) const</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"></td></tr>
+  <tr class="odd"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#a99eff900b999924e756de871539bf4f0">set</a>(const std::string &amp;key, T value)</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"><span class="mlabel">inline</span></td></tr>
+  <tr class="even"><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html#a28f44b9369edafc72d9f86bb12c43aaf">set_duk</a>(const std::string &amp;key, const DukValue &amp;value)</td><td class="entry"><a class="el" href="classmantis_1_1ContextStore.html">mantis::ContextStore</a></td><td class="entry"></td></tr>
 </table></div><!-- contents -->
 </div><!-- doc-content -->
 <!-- start footer part -->

@@ -1,7 +1,7 @@
 var searchData=
 [
-  ['fetchrecord_0',['fetchrecord',['../classmantis_1_1SysTablesUnit.html#aa02f76fc6fc17df78cda579c1107f6a7',1,'mantis::SysTablesUnit::fetchRecord()'],['../classmantis_1_1TableUnit.html#aa435e6503111c6c7cf345294809ea34e',1,'mantis::TableUnit::fetchRecord()']]],
-  ['fetchrecords_1',['fetchrecords',['../classmantis_1_1SysTablesUnit.html#a7babc715b4f16064df97f8facbaa6736',1,'mantis::SysTablesUnit::fetchRecords()'],['../classmantis_1_1TableUnit.html#a2624ca0751f301f39d21565d8be8aac9',1,'mantis::TableUnit::fetchRecords()']]],
+  ['fetchrecord_0',['fetchrecord',['../classmantis_1_1SysTablesUnit.html#a236c5c7371b5e887b2c9d6f9f61c60a5',1,'mantis::SysTablesUnit::fetchRecord()'],['../classmantis_1_1TableUnit.html#a40806f01b18c1cf9291c07689e48e47e',1,'mantis::TableUnit::fetchRecord()']]],
+  ['fetchrecords_1',['fetchrecords',['../classmantis_1_1SysTablesUnit.html#a8a7b4526f744aa8b4a849f4be9acbca9',1,'mantis::SysTablesUnit::fetchRecords()'],['../classmantis_1_1TableUnit.html#a09780b4d616c4e816b36da810309bda0',1,'mantis::TableUnit::fetchRecords()']]],
   ['field_2',['field',['../structmantis_1_1Field.html',1,'mantis::Field'],['../structmantis_1_1Field.html#ab2ebc315a6e4239993d49b9a54d5696b',1,'mantis::Field::Field()']]],
   ['field_20names_3',['2. Use Consistent Field Names',['../rest_api_rules.html#autotoc_md65',1,'']]],
   ['field_20validation_4',['Custom Field Validation',['../rest_api_rules.html#autotoc_md71',1,'']]],
@@ -20,7 +20,7 @@ var searchData=
   ['fileunit_2ecpp_17',['fileunit.cpp',['../fileunit_8cpp.html',1,'']]],
   ['fileunit_2eh_18',['fileunit.h',['../fileunit_8h.html',1,'']]],
   ['filtering_20query_20parameters_20pending_19',['🎛️ Filtering &amp; Query Parameters [PENDING]',['../rest_api.html#autotoc_md32',1,'']]],
-  ['find_20',['find',['../classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f',1,'mantis::Validator::find()'],['../classmantis_1_1RouteRegistry.html#ab296c9afa8887f22c2628bfd8a2116c3',1,'mantis::RouteRegistry::find()']]],
+  ['find_20',['find',['../classmantis_1_1Validator.html#af6aa05db02e223f29f900ab7a6400e7f',1,'mantis::Validator::find()'],['../classmantis_1_1RouteRegistry.html#ab5e943bf0659aaaf4a022d4389869c59',1,'mantis::RouteRegistry::find()']]],
   ['findfieldbykey_21',['findFieldByKey',['../classmantis_1_1TableUnit.html#aeb0e1101b9c2be401432e8b641076eea',1,'mantis::TableUnit']]],
   ['from_20source_22',['2. Building from Source',['../index.html#autotoc_md168',1,'']]],
   ['fromjson_23',['fromJson',['../classmantis_1_1TableUnit.html#a6b42ede1de6b44bd8da8d4d4e6be7756',1,'mantis::TableUnit']]],

@@ -7,7 +7,7 @@ var searchData=
   ['_7ehttpunit_4',['~HttpUnit',['../classmantis_1_1HttpUnit.html#a9f4e4966cfd1a569c11cd802572e44c9',1,'mantis::HttpUnit']]],
   ['_7eloggingunit_5',['~LoggingUnit',['../classmantis_1_1LoggingUnit.html#abffa6656c2fd0a4ebe96d68a51c1db00',1,'mantis::LoggingUnit']]],
   ['_7emantisapp_6',['~MantisApp',['../classmantis_1_1MantisApp.html#a33ea488da00cdaf9832bffd55695110d',1,'mantis::MantisApp']]],
-  ['_7emantisresponse_7',['~MantisResponse',['../classmantis_1_1MantisResponse.html#a0ef6ecb9dc9007d200c7e44e82c57a34',1,'mantis::MantisResponse']]],
+  ['_7emantisresponse_7',['~MantisResponse',['../classmantis_1_1MantisResponse.html#a2347cc2fa5695936ddc089692ac58ec5',1,'mantis::MantisResponse']]],
   ['_7erouter_8',['~Router',['../classmantis_1_1Router.html#a95566da1309379ae6f1abb560355d52f',1,'mantis::Router']]],
   ['_7esystablesunit_9',['~SysTablesUnit',['../classmantis_1_1SysTablesUnit.html#aba94516520a0ce06b9ec30a9b73f88d6',1,'mantis::SysTablesUnit']]],
   ['_7esystemtable_10',['~SystemTable',['../structmantis_1_1SystemTable.html#a94a9511ec6c7cfba1a6ee008b5f11094',1,'mantis::SystemTable']]],

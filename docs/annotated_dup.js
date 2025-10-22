@@ -4,7 +4,7 @@ var annotated_dup =
       [ "AdminTable", "structmantis_1_1AdminTable.html", "structmantis_1_1AdminTable" ],
       [ "AuthTable", "structmantis_1_1AuthTable.html", "structmantis_1_1AuthTable" ],
       [ "BaseTable", "structmantis_1_1BaseTable.html", "structmantis_1_1BaseTable" ],
-      [ "Context", "classmantis_1_1Context.html", "classmantis_1_1Context" ],
+      [ "ContextStore", "classmantis_1_1ContextStore.html", "classmantis_1_1ContextStore" ],
       [ "CrudInterface", "classmantis_1_1CrudInterface.html", "classmantis_1_1CrudInterface" ],
       [ "DatabaseUnit", "classmantis_1_1DatabaseUnit.html", "classmantis_1_1DatabaseUnit" ],
       [ "DuktapeImpl", "classmantis_1_1DuktapeImpl.html", null ],
