@@ -366,8 +366,8 @@ namespace mantis
         registry.add(method, path, handler, {middlewares});
         bind_method(path, [this, method, path](const httplib::Request& req, httplib::Response& res)
         {
-            MantisRequest _req{req};
-            MantisResponse _res{res};
+            MantisRequest ma_req{req};
+            MantisResponse ma_res{res};
 
             const auto* route = registry.find(method, path);
             if (!route)
@@ -377,18 +377,18 @@ namespace mantis
                 response["error"] = std::format("{} {} Route Not Found", method, path);
                 response["data"] = json::object();
 
-                _res.sendJson(404, response);
+                ma_res.sendJson(404, response);
                 return;
             }
 
             for (const auto& mw : route->middlewares)
             {
-                if (!mw(_req, _res)) return;
+                if (!mw(ma_req, ma_res)) return;
             }
 
             if (const auto func = std::get_if<RouteHandlerFunc>(&route->handler))
             {
-                (*func)(_req, _res);
+                (*func)(ma_req, ma_res);
             }
         });
     }
@@ -404,8 +404,8 @@ namespace mantis
                                                httplib::Response& res,
                                                const MantisContentReader& content_reader)
                     {
-                        MantisRequest _req{req};
-                        MantisResponse _res{res};
+                        MantisRequest ma_req{req};
+                        MantisResponse ma_res{res};
 
                         const auto* route = registry.find(method, path);
                         if (!route)
@@ -415,18 +415,18 @@ namespace mantis
                             response["error"] = std::format("{} {} Route Not Found", method, path);
                             response["data"] = json::object();
 
-                            _res.sendJson(404, response);
+                            ma_res.sendJson(404, response);
                             return;
                         }
 
                         for (const auto& mw : route->middlewares)
                         {
-                            if (!mw(_req, _res)) return;
+                            if (!mw(ma_req, ma_res)) return;
                         }
 
                         if (const auto func = std::get_if<RouteHandlerFuncWithContentReader>(&route->handler))
                         {
-                            (*func)(_req, _res, content_reader);
+                            (*func)(ma_req, ma_res, content_reader);
                         }
                     }
         );
