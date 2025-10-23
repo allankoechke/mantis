@@ -39,7 +39,7 @@ namespace mantis
     class HttpUnit;
     class LoggingUnit;
     class SettingsUnit;
-    class Router;
+    class RouterUnit;
     class Validator;
     class FileUnit;
 
@@ -214,7 +214,7 @@ namespace mantis
         /// Get the commandline parser object
         [[nodiscard]] argparse::ArgumentParser& cmd() const;
         /// Get the router object instance.
-        [[nodiscard]] Router& router() const;
+        [[nodiscard]] RouterUnit& router() const;
         /// Get the validators unit object instance in MantisApp.
         [[nodiscard]] Validator& validators() const;
         /// Get the `cparse` expression evaluator unit object instance.
@@ -311,7 +311,7 @@ namespace mantis
 
         std::string version_JSWrapper() const { return appVersion(); }
         std::string jwtSecretKey_JSWrapper() const { return jwtSecretKey(); }
-        void quit_JSWrapper(const int code, const std::string& msg);
+        void quit_JSWrapper(int code, const std::string& msg);
 
         /**
          * @brief Wrapper method to return `DatabaseUnit*` instead of
@@ -320,46 +320,7 @@ namespace mantis
          * @return DatabaseUnit instance pointer
          */
         [[nodiscard]] DatabaseUnit* duk_db() const;
-
-        /**
-         * @brief Add HTTP route given the `method`, `path`, and
-         * at least one request handler and none or more middlewares.
-         * @param ctx duktape JS context
-         * @return Duktape return value (`duk_ret_t`)
-         *
-         * ```
-         * // Usage in JavaScript
-         * app.addRoute("GET", "/somepath/{args}", (req, res) {
-         *      // Request Body Here ...
-         * }, [
-         *      // One or More Middlewares
-         *      app.someFunc,
-         *      (req, res) {
-         *          // For each middleware, returning:
-         *          // - `true`: Middleware was successful, proceed to the next middleware/handler
-         *          // - `false`: Middleware failed, so return request to the user as an error
-         *          return true;
-         *      }
-         * ])
-         * ```
-         */
-        duk_ret_t addRoute(duk_context* ctx);
-
-        /**
-         * @brief Handles execution of handler & middlewares for JS bound requests
-         * through the @see addRoute() method call.
-         *
-         * @param ctx Duktape Context pointer
-         * @param handler Request Handler Method
-         * @param middlewares Request Middlewares to execute
-         * @param req MantisRequest instance
-         * @param res MantisResponse instance
-         */
-        void executeRoute(duk_context* ctx,
-                          const DukValue& handler,
-                          const std::vector<DukValue>& middlewares,
-                          MantisRequest& req, MantisResponse& res);
-
+        [[nodiscard]] RouterUnit* duk_router() const;
 
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
@@ -388,7 +349,7 @@ namespace mantis
         std::unique_ptr<LoggingUnit> m_logger;
         std::unique_ptr<HttpUnit> m_http;
         std::unique_ptr<argparse::ArgumentParser> m_opts;
-        std::unique_ptr<Router> m_router;
+        std::unique_ptr<RouterUnit> m_router;
         std::unique_ptr<Validator> m_validators;
         std::unique_ptr<ExprEvaluator> m_exprEval;
         std::unique_ptr<SettingsUnit> m_settings;

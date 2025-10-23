@@ -200,7 +200,7 @@ namespace mantis
         const auto scripts_dir = dirFromPath(scriptsDir);
         setScriptsDir(scripts_dir.empty() ? dirFromPath("scripts") : scripts_dir);
 
-        Log::info("Mantis Configured Paths:\n\t> Data Dir: {}\n\t> Public Dir: {}\n\t> Scripts Dir: {}",
+        Log::trace("Mantis Configured Paths:\n\t> Data Dir: {}\n\t> Public Dir: {}\n\t> Scripts Dir: {}",
                   data_dir, pub_dir, scripts_dir);
 
         // Ensure objects are first created, taking into account the cmd args passed in
@@ -376,7 +376,7 @@ namespace mantis
         m_exprEval = std::make_unique<ExprEvaluator>(); // depends on log()
         m_database = std::make_unique<DatabaseUnit>(); // depends on log()
         m_http = std::make_unique<HttpUnit>(); // depends on db()
-        m_router = std::make_unique<Router>(); // depends on db() & http()
+        m_router = std::make_unique<RouterUnit>(); // depends on db() & http()
         m_settings = std::make_unique<SettingsUnit>(); // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
         m_validators = std::make_unique<Validator>();
@@ -452,7 +452,7 @@ namespace mantis
         return *m_opts;
     }
 
-    Router& MantisApp::router() const
+    RouterUnit& MantisApp::router() const
     {
         return *m_router;
     }
@@ -730,11 +730,11 @@ namespace mantis
         dukglue_register_method(m_dukCtx, &MantisApp::quit_JSWrapper, "quit");
         // `app.db()`
         dukglue_register_method(m_dukCtx, &MantisApp::duk_db, "db");
+        // `app.router()`
+        dukglue_register_method(m_dukCtx, &MantisApp::duk_router, "router");
 
         MantisRequest::registerDuktapeMethods();
         MantisResponse::registerDuktapeMethods();
-
-        dukglue_register_method_varargs(m_dukCtx, &MantisApp::addRoute, "addRoute");
 
         // ---------------------------------------------- //
         // Register `console` object
@@ -759,8 +759,8 @@ namespace mantis
         // DATABASE methods
         DatabaseUnit::registerDuktapeMethods();
 
-        // HTTP methods
-        // HttpUnit::registerDuktapeMethods();
+        // Router methods for dukttape
+        RouterUnit::registerDuktapeMethods();
     }
 
     void MantisApp::loadStartScript() const
@@ -811,154 +811,8 @@ namespace mantis
         return m_database.get();
     }
 
-    duk_ret_t MantisApp::addRoute(duk_context* ctx)
+    RouterUnit* MantisApp::duk_router() const
     {
-        // Get method (GET, POST, etc.) from argument 0
-        auto method = trim(duk_require_string(ctx, 0));
-        std::ranges::transform(method, method.begin(), ::toupper);
-        if (method.empty() ||
-            !(method == "GET" || method == "POST" || method == "PATCH" || method == "DELETE"))
-        {
-            duk_error(ctx, DUK_ERR_TYPE_ERROR,
-                      "addRoute expects request method of type `GET`, `POST`, `PATCH` or `DELETE` only!");
-            return DUK_RET_TYPE_ERROR;
-        }
-
-        // Get path from argument 1
-        const auto path = trim(duk_require_string(ctx, 1));
-        // TODO Catch wildcard paths as well?
-        if (path.empty() || path[0] != '/')
-        {
-            duk_error(ctx, DUK_ERR_TYPE_ERROR, "addRoute expects route paths to be valid and start with `/`!");
-            return DUK_RET_TYPE_ERROR;
-        }
-
-        // Get number of function arguments (everything after path)
-        duk_idx_t n = duk_get_top(ctx);
-        if (n < 3)
-        {
-            duk_error(ctx, DUK_ERR_TYPE_ERROR, "addRoute requires at least a handler function");
-            return DUK_RET_TYPE_ERROR;
-        }
-
-        // First function (argument 2) is the handler
-        if (!duk_is_callable(ctx, 2))
-        {
-            duk_error(ctx, DUK_ERR_TYPE_ERROR, "Argument 2 must be a callable handler function");
-            return DUK_RET_TYPE_ERROR;
-        }
-
-        duk_dup(ctx, 2);
-        DukValue handler = DukValue::take_from_stack(ctx);
-
-        // Remaining functions (arguments 3+) are middleware
-        std::vector<DukValue> middlewares;
-        for (duk_idx_t i = 3; i < n; i++)
-        {
-            if (!duk_is_callable(ctx, i))
-            {
-                duk_error(ctx, DUK_ERR_TYPE_ERROR, "All arguments after handler must be callable functions");
-                return DUK_RET_TYPE_ERROR;
-            }
-
-            duk_dup(ctx, i);
-            middlewares.push_back(DukValue::take_from_stack(ctx));
-        }
-
-        if (method == "GET")
-        {
-            m_http->Get(path, [this, ctx, handler, middlewares](
-                        MantisRequest& req,
-                        MantisResponse& res)
-                        {
-                            this->executeRoute(ctx, handler, middlewares, req, res);
-                        }, {}
-            );
-        }
-        else if (method == "POST")
-        {
-            m_http->Post(path, [this, ctx, handler, middlewares](
-                         MantisRequest& req,
-                         MantisResponse& res)
-                         {
-                             this->executeRoute(ctx, handler, middlewares, req, res);
-                         }, {}
-            );
-        }
-        else if (method == "PATCH")
-        {
-            m_http->Patch(path, [this, ctx, handler, middlewares](
-                          MantisRequest& req,
-                          MantisResponse& res)
-                          {
-                              this->executeRoute(ctx, handler, middlewares, req, res);
-                          }, {}
-            );
-        }
-        else if (method == "DELETE")
-        {
-            m_http->Delete(path, [this, ctx, handler, middlewares](
-                           MantisRequest& req,
-                           MantisResponse& res)
-                           {
-                               this->executeRoute(ctx, handler, middlewares, req, res);
-                           }, {}
-            );
-        }
-        else
-        {
-            duk_error(ctx, DUK_ERR_TYPE_ERROR, "Unsupported HTTP method: %s", method.c_str());
-            return DUK_RET_TYPE_ERROR;
-        }
-
-        return 0; // No return value
-    }
-
-    void MantisApp::executeRoute(duk_context* ctx, const DukValue& handler, const std::vector<DukValue>& middlewares,
-                                 MantisRequest& req, MantisResponse& res)
-    {
-        // Execute middleware functions first
-        for (const auto& middleware : middlewares)
-        {
-            try
-            {
-                // Call middleware: middleware(req, res)
-                // If middleware returns false, stop execution
-                const bool ok = dukglue_pcall<bool>(ctx, middleware, &req, &res);
-
-                if (!ok)
-                {
-                    if (res.getStatus() < 400) res.setStatus(500); // If error code is not explicit
-                    return; // Middleware stopped the chain
-                }
-            }
-            catch (const DukException& e)
-            {
-                json response;
-                response["status"] = "ok";
-                response["data"] = json::object();
-                response["error"] = e.what();
-
-                res.sendJson(500, response);
-                Log::critical("Error Executing Middleware: {}", e.what());
-                return;
-            }
-        }
-
-        // Execute the handler function
-        try
-        {
-            dukglue_pcall<void>(ctx, handler, &req, &res);
-        }
-        catch (const DukException& e)
-        {
-            json response;
-            response["status"] = 500;
-            response["data"] = json::object();
-            response["error"] = e.what();
-
-            res.sendJson(500, response);
-            Log::critical("Error Executing Route {} : {}", req.getPath(), e.what());
-        }
+        return m_router.get();
     }
 }

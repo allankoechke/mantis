@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.2.10)
+project(mantisapp VERSION 0.2.11)
 
 set(CMAKE_CXX_STANDARD 20)
 
@@ -53,8 +53,8 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     include/mantis/core/models/models.h
     src/core/logging.cpp
     include/mantis/core/logging.h
-    src/core/router.cpp
-    include/mantis/core/router.h
+        src/core/router.cpp
+        include/mantis/core/router.h
     src/core/http.cpp
     include/mantis/core/http.h
     include/mantis/core/crud/crud.h

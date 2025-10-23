@@ -253,6 +253,42 @@ void mantis::DatabaseUnit::registerDuktapeMethods()
     // dukglue_register_method(ctx, &soci::session::get_last_insert_id, "getLastInsertId");
     dukglue_register_method(ctx, &soci::session::get_backend_name, "getBackendName");
     dukglue_register_method(ctx, &soci::session::empty_blob, "emptyBlob");
+
+
+    dukglue_register_method(ctx, &DatabaseUnit::queryOne, "queryOne");
+}
+
+duk_ret_t mantis::DatabaseUnit::queryOne(duk_context* ctx)
+{
+    // TRACE_CLASS_METHOD();
+
+    // Get number of arguments
+    const int nargs = duk_get_top(ctx);
+
+    if (nargs < 1) {
+        Log::critical("[JS] Expected at least 1 argument (query string)");
+        duk_error(ctx, DUK_ERR_TYPE_ERROR, "Expected at least 1 argument (query string)");
+        return DUK_RET_TYPE_ERROR;
+    }
+
+    // First argument is the SQL query
+    const char* query = duk_require_string(ctx, 0);
+
+    // Collect remaining arguments (bind parameters)
+    std::vector<std::string> params;
+    soci::values bind_vals;
+    for (int i = 1; i < nargs; i++) {
+        if (duk_is_number(ctx, i)) {
+            params.push_back(std::to_string(duk_get_number(ctx, i)));
+        } else if (duk_is_string(ctx, i)) {
+            params.push_back(duk_get_string(ctx, i));
+        } else if (duk_is_boolean(ctx, i)) {
+            params.push_back(duk_get_boolean(ctx, i) ? "1" : "0");
+        }
+        // Add more type handling as needed
+    }
+
+
 }
 
 void mantis::DatabaseUnit::writeCheckpoint() const

@@ -77,38 +77,17 @@ namespace mantis
          * @brief Execute an SQL script, bound to any given values and return a single or no
          * Dukvalue object. In case of any erorr, we throw the error back to JS.
          *
+         * @code
+         * const user = queryOne("SELECT * FROM students WHERE id = :id LIMIT 1", "12345643")
+         * if(user!==undefined) {
+         *     // ....
+         * }
+         * @endcode
+         *
          * @param ctx
          * @return
          */
-        duk_ret_t executeOne(duk_context* ctx)
-        {
-            // TRACE_CLASS_METHOD();
-
-            // Get number of arguments
-            int nargs = duk_get_top(ctx);
-
-            if (nargs < 1) {
-                Log::critical("[JS] Expected at least 1 argument (query string)");
-                duk_error(ctx, DUK_ERR_TYPE_ERROR, "Expected at least 1 argument (query string)");
-                return DUK_RET_TYPE_ERROR;
-            }
-
-            // First argument is the SQL query
-            const char* query = duk_require_string(ctx, 0);
-
-            // Collect remaining arguments (bind parameters)
-            std::vector<std::string> params;
-            for (int i = 1; i < nargs; i++) {
-                if (duk_is_number(ctx, i)) {
-                    params.push_back(std::to_string(duk_get_number(ctx, i)));
-                } else if (duk_is_string(ctx, i)) {
-                    params.push_back(duk_get_string(ctx, i));
-                } else if (duk_is_boolean(ctx, i)) {
-                    params.push_back(duk_get_boolean(ctx, i) ? "1" : "0");
-                }
-                // Add more type handling as needed
-            }
-        }
+        duk_ret_t queryOne(duk_context* ctx);
         /**
          * @brief Write WAL data to db file and truncate the WAL file
          */
