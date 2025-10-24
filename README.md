@@ -126,12 +126,15 @@ Mantis has a built-in lightweight JavaScript engine based on the `Duktape` libra
 For adding routes for instance:
 
 ```js
-app.addRoute("GET", "/someapi/method/:arg", function(req, res){
+app.router().addRoute("GET", "/someapi/method/:arg", function(req, res){
     // Check if path params are available
     if(req.hasPathParam("arg")) {
         const arg = req.getPathParam("arg")
         const db_connected = app.db().connected
-        res.sendJson(200, JSON.stringify({path: arg, connected: db_connected}))
+        // res.text(200, "Hello World")
+        // res.empty(204)
+        // res.send(200, "response as text", "text/plain")
+        res.json(200, {path: arg, connected: db_connected})
         return
     }
 

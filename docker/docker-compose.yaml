@@ -10,3 +10,4 @@ services:
     volumes:
       - ./data:/mantis/data
       - ./www:/mantis/public
+      - ./scripts:/mantis/scripts

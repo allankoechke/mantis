@@ -10,11 +10,12 @@
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
 #include <mantis/core/private-impl/soci_custom_types.hpp>
+#include <dukglue/dukglue.h>
 
 #include "../app/app.h"
 #include "logging.h"
 
-// #define __file__ "core/tables/database.h"
+#define __file__ "core/tables/database.h"
 
 namespace mantis
 {
@@ -61,6 +62,8 @@ namespace mantis
          * @return A reference to the soci::connection_pool instance
          */
         [[nodiscard]] soci::connection_pool& connectionPool() const;
+
+        static nlohmann::json rowToJson(const soci::row& r);
 
         /**
          * @brief Check if the database is connected
