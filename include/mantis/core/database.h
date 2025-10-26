@@ -78,19 +78,22 @@ namespace mantis
     private:
         /**
          * @brief Execute an SQL script, bound to any given values and return a single or no
-         * Dukvalue object. In case of any erorr, we throw the error back to JS.
+         * Dukvalue object. In case of any error, we throw the error back to JS.
          *
          * @code
-         * const user = queryOne("SELECT * FROM students WHERE id = :id LIMIT 1", "12345643")
+         * const user = query("SELECT * FROM students WHERE id = :id LIMIT 1", {id: "12345643"})
          * if(user!==undefined) {
          *     // ....
          * }
+         * query("INSERT INTO students(name, age) VALUES ()", {name: "John Doe"}, {age: 12})
          * @endcode
          *
-         * @param ctx
-         * @return
+         * @param ctx duktape context object
+         * @return Execution status of the query. The objects returned (JSON Object or JSON Array) are
+         * pushed directly to the JS context
          */
-        duk_ret_t queryOne(duk_context* ctx);
+        duk_ret_t query(duk_context* ctx);
+
         /**
          * @brief Write WAL data to db file and truncate the WAL file
          */

@@ -306,7 +306,7 @@ namespace mantis
         // DatabaseUnit methods
         dukglue_register_property(ctx, &DatabaseUnit::isConnected, nullptr, "connected");
         dukglue_register_method(ctx, &DatabaseUnit::session, "session");
-        dukglue_register_method_varargs(ctx, &DatabaseUnit::queryOne, "queryOne");
+        dukglue_register_method_varargs(ctx, &DatabaseUnit::query, "query");
 
         // soci::session methods
         dukglue_register_method(ctx, &soci::session::close, "close");
@@ -324,7 +324,7 @@ namespace mantis
         dukglue_register_method(ctx, &soci::session::empty_blob, "emptyBlob");
     }
 
-    duk_ret_t DatabaseUnit::queryOne(duk_context* ctx)
+    duk_ret_t DatabaseUnit::query(duk_context* ctx)
     {
         // TRACE_CLASS_METHOD();
 
@@ -386,15 +386,9 @@ namespace mantis
                     std::optional<int> val;
                     vals.set(key, val, soci::i_null);
                 }
-                else if (value.is_object())
+                else if (value.is_object() || value.is_array())
                 {
-                    auto val = value.object();
-                    vals.set(key, val);
-                }
-                else if (value.is_array())
-                {
-                    auto val = value.array();
-                    vals.set(key, val);
+                    vals.set(key, value);
                 }
                 else
                 {
@@ -404,40 +398,38 @@ namespace mantis
                     return DUK_RET_TYPE_ERROR;
                 }
             }
-
-            auto sql = session();
-
-            soci::row r;
-            *sql << query, soci::use(vals), soci::into(r);
-
-            if (!sql->got_data())
-            {
-                duk_push_null(ctx);
-                return 1; // Return null
-            }
-
-            // Return a JavaScript object
-            duk_idx_t obj_idx = duk_push_object(ctx);
-
-            const json rJs = rowToJson(r);
-
-            for (const auto& key : rJs.items())
-
-
-            // Populate the object with your data
-            duk_push_string(ctx, "success");
-            duk_put_prop_string(ctx, obj_idx, "status");
-
-            duk_push_int(ctx, 42);
-            duk_put_prop_string(ctx, obj_idx, "count");
-
-            // Add more properties as needed
-
-            return 1; // Return the object
         }
 
+        // Get SQL Session
+        auto sql = session();
 
-        return {};
+        Log::trace("[JS] soci::value binding? {}", vals.get_number_of_columns());
+
+        // Execute SQL Statement
+        soci::rowset<soci::row> rs = (sql->prepare << query, soci::use(vals));
+
+        json results = json::array();
+        for (auto & r : rs)
+        {
+            nlohmann::json obj;
+            const json row = rowToJson(r);
+            results.push_back(obj);
+        }
+
+        Log::trace("[JS] Results: {}", results.dump());
+
+        if (results.empty())
+        {
+            // Return null
+            duk_push_null(ctx);
+            return 1;
+        }
+
+        // Convert nlohmann::json to JavaScript object
+        std::string results_str = results.size() == 1 ? results[0].dump() : results.dump();
+        duk_push_string(ctx, results_str.c_str());
+        duk_json_decode(ctx, -1);
+        return 1; // Return the object
     }
 
     void DatabaseUnit::writeCheckpoint() const
