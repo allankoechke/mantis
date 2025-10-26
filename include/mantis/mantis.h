@@ -17,6 +17,9 @@
 #include "core/http.h"
 #include "core/logging.h"
 #include "core/router.h"
+#include "core/context_store.h"
+#include "core/fileunit.h"
+#include "core/settings.h"
 
 // CRUD and JWT
 #include "core/jwt.h"

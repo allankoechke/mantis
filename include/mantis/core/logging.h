@@ -8,9 +8,9 @@
 #ifndef MANTIS_LOGGER_H
 #define MANTIS_LOGGER_H
 
-#include <../../3rdParty/json/single_include/nlohmann/json.hpp>
-#include <../../3rdParty/spdlog/include/spdlog/spdlog.h>
-#include <../../3rdParty/spdlog/include/spdlog/sinks/basic_file_sink.h>
+#include <nlohmann/json.hpp>
+#include <spdlog/spdlog.h>
+#include <spdlog/sinks/basic_file_sink.h>
 
 namespace mantis
 {
