@@ -340,79 +340,115 @@ namespace mantis
 
         // First argument is the SQL query
         const char* query = duk_require_string(ctx, 0);
+        // Log::trace("[JS] SQL Query: `{}`", query);
 
         // Collect remaining arguments (bind parameters)
         soci::values vals;
-        for (int i = 1; i < nargs; i++)
+
+        try
         {
-            if (!duk_is_object(ctx, i))
+            for (int i = 1; i < nargs; i++)
             {
-                Log::critical("[JS] Arguments after query must be objects.");
-                duk_error(ctx, DUK_ERR_TYPE_ERROR, "Arguments after query must be objects");
-                return DUK_RET_TYPE_ERROR;
-            }
-
-            // Convert JavaScript object to JSON string
-            duk_dup(ctx, i); // Duplicate the object at index i
-            const char* json_str = duk_json_encode(ctx, -1);
-            duk_pop(ctx); // Pop the encoded string
-
-            // Parse into nlohmann::json
-            nlohmann::json json_obj = nlohmann::json::parse(json_str);
-            for (auto& [key, value] : json_obj.items())
-            {
-                if (value.is_string())
+                if (!duk_is_object(ctx, i))
                 {
-                    auto str_val = value.get<std::string>();
-                    vals.set(key, str_val);
-                }
-                else if (value.is_number_integer())
-                {
-                    int int_val = value.get<int>();
-                    vals.set(key, int_val);
-                }
-                else if (value.is_number_float())
-                {
-                    double double_val = value.get<double>();
-                    vals.set(key, double_val);
-                }
-                else if (value.is_boolean())
-                {
-                    bool bool_val = value.get<bool>();
-                    vals.set(key, bool_val);
-                }
-                else if (value.is_null())
-                {
-                    std::optional<int> val;
-                    vals.set(key, val, soci::i_null);
-                }
-                else if (value.is_object() || value.is_array())
-                {
-                    vals.set(key, value);
-                }
-                else
-                {
-                    auto err = std::format("Could not cast type at {} to DB supported types.", (i - 1));
-                    Log::critical("[JS] {}", err);
-                    duk_error(ctx, DUK_ERR_TYPE_ERROR, err.c_str());
+                    Log::critical("[JS] Arguments after query must be objects.");
+                    duk_error(ctx, DUK_ERR_TYPE_ERROR, "Arguments after query must be objects");
                     return DUK_RET_TYPE_ERROR;
                 }
+
+                // Convert JavaScript object to JSON string
+                duk_dup(ctx, i); // Duplicate the object at index i
+                const char* json_char = duk_json_encode(ctx, -1);
+
+                // Create a string out of the char*, else, json::parse throws an exception
+                const std::string json_str = json_char ? std::string(json_char) : std::string();
+
+                duk_pop(ctx); // Pop the encoded string
+
+                nlohmann::json json_obj = json::object();
+                try
+                {
+                    // Parse into nlohmann::json
+                    json_obj = nlohmann::json::parse(json_str);
+                } catch (const std::exception& e)
+                {
+                    Log::critical("[JS] Parsing exception: {}", e.what());
+                } catch (const char* e)
+                {
+                    Log::critical("[JS] Unknown Parsing exception");
+                }
+                Log::trace("After Parsing, object? `{}`", json_obj.dump());
+
+                for (auto& [key, value] : json_obj.items())
+                {
+                    if (value.is_string())
+                    {
+                        auto str_val = value.get<std::string>();
+                        Log::trace("[JS] Str Value: `{}` - `{}`", key, str_val);
+                        vals.set(key, str_val);
+                        Log::trace("[JS] After Set Value");
+                        Log::trace("[JS] After Set Value To: `{}`", vals.get<std::string>(key));
+                    }
+                    else if (value.is_number_integer())
+                    {
+                        int int_val = value.get<int>();
+                        Log::trace("[JS] Int Value: `{}`", int_val);
+                        vals.set(key, int_val);
+                    }
+                    else if (value.is_number_float())
+                    {
+                        double double_val = value.get<double>();
+                        Log::trace("[JS] Double Value: `{}`", double_val);
+                        vals.set(key, double_val);
+                    }
+                    else if (value.is_boolean())
+                    {
+                        bool bool_val = value.get<bool>();
+                        Log::trace("[JS] Bool Value: `{}`", bool_val);
+                        vals.set(key, bool_val);
+                    }
+                    else if (value.is_null())
+                    {
+                        std::optional<int> val;
+                        Log::trace("[JS] Null Value: `null`");
+                        vals.set(key, val, soci::i_null);
+                    }
+                    else if (value.is_object() || value.is_array())
+                    {
+                        Log::trace("[JS] JSON Value: `{}`", value.dump());
+                        vals.set(key, value);
+                    }
+                    else
+                    {
+                        auto err = std::format("Could not cast type at {} to DB supported types.", (i - 1));
+                        Log::critical("[JS] Casting Value > {}", err);
+                        duk_error(ctx, DUK_ERR_TYPE_ERROR, err.c_str());
+                        return DUK_RET_TYPE_ERROR;
+                    }
+                }
             }
+        } catch (const std::exception& e)
+        {
+            Log::critical("[JS] Getting Binding Values Failed: Why? {}", e.what());
+
         }
 
         // Get SQL Session
         auto sql = session();
 
-        Log::trace("[JS] soci::value binding? {}", vals.get_number_of_columns());
+        Log::trace("[JS] soci::value binding? {}", nargs-1);
 
         // Execute SQL Statement
-        soci::rowset<soci::row> rs = (sql->prepare << query, soci::use(vals));
+        soci::row data_row;
+        soci::statement st = nargs < 2 // If only the query is provided, no binding values
+                                         ? (sql->prepare << query, soci::into(data_row)) // Execute only the query
+                                         : (sql->prepare << query, soci::use(vals), soci::into(data_row));
+        st.execute(); // Execute statement
 
         json results = json::array();
-        for (auto & r : rs)
+        while (st.fetch())
         {
-            nlohmann::json obj;
-            const json row = rowToJson(r);
+            nlohmann::json obj = rowToJson(data_row);
             results.push_back(obj);
         }
 
