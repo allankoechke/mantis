@@ -19,3 +19,6 @@
 [submodule "3rdParty/dukglue"]
 	path = 3rdParty/dukglue
 	url = https://github.com/Aloshi/dukglue.git
+[submodule "3rdParty/bcrypt-cpp"]
+	path = 3rdParty/bcrypt-cpp
+	url = https://github.com/allankoechke/Bcrypt.cpp.git

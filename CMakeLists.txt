@@ -44,25 +44,15 @@ add_executable(mantisapp
 
 # Add library
 add_library(mantis ${MANTIS_LIB_TYPE}
-    include/mantis/mantis.h
     src/app/app.cpp
-    include/mantis/app/app.h
     src/core/database.cpp
-    include/mantis/core/database.h
     src/core/models/models.cpp
-    include/mantis/core/models/models.h
     src/core/logging.cpp
-    include/mantis/core/logging.h
-        src/core/router.cpp
-        include/mantis/core/router.h
+    src/core/router.cpp
     src/core/http.cpp
-    include/mantis/core/http.h
-    include/mantis/core/crud/crud.h
-    include/mantis/core/jwt.h
     src/core/jwt.cpp
 
     # All table operations
-    include/mantis/core/tables/tables.h
     src/core/tables/tables.cpp
     src/core/tables/tables_crud.cpp
     src/core/tables/tables_routes.cpp
@@ -71,16 +61,13 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     src/core/tables/tables_validation.cpp
 
     # System Tables
-    include/mantis/core/tables/sys_tables.h
     src/core/tables/sys_tables.cpp
     src/core/tables/sys_tables_crud.cpp
 
     # Expression evaluator
     src/core/expr_evaluator.cpp
-    include/mantis/core/expr_evaluator.h
 
     # Utilities
-    include/mantis/utils/utils.h
     src/utils/auth_utils.cpp
     src/utils/string_utils.cpp
     src/utils/path_utils.cpp
@@ -91,18 +78,12 @@ add_library(mantis ${MANTIS_LIB_TYPE}
     include/mantis/app/config.hpp.in
 
     src/core/settings.cpp
-    include/mantis/core/settings.h
-
     src/core/fileunit.cpp
-    include/mantis/core/fileunit.h
+    src/core/context_store.cpp
 
-    include/mantis/core/private-impl/duktape_custom_types.h
     src/core/private-impl/duktape_custom_types.cpp
     src/core/private-impl/duktape_request_wrapper.cpp
     src/core/private-impl/duktape_response_wrapper.cpp
-
-    include/mantis/core/context_store.h
-    src/core/context_store.cpp
 )
 
 # Add httplib
@@ -174,11 +155,6 @@ target_include_directories(mantis
 target_link_libraries(mantisapp
     PRIVATE mantis
 )
-
-# In your main CMakeLists.txt, after add_subdirectory(3rdParty/l8w8jwt)
-if(WIN32)
-    target_link_libraries(mantis PRIVATE bcrypt)
-endif()
 
 # Check if Doxygen is installed, then build docs
 include(cmake/add-doxygen.cmake)

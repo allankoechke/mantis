@@ -70,8 +70,8 @@ namespace mantis
 
             // Extract user password value
             const auto db_password = r.get<std::string>("password");
-            const auto resp = verifyPassword(password, db_password);
-            if (resp.value("verified", false))
+            const auto pswd_ok = verifyPassword(password, db_password);
+            if (pswd_ok)
             {
                 // Create JWT Token and return to the user ...
                 auto user = parseDbRowToJson(r);
@@ -107,8 +107,7 @@ namespace mantis
             response["error"] = "No user found matching given email/password combination.";
 
             res.sendJson(404, response);
-            Log::warn("No user found for given email/password combination. Reason: {}",
-                      resp.value("error", ""));
+            Log::warn("No user found for given email/password combination");
         }
         catch (std::exception& e)
         {

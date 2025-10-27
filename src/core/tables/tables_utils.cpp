@@ -210,21 +210,9 @@ namespace mantis
             if (field_name == "password")
             {
                 // Extract password value and hash it
-                auto res = hashPassword(entity.value(field_name, ""));
-                if (!res.value("error", "").empty())
-                {
-                    // Something went wrong while hashing password
-                    Log::critical("Failed to hash user password. Reason: {}", res.value("error", ""));
-
-                    json result;
-                    result["error"] = res.value("error", "");
-                    result["data"] = json::object();
-                    result["status"] = 500;
-                    return result;
-                }
-
+                auto hashed_pswd = hashPassword(entity.at(field_name).get<std::string>());
                 // Add the hashed password to the soci::vals
-                vals.set(field_name, res.at("hash").get<std::string>());
+                vals.set(field_name, hashed_pswd);
             }
 
             else

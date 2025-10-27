@@ -11,9 +11,7 @@ namespace mantis {
         dukglue_register_function(ctx, &generateShortId, "generateShortId");
         dukglue_register_function(ctx, &getEnvOrDefault, "getEnvOrDefault");
         dukglue_register_function(ctx, &sanitizeFilename_JSWrapper, "sanitizeFilename");
-        dukglue_register_function(ctx, &bcryptBase64EncodeStr, "bcryptBase64Encode");
-        dukglue_register_function(ctx, &generateSalt, "generateSalt");
-        dukglue_register_function(ctx, &hashPasswordJS, "hashPassword");
-        dukglue_register_function(ctx, &verifyPasswordJS, "verifyPassword");
+        dukglue_register_function(ctx, &hashPassword, "hashPassword");
+        dukglue_register_function(ctx, &verifyPassword, "verifyPassword");
     }
 }
