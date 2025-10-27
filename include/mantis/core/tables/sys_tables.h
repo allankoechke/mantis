@@ -6,7 +6,7 @@
 #define SYS_TABLES_H
 
 #include "tables.h"
-
+#include "../../utils/utils.h"
 
 namespace mantis
 {

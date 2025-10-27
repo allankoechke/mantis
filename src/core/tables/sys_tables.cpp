@@ -1,13 +1,9 @@
-//
-// Created by allan on 20/05/2025.
-//
-
 #include "../../../include/mantis/core/tables/sys_tables.h"
 #include "../../../include/mantis/core/database.h"
 #include "../../../include/mantis/app/app.h"
 #include "../../../include/mantis/utils/utils.h"
 #include "../../../include/mantis/core/router.h"
-#include "mantis/core/jwt.h"
+#include "../../../include/mantis/core/jwt.h"
 
 #define __file__ "core/tables/sys_tables.cpp"
 

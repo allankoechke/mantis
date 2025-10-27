@@ -1,10 +1,7 @@
-//
-// Created by allan on 22/06/2025.
-//
 #include "../../include/mantis/utils/utils.h"
-#include <algorithm>
 
-#include "httplib.h"
+#include <algorithm>
+#include <httplib.h>
 
 namespace mantis
 {

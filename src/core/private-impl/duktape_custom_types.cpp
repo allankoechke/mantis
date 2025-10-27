@@ -1,8 +1,4 @@
-//
-// Created by allan on 07/10/2025.
-//
-
-#include <mantis/core/private-impl/duktape_custom_types.h>
+#include "../../include/mantis/core/private-impl/duktape_custom_types.h"
 #include <iostream>
 
 namespace mantis

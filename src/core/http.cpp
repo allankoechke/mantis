@@ -1,19 +1,14 @@
-//
-// Created by allan on 13/05/2025.
-//
 #include "../../include/mantis/core/http.h"
 #include "../../include/mantis/core/logging.h"
 #include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/private-impl/duktape_custom_types.h"
 
 #include <chrono>
 #include <thread>
-#include <format>
 
 // For thread logger
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
-
-#include "mantis/core/private-impl/duktape_custom_types.h"
-#include "spdlog/sinks/ansicolor_sink.h"
+#include <spdlog/sinks/ansicolor_sink.h>
 
 #define __file__ "core/http.cpp"
 

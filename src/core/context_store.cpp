@@ -1,11 +1,8 @@
-//
-// Created by allan on 18/10/2025.
-//
+#include "../../include/mantis/core/context_store.h"
+#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/logging.h"
 
-#include <mantis/core/context_store.h>
-#include <mantis/app/app.h>
 #include <dukglue/dukglue.h>
-#include <mantis/core/logging.h>
 
 namespace mantis
 {

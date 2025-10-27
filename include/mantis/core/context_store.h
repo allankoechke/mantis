@@ -7,6 +7,7 @@
 
 #include <nlohmann/json.hpp>
 #include <dukglue/dukglue.h>
+#include "../utils/utils.h"
 
 namespace mantis
 {

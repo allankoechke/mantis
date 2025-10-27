@@ -21,6 +21,7 @@
 #include "logging.h"
 #include "mantis/app/app.h"
 #include "private-impl/duktape_custom_types.h"
+#include "../utils/utils.h"
 
 #define REQUEST_HANDLED false
 #define REQUEST_PENDING true

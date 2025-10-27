@@ -8,6 +8,7 @@
 #include <dukglue/dukglue.h>
 #include <mantis/core/http.h>
 #include <mantis/core/context_store.h>
+#include "../../utils/utils.h"
 
 namespace mantis
 {

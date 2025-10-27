@@ -1,7 +1,3 @@
-//
-// Created by allan on 16/05/2025.
-//
-
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/logging.h"
 #include "../../include/mantis/app/app.h"
@@ -14,8 +10,6 @@
 
 #if MANTIS_HAS_POSTGRESQL
 #include <soci/postgresql/soci-postgresql.h>
-// #include "soci/postgresql/soci-postgresql.h"
-// soci::dynamic_backends::register_backend("postgresql", soci::postgresql);
 #endif
 
 #define __file__ "core/tables/sys_tables.cpp"

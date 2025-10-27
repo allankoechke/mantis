@@ -1,20 +1,12 @@
 #include "../../include/mantis/core/router.h"
-
 #include "../../include/mantis/utils/utils.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/core/tables/sys_tables.h"
 #include "../../include/mantis/core/fileunit.h"
-
-#include <format>
-#include <nlohmann/json.hpp>
-
-#include "mantis/core/settings.h"
-using json = nlohmann::json;
-
-// MantisRequest & MantisResponse
-#include <mantis/core/private-impl/duktape_custom_types.h>
+#include "../../include/mantis/core/private-impl/duktape_custom_types.h"
+#include "../../include/mantis/core/settings.h"
 
 #include <cmrc/cmrc.hpp>
 #include <dukglue/dukglue.h>
@@ -22,10 +14,10 @@ using json = nlohmann::json;
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);
 
-namespace mantis
-{
 #define __file__ "core/router.cpp"
 
+namespace mantis
+{
     RouterUnit::RouterUnit()
     {
         // Create admin table object, we'll use it to get JSON rep for use in

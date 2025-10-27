@@ -11,6 +11,8 @@
 #include <containers.h>
 #include <nlohmann/json.hpp>
 
+#include "../utils/utils.h"
+
 // #define __file__ "core/expr_evaluator.h"
 
 namespace mantis

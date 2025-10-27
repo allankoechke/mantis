@@ -12,6 +12,7 @@
 #include <nlohmann/json.hpp>
 
 #include "logging.h"
+#include "../utils/utils.h"
 
 namespace mantis
 {

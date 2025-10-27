@@ -16,13 +16,27 @@
 #include <string_view>
 #include <algorithm>
 #include <soci/row.h>
+#include <nlohmann/json.hpp>
 
 #include "../core/logging.h"
 #include "dukglue/dukvalue.h"
 
+// Wrap around std::format for compilers that do no support
+// std::format yet, especially on Windows
+#if __has_include(<format>)
+#include <format>
+#else
+#include <spdlog/fmt/bundled/format.h>
+namespace std
+{
+    using fmt::format;
+}
+#endif
+
 namespace mantis
 {
     namespace fs = std::filesystem; ///< Use shorthand `fs` to refer to the `std::filesystem`
+    using json = nlohmann::json;    ///> JSON convenience for the nlomann::json namespace
 
     // ----------------------------------------------------------------- //
     // PATH UTILS

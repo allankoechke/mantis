@@ -1,17 +1,11 @@
-//
-// Created by allan on 07/06/2025.
-//
-
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
-#include "../../../include/mantis/utils/utils.h"
-
-#define __file__ "core/tables/tables_crud.cpp"
-
+#include "../../include/mantis/utils/utils.h"
+#include "../../include/mantis/core/fileunit.h"
 #include <cmath>
 
-#include "mantis/core/fileunit.h"
+#define __file__ "core/tables/tables_crud.cpp"
 
 namespace mantis
 {

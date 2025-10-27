@@ -1,11 +1,7 @@
-//
-// Created by allan on 07/06/2025.
-//
-
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
-#include "../../../include/mantis/utils/utils.h"
+#include "../../include/mantis/utils/utils.h"
 
 #include <iomanip>
 

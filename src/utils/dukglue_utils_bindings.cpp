@@ -1,8 +1,5 @@
-//
-// Created by allan on 08/10/2025.
-//
-#include <mantis/utils/utils.h>
-#include <mantis/app/app.h>
+#include "../../include/mantis/utils/utils.h"
+#include "../../include/mantis/app/app.h"
 
 namespace mantis {
     void registerUtilsToDuktapeEngine()

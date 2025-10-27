@@ -1,16 +1,12 @@
-//
-// Created by allan on 18/05/2025.
-//
-
-#include "mantis/core/tables/sys_tables.h"
-#include "mantis/app/app.h"
-#include "mantis/core/database.h"
-#include "mantis/core/models/models.h"
-#include "mantis/core/tables/tables.h"
-#include "mantis/core/logging.h"
-#include "mantis/utils/utils.h"
-#include "mantis/core/fileunit.h"
-#include "mantis/core/router.h"
+#include "../../../include/mantis/core/tables/sys_tables.h"
+#include "../../../include/mantis/app/app.h"
+#include "../../../include/mantis/core/database.h"
+#include "../../../include/mantis/core/models/models.h"
+#include "../../../include/mantis/core/tables/tables.h"
+#include "../../../include/mantis/core/logging.h"
+#include "../../../include/mantis/utils/utils.h"
+#include "../../../include/mantis/core/fileunit.h"
+#include "../../../include/mantis/core/router.h"
 
 #include <soci/soci.h>
 #include <private/soci-mktime.h>

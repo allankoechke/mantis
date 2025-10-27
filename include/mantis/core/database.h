@@ -13,6 +13,7 @@
 #include <dukglue/dukglue.h>
 
 #include "../app/app.h"
+#include "../utils/utils.h"
 #include "logging.h"
 
 #define __file__ "core/tables/database.h"

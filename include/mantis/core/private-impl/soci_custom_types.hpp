@@ -10,6 +10,7 @@
 
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
+#include "../../utils/utils.h"
 
 /**
  * @brief Add SOCI support for `booleans` and `json` types

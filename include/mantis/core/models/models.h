@@ -8,6 +8,7 @@
 #include <optional>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
+#include "../../utils/utils.h"
 
 namespace mantis
 {

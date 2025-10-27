@@ -1,15 +1,11 @@
-//
-// Created by allan on 07/06/2025.
-//
-
-#include <fstream>
-
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/database.h"
-#include "../../../include/mantis/utils/utils.h"
-#include "mantis/core/fileunit.h"
+#include "../../include/mantis/utils/utils.h"
+#include "../../include/mantis/core/fileunit.h"
+
 #include <iostream>
+#include <fstream>
 
 #define __file__ "core/tables/tables_routes.cpp"
 

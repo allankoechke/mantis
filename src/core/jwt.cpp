@@ -1,15 +1,12 @@
-//
-// Created by allan on 07/06/2025.
-//
-
 #include "../include/mantis/core/jwt.h"
+#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/settings.h"
+
 #include <l8w8jwt/encode.h>
 #include <l8w8jwt/decode.h>
 #include <l8w8jwt/claim.h>
 #include <cstring>
 
-#include "mantis/app/app.h"
-#include "mantis/core/settings.h"
 
 namespace mantis
 {

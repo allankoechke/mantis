@@ -8,6 +8,7 @@
 #include <optional>
 #include <vector>
 #include <nlohmann/json.hpp>
+#include "../../utils/utils.h"
 
 namespace mantis
 {

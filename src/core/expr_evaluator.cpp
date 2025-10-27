@@ -1,9 +1,4 @@
-//
-// Created by allan on 09/06/2025.
-//
-
 #include "../../include/mantis/core/expr_evaluator.h"
-
 #include "../../include/mantis/core/logging.h"
 
 #define __file__ "core/evaluator.cpp"

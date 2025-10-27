@@ -1,18 +1,13 @@
-//
-// Created by allan on 16/05/2025.
-//
+#include "../../include/mantis/mantis.h"
+#include "../../include/mantis/app/config.hpp"
+#include "../../include/mantis/core/settings.h"
+#include "../../include/mantis/core/fileunit.h"
+#include "../../include/mantis/core/private-impl/duktape_custom_types.h"
+#include "../../include/mantis/core/http.h"
 
-#include "mantis/mantis.h"
 #include <builtin_features.h>
-#include <mantis/app/config.hpp>
 #include <cmrc/cmrc.hpp>
-#include <format>
 #include <fstream>
-
-#include "mantis/core/settings.h"
-#include "mantis/core/fileunit.h"
-#include "mantis/core/private-impl/duktape_custom_types.h"
-#include "mantis/core/http.h"
 
 #define __file__ "app/app.cpp"
 

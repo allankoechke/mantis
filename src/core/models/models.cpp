@@ -1,7 +1,3 @@
-//
-// Created by allan on 09/05/2025.
-//
-
 #include "../../../include/mantis/mantis.h"
 #include "soci/sqlite3/soci-sqlite3.h"
 

@@ -12,6 +12,7 @@
 #include "../http.h"
 #include "../crud/crud.h"
 #include "../../app/app.h"
+#include "../../utils/utils.h"
 
 namespace mantis
 {

@@ -1,7 +1,3 @@
-//
-// Created by allan on 12/05/2025.
-//
-
 #include "../../include/mantis/core/logging.h"
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include "spdlog/sinks/ansicolor_sink.h"

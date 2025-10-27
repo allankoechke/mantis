@@ -1,10 +1,5 @@
-//
-// Created by allan on 12/10/2025.
-//
-
-#include <mantis/core/private-impl/duktape_custom_types.h>
-
-#include "mantis/app/app.h"
+#include "../../include/mantis/core/private-impl/duktape_custom_types.h"
+#include "../../include/mantis/app/app.h"
 
 #define __file__ "duktape_response_wrapper.cpp"
 

@@ -12,13 +12,12 @@
 #define APP_H
 
 #include <string>
-#include <mutex>
 #include <filesystem>
-#include <argparse/argparse.hpp>
 #include <chrono>
+#include <argparse/argparse.hpp>
 #include <dukglue/dukglue.h>
+#include <httplib.h>
 
-#include "httplib.h"
 #include "../core/expr_evaluator.h"
 
 // For password management ... // TODO get a proper library

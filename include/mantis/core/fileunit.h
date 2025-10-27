@@ -8,6 +8,7 @@
 
 #include <optional>
 #include <string>
+#include "../utils/utils.h"
 
 namespace mantis
 {

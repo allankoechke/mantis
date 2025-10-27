@@ -7,6 +7,7 @@
 
 #include <mantis/core/http.h>
 #include <nlohmann/json.hpp>
+#include "../utils/utils.h"
 
 namespace mantis
 {

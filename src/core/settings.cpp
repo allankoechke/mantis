@@ -1,17 +1,12 @@
-//
-// Created by allan on 30/06/2025.
-//
-
 #include "../../include/mantis/core/settings.h"
+#include "../../include/mantis/core/http.h"
+#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/database.h"
+#include "../../include/mantis/core/jwt.h"
+#include "../../include/mantis/core/tables/tables.h"
+#include "../../include/mantis/utils/utils.h"
 
-#include <mantis/core/http.h>
-#include <mantis/app/app.h>
 #include <soci/soci.h>
-#include <mantis/core/database.h>
-
-#include "mantis/core/jwt.h"
-#include "mantis/core/tables/tables.h"
-#include "mantis/utils/utils.h"
 
 #define __file__ "core/settings.cpp"
 
