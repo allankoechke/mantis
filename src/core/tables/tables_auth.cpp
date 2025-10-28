@@ -70,30 +70,36 @@ namespace mantis
 
             // Extract user password value
             const auto db_password = r.get<std::string>("password");
-            const auto pswd_ok = verifyPassword(password, db_password);
-            if (pswd_ok)
+
+            // Verify user password
+            if (const auto p_verified = verifyPassword(password, db_password); !p_verified)
             {
-                // Create JWT Token and return to the user ...
-                auto user = parseDbRowToJson(r);
-                user.erase("password"); // Remove password field
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
 
-                // C
-                const json claims{{"id", user.at("id").get<std::string>()}, {"table", m_tableName}};
-                const auto obj = JwtUnit::createJWTToken(claims, MantisApp::jwtSecretKey());
-                if (const auto err = obj.at("error").get<std::string>(); !err.empty())
-                {
-                    response["status"] = 500;
-                    response["data"] = json::object();
-                    response["error"] = err;
+                res.sendJson(404, response);
+                Log::warn("No user found for given email/password combination");
+            }
 
-                    res.sendJson(500, response);
-                    return;
-                }
+            // Create JWT Token and return to the user ...
+            auto user = parseDbRowToJson(r);
+            user.erase("password"); // Remove password field
+
+            // Create user claims to be added to the token
+            const json claims{
+                {"id", user.at("id").get<std::string>()},
+                {"table", m_tableName}
+            };
+
+            try
+            {
+                // Create a user token
+                const auto token = JwtUnit::createJWTToken(claims);
 
                 json data;
                 data["user"] = user;
-                data["token"] = obj.at("token").get<std::string>();
-
+                data["token"] = token;
                 response["status"] = 200;
                 response["data"] = data;
                 response["error"] = "";
@@ -101,13 +107,15 @@ namespace mantis
                 res.sendJson(200, response);
                 return;
             }
+            catch (const std::exception& e)
+            {
+                response["status"] = 500;
+                response["data"] = json::object();
+                response["error"] = std::format("Failed to create token: {}", e.what());
 
-            response["status"] = 404;
-            response["data"] = json::object();
-            response["error"] = "No user found matching given email/password combination.";
-
-            res.sendJson(404, response);
-            Log::warn("No user found for given email/password combination");
+                res.sendJson(500, response);
+                return;
+            }
         }
         catch (std::exception& e)
         {
@@ -167,24 +175,13 @@ namespace mantis
         TRACE_CLASS_METHOD();
 
         // Get the auth var from the context, resort to empty object if it's not set.
-        // auto auth = *ctx.get<json>("auth").value_or(new json{json::object()});
         auto auth = req.getOr<json>("auth", json::object());
 
-        // Store rule, depending on the request type
-        std::string rule;
-        if (req.getMethod() == "GET")
-        {
-            // Check if we are fetching single record using the ID
-            // empty params means we are listing through the endpoint
-            if (req.hasPathParams())
-                rule = m_listRule;
-            else
-                rule = m_getRule;
-        }
-        else if (req.getMethod() == "POST") rule = m_addRule;
-        else if (req.getMethod() == "PATCH") rule = m_updateRule;
-        else if (req.getMethod() == "DELETE") rule = m_deleteRule;
-        else
+        auto method = req.getMethod();
+        if (!(method == "GET"
+            || method == "POST"
+            || method == "PATCH"
+            || method == "DELETE"))
         {
             json response;
             response["status"] = 400;
@@ -194,6 +191,15 @@ namespace mantis
             res.sendJson(400, response);
             return REQUEST_HANDLED;
         }
+
+        // Store rule, depending on the request type
+        std::string rule = method == "GET"
+                               ? (req.hasPathParams() ? m_listRule : m_getRule)
+                               : method == "POST"
+                               ? m_addRule
+                               : method == "PATCH"
+                               ? m_updateRule
+                               : m_deleteRule;
 
         // Remove whitespaces
         rule = trim(rule);
@@ -207,61 +213,50 @@ namespace mantis
             const auto token = auth.value("token", "");
 
             // If token validation worked, lets get data from database
-            if (const auto resp = JwtUnit::verifyJWTToken(token, MantisApp::jwtSecretKey());
-                resp.value("verified", false))
+            if (const auto resp = JwtUnit::verifyJwtToken(token); resp.at("verified").get<bool>())
             {
-                // Ensure that, we only enter this block if `id` and `table` keys have a valid string data
-                if (!resp["id"].is_null() &&
-                    !resp["id"].empty() &&
-                    !resp["table"].is_null() &&
-                    !resp["table"].empty())
+                const auto user_id = resp.at("id").get<std::string>();
+                const auto user_table = resp.at("table").get<std::string>();
+
+                // Query for user with given ID, this info will be populated to the
+                // expression evaluator args as well as available through
+                // the session context, queried by:
+                //  ` req.get<json>("auth").value("id", ""); // returns the user ID
+                //  ` req.get<json>("auth").value("name", ""); // returns the user's name
+                auto sql = MantisApp::instance().db().session();
+                std::string query = "SELECT * FROM " + user_table + " WHERE id = :id LIMIT 1";
+
+                soci::row user_row;
+                *sql << query, soci::use(user_id), soci::into(user_row);
+
+                // Let's only populate TokenVars for now, no returning
+                if (sql->got_data())
                 {
-                    const auto _id = resp["id"].is_null()
-                                         ? ""
-                                         : resp.value("id", "");
-                    const auto _table = resp["table"].is_null()
-                                            ? ""
-                                            : resp.value("table", "");
+                    // Populate the auth object with additional data from the database
+                    // remove `password` field if available
+                    auto user = user_table == "__admins"
+                                    ? parseDbRowToJson(user_row, MantisApp::instance().router().adminTableFields)
+                                    : parseDbRowToJson(user_row);
 
-                    // Query for user with given ID, this info will be populated to the
-                    // expression evaluator args as well as available through
-                    // the session context, queried by:
-                    //  ` req.get<json>("auth").value("id", ""); // returns the user ID
-                    //  ` req.get<json>("auth").value("name", ""); // returns the user's name
-                    auto sql = MantisApp::instance().db().session();
-                    soci::row r;
-                    std::string query = "SELECT * FROM " + _table + " WHERE id = :id LIMIT 1";
-                    *sql << query, soci::use(_id), soci::into(r);
+                    // Populate the `auth` object
+                    auth["type"] = "user";
+                    auth["id"] = user_id;
+                    auth["table"] = user_table;
 
-                    // Let's only populate TokenVars for now, no returning
-                    if (sql->got_data())
+                    // Populate auth obj with user details ...
+                    for (const auto& [key, value] : user.items())
                     {
-                        // Populate the auth object with additional data from the database
-                        // remove `password` field if available
-                        auto user = _table == "__admins"
-                                        ? parseDbRowToJson(r, MantisApp::instance().router().adminTableFields)
-                                        : parseDbRowToJson(r);
-
-                        // Populate the `auth` object
-                        auth["type"] = "user";
-                        auth["id"] = _id;
-                        auth["table"] = _table;
-
-                        // Populate auth obj with user details ...
-                        for (const auto& [key, value] : user.items())
-                        {
-                            auth[key] = value;
-                        }
-
-                        // Remove password field
-                        auth.erase("password");
-
-                        // Update context data
-                        req.set("auth", auth);
-
-                        // Add `auth` data to the TokenMap
-                        vars["auth"] = MantisApp::instance().evaluator().jsonToTokenMap(auth);
+                        auth[key] = value;
                     }
+
+                    // Remove password field
+                    auth.erase("password");
+
+                    // Update context data
+                    req.set("auth", auth);
+
+                    // Add `auth` data to the TokenMap
+                    vars["auth"] = MantisApp::instance().evaluator().jsonToTokenMap(auth);
                 }
             }
         }
@@ -275,7 +270,7 @@ namespace mantis
 
         try
         {
-            if (req.getMethod() == "POST" && !req.getMethod().empty())
+            if (req.getMethod() == "POST" && !req.getBody().empty()) // TODO handle formdata
             {
                 // Parse request body and add it to the request TokenMap
                 auto request = json::parse(req.getMethod());

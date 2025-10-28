@@ -38,7 +38,7 @@ namespace mantis
          * @param token JWT Token
          * @return JSON Object having a `id`, `table`, `verified` and `error` values.
          */
-        static json verifyJWTToken(const std::string& token);
+        static json verifyJwtToken(const std::string& token);
     };
 } // mantis
 

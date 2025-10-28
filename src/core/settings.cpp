@@ -105,7 +105,7 @@ namespace mantis
         const auto& token = auth.at("token").get<std::string>();
 
         // Expand logged user if token is present
-        const auto resp = JwtUnit::verifyJWTToken(token, MantisApp::jwtSecretKey());
+        const auto resp = JwtUnit::verifyJwtToken(token);
         if (!resp.value("verified", false) || !resp.value("error", "").empty())
         {
             json response;
