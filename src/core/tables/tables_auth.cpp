@@ -79,7 +79,7 @@ namespace mantis
 
                 // C
                 const json claims{{"id", user.at("id").get<std::string>()}, {"table", m_tableName}};
-                const auto obj = JWT::createJWTToken(claims, MantisApp::jwtSecretKey());
+                const auto obj = JwtUnit::createJWTToken(claims, MantisApp::jwtSecretKey());
                 if (const auto err = obj.at("error").get<std::string>(); !err.empty())
                 {
                     response["status"] = 500;
@@ -207,7 +207,7 @@ namespace mantis
             const auto token = auth.value("token", "");
 
             // If token validation worked, lets get data from database
-            if (const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
+            if (const auto resp = JwtUnit::verifyJWTToken(token, MantisApp::jwtSecretKey());
                 resp.value("verified", false))
             {
                 // Ensure that, we only enter this block if `id` and `table` keys have a valid string data

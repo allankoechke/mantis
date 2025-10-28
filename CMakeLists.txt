@@ -1,15 +1,13 @@
 cmake_minimum_required(VERSION 3.22)
 project(mantisapp VERSION 0.2.11)
-
 set(CMAKE_CXX_STANDARD 20)
 
 # Set output directories to match SOCI's
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
 set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
-set(CMAKE_POLICY_VERSION_MINIMUM 3.5) # Chilbuff still on CMake 3.1
 
-option(MANTIS_BUILD_TESTS "Build tests" ON)
+set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 
 # Mantis Admin Dashboard Fetch Flags
 # Mantis Admin dashboard version to embed
@@ -18,7 +16,7 @@ set(MANTIS_ADMIN_HASH 184fe54ab4d003de49cc75565258fafe098486b8a177fb8f9405398015
 
 configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
-    ${CMAKE_CURRENT_BINARY_DIR}/include/mantis/app/config.hpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp
 )
 
 # Flag for building deps as shared/static libs
@@ -43,7 +41,8 @@ add_executable(mantisapp
 )
 
 # Add library
-add_library(mantis ${MANTIS_LIB_TYPE}
+add_library(mantis
+    ${MANTIS_LIB_TYPE}
     src/app/app.cpp
     src/core/database.cpp
     src/core/models/models.cpp
@@ -113,8 +112,6 @@ include(cmake/add-json.cmake)
 # Add SOCI
 include(cmake/add-soci.cmake)
 
-# add_subdirectory(3rdParty/l8w8jwt)
-
 # Add the cparse module for expr evaluation
 include(cmake/cparse.cmake)
 
@@ -161,4 +158,5 @@ include(cmake/add-doxygen.cmake)
 include(cmake/add-semver.cmake)
 
 # Add Tests
+option(MANTIS_BUILD_TESTS "Build Mantis Tests" OFF)
 include(cmake/add-tests.cmake)

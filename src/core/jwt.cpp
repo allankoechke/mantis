@@ -1,16 +1,17 @@
-#include "../include/mantis/core/jwt.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/settings.h"
+#include "../../../include/mantis/core/jwt.h"
+#include "../../../include/mantis/app/app.h"
+#include "../../../include/mantis/core/settings.h"
 
 #include <cstring>
-#include <jwt-cpp/jwt.h>
-#include <jwt-cpp/traits/nlohmann-json/traits.h>
+#include <jwt-cpp/traits/nlohmann-json/defaults.h>
 
 namespace mantis
 {
-    std::string JWT::createJWTToken(const json& claims_params, int timeout)
+    std::string JwtUnit::createJWTToken(const json& claims_params, const int timeout)
     {
+        // Get signing key for JWT ...
         const std::string secretKey = MantisApp::jwtSecretKey();
+
         json res{{"error", ""}, {"token", ""}};
         if (claims_params.empty() || !claims_params.contains("id") || !claims_params.contains("table"))
         {
@@ -18,88 +19,35 @@ namespace mantis
             return res;
         }
 
-        // DO NOT REMOVE `id_str` and/or `table_str`, else, extracting json values
-        // directly in the `id`/`table` var assignment below will yield garbage and crash
-        // the token encode/decode segment below.
-        auto id_str = claims_params.at("id").get<std::string>();
-        auto table_str = claims_params.at("table").get<std::string>();
-        const auto id = const_cast<char*>(id_str.c_str());
-        const auto table = const_cast<char*>(table_str.c_str());
-
         // Give access token based on login type, `admin` or `user`
         const auto& config = MantisApp::instance().settings().configs();
-        const int expiry_t = table_str == "__admins"
+        const int expiry_t = timeout > 0
+                                 ? timeout // Use `timeout` value if provided
+                                 : claims_params.at("table").get<std::string>() == "__admins"
                                  ? config.value("adminSessionTimeout", 1 * 60 * 60) // admins
-                                 : config.value("sessionTimeout", 24 * 60 * 60);    // users
+                                 : config.value("sessionTimeout", 24 * 60 * 60); // users
 
-        char* jwt = nullptr;
-        size_t jwt_length = 0;
+        const auto time = jwt::date::clock::now();
+        auto token_builder = jwt::create()
+                             .set_type("JWT")
+                             // .set_issuer("mantisapp") // Replace with application name
+                             // .set_audience("mydomain.io") // Replace with app domain
+                             .set_issued_at(time)
+                             .set_not_before(time)
+                             .set_expires_at(time + sec{expiry_t});
 
-        // Initialize encoding parameters
-        l8w8jwt_encoding_params params;
-        l8w8jwt_encoding_params_init(&params);
-
-        // Set algorithm (using HS256 for simplicity)
-        params.alg = L8W8JWT_ALG_HS256;
-
-        // Set expiration based on user
-        params.iat = l8w8jwt_time(nullptr);
-        params.exp = l8w8jwt_time(nullptr) + expiry_t;
-
-        // Set secret key
-        params.secret_key = (unsigned char*)secretKey.c_str();
-        params.secret_key_length = secretKey.length();
-
-        // Create additional payload claims for 'id' and 'table'
-        l8w8jwt_claim additional_claims[2];
-
-        // Log::debug("Dump: id = '{}', table = '{}'", id, table);
-
-        additional_claims[0] = {
-            .key = const_cast<char*>("id"),
-            .key_length = 2,
-            .value = id,
-            .value_length = strlen(id),
-            .type = L8W8JWT_CLAIM_TYPE_STRING
-        };
-
-        additional_claims[1] = {
-            .key = const_cast<char*>("table"),
-            .key_length = strlen("table"),
-            .value = table,
-            .value_length = strlen(table),
-            .type = L8W8JWT_CLAIM_TYPE_STRING
-        };
-
-        params.additional_payload_claims = additional_claims;
-        params.additional_payload_claims_count = 2;
-
-        // Set output parameters
-        params.out = &jwt;
-        params.out_length = &jwt_length;
-
-        // Encode the JWT
-        if (const int result = l8w8jwt_encode(&params); result == L8W8JWT_SUCCESS && jwt != nullptr)
+        for (const auto& [key, value] : claims_params.items())
         {
-            std::string token(jwt);
-            l8w8jwt_free(jwt); // Always free the allocated memory
-            res["token"] = token;
-            return res;
+            token_builder.set_payload_claim(key, value);
         }
 
-        // Handle encoding failure
-        if (jwt != nullptr)
-        {
-            l8w8jwt_free(jwt);
-            res["error"] = "JWT Token Encoding Error";
-            return res;
-        }
+        const std::string token = token_builder.sign(jwt::algorithm::none{});
 
-        res["error"] = "Could not provision an access token!";
-        return res; // Return empty string on failure
+        res["token"] = token;
+        return res;
     }
 
-    json JWT::verifyJWTToken(const std::string& token)
+    json JwtUnit::verifyJWTToken(const std::string& token)
     {
         // Response Object
         json res;

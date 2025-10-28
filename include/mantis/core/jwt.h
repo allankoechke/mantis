@@ -5,23 +5,18 @@
  * Created by allan on 07/06/2025.
  */
 
-#ifndef JWT_H
-#define JWT_H
+#ifndef JWTUNIT_H
+#define JWTUNIT_H
 
 #include <string>
-#include <nlohmann/json.hpp>
-
-#include "logging.h"
 #include "../utils/utils.h"
 
 namespace mantis
 {
-    using json = nlohmann::json;
-
     /**
      * This class manages creation and verification of JWTs.
      */
-    class JWT
+    class JwtUnit
     {
     public:
         /**
@@ -47,4 +42,4 @@ namespace mantis
     };
 } // mantis
 
-#endif //JWT_H
+#endif //JWTUNIT_H

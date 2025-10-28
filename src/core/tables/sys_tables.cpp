@@ -508,7 +508,7 @@ namespace mantis
                 user.erase("password"); // Remove password field
 
                 const json claims{{"id", user.at("id").get<std::string>()}, {"table", m_tableName}};
-                const auto obj = JWT::createJWTToken(claims, MantisApp::jwtSecretKey());
+                const auto obj = JwtUnit::createJWTToken(claims, MantisApp::jwtSecretKey());
                 if (const auto err = obj.at("error").get<std::string>(); !err.empty())
                 {
                     response["status"] = 500;
@@ -580,7 +580,7 @@ namespace mantis
         }
 
         // Expand logged user if token is present
-        const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
+        const auto resp = JwtUnit::verifyJWTToken(token, MantisApp::jwtSecretKey());
         if (!resp.value("verified", false) || !resp.value("error", "").empty())
         {
             json response;
