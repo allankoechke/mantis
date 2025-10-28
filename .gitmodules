@@ -22,3 +22,6 @@
 [submodule "3rdParty/bcrypt-cpp"]
 	path = 3rdParty/bcrypt-cpp
 	url = https://github.com/allankoechke/Bcrypt.cpp.git
+[submodule "3rdParty/jwt-cpp"]
+	path = 3rdParty/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp.git

@@ -113,7 +113,7 @@ include(cmake/add-json.cmake)
 # Add SOCI
 include(cmake/add-soci.cmake)
 
-add_subdirectory(3rdParty/l8w8jwt)
+# add_subdirectory(3rdParty/l8w8jwt)
 
 # Add the cparse module for expr evaluation
 include(cmake/cparse.cmake)
@@ -135,7 +135,6 @@ target_link_libraries(mantis
     PUBLIC
     httplib::httplib
     spdlog::spdlog
-    l8w8jwt
     cparse
 )
 
@@ -146,8 +145,7 @@ target_include_directories(mantis
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/argparse/include
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/spdlog/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/include
-    ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/l8w8jwt/lib/mbedtls/include
+    ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/jwt-cpp/include
     ${CMAKE_CURRENT_SOURCE_DIR}/libs/cparse
     ${CMAKE_BINARY_DIR}/include
 )

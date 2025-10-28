@@ -2,16 +2,15 @@
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/settings.h"
 
-#include <l8w8jwt/encode.h>
-#include <l8w8jwt/decode.h>
-#include <l8w8jwt/claim.h>
 #include <cstring>
-
+#include <jwt-cpp/jwt.h>
+#include <jwt-cpp/traits/nlohmann-json/traits.h>
 
 namespace mantis
 {
-    json JWT::createJWTToken(const json& claims_params, const std::string& secretKey)
+    std::string JWT::createJWTToken(const json& claims_params, int timeout)
     {
+        const std::string secretKey = MantisApp::jwtSecretKey();
         json res{{"error", ""}, {"token", ""}};
         if (claims_params.empty() || !claims_params.contains("id") || !claims_params.contains("table"))
         {
@@ -100,7 +99,7 @@ namespace mantis
         return res; // Return empty string on failure
     }
 
-    json JWT::verifyJWTToken(const std::string& token, const std::string& secretKey)
+    json JWT::verifyJWTToken(const std::string& token)
     {
         // Response Object
         json res;
