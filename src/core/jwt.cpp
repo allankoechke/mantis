@@ -47,7 +47,7 @@ namespace mantis
             token_builder.set_payload_claim(key, value);
         }
 
-        const std::string token = token_builder.sign(jwt::algorithm::none{});
+        const std::string token = token_builder.sign(jwt::algorithm::hs256{secretKey});
         return token;
     }
 
@@ -63,9 +63,10 @@ namespace mantis
             // Decode the token
             const auto decoded = jwt::decode(token);
 
+            const auto secretKey = MantisApp::jwtSecretKey();
             // Create verifier with your validation rules
             auto verifier = jwt::verify()
-                .allow_algorithm(jwt::algorithm::none{});
+                .allow_algorithm(jwt::algorithm::hs256{secretKey});
 
             const auto& config = MantisApp::instance().settings().configs();
             // Add JWT Issuer if enabled
