@@ -177,6 +177,8 @@ namespace mantis
         // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = req.getOr<json>("auth", json::object());
 
+        Log::trace("Auth Obj: `{}`", auth.dump());
+
         auto method = req.getMethod();
         if (!(method == "GET"
             || method == "POST"
@@ -201,6 +203,8 @@ namespace mantis
                                ? m_updateRule
                                : m_deleteRule;
 
+        Log::trace("Rule: `{}`", rule);
+
         // Remove whitespaces
         rule = trim(rule);
 
@@ -210,11 +214,12 @@ namespace mantis
         // Expand logged user if token is present and query user information if it exists
         if (auth.contains("token") && !auth["token"].is_null() && !auth["token"].empty())
         {
-            const auto token = auth.value("token", "");
+            const auto token = auth.at("token").get<std::string>();
 
             // If token validation worked, lets get data from database
             if (const auto resp = JwtUnit::verifyJwtToken(token); resp.at("verified").get<bool>())
             {
+                Log::trace("Token Verified: `{}`", token);
                 const auto user_id = resp.at("id").get<std::string>();
                 const auto user_table = resp.at("table").get<std::string>();
 
@@ -288,13 +293,17 @@ namespace mantis
         if (rule.empty())
         {
             // Check if user is logged in as Admin
-            if (auth.contains("table") && !auth["table"].is_null()
-                && auth.value("table", "") == "__admins") // Check table value not null
+            if (auth.contains("table")  // Has `table` key
+                && !auth["table"].is_null() // `table` value is not null
+                && auth.at("table").get<std::string>() == "__admins"
+            ) // Check table value not null
             {
                 // If logged in as admin, grant access
                 // Admins get unconditional data access
                 return REQUEST_PENDING;
             }
+
+            Log::trace("Table: `{}`", auth.at("table").get<std::string>());
 
             // User was not an admin, lets return access denied error
             json response;

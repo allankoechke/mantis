@@ -10,13 +10,10 @@ namespace mantis
     std::string JwtUnit::createJWTToken(const json& claims_params, const int timeout)
     {
         // Get signing key for JWT ...
-        const std::string secretKey = MantisApp::jwtSecretKey();
-
-        json res{{"error", ""}, {"token", ""}};
+        const auto secretKey = MantisApp::jwtSecretKey();
         if (claims_params.empty() || !claims_params.contains("id") || !claims_params.contains("table"))
         {
-            res["error"] = "The claims expect 'id' and 'table' params.";
-            return res;
+            throw std::invalid_argument("Missing `id` and/or `table` fields in token claims.");
         }
 
         // Give access token based on login type, `admin` or `user`
@@ -30,11 +27,20 @@ namespace mantis
         const auto time = jwt::date::clock::now();
         auto token_builder = jwt::create()
                              .set_type("JWT")
-                             // .set_issuer("mantisapp") // Replace with application name
-                             // .set_audience("mydomain.io") // Replace with app domain
                              .set_issued_at(time)
                              .set_not_before(time)
                              .set_expires_at(time + std::chrono::seconds(expiry_t));
+
+        // Add JWT Issuer if enabled
+        if (!config.value("jwtEnableSetIssuer", false))
+        {
+            token_builder.set_issuer(config.at("appName").get<std::string>());
+        }
+        // Add JWT audience if enabled
+        if (!config.value("jwtEnableSetAudience", false))
+        {
+            token_builder.set_audience(config.at("baseUrl").get<std::string>());
+        }
 
         for (const auto& [key, value] : claims_params.items())
         {
@@ -42,9 +48,7 @@ namespace mantis
         }
 
         const std::string token = token_builder.sign(jwt::algorithm::none{});
-
-        res["token"] = token;
-        return res;
+        return token;
     }
 
     json JwtUnit::verifyJwtToken(const std::string& token)
@@ -60,9 +64,20 @@ namespace mantis
             const auto decoded = jwt::decode(token);
 
             // Create verifier with your validation rules
-            const auto verifier = jwt::verify()
+            auto verifier = jwt::verify()
                 .allow_algorithm(jwt::algorithm::none{});
-            // .with_issuer("auth0");  // TODO add issuer
+
+            const auto& config = MantisApp::instance().settings().configs();
+            // Add JWT Issuer if enabled
+            if (!config.value("jwtEnableSetIssuer", false))
+            {
+                verifier.with_issuer(config.at("appName").get<std::string>());
+            }
+            // Add JWT audience if enabled
+            if (!config.value("jwtEnableSetAudience", false))
+            {
+                verifier.with_audience(config.at("baseUrl").get<std::string>());
+            }
 
             // Verify with error_code to capture errors
             std::error_code ec;
@@ -72,6 +87,7 @@ namespace mantis
             {
                 // Validation failed - return error information
                 result["error"] = ec.message();
+                // Log::trace("Token verification failed: {}", ec.message());
                 return result;
             }
 
@@ -89,13 +105,13 @@ namespace mantis
                 return result;
             }
 
-            result["success"] = true;
+            result["verified"] = true;
             return result;
         }
         catch (const std::exception& e)
         {
             // Handle decoding errors (invalid token format, invalid JSON, etc.)
-            result["success"] = false;
+            result["verified"] = false;
             result["error"] = e.what();
             return result;
         }
