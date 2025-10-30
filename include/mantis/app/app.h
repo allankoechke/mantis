@@ -73,14 +73,67 @@ namespace mantis
          * @return A reference to the existing application instance.
          */
         static MantisApp& instance();
+
+        /**
+         * @brief Create class instance given cmd args passed in.
+         * @see parseArgs() for expected cmd args to be passed in.
+         *
+         * @param argc Number of cmd args
+         * @param argv Char array list
+         * @return Reference to the created class instance
+         */
         static MantisApp& create(int argc, char** argv);
+
+        /**
+         * @brief Convenience function to allow creating class instance given the
+         * values needed to set up the app without any need for passing in cmd args.
+         *
+         * The expected values are:
+         * {
+         *     "database": "<db type>",
+         *     "connection": "<connection string>",
+         *     "dataDir": "<path to dir>",
+         *     "publicDir": "<path to dir>",
+         *     "scriptsDir": "<path to dir>",
+         *     "dev": true,
+         *     "serve": {
+         *         "port": <int>,
+         *         "host": "<host IP/addr>",
+         *         "poolSize": <int>,
+         *     },
+         *     "admins": {
+         *         "add": "<email to add>",
+         *         "rm": "<email to remove>"
+         *     }
+         * }
+         *
+         * @note All primary options above are optional, you can omit to use default values.
+         * @note `admins` subcommand expects a subcommand with either the `add` or `rm`.
+         * @note `serve` command can have an empty json object and the app will configure with defaults.
+         *
+         * @code
+         * json arg1 = json::object();
+         * auto& app1 = MantisApp::create(arg2);
+         *
+         * json arg2;
+         * arg2["database"] = "PSQL";
+         * arg2["database"] = "dbname=mantis username=postgres password=12342532";
+         * arg2["dev"] = true;
+         * arg2["serve"] = json::object{};
+         * auto& app2 = MantisApp::create(arg2);
+         *
+         * @endcode
+         *
+         * @param config JSON Object bearing the cmd args values to be used
+         * @return A reference to the created class instance
+         */
+        static MantisApp& create(const json& config = json::object());
 
         /**
          * @brief Start the http server and start listening for requests.
          * @return `0` if execution was okay, else a non-zero value.
          */
-        [[nodiscard]]
-        int run();
+        [[nodiscard]] int run();
 
         /**
          * @brief Close the application and reset object
