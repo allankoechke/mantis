@@ -82,9 +82,9 @@ jobs:
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-#      - name: Test
-#        working-directory: ${{ steps.strings.outputs.build-output-dir }}
-#        run: ctest --build-config ${{ matrix.build_type }}
+      - name: Test
+        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+        run: ctest --build-config ${{ matrix.build_type }}
 
       - name: Zip the build output
         if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'ubuntu-latest'
@@ -99,6 +99,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'windows-latest'
         shell: pwsh
         run: |
+          del "${{ steps.strings.outputs.build-output-dir }}\bin\mantisapp_tests.exe"
           $BinPath = "${{ steps.strings.outputs.build-output-dir }}\bin"
           $ZipPath = "$BinPath\zip"
           $ZipFile = "$ZipPath\mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip"
