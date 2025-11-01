@@ -40,17 +40,12 @@ jobs:
 
       - name: Install dependencies on Ubuntu
         if: matrix.os == 'ubuntu-latest'
-        run: sudo apt-get update && sudo apt-get install -y libzstd-dev && sudo apt install libpq-dev && sudo apt install libssl-dev
+        run: sudo apt-get update && sudo apt-get install -y libzstd-dev && sudo apt install libpq-dev
 
       - name: Install MinGW
         if: matrix.os == 'windows-latest'
         run: |
           choco install mingw --no-progress
-
-      - name: Install OpenSSL
-        if: matrix.os == 'windows-latest'
-        run: |
-          choco install openssl --no-progress
 
       - name: Add MinGW to PATH
         if: matrix.os == 'windows-latest'

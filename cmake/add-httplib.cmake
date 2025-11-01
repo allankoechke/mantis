@@ -8,4 +8,11 @@ if(NOT WIN32)
     if(zstd_FOUND)
         add_library(zstd::libzstd ALIAS ZSTD::ZSTD)
     endif()
+
+    set(HTTPLIB_USE_NON_BLOCKING_GETADDRINFO OFF)
 endif()
+
+# Disable SSL use for now, throws errors with WolfSSL library version
+set(HTTPLIB_USE_OPENSSL_IF_AVAILABLE OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(3rdParty/httplib-cpp)
