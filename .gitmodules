@@ -10,12 +10,18 @@
 [submodule "3rdParty/spdlog"]
 	path = 3rdParty/spdlog
 	url = https://github.com/gabime/spdlog.git
-[submodule "3rdParty/l8w8jwt"]
-	path = 3rdParty/l8w8jwt
-	url = https://github.com/GlitchedPolygons/l8w8jwt.git
 [submodule "3rdParty/cmrc"]
 	path = 3rdParty/cmrc
 	url = https://github.com/vector-of-bool/cmrc.git
 [submodule "3rdParty/dukglue"]
 	path = 3rdParty/dukglue
 	url = https://github.com/Aloshi/dukglue.git
+[submodule "3rdParty/bcrypt-cpp"]
+	path = 3rdParty/bcrypt-cpp
+	url = https://github.com/allankoechke/Bcrypt.cpp.git
+[submodule "3rdParty/jwt-cpp"]
+	path = 3rdParty/jwt-cpp
+	url = https://github.com/Thalhammer/jwt-cpp.git
+[submodule "3rdParty/wolfssl"]
+	path = 3rdParty/wolfssl
+	url = https://github.com/wolfSSL/wolfssl.git

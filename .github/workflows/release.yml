@@ -45,7 +45,7 @@ jobs:
       - name: Install MinGW
         if: matrix.os == 'windows-latest'
         run: |
-          choco install mingw --version=13.2.0 --no-progress
+          choco install mingw --no-progress
 
       - name: Add MinGW to PATH
         if: matrix.os == 'windows-latest'
@@ -66,6 +66,7 @@ jobs:
           -DCMAKE_C_COMPILER=${{ matrix.c_compiler }}
           -DCMAKE_CXX_COMPILER="C:\ProgramData\mingw64\mingw64\bin\g++.exe"
           -DCMAKE_C_COMPILER="C:\ProgramData\mingw64\mingw64\bin\gcc.exe"
+          -DMANTIS_BUILD_TESTS=true
           -S ${{ github.workspace }}
 
       - name: Configure CMake (Ubuntu)
@@ -75,19 +76,21 @@ jobs:
           -DCMAKE_CXX_COMPILER=${{ matrix.cpp_compiler }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
           -DCMAKE_BUILD_TYPE=${{ matrix.build_type }}
+          -DMANTIS_BUILD_TESTS=true
           -S ${{ github.workspace }}
 
       - name: Build
         run: cmake --build ${{ steps.strings.outputs.build-output-dir }} --config ${{ matrix.build_type }}
 
-#      - name: Test
-#        working-directory: ${{ steps.strings.outputs.build-output-dir }}
-#        run: ctest --build-config ${{ matrix.build_type }}
+      - name: Test
+        working-directory: ${{ steps.strings.outputs.build-output-dir }}
+        run: ctest --build-config ${{ matrix.build_type }}
 
       - name: Zip the build output
         if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'ubuntu-latest'
         run: |
           cd ${{ github.workspace }}/build/bin
+          rm mantisapp_tests
           mkdir -p zip
           zip -r zip/mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip mantisapp*
         shell: bash
@@ -96,6 +99,7 @@ jobs:
         if: startsWith(github.ref, 'refs/tags/v') && matrix.os == 'windows-latest'
         shell: pwsh
         run: |
+          del "${{ steps.strings.outputs.build-output-dir }}\bin\mantisapp_tests.exe"
           $BinPath = "${{ steps.strings.outputs.build-output-dir }}\bin"
           $ZipPath = "$BinPath\zip"
           $ZipFile = "$ZipPath\mantisapp_${{ github.ref_name }}_${{ matrix.platform }}.zip"

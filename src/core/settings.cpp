@@ -58,8 +58,8 @@ namespace mantis
             settings["maxFileSize"] = 10; // in MB
             settings["allowRegistration"] = true;
             settings["emailVerificationRequired"] = false;
-            settings["sessionTimeout"] = 24*60*60;  // 24 hours
-            settings["adminSessionTimeout"] = 1*60*60;  // 1 hour
+            settings["sessionTimeout"] = 24 * 60 * 60; // 24 hours
+            settings["adminSessionTimeout"] = 1 * 60 * 60; // 1 hour
             settings["mode"] = "PROD";
 
             *sql <<
@@ -70,7 +70,7 @@ namespace mantis
         }
     }
 
-    bool SettingsUnit::hasAccess(MantisRequest &req, MantisResponse& res) const
+    bool SettingsUnit::hasAccess(MantisRequest& req, MantisResponse& res) const
     {
         TRACE_CLASS_METHOD()
 
@@ -105,7 +105,7 @@ namespace mantis
         const auto& token = auth.at("token").get<std::string>();
 
         // Expand logged user if token is present
-        const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
+        const auto resp = JwtUnit::verifyJwtToken(token);
         if (!resp.value("verified", false) || !resp.value("error", "").empty())
         {
             json response;
@@ -203,7 +203,7 @@ namespace mantis
         // Set up settings get & update endpoints
         MantisApp::instance().http().Get(
             "/api/v1/settings/config",
-            [this](MantisRequest &req, MantisResponse& res)
+            [this](MantisRequest& req, MantisResponse& res)
             {
                 // If we have a cached config object ...
                 if (!m_configs.empty())
@@ -250,11 +250,11 @@ namespace mantis
 
                 res.sendJson(404, response);
             }, {
-                [](MantisRequest &req, MantisResponse& res)-> bool
+                [](MantisRequest& req, MantisResponse& res)-> bool
                 {
                     return TableUnit::getAuthToken(req, res);
                 },
-                [this](MantisRequest &req, MantisResponse& res)-> bool
+                [this](MantisRequest& req, MantisResponse& res)-> bool
                 {
                     return hasAccess(req, res);
                 }
@@ -263,7 +263,7 @@ namespace mantis
         // Update settings config
         MantisApp::instance().http().Patch(
             "/api/v1/settings/config",
-            [this](MantisRequest &req, MantisResponse& res)
+            [this](MantisRequest& req, MantisResponse& res)
             {
                 // Parse request body
                 json body = json::object();
@@ -288,8 +288,18 @@ namespace mantis
                 // Create base data before we update.
                 if (m_configs.empty()) migrate();
 
-                m_configs["appName"] = body.contains("appName") ? body["appName"] : m_configs["appName"];
-                m_configs["baseUrl"] = body.contains("baseUrl") ? body["baseUrl"] : m_configs["baseUrl"];
+                m_configs["appName"] = body.contains("appName")
+                                           ? body["appName"]
+                                           : m_configs["appName"];
+                m_configs["baseUrl"] = body.contains("baseUrl")
+                                           ? body["baseUrl"]
+                                           : m_configs["baseUrl"];
+                m_configs["jwtEnableSetIssuer"] = body.contains("jwtEnableSetIssuer")
+                                                      ? body["jwtEnableSetIssuer"]
+                                                      : m_configs["jwtEnableSetIssuer"];
+                m_configs["jwtEnableSetAudience"] = body.contains("jwtEnableSetAudience")
+                                                        ? body["jwtEnableSetAudience"]
+                                                        : m_configs["jwtEnableSetAudience"];
                 m_configs["maintenanceMode"] = body.contains("maintenanceMode")
                                                    ? body.value("maintenanceMode", false)
                                                    : m_configs.value("maintenanceMode", false);
@@ -308,11 +318,12 @@ namespace mantis
                 m_configs["adminSessionTimeout"] = body.contains("adminSessionTimeout")
                                                        ? body.value("adminSessionTimeout", 1 * 60 * 60)
                                                        : m_configs.value("adminSessionTimeout", 1 * 60 * 60);
+                ///> TODO [Deprecated], drop it in v0.3.0
                 auto mode = body.contains("mode")
-                                                       ? body.value("mode", "PROD")
-                                                       : m_configs.value("mode", "PROD");
+                                ? body.value("mode", "PROD")
+                                : m_configs.value("mode", "PROD");
 
-                toUpperCase(mode);  // Ensure mode is in upper case
+                toUpperCase(mode); // Ensure mode is in upper case
                 m_configs["mode"] = mode == "TEST" ? "TEST" : "PROD"; // Limit update modes to prod/test only
 
                 // Create default time values
@@ -334,11 +345,11 @@ namespace mantis
 
                 res.sendJson(200, response);
             }, {
-                [](MantisRequest &req, MantisResponse& res)-> bool
+                [](MantisRequest& req, MantisResponse& res)-> bool
                 {
                     return TableUnit::getAuthToken(req, res);
                 },
-                [this](MantisRequest &req, MantisResponse& res)-> bool
+                [this](MantisRequest& req, MantisResponse& res)-> bool
                 {
                     return hasAccess(req, res);
                 }

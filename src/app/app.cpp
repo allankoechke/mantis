@@ -76,6 +76,121 @@ namespace mantis
         return app;
     }
 
+    MantisApp& MantisApp::create(const json& config)
+    {
+        auto& app = getInstanceImpl();
+        if (app.m_isCreated)
+            throw std::runtime_error("MantisApp already created, use MantisApp::instance() instead.");
+
+        app.m_cmdArgs.emplace_back("mantisapp"); // Arg[0] should be the app name
+
+        // dataDir publicDir scriptsDir serve [port host] admins [add remove]
+        // --database psql
+        if (config.contains("database"))
+        {
+            app.m_cmdArgs.emplace_back("--database");
+            app.m_cmdArgs.push_back(config.at("database").get<std::string>());
+        }
+
+        // --connection "dbname=mantis host=127.0.0.1 username=duser password=1235"
+        if (config.contains("connection"))
+        {
+            app.m_cmdArgs.emplace_back("--connection");
+            app.m_cmdArgs.push_back(config.at("connection").get<std::string>());
+        }
+
+        // --dataDir /some/path/to/dir
+        if (config.contains("dataDir"))
+        {
+            app.m_cmdArgs.emplace_back("--dataDir");
+            app.m_cmdArgs.push_back(config.at("dataDir").get<std::string>());
+        }
+
+        // --publicDir /some/path/to/dir
+        if (config.contains("publicDir"))
+        {
+            app.m_cmdArgs.emplace_back("--publicDir");
+            app.m_cmdArgs.push_back(config.at("publicDir").get<std::string>());
+        }
+
+        // --scriptsDir /some/path/to/dir
+        if (config.contains("scriptsDir"))
+        {
+            app.m_cmdArgs.emplace_back("--scriptsDir");
+            app.m_cmdArgs.push_back(config.at("scriptsDir").get<std::string>());
+        }
+
+        // --dev
+        if (config.contains("dev"))
+        {
+            app.m_cmdArgs.emplace_back("--dev"); // We don't care much about the value
+        }
+
+        // serve [--host x.y.z.t --port 1234 --poolSize 8]
+        if (config.contains("serve"))
+        {
+            app.m_cmdArgs.emplace_back("serve");
+            const auto& serve = config["serve"];
+
+            // If we have a valid JSON Object
+            if (serve.is_object())
+            {
+
+                // serve --host 127.0.0.1
+                if (serve.contains("host"))
+                {
+                    app.m_cmdArgs.emplace_back("--host");
+                    app.m_cmdArgs.push_back(serve.at("host").get<std::string>());
+                }
+
+                // serve --port 7071
+                if (serve.contains("port"))
+                {
+                    app.m_cmdArgs.emplace_back("--port");
+                    app.m_cmdArgs.push_back(std::to_string(serve.at("port").get<int>()));
+                }
+
+                // serve --poolSize 10
+                if (serve.contains("poolSize"))
+                {
+                    app.m_cmdArgs.emplace_back("--poolSize");
+                    app.m_cmdArgs.push_back(std::to_string(serve.at("poolSize").get<int>()));
+                }
+            }
+        }
+
+        // admins --add x@y.z
+        // admins --rm x@y.z
+        if (config.contains("admins"))
+        {
+            app.m_cmdArgs.emplace_back("admins");
+            const auto& admins = config["admins"];
+
+            if (admins.contains("add"))
+            {
+                app.m_cmdArgs.emplace_back("--host");
+                app.m_cmdArgs.push_back(admins.at("host").get<std::string>());
+            }
+
+            if (admins.contains("rm"))
+            {
+                app.m_cmdArgs.emplace_back("--rm");
+                app.m_cmdArgs.push_back(admins.at("rm").get<std::string>());
+            }
+
+            else
+            {
+                throw std::runtime_error("MantisApp `admins` command expects `--add <email>` or `--rm <user>` subcommand.");
+            }
+        }
+
+        // Initialize the app with passed in args
+        app.init();
+
+        // Return the instance
+        return app;
+    }
+
     MantisApp& MantisApp::getInstanceImpl()
     {
         static MantisApp s_instance;

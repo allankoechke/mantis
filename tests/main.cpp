@@ -11,19 +11,15 @@ int main(int argc, char* argv[])
     const auto dataDir = (baseDir / "data").string();
     const auto publicDir = (baseDir / "www").string();
 
-    char* testArgs2[] = {
-        "mantisapp_test", "--database", "SQLITE",
-        "--dataDir", const_cast<char*>(dataDir.c_str()),
-        "--publicDir", const_cast<char*>(publicDir.c_str()),
-        "--scriptsDir", const_cast<char*>(scriptingDir.c_str()),
-        "serve", "--port", "7075", "--host", "0.0.0.0"
-    };
-
-    // Catch::Session session;
-    // session.configData().noCapture = true;
+    mantis::json args;
+    args["database"] = "SQLITE";
+    args["dataDir"] = dataDir;
+    args["publicDir"] = publicDir;
+    args["scriptsDir"] = scriptingDir;
+    args["serve"] = {{"port", 7075}, {"host", "0.0.0.0"}};
 
     // Setup Db, Server, etc.
-    auto& tFix = TestFixture::instance(14, testArgs2);
+    auto& tFix = TestFixture::instance(args);
 
     // Spawn a new thread to run the
     auto serverThread = std::thread([&tFix]()

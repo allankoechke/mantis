@@ -48,7 +48,7 @@ There are several ways to get started with Mantis:
 Download pre-built binaries from the [release page](https://github.com/allankoechke/mantis/releases). Unzip the package and start the server:
 
 ```bash
-./build/mantisapp serve -p 7070
+mantisapp --dev serve
 ```
 
 #### Creating an Admin Account

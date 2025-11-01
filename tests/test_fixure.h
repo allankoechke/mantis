@@ -44,16 +44,16 @@ struct TestFixture
     mantis::MantisApp& mApp;
 
 private:
-    TestFixture(const int argc, char* argv[])
-        : mApp(mantis::MantisApp::create(argc, argv))
+    TestFixture(const mantis::json& config)
+        : mApp(mantis::MantisApp::create(config))
     {
         std::cout << "[TestFixture] Setting up DB and starting server...\n";
     }
 
 public:
-    static TestFixture& instance(const int argc, char* argv[])
+    static TestFixture& instance(const mantis::json& config)
     {
-        static TestFixture _instance{argc, argv};
+        static TestFixture _instance{config};
         return _instance;
     }
 

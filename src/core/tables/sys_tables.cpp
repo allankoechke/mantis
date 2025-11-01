@@ -192,7 +192,7 @@ namespace mantis
             response["error"] = "Item Not Found";
             response["data"] = json::object();
 
-                res.sendJson(404, response);
+            res.sendJson(404, response);
         }
         catch (const std::exception& e)
         {
@@ -200,7 +200,7 @@ namespace mantis
             response["error"] = e.what();
             response["data"] = json::object();
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
         }
 
         catch (...)
@@ -209,7 +209,7 @@ namespace mantis
             response["error"] = "Unknown Error";
             response["data"] = json::object();
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
         }
     }
 
@@ -226,7 +226,7 @@ namespace mantis
             response["status"] = 200;
             response["error"] = "";
 
-                res.sendJson(200, response);
+            res.sendJson(200, response);
         }
 
         catch (const std::exception& e)
@@ -235,7 +235,7 @@ namespace mantis
             response["status"] = 500;
             response["error"] = e.what();
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
         }
 
         catch (...)
@@ -244,7 +244,7 @@ namespace mantis
             response["status"] = 500;
             response["error"] = "Internal Server Error";
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
         }
     }
 
@@ -274,7 +274,7 @@ namespace mantis
             response["error"] = std::format("Error parsing Table Schema: {}", e.what());
             response["data"] = json::object();
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
             return;
         }
 
@@ -296,7 +296,7 @@ namespace mantis
             response["error"] = err;
             response["data"] = json::object();
 
-                res.sendJson(status, response);
+            res.sendJson(status, response);
 
             Log::critical("Failed to create table, reason: {}", resp.dump());
             return;
@@ -306,7 +306,7 @@ namespace mantis
         response["error"] = "";
         response["data"] = resp.at("data");
 
-                res.sendJson(201, response);
+        res.sendJson(201, response);
     }
 
     void SysTablesUnit::updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)
@@ -324,7 +324,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Table ID is required!";
 
-                res.sendJson(400, response);
+            res.sendJson(400, response);
             return;
         }
 
@@ -347,8 +347,8 @@ namespace mantis
             response["status"] = 500;
             response["error"] = std::format("Error parsing table schema: {}", e.what());
             response["data"] = json::object();
-            
-                res.sendJson(500, response);
+
+            res.sendJson(500, response);
             return;
         }
 
@@ -361,7 +361,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = std::format("Record with id = `{}` was not found.", id);
 
-                res.sendJson(404, response);
+            res.sendJson(404, response);
             return;
         }
 
@@ -373,8 +373,8 @@ namespace mantis
             response["status"] = status;
             response["error"] = err;
             response["data"] = json::object();
-            
-                res.sendJson(status, response);
+
+            res.sendJson(status, response);
 
             Log::critical("Failed to update table, id = {}, reason: {}", id, respObj.dump());
             return;
@@ -389,7 +389,7 @@ namespace mantis
         response["error"] = "";
         response["data"] = record;
 
-                res.sendJson(200, response);
+        res.sendJson(200, response);
     }
 
     void SysTablesUnit::deleteRecord(MantisRequest& req, MantisResponse& res)
@@ -403,8 +403,8 @@ namespace mantis
             response["status"] = 400;
             response["error"] = "Record ID is required";
             response["data"] = json::object();
-            
-                res.sendJson(400, response);
+
+            res.sendJson(400, response);
             return;
         }
 
@@ -427,11 +427,11 @@ namespace mantis
             response["error"] = e.what();
             response["data"] = json::object();
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
             return;
         }
-        
-                res.sendEmpty();
+
+        res.sendEmpty();
     }
 
     void SysTablesUnit::authWithEmailAndPassword(MantisRequest& req, MantisResponse& res)
@@ -446,7 +446,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Could not parse request body! ";
 
-                res.sendJson(500, response);
+            res.sendJson(500, response);
             return;
         }
 
@@ -464,8 +464,8 @@ namespace mantis
             response["error"] = "Admin user `email` is missing!";
 
 
-                res.sendJson(400, response);
-                res.sendJson(400, response);
+            res.sendJson(400, response);
+            res.sendJson(400, response);
             return;
         }
 
@@ -475,7 +475,7 @@ namespace mantis
             response["data"] = json::object();
             response["error"] = "Admin user `password` is missing!";
 
-                res.sendJson(400, response);
+            res.sendJson(400, response);
             return;
         }
 
@@ -500,45 +500,37 @@ namespace mantis
 
             // Extract user password value
             const auto db_password = r.get<std::string>("password");
-            const auto resp = verifyPassword(password, db_password);
-            if (resp.value("verified", false))
+            const auto p_verified = verifyPassword(password, db_password);
+            if (!p_verified)
             {
-                // Create JWT Token and return to the user ...
-                auto user = parseDbRowToJson(r);
-                user.erase("password"); // Remove password field
+                response["status"] = 404;
+                response["data"] = json::object();
+                response["error"] = "No user found matching given email/password combination.";
 
-                const json claims{{"id", user.at("id").get<std::string>()}, {"table", m_tableName}};
-                const auto obj = JWT::createJWTToken(claims, MantisApp::jwtSecretKey());
-                if (const auto err = obj.at("error").get<std::string>(); !err.empty())
-                {
-                    response["status"] = 500;
-                    response["data"] = "";
-                    response["error"] = err;
-
-                    res.sendJson(500, response);
-                    return;
-                }
-
-                json data;
-                data["user"] = user;
-                data["token"] = obj.at("token").get<std::string>();
-
-                response["status"] = 200;
-                response["data"] = data;
-                response["error"] = "";
-
-                res.sendJson(200, response);
-                // Log::info("Login Successful, user: {}", response.dump());
+                res.sendJson(404, response);
+                Log::warn("No user found for given email/password combination.");
                 return;
             }
 
-            response["status"] = 404;
-            response["data"] = json::object();
-            response["error"] = "No user found matching given email/password combination.";
+            // Create JWT Token and return to the user ...
+            auto user = parseDbRowToJson(r);
+            user.erase("password"); // Remove password field
 
-            res.sendJson(404, response);
-            Log::warn("No user found for given email/password combination. Reason: {}",
-                      resp.value("error", ""));
+            const json claims{
+                {"id", user.at("id").get<std::string>()},
+                {"table", m_tableName}
+            };
+
+            const auto token = JwtUnit::createJWTToken(claims, 60 * 60); // 1hr
+            json data;
+            data["user"] = user;
+            data["token"] = token;
+
+            response["status"] = 200;
+            response["data"] = data;
+            response["error"] = "";
+
+            res.sendJson(200, response);
         }
         catch (std::exception& e)
         {
@@ -549,15 +541,6 @@ namespace mantis
 
             res.sendJson(500, response);
             Log::critical("Error Processing Request: {}", e.what());
-        }
-        catch (...)
-        {
-            response["status"] = 500;
-            response["data"] = json::object();
-            response["error"] = "Internal Server Error";
-
-            res.sendJson(500, response);
-            Log::critical("Error on admin login: Unknown Error");
         }
     }
 
@@ -582,8 +565,8 @@ namespace mantis
         }
 
         // Expand logged user if token is present
-        const auto resp = JWT::verifyJWTToken(token, MantisApp::jwtSecretKey());
-        if (!resp.value("verified", false) || !resp.value("error", "").empty())
+        const auto resp = JwtUnit::verifyJwtToken(token);
+        if (!resp.value("verified", false) || !resp.at("error").get<std::string>().empty())
         {
             json response;
             response["status"] = 403;
@@ -616,9 +599,10 @@ namespace mantis
         //  ` req.get<json>("auth").value("id", ""); // returns the user ID
         //  ` req.get<json>("auth").value("name", ""); // returns the user's name
         auto sql = MantisApp::instance().db().session();
-        soci::row row;
-        std::string query = "SELECT id, email, created, updated FROM __admins WHERE id = :id LIMIT 1";
-        *sql << query, soci::use(auth_user_id), soci::into(row);
+
+        soci::row admin_row;
+        *sql << "SELECT id, email, created, updated FROM __admins WHERE id = :id LIMIT 1",
+        soci::use(auth_user_id), soci::into(admin_row);
 
         // Return 404 if user was not found
         if (!sql->got_data())
@@ -637,22 +621,22 @@ namespace mantis
             // Populate the auth object with additional data from the database
             // remove `password` field if available
             json user;
-            user["id"] = row.get<std::string>(0);
-            user["email"] = row.get<std::string>(1);
+            user["id"] = admin_row.get<std::string>(0);
+            user["email"] = admin_row.get<std::string>(1);
 
             // Handle date parsing, SQLITE uses `string` type
-            if (row.get_properties(2).get_db_type() == soci::db_date)
+            if (admin_row.get_properties(2).get_db_type() == soci::db_date)
             {
-                auto t = row.get<std::tm>(2);
+                auto t = admin_row.get<std::tm>(2);
                 user["created"] = tmToStr(t);
 
-                t = row.get<std::tm>(3);
+                t = admin_row.get<std::tm>(3);
                 user["updated"] = tmToStr(t);
             }
             else
             {
-                user["created"] = row.get<std::string>(2);
-                user["updated"] = row.get<std::string>(3);
+                user["created"] = admin_row.get<std::string>(2);
+                user["updated"] = admin_row.get<std::string>(3);
             }
 
             // Enrich auth object with auth information
@@ -686,7 +670,6 @@ namespace mantis
         // Check if user is logged in as Admin
         if (table_name == "__admins")
         {
-            Log::trace("Logged in as Admin!");
             // If logged in as admin, grant access
             // Admins get unconditional data access
             return REQUEST_PENDING;

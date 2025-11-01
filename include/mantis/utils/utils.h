@@ -260,30 +260,11 @@ namespace mantis
     // AUTH UTILS
     // ----------------------------------------------------------------- //
     /**
-     * @brief Encode a Salt string to bcrypt base64 format.
-     * @param data `char*` string data to encode.
-     * @param len Length of the string data.
-     * @return A base64 encoded salt value.
-     */
-    std::string bcryptBase64Encode(const unsigned char* data, size_t len);
-    std::string bcryptBase64EncodeStr(const std::string& data);
-
-    /**
-     * @brief Generates a salt to be used in hashing user passwords.
-     * @param cost Cost parameter.
-     * @return A base64 encoded salt value.
-     *
-     * @see https://app.studyraid.com/en/read/12358/398958/understanding-the-cost-factor-parameter
-     */
-    std::string generateSalt(int cost = 12);
-
-    /**
      * @brief Digests user password + a generated salt to yield a hashed password.
      * @param password Password input to hash.
-     * @return A JSON object having `hash`, `salt` and `error` values.
+     * @return A hash string representation of the password + salt.
      */
-    json hashPassword(const std::string& password);
-    DukValue hashPasswordJS(const std::string& password);
+    std::string hashPassword(const std::string& password);
 
     /**
      * @brief Verifies user password if it matches the given hashed password.
@@ -293,10 +274,9 @@ namespace mantis
      *
      * @param password User password input.
      * @param stored_hash Database stored hashed user password.
-     * @return JSON object indicating whether the verification was successful and an error value if any.
+     * @return boolean indicating whether the verification was successful or not.
      */
-    json verifyPassword(const std::string& password, const std::string& stored_hash);
-    DukValue verifyPasswordJS(const std::string& password, const std::string& stored_hash);
+    bool verifyPassword(const std::string& password, const std::string& stored_hash);
 
     // ----------------------------------------------------------------- //
     // AUTH UTILS

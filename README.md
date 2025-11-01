@@ -69,14 +69,21 @@ You will be prompted to enter and confirm the password after which the user acco
 Download pre-built binaries from our [release page](https://github.com/allankoechke/mantis/releases). First, download the zip package (~4mb) for the target platform and unzip it. With that, we can start the server as shown below;
 
 ```bash
-./build/mantisapp serve -p 7070
+mantisapp serve -p 7070
 ```
 
 ### 2. Building from source
 Why miss out on the fun? You can also clone the source setup your build environment and compile it all. Once compiled, the resultant binary can be executed just as the pre-compiled binary above.
 
+Note of the following dependencies for Linux (ZSTD and PostgreSQL):
+```shell
+sudo apt-get install -y libzstd-dev
+sudo apt install libpq-dev
+```
+
+For Windows, we don't have any dependencies outside the cloned repo.
 ```bash
-git clone --recurse-submodules https://github.com/allankoechke/mantis.git
+git clone --depth 1 --recurse-submodules --shallow-submodules https://github.com/allankoechke/mantis.git
 cd mantis
 cmake -B build
 cmake --build build
@@ -194,8 +201,8 @@ For full API Docs, check [https://docs.mantisapp.dev](https://allankoechke.githu
 * Database Layer: [SOCI - SQL lib](https://github.com/SOCI/soci)
 * Logging Layer: [spdlog](https://github.com/gabime/spdlog)
 * Commandline Args: [Argparse](https://github.com/p-ranav/argparse)
-* JWT: [l8w8tjwt](https://github.com/GlitchedPolygons/l8w8jwt)
-* Password Hashing: [libbcrypt](https://github.com/rg3/libbcrypt)
+* JWT: [jwt-cpp](https://github.com/Thalhammer/jwt-cpp)
+* Password Hashing: [bcrypt-cpp](https://github.com/allankoechke/Bcrypt.cpp)
 * JSON: [nlohmann::json](https://github.com/nlohmann/json)
 * Duktape/Dukglue: Ecmascript support for mantis scripting.
 

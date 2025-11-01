@@ -2,23 +2,16 @@
 <project version="4">
   <component name="VcsDirectoryMappings">
     <mapping directory="$PROJECT_DIR$" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/bcrypt-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/cmrc" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/dukglue" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/httplib-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/json" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/acutest" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/checknum" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/chillbuff" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/chillbuff/lib/doxygen-awesome" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/doxygen-awesome" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/ed25519" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/jsmn" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/mbedtls" vcs="Git" />
-    <mapping directory="$PROJECT_DIR$/3rdParty/l8w8jwt/lib/mbedtls/framework" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/jwt-cpp" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/soci/3rdparty/sqlite3" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/3rdParty/spdlog" vcs="Git" />
+    <mapping directory="$PROJECT_DIR$/3rdParty/wolfssl" vcs="Git" />
     <mapping directory="$PROJECT_DIR$/cmake-build-relwithdebinfo/_deps/googletest-src" vcs="Git" />
   </component>
 </project>
