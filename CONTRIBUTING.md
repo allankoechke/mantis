@@ -49,16 +49,16 @@ mantis/
 ### 🛠️ Build System
 Mantis uses CMake with the following key dependencies: README.md:46-53
 
-httplib-cpp: HTTP server framework
-spdlog: Structured logging
-SOCI: Database abstraction layer
-nlohmann/json: JSON processing
-l8w8jwt: JWT token handling
-libbcrypt: Password hashing
-argparse: Command-line parsing
-Build Options
-MANTIS_SHARED_DEPS: Build dependencies as shared libraries (default: ON)
-MANTIS_BUILD_TESTS: Enable test compilation (default: ON)
+- httplib-cpp: HTTP server framework
+- spdlog: Structured logging
+- SOCI: Database abstraction layer
+- nlohmann/json: JSON processing
+- jwt-cpp: JWT token handling
+- bcrypt-cpp: Password hashing
+- argparse: Command-line parsing
+- Build Options
+  - *MANTIS_SHARED_DEPS*: Build dependencies as shared libraries (default: ON)
+  - *MANTIS_BUILD_TESTS*: Enable test compilation (default: ON)
 
 ### 🧪 Testing
 Run tests after building:
@@ -156,6 +156,6 @@ GitHub Discussions: For questions and general discussion
 Wiki: For detailed documentation and guides
 
 ### 📜 License
-By contributing to Mantis, you agree that your contributions will be licensed under the MIT License. README.md:118
+By contributing to Mantis, you agree that your contributions will be licensed under the MIT License.
 
 Thank you for helping make Mantis better! 🚀

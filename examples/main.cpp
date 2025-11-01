@@ -7,8 +7,20 @@ using namespace mantis;
 
 int main(int argc, char** argv)
 {
-    // Create app instance
+    // Create app instance using CMD args
     auto& app = MantisApp::create(argc, argv);
+
+    // Alternatively, create `MantisApp` instance using a JSON object configuration
+    // Check docs on MantisApp::create(const json&) method for supported keys.
+    // This is better for embedding MantisApp into another application
+    // ```cpp
+    // int main() {
+    //     const mantis::json opts{{"dev", true}, {"serve", {{"port", 7896}, {"host", "127.0.0.1"}}}};
+    //     auto& app = MantisApp::create(opts);
+    //
+    //     return app.run();
+    // }
+    // ```
 
     // app.http().Get(path, handler_func, {vector of middlewares});
     // handler_func -> [](Request, Response, Context);
@@ -80,5 +92,5 @@ int main(int argc, char** argv)
     }
 
     // Start the server event loop
-    return app.run();
+    return app.run(); // Blocking call
 }
