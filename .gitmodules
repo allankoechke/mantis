@@ -22,3 +22,6 @@
 [submodule "3rdParty/jwt-cpp"]
 	path = 3rdParty/jwt-cpp
 	url = https://github.com/Thalhammer/jwt-cpp.git
+[submodule "3rdParty/wolfssl"]
+	path = 3rdParty/wolfssl
+	url = https://github.com/wolfSSL/wolfssl.git

@@ -1,0 +1,16 @@
+# Use wolfSSL library in JWT signature signing/verification
+# in place of OpenSSL
+set(JWT_SSL_LIBRARY wolfSSL)
+
+# Disable tests and examples
+set(WOLFSSL_EXAMPLES OFF CACHE BOOL "" FORCE)
+set(WOLFSSL_CRYPT_TESTS OFF CACHE BOOL "" FORCE)
+
+# Force static library build
+set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
+
+add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/wolfssl)
+
+# target_include_directories(mantis  PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/wolfssl/)
+
+target_link_libraries(mantis PRIVATE wolfssl)

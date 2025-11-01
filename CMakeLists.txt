@@ -115,6 +115,9 @@ include(cmake/add-soci.cmake)
 # Add the cparse module for expr evaluation
 include(cmake/cparse.cmake)
 
+# Add wolfssl library
+include(cmake/add-wolfssl.cmake)
+
 # Add bcrypt to the project
 include(cmake/add-bcrypt.cmake)
 
