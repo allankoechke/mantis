@@ -12,6 +12,10 @@ set(WOLFSSL_CRYPT_TESTS OFF CACHE BOOL "" FORCE)
 # Force static library build
 set(BUILD_SHARED_LIBS OFF CACHE BOOL "" FORCE)
 
+# GitHub CI fails with string overflow warning treated as an error
+# so, lets disable it.
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-stringop-overflow")
+
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/wolfssl)
 
 target_include_directories(mantis  PUBLIC
