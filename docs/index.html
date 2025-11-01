@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -102,7 +102,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <p><b>A lightweight, pluggable Backend-as-a-Service (BaaS) library built in C++</b><br  />
  Portable. Embeddable. Syncable. Built for speed and extensibility. </p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md161"></a>
+<h2><a class="anchor" id="autotoc_md163"></a>
 🔧 Overview</h2>
 <p><b>Mantis</b> is a modular, lightweight C++ library designed to power modern backend systems in embedded devices, desktop tools, or standalone server deployments. Inspired by systems like PocketBase and Supabase, Mantis focuses on:</p>
 <ul>
@@ -114,7 +114,7 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <li>Embeddable as a reusable C++ library</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md163"></a>
+<h2><a class="anchor" id="autotoc_md165"></a>
 🛠️ Tech Stack</h2>
 <ul>
 <li><b>Language</b>: C++</li>
@@ -126,21 +126,21 @@ $(document).ready(function(){initNavTree('index.html',''); initResizable(); });
 <blockquote class="doxtable">
 <p>&zwj;<b>Note:</b> On Windows, use <code>mingw</code> (not <code>MSVC</code>) due to feature incompatibility. For <code>mingw</code>, version 13+ is required for <code>std::format</code> support. </p>
 </blockquote>
-<h2><a class="anchor" id="autotoc_md164"></a>
+<h2><a class="anchor" id="autotoc_md166"></a>
 &lt;/blockquote&gt;</h2>
-<h2><a class="anchor" id="autotoc_md165"></a>
+<h2><a class="anchor" id="autotoc_md167"></a>
 🚀 Getting Started</h2>
 <p>There are several ways to get started with Mantis:</p>
-<h3><a class="anchor" id="autotoc_md166"></a>
+<h3><a class="anchor" id="autotoc_md168"></a>
 1. Using Pre-built Binaries</h3>
 <p>Download pre-built binaries from the <a href="https://github.com/allankoechke/mantis/releases">release page</a>. Unzip the package and start the server:</p>
-<div class="fragment"><div class="line">./build/mantisapp serve -p 7070</div>
-</div><!-- fragment --><h4><a class="anchor" id="autotoc_md167"></a>
+<div class="fragment"><div class="line">mantisapp --dev serve</div>
+</div><!-- fragment --><h4><a class="anchor" id="autotoc_md169"></a>
 Creating an Admin Account</h4>
 <p>To use the admin dashboard, you must first create an admin user account. This can be done via the CLI:</p>
 <div class="fragment"><div class="line">mantisapp admins --add john@doe.com</div>
 </div><!-- fragment --><p> You will be prompted to enter and confirm the password. The account can then be used to log in to the admin dashboard.</p>
-<h3><a class="anchor" id="autotoc_md168"></a>
+<h3><a class="anchor" id="autotoc_md170"></a>
 2. Building from Source</h3>
 <p>Clone the repository and build the project:</p>
 <div class="fragment"><div class="line">git clone --recurse-submodules https://github.com/allankoechke/mantis.git</div>
@@ -149,7 +149,7 @@ Creating an Admin Account</h4>
 <div class="line">cmake --build build</div>
 <div class="line">./build/mantisapp serve</div>
 </div><!-- fragment --><p> By default, the server runs on port <code>7070</code>.</p>
-<h3><a class="anchor" id="autotoc_md169"></a>
+<h3><a class="anchor" id="autotoc_md171"></a>
 3. Embedding in Another Project</h3>
 <p>You can embed Mantis as a library in your own C++ project:</p>
 <ul>
@@ -165,17 +165,17 @@ Creating an Admin Account</h4>
 <div class="line">    <span class="keywordflow">return</span> app.run();</div>
 <div class="line">}</div>
 <div class="ttc" id="aapp_8h_html"><div class="ttname"><a href="app_8h.html">app.h</a></div><div class="ttdoc">The main application for mantis.</div></div>
-<div class="ttc" id="aclassmantis_1_1MantisApp_html_ae4ab7cf1744066d536f848ad40863fd3"><div class="ttname"><a href="classmantis_1_1MantisApp.html#ae4ab7cf1744066d536f848ad40863fd3">mantis::MantisApp::create</a></div><div class="ttdeci">static MantisApp &amp; create(int argc, char **argv)</div><div class="ttdef"><b>Definition</b> app.cpp:71</div></div>
+<div class="ttc" id="aclassmantis_1_1MantisApp_html_ae4ab7cf1744066d536f848ad40863fd3"><div class="ttname"><a href="classmantis_1_1MantisApp.html#ae4ab7cf1744066d536f848ad40863fd3">mantis::MantisApp::create</a></div><div class="ttdeci">static MantisApp &amp; create(int argc, char **argv)</div><div class="ttdoc">Create class instance given cmd args passed in.</div><div class="ttdef"><b>Definition</b> app.cpp:66</div></div>
 <div class="ttc" id="amantisapp_8cpp_html_a638b85ceffac097c2aa79b76ba8c055e"><div class="ttname"><a href="mantisapp_8cpp.html#a638b85ceffac097c2aa79b76ba8c055e">main</a></div><div class="ttdeci">int main(const int argc, char *argv[])</div><div class="ttdoc">MantisApp standalone entrypoint.</div><div class="ttdef"><b>Definition</b> mantisapp.cpp:16</div></div>
 </div><!-- fragment --><p> Check <a href="https://github.com/allankoechke/mantis/tree/master/examples">mantis/examples</a> for a sample.</p>
 <blockquote class="doxtable">
 <p>&zwj;<b>Note:</b> <code>MantisApp</code> has a blocking event loop when listening for HTTP events. To avoid blocking your main thread, run it in a separate thread if needed. </p>
 </blockquote>
-<h3><a class="anchor" id="autotoc_md170"></a>
+<h3><a class="anchor" id="autotoc_md172"></a>
 4. Using Docker</h3>
 <p>You can also run <code>mantisapp</code> in a Docker container. See doc/docker.md for more information.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md172"></a>
+<h2><a class="anchor" id="autotoc_md174"></a>
 🖥️ Admin Dashboard</h2>
 <p>Mantis ships with a lightweight admin dashboard available at <code>&lt;host&gt;:&lt;port&gt;/admin</code> (admin login required). The dashboard allows for easy management of:</p>
 <ul>
@@ -188,7 +188,7 @@ Creating an Admin Account</h4>
 <p>By default, admin auth tokens expire after an hour (configurable in the dashboard settings).</p>
 <p><img src="assets/mantis-admin.png" alt="Mantis Admin" class="inline"/> <em>Admin dashboard snapshot</em></p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md174"></a>
+<h2><a class="anchor" id="autotoc_md176"></a>
 📁 Project Structure</h2>
 <div class="fragment"><div class="line">mantis/</div>
 <div class="line">├── include/</div>
@@ -199,7 +199,7 @@ Creating an Admin Account</h4>
 <div class="line">├── docker/             # Docker deployment</div>
 <div class="line">└── CMakeLists.txt</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md176"></a>
+<h2><a class="anchor" id="autotoc_md178"></a>
 🩺 Healthcheck Endpoint</h2>
 <p>Mantis provides a healthcheck endpoint for monitoring and orchestration tools:</p>
 <div class="fragment"><div class="line">GET /api/v1/health</div>
@@ -210,7 +210,7 @@ Creating an Admin Account</h4>
 <div class="line">}</div>
 </div><!-- fragment --><p>Use this endpoint to verify server availability and uptime.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md178"></a>
+<h2><a class="anchor" id="autotoc_md180"></a>
 📂 File Handling</h2>
 <p>Mantis supports file uploads and management via the API:</p>
 <ul>
@@ -234,16 +234,16 @@ Creating an Admin Account</h4>
 </ul>
 <p>See <a class="el" href="11_8files_8md.html">files.md</a> for more details.</p>
 <hr  />
- <h1><a class="anchor" id="autotoc_md180"></a>
+ <h1><a class="anchor" id="autotoc_md182"></a>
 Extending Mantis with JavaScript</h1>
 <p>Mantis has a built-in lightweight JavaScript engine based on the <code>Duktape</code> library. This allows us to write scripts that will be evaluated to provide extensions to existing functionality.</p>
 <p>For adding routes for instance:</p>
-<div class="fragment"><div class="line">app.addRoute(&quot;GET&quot;, &quot;/someapi/method/:arg&quot;, function(req, res){</div>
+<div class="fragment"><div class="line">app.router().addRoute(&quot;GET&quot;, &quot;/someapi/method/:arg&quot;, function(req, res){</div>
 <div class="line">    // Check if path params are available</div>
 <div class="line">    if(req.hasPathParam(&quot;arg&quot;)) {</div>
 <div class="line">        const arg = req.getPathParam(&quot;arg&quot;)</div>
 <div class="line">        const db_connected = app.db().connected</div>
-<div class="line">        res.sendJson(200, JSON.stringify({path: arg, connected: db_connected}))</div>
+<div class="line">        res.json(200, {path: arg, connected: db_connected})</div>
 <div class="line">        return // Exit function to return response</div>
 <div class="line">    }</div>
 <div class="line"> </div>
@@ -252,7 +252,7 @@ Extending Mantis with JavaScript</h1>
 <div class="line">})</div>
 </div><!-- fragment --><p>Check more information at <a class="el" href="13_8scripting_8md.html">Scripting Page</a>.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md182"></a>
+<h2><a class="anchor" id="autotoc_md184"></a>
 🤝 Contributing</h2>
 <p>Contributions are welcome! Please see <a href="https://github.com/allankoechke/mantis/blob/master/CONTRIBUTING.md">CONTRIBUTING.md</a> and open an issue or PR. </p>
 </div></div><!-- PageDoc -->

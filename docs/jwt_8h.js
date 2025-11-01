@@ -1,4 +1,4 @@
 var jwt_8h =
 [
-    [ "mantis::JWT", "classmantis_1_1JWT.html", null ]
+    [ "mantis::JwtUnit", "classmantis_1_1JwtUnit.html", null ]
 ];

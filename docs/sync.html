@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -95,11 +95,11 @@ $(document).ready(function(){initNavTree('sync.html',''); initResizable(); });
   <div class="headertitle"><div class="title">Engine Sync</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md121"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md122"></a>
 Mantis Sync Engine Design (NOT IMPLEMENTED YET!)</h1>
 <p>The Mantis sync engine is designed to support offline-first applications that require robust and efficient synchronization between local nodes (clients) and remote nodes (servers). This document outlines how the sync system works, how it is configured, and how conflicts are handled.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md123"></a>
+<h2><a class="anchor" id="autotoc_md124"></a>
 🔄 Sync Model Overview</h2>
 <p>Mantis supports a <b>two-mode sync model</b>:</p><ul>
 <li><b>Client Mode</b>: Local-first apps that store data offline and push/pull to a remote sync server.</li>
@@ -107,7 +107,7 @@ Mantis Sync Engine Design (NOT IMPLEMENTED YET!)</h1>
 </ul>
 <p>Both modes are configured via the startup configuration file.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md125"></a>
+<h2><a class="anchor" id="autotoc_md126"></a>
 ⚙️ Sync Workflow</h2>
 <div class="fragment"><div class="line">+-------------+       Push       +-------------+</div>
 <div class="line">|  Client DB  | ---------------&gt; |  Server DB  |</div>
@@ -116,33 +116,33 @@ Mantis Sync Engine Design (NOT IMPLEMENTED YET!)</h1>
 <div class="line">       ^                             |</div>
 <div class="line">       |         Pull/Update         |</div>
 <div class="line">       +-----------------------------+</div>
-</div><!-- fragment --><h3><a class="anchor" id="autotoc_md126"></a>
+</div><!-- fragment --><h3><a class="anchor" id="autotoc_md127"></a>
 1. &lt;strong&gt;Change Detection&lt;/strong&gt;</h3>
 <ul>
 <li>Each table has an internal <code>__updated_at</code> timestamp or revision ID.</li>
 <li>Sync engine scans for new/changed rows since the last sync.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md127"></a>
+<h3><a class="anchor" id="autotoc_md128"></a>
 2. &lt;strong&gt;Conflict Resolution&lt;/strong&gt;</h3>
 <ul>
 <li>Defaults to <b>latest timestamp wins</b>.</li>
 <li>Optional: version-based merge or manual conflict hooks.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md128"></a>
+<h3><a class="anchor" id="autotoc_md129"></a>
 3. &lt;strong&gt;Transport Layer&lt;/strong&gt;</h3>
 <ul>
 <li>REST API or WebSocket-based sync messages.</li>
 <li>All data is serialized as JSON.</li>
 <li>Sync headers include node ID, table revision, and auth token.</li>
 </ul>
-<h3><a class="anchor" id="autotoc_md129"></a>
+<h3><a class="anchor" id="autotoc_md130"></a>
 4. &lt;strong&gt;Sync Tables&lt;/strong&gt;</h3>
 <ul>
 <li><code>__sync_log</code>: Stores outgoing sync queue</li>
 <li><code>__sync_state</code>: Tracks last pull/push per table and remote</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md131"></a>
+<h2><a class="anchor" id="autotoc_md132"></a>
 🔐 Security</h2>
 <ul>
 <li>All sync endpoints require authentication (JWT or session).</li>
@@ -150,13 +150,13 @@ Mantis Sync Engine Design (NOT IMPLEMENTED YET!)</h1>
 <li>Sync can be enabled/disabled per client in config.</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md133"></a>
+<h2><a class="anchor" id="autotoc_md134"></a>
 🧪 Sync Testing</h2>
 <p>Simulate sync with curl:</p>
 <div class="fragment"><div class="line">curl -X POST http://localhost:8080/sync/push   -H &quot;Authorization: Bearer &lt;token&gt;&quot;   -d @sync_payload.json</div>
 </div><!-- fragment --><p>Use <code>mantisd --mode server</code> on one node and <code>mantisd --mode client</code> on another to test full duplex sync.</p>
 <hr  />
-<h2><a class="anchor" id="autotoc_md135"></a>
+<h2><a class="anchor" id="autotoc_md136"></a>
 🔧 Configuration Example</h2>
 <div class="fragment"><div class="line">{</div>
 <div class="line">  &quot;mode&quot;: &quot;client&quot;,</div>
@@ -168,7 +168,7 @@ Mantis Sync Engine Design (NOT IMPLEMENTED YET!)</h1>
 <div class="line">  }</div>
 <div class="line">}</div>
 </div><!-- fragment --><hr  />
-<h2><a class="anchor" id="autotoc_md137"></a>
+<h2><a class="anchor" id="autotoc_md138"></a>
 📌 Sync Customization</h2>
 <ul>
 <li>Hook into sync lifecycle via middleware or plugin interface.</li>
@@ -176,7 +176,7 @@ Mantis Sync Engine Design (NOT IMPLEMENTED YET!)</h1>
 <li>Implement custom conflict resolvers per table.</li>
 </ul>
 <hr  />
-<h2><a class="anchor" id="autotoc_md139"></a>
+<h2><a class="anchor" id="autotoc_md140"></a>
 🏁 Summary</h2>
 <p>Mantis provides a robust but flexible sync system tailored for offline-capable and distributed applications. With per-table tracking, pluggable conflict resolution, and secure transport, it supports both embedded clients and production server sync strategies. </p>
 </div></div><!-- contents -->

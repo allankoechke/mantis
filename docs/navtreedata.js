@@ -66,41 +66,42 @@ var NAVTREE =
     ] ],
     [ "Embedding Mantis", "embedding.html", null ],
     [ "Running in Docker", "docker.html", [
-      [ "Dockerizing MantisApp", "docker.html#autotoc_md117", null ],
-      [ "Limitations", "docker.html#autotoc_md118", null ],
-      [ "Dockerfile", "docker.html#autotoc_md119", null ],
-      [ "Docker Compose", "docker.html#autotoc_md120", null ]
+      [ "Dockerizing MantisApp", "docker.html#autotoc_md118", null ],
+      [ "Limitations", "docker.html#autotoc_md119", null ],
+      [ "Dockerfile", "docker.html#autotoc_md120", null ],
+      [ "Docker Compose", "docker.html#autotoc_md121", null ]
     ] ],
     [ "Engine Sync", "sync.html", [
-      [ "Mantis Sync Engine Design (NOT IMPLEMENTED YET!)", "sync.html#autotoc_md121", [
-        [ "🔄 Sync Model Overview", "sync.html#autotoc_md123", null ],
-        [ "⚙️ Sync Workflow", "sync.html#autotoc_md125", [
-          [ "1. <strong>Change Detection</strong>", "sync.html#autotoc_md126", null ],
-          [ "2. <strong>Conflict Resolution</strong>", "sync.html#autotoc_md127", null ],
-          [ "3. <strong>Transport Layer</strong>", "sync.html#autotoc_md128", null ],
-          [ "4. <strong>Sync Tables</strong>", "sync.html#autotoc_md129", null ]
+      [ "Mantis Sync Engine Design (NOT IMPLEMENTED YET!)", "sync.html#autotoc_md122", [
+        [ "🔄 Sync Model Overview", "sync.html#autotoc_md124", null ],
+        [ "⚙️ Sync Workflow", "sync.html#autotoc_md126", [
+          [ "1. <strong>Change Detection</strong>", "sync.html#autotoc_md127", null ],
+          [ "2. <strong>Conflict Resolution</strong>", "sync.html#autotoc_md128", null ],
+          [ "3. <strong>Transport Layer</strong>", "sync.html#autotoc_md129", null ],
+          [ "4. <strong>Sync Tables</strong>", "sync.html#autotoc_md130", null ]
         ] ],
-        [ "🔐 Security", "sync.html#autotoc_md131", null ],
-        [ "🧪 Sync Testing", "sync.html#autotoc_md133", null ],
-        [ "🔧 Configuration Example", "sync.html#autotoc_md135", null ],
-        [ "📌 Sync Customization", "sync.html#autotoc_md137", null ],
-        [ "🏁 Summary", "sync.html#autotoc_md139", null ]
+        [ "🔐 Security", "sync.html#autotoc_md132", null ],
+        [ "🧪 Sync Testing", "sync.html#autotoc_md134", null ],
+        [ "🔧 Configuration Example", "sync.html#autotoc_md136", null ],
+        [ "📌 Sync Customization", "sync.html#autotoc_md138", null ],
+        [ "🏁 Summary", "sync.html#autotoc_md140", null ]
       ] ]
     ] ],
     [ "Handling Files in Mantis", "files.html", null ],
     [ "Healthcheck Endpoint", "healthcheck.html", null ],
     [ "Scripting in Mantis", "scripting.html", [
-      [ "Scripting", "scripting.html#autotoc_md151", [
-        [ "Application", "scripting.html#autotoc_md152", null ],
-        [ "Database", "scripting.html#autotoc_md153", [
-          [ "Session", "scripting.html#autotoc_md154", null ]
+      [ "Scripting", "scripting.html#autotoc_md152", [
+        [ "Application", "scripting.html#autotoc_md153", null ],
+        [ "Database", "scripting.html#autotoc_md154", [
+          [ "Session", "scripting.html#autotoc_md155", null ]
         ] ],
-        [ "Requests", "scripting.html#autotoc_md155", [
-          [ "Middlewares", "scripting.html#autotoc_md156", null ],
-          [ "MantisRequest Methods/Properties", "scripting.html#autotoc_md157", null ],
-          [ "MantisResponse Methods/Properties", "scripting.html#autotoc_md158", null ]
+        [ "Router", "scripting.html#autotoc_md156", null ],
+        [ "Requests", "scripting.html#autotoc_md157", [
+          [ "Middlewares", "scripting.html#autotoc_md158", null ],
+          [ "MantisRequest Methods/Properties", "scripting.html#autotoc_md159", null ],
+          [ "MantisResponse Methods/Properties", "scripting.html#autotoc_md160", null ]
         ] ],
-        [ "Utils (utility functions)", "scripting.html#autotoc_md159", null ]
+        [ "Utils (utility functions)", "scripting.html#autotoc_md161", null ]
       ] ]
     ] ],
     [ "Namespaces", "namespaces.html", [
@@ -138,10 +139,10 @@ var NAVTREE =
 var NAVTREEINDEX =
 [
 "annotated.html",
-"classmantis_1_1MantisRequest.html#a84b7f0f2c3d33495ba1c73d7eeb40279",
-"classmantis_1_1TableUnit.html#a9084ad7afbfd36208979de7d79c85f61",
-"namespacemantis.html#a2bc2a84280e5b58546a4ddfdeea4a230",
-"tables_8cpp.html#a6d52b503c1252a454522f24685ea9da2"
+"classmantis_1_1MantisRequest.html#aaa71b9831c06e33c3881da6c522b2f60",
+"classmantis_1_1TableUnit.html#aa1181122430ff57cc1d69bd93bb7f2e5",
+"namespacemantis.html#a634042b7708af2536b4a3978eba873f7",
+"tables__routes_8cpp.html#a6d52b503c1252a454522f24685ea9da2"
 ];
 
 var SYNCONMSG = 'click to disable panel synchronisation';

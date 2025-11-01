@@ -1,4 +1,4 @@
 var searchData=
 [
-  ['jwt_0',['JWT',['../classmantis_1_1JWT.html',1,'mantis']]]
+  ['jwtunit_0',['JwtUnit',['../classmantis_1_1JwtUnit.html',1,'mantis']]]
 ];

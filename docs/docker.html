@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -95,15 +95,15 @@ $(document).ready(function(){initNavTree('docker.html',''); initResizable(); });
   <div class="headertitle"><div class="title">Running in Docker</div></div>
 </div><!--header-->
 <div class="contents">
-<div class="textblock"><h1><a class="anchor" id="autotoc_md117"></a>
+<div class="textblock"><h1><a class="anchor" id="autotoc_md118"></a>
 Dockerizing MantisApp</h1>
 <p>There are many benefits of running applications in docker containers or generally, containeralization technologies. As such, <code>mantisapp</code> offers docker ready container support, with some limitations.</p>
-<h1><a class="anchor" id="autotoc_md118"></a>
+<h1><a class="anchor" id="autotoc_md119"></a>
 Limitations</h1>
 <p>Docker support is limited to platform build, as such, provided builds are for <code>linux-amd64</code>, if you need <code>ARM</code> builds, you will need to build the project from source for now. </p><blockquote class="doxtable">
 <p>&zwj;Other platform support will be added, be sure to check project development for news. For now, we are focussing on building the core functionality till we have a stable base. </p>
 </blockquote>
-<h1><a class="anchor" id="autotoc_md119"></a>
+<h1><a class="anchor" id="autotoc_md120"></a>
 Dockerfile</h1>
 <p>The repo provides a ready <code>Dockerfile</code> in the /docker container, which ready to go container. To run the container:</p>
 <div class="fragment"><div class="line">docker build -t mantisapp .</div>
@@ -112,8 +112,9 @@ Dockerfile</h1>
 <p>Of interest, mount a directory to the following:</p><ul>
 <li><code>/mantis/data</code> for storing database files, logs, assets, etc.</li>
 <li><code>/mantis/public</code> for any public site static data that should be served</li>
+<li><code>/mantis/scripts</code> for any extensibility scripts. The entrypoint is a file <code>index.mantis.js</code> in this directory.</li>
 </ul>
-<h1><a class="anchor" id="autotoc_md120"></a>
+<h1><a class="anchor" id="autotoc_md121"></a>
 Docker Compose</h1>
 <p>To package all into a simple interface, we can make use of <code>docker compose</code> file provided. This adds the file mounting out of the box if needed.</p>
 <div class="fragment"><div class="line">docker compose up --build</div>

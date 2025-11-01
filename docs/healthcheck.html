@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -96,13 +96,13 @@ $(document).ready(function(){initNavTree('healthcheck.html',''); initResizable()
 </div><!--header-->
 <div class="contents">
 <div class="textblock"><p>This document describes the healthcheck endpoint in the Mantis project, its purpose, route, and expected results.</p>
-<h2><a class="anchor" id="autotoc_md145"></a>
+<h2><a class="anchor" id="autotoc_md146"></a>
 Purpose</h2>
 <p>The healthcheck endpoint provides a simple way to verify that the Mantis server is running and responsive. It is typically used by monitoring tools, load balancers, or deployment scripts to check the application's status and uptime.</p>
-<h2><a class="anchor" id="autotoc_md146"></a>
+<h2><a class="anchor" id="autotoc_md147"></a>
 Route</h2>
 <div class="fragment"><div class="line">GET /api/v1/health</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md147"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md148"></a>
 Expected Results</h2>
 <p>A successful request to the healthcheck endpoint returns a JSON response with the following structure:</p>
 <div class="fragment"><div class="line">{</div>
@@ -114,16 +114,16 @@ Expected Results</h2>
 <li><code>uptime</code>: The number of seconds the server has been running since it started.</li>
 </ul>
 <p>The HTTP status code for a healthy response is <code>200 OK</code>.</p>
-<h2><a class="anchor" id="autotoc_md148"></a>
+<h2><a class="anchor" id="autotoc_md149"></a>
 Example Response</h2>
 <div class="fragment"><div class="line">{</div>
 <div class="line">  &quot;status&quot;: &quot;ok&quot;,</div>
 <div class="line">  &quot;uptime&quot;: 12345</div>
 <div class="line">}</div>
-</div><!-- fragment --><h2><a class="anchor" id="autotoc_md149"></a>
+</div><!-- fragment --><h2><a class="anchor" id="autotoc_md150"></a>
 Error Handling</h2>
 <p>If the server encounters an error while processing the healthcheck, it may return a <code>500 Internal Server Error</code> with an appropriate error message.</p>
-<h2><a class="anchor" id="autotoc_md150"></a>
+<h2><a class="anchor" id="autotoc_md151"></a>
 Usage</h2>
 <ul>
 <li>Use this endpoint to verify server availability.</li>

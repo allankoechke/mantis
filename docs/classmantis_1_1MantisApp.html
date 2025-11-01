@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -171,9 +171,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c63b1574d22c5f0e663f63169a31518" id="r_a1c63b1574d22c5f0e663f63169a31518"><td class="memItemLeft" align="right" valign="top">argparse::ArgumentParser &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a1c63b1574d22c5f0e663f63169a31518">cmd</a> () const</td></tr>
 <tr class="memdesc:a1c63b1574d22c5f0e663f63169a31518"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the commandline parser object.  <br /></td></tr>
 <tr class="separator:a1c63b1574d22c5f0e663f63169a31518"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a19c58dfee147f79319bb8e96065038c8" id="r_a19c58dfee147f79319bb8e96065038c8"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmantis_1_1Router.html">Router</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a19c58dfee147f79319bb8e96065038c8">router</a> () const</td></tr>
-<tr class="memdesc:a19c58dfee147f79319bb8e96065038c8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the router object instance.  <br /></td></tr>
-<tr class="separator:a19c58dfee147f79319bb8e96065038c8"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a218c19e8e8b33c0c460f01eb08ace70a" id="r_a218c19e8e8b33c0c460f01eb08ace70a"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmantis_1_1RouterUnit.html">RouterUnit</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a218c19e8e8b33c0c460f01eb08ace70a">router</a> () const</td></tr>
+<tr class="memdesc:a218c19e8e8b33c0c460f01eb08ace70a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the router object instance.  <br /></td></tr>
+<tr class="separator:a218c19e8e8b33c0c460f01eb08ace70a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a9a945a51d82e62bb503860105882a9d4" id="r_a9a945a51d82e62bb503860105882a9d4"><td class="memItemLeft" align="right" valign="top"><a class="el" href="classmantis_1_1Validator.html">Validator</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a9a945a51d82e62bb503860105882a9d4">validators</a> () const</td></tr>
 <tr class="memdesc:a9a945a51d82e62bb503860105882a9d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Get the validators unit object instance in <a class="el" href="classmantis_1_1MantisApp.html" title="Mantis entry point.">MantisApp</a>.  <br /></td></tr>
 <tr class="separator:a9a945a51d82e62bb503860105882a9d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -204,12 +204,16 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memdesc:a2adab0fbd43cce6fb8a8b946859848b6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve existing application instance.  <br /></td></tr>
 <tr class="separator:a2adab0fbd43cce6fb8a8b946859848b6"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae4ab7cf1744066d536f848ad40863fd3" id="r_ae4ab7cf1744066d536f848ad40863fd3"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classmantis_1_1MantisApp.html">MantisApp</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#ae4ab7cf1744066d536f848ad40863fd3">create</a> (int argc, char **argv)</td></tr>
+<tr class="memdesc:ae4ab7cf1744066d536f848ad40863fd3"><td class="mdescLeft">&#160;</td><td class="mdescRight">Create class instance given cmd args passed in.  <br /></td></tr>
 <tr class="separator:ae4ab7cf1744066d536f848ad40863fd3"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a56b02a2255be0129c7b64a8d0c20bff8" id="r_a56b02a2255be0129c7b64a8d0c20bff8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="classmantis_1_1MantisApp.html">MantisApp</a> &amp;&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a56b02a2255be0129c7b64a8d0c20bff8">create</a> (const <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &amp;config=json::object())</td></tr>
+<tr class="memdesc:a56b02a2255be0129c7b64a8d0c20bff8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Convenience function to allow creating class instance given the values needed to set up the app without any need for passing in cmd args.  <br /></td></tr>
+<tr class="separator:a56b02a2255be0129c7b64a8d0c20bff8"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab39effc30bd0f450d04e5ac1ff0f1a2d" id="r_ab39effc30bd0f450d04e5ac1ff0f1a2d"><td class="memItemLeft" align="right" valign="top">static int&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#ab39effc30bd0f450d04e5ac1ff0f1a2d">quit</a> (const int &amp;exitCode=0, const std::string &amp;reason=&quot;Something went wrong!&quot;)</td></tr>
 <tr class="memdesc:ab39effc30bd0f450d04e5ac1ff0f1a2d"><td class="mdescLeft">&#160;</td><td class="mdescRight">Quit the running application immediately.  <br /></td></tr>
 <tr class="separator:ab39effc30bd0f450d04e5ac1ff0f1a2d"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a5a0d783c8300af0f042194d6d8e05127" id="r_a5a0d783c8300af0f042194d6d8e05127"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a5a0d783c8300af0f042194d6d8e05127">jwtSecretKey</a> ()</td></tr>
-<tr class="memdesc:a5a0d783c8300af0f042194d6d8e05127"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the <a class="el" href="classmantis_1_1JWT.html">JWT</a> secret key.  <br /></td></tr>
+<tr class="memdesc:a5a0d783c8300af0f042194d6d8e05127"><td class="mdescLeft">&#160;</td><td class="mdescRight">Retrieve the JWT secret key.  <br /></td></tr>
 <tr class="separator:a5a0d783c8300af0f042194d6d8e05127"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a2e30d8bb66607cdd1d4a1f6a475ea560" id="r_a2e30d8bb66607cdd1d4a1f6a475ea560"><td class="memItemLeft" align="right" valign="top">static std::string&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="classmantis_1_1MantisApp.html#a2e30d8bb66607cdd1d4a1f6a475ea560">appVersion</a> ()</td></tr>
 <tr class="separator:a2e30d8bb66607cdd1d4a1f6a475ea560"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -230,13 +234,13 @@ Static Public Member Functions</h2></td></tr>
 </li>
 <li><a class="el" href="classmantis_1_1HttpUnit.html">HttpUnit</a>: Low-level http server operation and routing. <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1HttpUnit.html">HttpUnit</a> for low-level access or </dd>
 <dd>
-<a class="el" href="classmantis_1_1Router.html" title="Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.">Router</a> for a high level routing methods.</dd></dl>
+Router for a high level routing methods.</dd></dl>
 </li>
 <li><a class="el" href="classmantis_1_1LoggingUnit.html">LoggingUnit</a>: For logging capabilities, <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1LoggingUnit.html">LoggingUnit</a> for more details.</dd></dl>
 </li>
-<li><a class="el" href="classmantis_1_1Router.html" title="Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.">Router</a>: High level routing wrapper on top of <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1HttpUnit.html">HttpUnit</a>, </dd>
+<li>Router: High level routing wrapper on top of <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1HttpUnit.html">HttpUnit</a>, </dd>
 <dd>
-<a class="el" href="classmantis_1_1Router.html" title="Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.">Router</a> for more details.</dd></dl>
+Router for more details.</dd></dl>
 </li>
 <li><a class="el" href="classmantis_1_1Validator.html">Validator</a>: A validation store using regex, <dl class="section see"><dt>See also</dt><dd><a class="el" href="classmantis_1_1Validator.html">Validator</a> for more details. </dd></dl>
 </li>
@@ -406,8 +410,60 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
+<a id="a56b02a2255be0129c7b64a8d0c20bff8" name="a56b02a2255be0129c7b64a8d0c20bff8"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a56b02a2255be0129c7b64a8d0c20bff8">&#9670;&#160;</a></span>create() <span class="overload">[1/2]</span></h2>
+
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="classmantis_1_1MantisApp.html">MantisApp</a> &amp; mantis::MantisApp::create </td>
+          <td>(</td>
+          <td class="paramtype">const <a class="el" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> &amp;&#160;</td>
+          <td class="paramname"><em>config</em> = <code>json::object()</code></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Convenience function to allow creating class instance given the values needed to set up the app without any need for passing in cmd args. </p>
+<p>The expected values are: { "database": "&lt;db type&gt;", "connection": "&lt;connection string&gt;", "dataDir": "&lt;path to dir&gt;", "publicDir": "&lt;path to dir&gt;", "scriptsDir": "&lt;path to dir&gt;", "dev": true, "serve": { "port": &lt;int&gt;, "host": "&lt;host IP/addr&gt;", "poolSize": &lt;int&gt;, }, "admins": { "add": "&lt;email to add&gt;", "rm": "&lt;email to remove&gt;" } }</p>
+<dl class="section note"><dt>Note</dt><dd>All primary options above are optional, you can omit to use default values. </dd>
+<dd>
+<code>admins</code> subcommand expects a subcommand with either the <code>add</code> or <code>rm</code>. </dd>
+<dd>
+<code>serve</code> command can have an empty json object and the app will configure with defaults.</dd></dl>
+<div class="fragment"><div class="line"><a class="code hl_typedef" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> arg1 = json::object();</div>
+<div class="line"><span class="keyword">auto</span>&amp; app1 = <a class="code hl_function" href="classmantis_1_1MantisApp.html#ae4ab7cf1744066d536f848ad40863fd3">MantisApp::create</a>(arg2);</div>
+<div class="line"> </div>
+<div class="line"><a class="code hl_typedef" href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">json</a> arg2;</div>
+<div class="line">arg2[<span class="stringliteral">&quot;database&quot;</span>] = <span class="stringliteral">&quot;PSQL&quot;</span>;</div>
+<div class="line">arg2[<span class="stringliteral">&quot;database&quot;</span>] = <span class="stringliteral">&quot;dbname=mantis username=postgres password=12342532&quot;</span>;</div>
+<div class="line">arg2[<span class="stringliteral">&quot;dev&quot;</span>] = <span class="keyword">true</span>;</div>
+<div class="line">arg2[<span class="stringliteral">&quot;serve&quot;</span>] = json::object{};</div>
+<div class="line"><span class="keyword">auto</span>&amp; app2 = <a class="code hl_function" href="classmantis_1_1MantisApp.html#ae4ab7cf1744066d536f848ad40863fd3">MantisApp::create</a>(arg2);</div>
+<div class="ttc" id="aclassmantis_1_1MantisApp_html_ae4ab7cf1744066d536f848ad40863fd3"><div class="ttname"><a href="classmantis_1_1MantisApp.html#ae4ab7cf1744066d536f848ad40863fd3">mantis::MantisApp::create</a></div><div class="ttdeci">static MantisApp &amp; create(int argc, char **argv)</div><div class="ttdoc">Create class instance given cmd args passed in.</div><div class="ttdef"><b>Definition</b> app.cpp:66</div></div>
+<div class="ttc" id="anamespacemantis_html_a0255780f56da02614156f7ef7cd3d3a3"><div class="ttname"><a href="namespacemantis.html#a0255780f56da02614156f7ef7cd3d3a3">mantis::json</a></div><div class="ttdeci">nlohmann::json json</div><div class="ttdoc">Shorten JSON namespace.</div><div class="ttdef"><b>Definition</b> context_store.h:15</div></div>
+</div><!-- fragment --><dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">config</td><td>JSON Object bearing the cmd args values to be used </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>A reference to the created class instance </dd></dl>
+
+</div>
+</div>
 <a id="ae4ab7cf1744066d536f848ad40863fd3" name="ae4ab7cf1744066d536f848ad40863fd3"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#ae4ab7cf1744066d536f848ad40863fd3">&#9670;&#160;</a></span>create()</h2>
+<h2 class="memtitle"><span class="permalink"><a href="#ae4ab7cf1744066d536f848ad40863fd3">&#9670;&#160;</a></span>create() <span class="overload">[2/2]</span></h2>
 
 <div class="memitem">
 <div class="memproto">
@@ -439,6 +495,17 @@ Static Public Member Functions</h2></td></tr>
   </tr>
 </table>
 </div><div class="memdoc">
+
+<p>Create class instance given cmd args passed in. </p>
+<dl class="section see"><dt>See also</dt><dd>parseArgs() for expected <a class="el" href="classmantis_1_1MantisApp.html#a1c63b1574d22c5f0e663f63169a31518" title="Get the commandline parser object.">cmd</a> args to be passed in.</dd></dl>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">argc</td><td>Number of cmd args </td></tr>
+    <tr><td class="paramname">argv</td><td>Char array list </td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd>Reference to the created class instance </dd></dl>
 
 </div>
 </div>
@@ -685,8 +752,8 @@ Static Public Member Functions</h2></td></tr>
 </table>
 </div><div class="memdoc">
 
-<p>Retrieve the <a class="el" href="classmantis_1_1JWT.html">JWT</a> secret key. </p>
-<dl class="section return"><dt>Returns</dt><dd><a class="el" href="classmantis_1_1JWT.html">JWT</a> Secret value. </dd></dl>
+<p>Retrieve the JWT secret key. </p>
+<dl class="section return"><dt>Returns</dt><dd>JWT Secret value. </dd></dl>
 
 </div>
 </div>
@@ -837,14 +904,14 @@ Static Public Member Functions</h2></td></tr>
 
 </div>
 </div>
-<a id="a19c58dfee147f79319bb8e96065038c8" name="a19c58dfee147f79319bb8e96065038c8"></a>
-<h2 class="memtitle"><span class="permalink"><a href="#a19c58dfee147f79319bb8e96065038c8">&#9670;&#160;</a></span>router()</h2>
+<a id="a218c19e8e8b33c0c460f01eb08ace70a" name="a218c19e8e8b33c0c460f01eb08ace70a"></a>
+<h2 class="memtitle"><span class="permalink"><a href="#a218c19e8e8b33c0c460f01eb08ace70a">&#9670;&#160;</a></span>router()</h2>
 
 <div class="memitem">
 <div class="memproto">
       <table class="memname">
         <tr>
-          <td class="memname"><a class="el" href="classmantis_1_1Router.html">Router</a> &amp; mantis::MantisApp::router </td>
+          <td class="memname"><a class="el" href="classmantis_1_1RouterUnit.html">RouterUnit</a> &amp; mantis::MantisApp::router </td>
           <td>(</td>
           <td class="paramname"></td><td>)</td>
           <td> const</td>

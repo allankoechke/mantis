@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -100,42 +100,46 @@ $(document).ready(function(){initNavTree('string__utils_8cpp.html',''); initResi
 <div class="contents">
 <div class="textblock"><code>#include &quot;<a class="el" href="utils_8h_source.html">../../include/mantis/utils/utils.h</a>&quot;</code><br />
 <code>#include &lt;algorithm&gt;</code><br />
-<code>#include &quot;httplib.h&quot;</code><br />
+<code>#include &lt;httplib.h&gt;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for string_utils.cpp:</div>
 <div class="dyncontent">
 <div class="center"><img src="string__utils_8cpp__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2src_2utils_2string__utils_8cpp" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2src_2utils_2string__utils_8cpp" id="a_2home_2runner_2work_2mantis_2mantis_2src_2utils_2string__utils_8cpp">
-<area shape="rect" title=" " alt="" coords="700,5,895,60"/>
-<area shape="rect" href="utils_8h.html" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="425,108,567,148"/>
-<area shape="poly" title=" " alt="" coords="713,63,571,107,569,101,712,58"/>
-<area shape="rect" title=" " alt="" coords="948,196,1033,221"/>
-<area shape="poly" title=" " alt="" coords="799,60,805,104,813,127,826,146,843,158,870,170,935,191,934,196,868,175,840,163,822,150,808,129,800,105,794,61"/>
-<area shape="rect" title=" " alt="" coords="835,115,911,141"/>
-<area shape="poly" title=" " alt="" coords="821,59,857,103,853,106,817,62"/>
-<area shape="rect" title=" " alt="" coords="5,196,64,221"/>
-<area shape="poly" title=" " alt="" coords="425,141,270,163,78,199,77,193,269,158,424,136"/>
-<area shape="rect" title=" " alt="" coords="88,196,179,221"/>
-<area shape="poly" title=" " alt="" coords="425,147,193,197,192,192,424,142"/>
-<area shape="rect" title=" " alt="" coords="203,196,275,221"/>
-<area shape="poly" title=" " alt="" coords="435,151,288,195,287,190,434,145"/>
-<area shape="rect" title=" " alt="" coords="299,196,365,221"/>
-<area shape="poly" title=" " alt="" coords="458,150,369,192,367,188,456,146"/>
-<area shape="rect" title=" " alt="" coords="390,196,487,221"/>
-<area shape="poly" title=" " alt="" coords="484,150,457,186,453,183,480,147"/>
-<area shape="poly" title=" " alt="" coords="568,136,732,160,935,193,934,198,731,165,567,142"/>
-<area shape="rect" title=" " alt="" coords="511,196,598,221"/>
-<area shape="poly" title=" " alt="" coords="512,147,540,183,535,186,508,150"/>
-<area shape="rect" href="logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="622,196,749,221"/>
-<area shape="poly" title=" " alt="" coords="542,146,646,188,644,193,540,150"/>
-<area shape="rect" title=" " alt="" coords="773,196,923,221"/>
-<area shape="poly" title=" " alt="" coords="568,143,784,190,783,196,567,148"/>
-<area shape="rect" title=" " alt="" coords="383,269,571,324"/>
-<area shape="poly" title=" " alt="" coords="658,224,554,267,552,262,656,219"/>
-<area shape="rect" title=" " alt="" coords="596,277,775,317"/>
-<area shape="poly" title=" " alt="" coords="688,222,688,263,683,263,683,222"/>
-<area shape="rect" title=" " alt="" coords="799,269,958,324"/>
-<area shape="poly" title=" " alt="" coords="712,219,808,261,806,266,710,224"/>
+<area shape="rect" title=" " alt="" coords="451,5,645,60"/>
+<area shape="rect" href="utils_8h.html" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="477,108,619,148"/>
+<area shape="poly" title=" " alt="" coords="551,60,551,94,545,94,545,60"/>
+<area shape="rect" title=" " alt="" coords="5,203,91,229"/>
+<area shape="poly" title=" " alt="" coords="477,63,93,201,92,196,475,58"/>
+<area shape="rect" title=" " alt="" coords="643,115,719,141"/>
+<area shape="poly" title=" " alt="" coords="587,58,655,105,652,110,584,62"/>
+<area shape="rect" title=" " alt="" coords="115,203,173,229"/>
+<area shape="poly" title=" " alt="" coords="477,140,341,161,263,178,186,199,180,201,179,195,185,193,261,173,340,156,476,135"/>
+<area shape="rect" title=" " alt="" coords="197,203,288,229"/>
+<area shape="poly" title=" " alt="" coords="477,150,301,199,290,202,289,197,299,193,476,145"/>
+<area shape="rect" title=" " alt="" coords="312,203,384,229"/>
+<area shape="poly" title=" " alt="" coords="505,151,388,200,386,196,503,146"/>
+<area shape="rect" title=" " alt="" coords="408,203,475,229"/>
+<area shape="poly" title=" " alt="" coords="526,150,468,197,465,192,523,146"/>
+<area shape="rect" title=" " alt="" coords="499,203,597,229"/>
+<area shape="poly" title=" " alt="" coords="551,148,551,189,545,189,545,148"/>
+<area shape="poly" title=" " alt="" coords="477,139,306,160,204,177,103,199,92,202,91,197,102,193,203,172,305,155,476,133"/>
+<area shape="rect" title=" " alt="" coords="621,203,707,229"/>
+<area shape="poly" title=" " alt="" coords="575,146,639,193,636,197,572,150"/>
+<area shape="rect" title=" " alt="" coords="643,291,789,317"/>
+<area shape="poly" title=" " alt="" coords="620,146,682,168,706,181,722,194,731,215,734,238,727,279,722,278,728,238,726,216,718,198,703,185,680,173,618,151"/>
+<area shape="rect" href="logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="783,203,910,229"/>
+<area shape="poly" title=" " alt="" coords="607,145,788,197,787,202,605,151"/>
+<area shape="rect" title=" " alt="" coords="934,203,1085,229"/>
+<area shape="poly" title=" " alt="" coords="620,143,631,145,777,170,923,193,946,198,945,203,922,199,776,175,630,151,619,148"/>
+<area shape="rect" title=" " alt="" coords="1109,196,1257,236"/>
+<area shape="poly" title=" " alt="" coords="620,143,631,145,759,162,861,170,964,177,1095,193,1094,198,963,182,861,175,759,168,630,151,619,149"/>
+<area shape="poly" title=" " alt="" coords="813,206,632,154,633,149,814,201"/>
+<area shape="poly" title=" " alt="" coords="831,231,747,286,744,281,828,227"/>
+<area shape="rect" title=" " alt="" coords="814,291,938,317"/>
+<area shape="poly" title=" " alt="" coords="853,228,870,277,865,279,848,230"/>
+<area shape="rect" title=" " alt="" coords="963,284,1104,324"/>
+<area shape="poly" title=" " alt="" coords="873,226,981,276,978,281,871,231"/>
 </map>
 </div>
 </div><table class="memberdecls">

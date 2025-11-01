@@ -14,7 +14,7 @@ var hierarchy =
     [ "mantis::FileUnit", "classmantis_1_1FileUnit.html", null ],
     [ "mantis::FuncLogger", "classmantis_1_1FuncLogger.html", null ],
     [ "mantis::HttpUnit", "classmantis_1_1HttpUnit.html", null ],
-    [ "mantis::JWT", "classmantis_1_1JWT.html", null ],
+    [ "mantis::JwtUnit", "classmantis_1_1JwtUnit.html", null ],
     [ "soci::logger_impl", null, [
       [ "mantis::MantisLoggerImpl", "classmantis_1_1MantisLoggerImpl.html", null ]
     ] ],
@@ -24,8 +24,8 @@ var hierarchy =
     [ "mantis::MantisResponse", "classmantis_1_1MantisResponse.html", null ],
     [ "mantis::RouteHandler", "structmantis_1_1RouteHandler.html", null ],
     [ "mantis::RouteKeyHash", "structmantis_1_1RouteKeyHash.html", null ],
-    [ "mantis::Router", "classmantis_1_1Router.html", null ],
     [ "mantis::RouteRegistry", "classmantis_1_1RouteRegistry.html", null ],
+    [ "mantis::RouterUnit", "classmantis_1_1RouterUnit.html", null ],
     [ "mantis::SettingsUnit", "classmantis_1_1SettingsUnit.html", null ],
     [ "mantis::Table", "structmantis_1_1Table.html", [
       [ "mantis::AuthTable", "structmantis_1_1AuthTable.html", [

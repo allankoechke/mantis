@@ -1,17 +1,13 @@
 var utils_8h =
 [
-    [ "bcryptBase64Encode", "utils_8h.html#a9e23dffb248fc4160e5c6c09a594eae2", null ],
-    [ "bcryptBase64EncodeStr", "utils_8h.html#aeb45847f55aef56ed55a3e3c9df3e2df", null ],
     [ "createDirs", "utils_8h.html#a7198d676b24903590c1462d7af4958a7", null ],
     [ "dbDateToString", "utils_8h.html#a634042b7708af2536b4a3978eba873f7", null ],
     [ "dirFromPath", "utils_8h.html#ab35751b3a0762476bf6d955eacc1a6c1", null ],
     [ "generateReadableTimeId", "utils_8h.html#a3832564f3023e4b1683a1a9392f17bd8", null ],
-    [ "generateSalt", "utils_8h.html#a73a3aa68eaf070b0dc152df95c6b91ad", null ],
     [ "generateShortId", "utils_8h.html#a90a5625faff184237b8c6a18c660139a", null ],
     [ "generateTimeBasedId", "utils_8h.html#a2bc2a84280e5b58546a4ddfdeea4a230", null ],
     [ "getEnvOrDefault", "utils_8h.html#a5e25a8cc629f217be134c89138011502", null ],
-    [ "hashPassword", "utils_8h.html#a23e98d8e10ea45122b69111f3016c2a4", null ],
-    [ "hashPasswordJS", "utils_8h.html#a89431b676eb32feb2351f494c866c43f", null ],
+    [ "hashPassword", "utils_8h.html#ae0033889a7943df9d73a7f34265b9bcd", null ],
     [ "joinPaths", "utils_8h.html#a3b035e6242171c178e93e4f5e29fb18e", null ],
     [ "registerUtilsToDuktapeEngine", "utils_8h.html#a17d8355ab517396a1154c45a0aea1f96", null ],
     [ "resolvePath", "utils_8h.html#abe97209493d2bc0086c3678010342477", null ],
@@ -25,6 +21,5 @@ var utils_8h =
     [ "toUpperCase", "utils_8h.html#aa0aa0dffb82adecf81cc50947b7b7f1f", null ],
     [ "trim", "utils_8h.html#a842ffce0f72c6aed85cdfa2c1f0615f5", null ],
     [ "tryParseJsonStr", "utils_8h.html#a8ecebf53d24d9678f7005d0b4ee8da6d", null ],
-    [ "verifyPassword", "utils_8h.html#abefb7cd2f2074a44997f34b2362270ab", null ],
-    [ "verifyPasswordJS", "utils_8h.html#aaf69d2243058d693142d2f58eff061d3", null ]
+    [ "verifyPassword", "utils_8h.html#aa3b485737835c66ce8e394ba0bbdb2e2", null ]
 ];

@@ -28,7 +28,7 @@
  <tr id="projectrow">
   <td id="projectlogo"><img alt="Logo" src="mantis.png"/></td>
   <td id="projectalign">
-   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.10</span>
+   <div id="projectname">Mantis App<span id="projectnumber">&#160;v0.2.11</span>
    </div>
   </td>
  </tr>
@@ -101,18 +101,48 @@ $(document).ready(function(){initNavTree('crud_8h.html',''); initResizable(); })
 <div class="textblock"><code>#include &lt;optional&gt;</code><br />
 <code>#include &lt;vector&gt;</code><br />
 <code>#include &lt;nlohmann/json.hpp&gt;</code><br />
+<code>#include &quot;<a class="el" href="utils_8h_source.html">../../utils/utils.h</a>&quot;</code><br />
 </div><div class="textblock"><div class="dynheader">
 Include dependency graph for crud.h:</div>
 <div class="dyncontent">
 <div class="center"><img src="crud_8h__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2core_2crud_2crud_8h" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2core_2crud_2crud_8h" id="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2core_2crud_2crud_8h">
-<area shape="rect" title=" " alt="" coords="39,5,233,60"/>
+<area shape="rect" title=" " alt="" coords="73,5,268,60"/>
 <area shape="rect" title=" " alt="" coords="5,108,80,133"/>
-<area shape="poly" title=" " alt="" coords="109,62,67,100,64,96,106,58"/>
+<area shape="poly" title=" " alt="" coords="133,62,73,103,70,98,130,58"/>
 <area shape="rect" title=" " alt="" coords="105,108,167,133"/>
-<area shape="poly" title=" " alt="" coords="139,60,139,94,133,94,133,60"/>
-<area shape="rect" title=" " alt="" coords="192,108,339,133"/>
-<area shape="poly" title=" " alt="" coords="177,58,238,98,235,103,174,62"/>
+<area shape="poly" title=" " alt="" coords="163,61,148,96,143,94,158,59"/>
+<area shape="rect" title=" " alt="" coords="183,277,329,302"/>
+<area shape="poly" title=" " alt="" coords="182,59,250,263,245,265,177,61"/>
+<area shape="rect" href="utils_8h.html" title="Collection of utility functions that are re&#45;used across different files." alt="" coords="667,108,786,133"/>
+<area shape="poly" title=" " alt="" coords="269,46,654,105,653,111,268,52"/>
+<area shape="poly" title=" " alt="" coords="667,125,569,127,455,136,350,154,311,167,283,183,270,201,262,221,257,263,252,263,257,220,265,198,280,179,308,162,349,148,454,131,569,122,667,119"/>
+<area shape="rect" title=" " alt="" coords="293,189,352,214"/>
+<area shape="poly" title=" " alt="" coords="668,130,528,148,446,163,365,184,358,186,357,181,363,179,444,158,527,142,667,124"/>
+<area shape="rect" title=" " alt="" coords="376,189,467,214"/>
+<area shape="poly" title=" " alt="" coords="674,136,479,184,469,187,467,182,478,179,673,131"/>
+<area shape="rect" title=" " alt="" coords="491,189,563,214"/>
+<area shape="poly" title=" " alt="" coords="699,136,570,186,568,181,697,131"/>
+<area shape="rect" title=" " alt="" coords="587,189,653,214"/>
+<area shape="poly" title=" " alt="" coords="713,136,648,183,645,178,709,131"/>
+<area shape="rect" title=" " alt="" coords="678,189,775,214"/>
+<area shape="poly" title=" " alt="" coords="729,134,729,175,724,175,724,134"/>
+<area shape="rect" title=" " alt="" coords="800,189,885,214"/>
+<area shape="poly" title=" " alt="" coords="745,131,816,179,813,183,742,136"/>
+<area shape="rect" title=" " alt="" coords="910,189,997,214"/>
+<area shape="poly" title=" " alt="" coords="760,131,908,182,907,187,759,136"/>
+<area shape="rect" href="logging_8h.html" title="Wrapper around spdlog&#39;s functionality." alt="" coords="1021,189,1147,214"/>
+<area shape="poly" title=" " alt="" coords="776,131,998,179,1016,183,1014,188,997,184,775,136"/>
+<area shape="rect" title=" " alt="" coords="1171,189,1322,214"/>
+<area shape="poly" title=" " alt="" coords="786,126,955,147,1160,179,1184,183,1183,188,1160,184,954,153,786,131"/>
+<area shape="rect" title=" " alt="" coords="1346,181,1494,221"/>
+<area shape="poly" title=" " alt="" coords="786,123,1022,141,1175,157,1332,178,1332,184,1174,162,1021,146,786,128"/>
+<area shape="poly" title=" " alt="" coords="1044,217,1010,224,825,250,640,268,343,287,343,282,639,263,824,245,1009,219,1043,211"/>
+<area shape="poly" title=" " alt="" coords="1051,191,1021,184,799,137,800,132,1022,179,1052,186"/>
+<area shape="rect" title=" " alt="" coords="943,277,1067,302"/>
+<area shape="poly" title=" " alt="" coords="1075,216,1027,268,1023,264,1071,212"/>
+<area shape="rect" title=" " alt="" coords="1092,269,1233,309"/>
+<area shape="poly" title=" " alt="" coords="1097,212,1138,257,1134,261,1093,216"/>
 </map>
 </div>
 </div><div class="textblock"><div class="dynheader">
@@ -120,31 +150,33 @@ This graph shows which files directly or indirectly include this file:</div>
 <div class="dyncontent">
 <div class="center"><img src="crud_8h__dep__incl.png" border="0" usemap="#a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2core_2crud_2crud_8hdep" alt=""/></div>
 <map name="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2core_2crud_2crud_8hdep" id="a_2home_2runner_2work_2mantis_2mantis_2include_2mantis_2core_2crud_2crud_8hdep">
-<area shape="rect" title=" " alt="" coords="273,5,468,60"/>
-<area shape="rect" href="tables_8h.html" title=" " alt="" coords="484,108,679,163"/>
-<area shape="poly" title=" " alt="" coords="439,63,528,106,525,110,437,68"/>
-<area shape="rect" href="mantis_8h.html" title=" " alt="" coords="115,313,309,368"/>
-<area shape="poly" title=" " alt="" coords="325,71,294,98,261,131,232,170,210,212,204,237,202,264,208,313,203,313,197,265,199,237,206,210,228,167,257,128,290,94,321,67"/>
-<area shape="rect" href="sys__tables_8h.html" title=" " alt="" coords="753,211,948,265"/>
-<area shape="poly" title=" " alt="" coords="665,165,781,208,780,213,663,170"/>
-<area shape="poly" title=" " alt="" coords="471,150,402,160,334,173,276,191,254,201,239,213,224,235,215,262,212,314,207,313,210,261,219,233,235,209,252,197,274,186,332,168,401,155,470,145"/>
-<area shape="rect" href="router_8cpp.html" title=" " alt="" coords="535,321,729,361"/>
-<area shape="poly" title=" " alt="" coords="654,168,676,186,693,209,699,224,701,238,693,266,676,297,655,322,651,319,672,294,688,264,695,237,694,226,688,212,672,190,651,172"/>
-<area shape="rect" href="sys__tables__crud_8cpp.html" title=" " alt="" coords="972,313,1167,368"/>
-<area shape="poly" title=" " alt="" coords="693,136,757,144,826,157,896,178,961,208,992,231,1018,258,1057,311,1052,315,1014,262,988,235,959,213,894,183,825,162,756,149,692,142"/>
-<area shape="rect" href="settings_8cpp.html" title=" " alt="" coords="250,218,459,258"/>
-<area shape="poly" title=" " alt="" coords="511,171,398,220,396,215,509,166"/>
-<area shape="rect" href="tables_8cpp.html" title=" " alt="" coords="484,211,679,265"/>
-<area shape="poly" title=" " alt="" coords="584,176,584,211,579,211,579,176"/>
-<area shape="poly" title=" " alt="" coords="740,260,691,268,310,327,309,322,690,263,739,255"/>
-<area shape="poly" title=" " alt="" coords="783,273,674,323,672,318,780,269"/>
-<area shape="rect" href="sys__tables_8cpp.html" title=" " alt="" coords="753,313,948,368"/>
-<area shape="poly" title=" " alt="" coords="853,279,853,313,848,313,848,279"/>
-<area shape="poly" title=" " alt="" coords="921,269,1013,311,1011,316,919,273"/>
+<area shape="rect" title=" " alt="" coords="383,5,577,60"/>
+<area shape="rect" href="tables_8h.html" title=" " alt="" coords="593,108,788,163"/>
+<area shape="poly" title=" " alt="" coords="548,63,637,106,635,110,546,68"/>
+<area shape="rect" href="mantis_8h.html" title=" " alt="" coords="224,313,419,368"/>
+<area shape="poly" title=" " alt="" coords="434,71,403,98,371,131,342,170,320,212,313,237,312,264,317,313,312,313,306,265,308,237,315,210,337,167,367,128,399,94,431,67"/>
+<area shape="rect" href="sys__tables_8h.html" title=" " alt="" coords="863,211,1057,265"/>
+<area shape="poly" title=" " alt="" coords="775,165,891,208,889,213,773,170"/>
+<area shape="poly" title=" " alt="" coords="580,150,511,160,443,173,385,191,364,201,349,213,333,235,325,262,321,314,316,313,320,261,328,233,345,209,361,197,383,186,442,168,511,155,580,145"/>
+<area shape="rect" href="router_8cpp.html" title=" " alt="" coords="644,321,839,361"/>
+<area shape="poly" title=" " alt="" coords="763,168,785,186,802,209,809,224,810,238,802,266,786,297,765,322,760,319,781,294,798,264,805,237,803,226,798,212,781,190,760,172"/>
+<area shape="rect" href="sys__tables__crud_8cpp.html" title=" " alt="" coords="1081,313,1276,368"/>
+<area shape="poly" title=" " alt="" coords="802,136,866,144,935,157,1005,178,1071,208,1101,231,1128,258,1166,311,1162,315,1124,262,1098,235,1068,213,1003,183,934,162,865,149,801,142"/>
+<area shape="rect" href="settings_8cpp.html" title=" " alt="" coords="359,218,569,258"/>
+<area shape="poly" title=" " alt="" coords="621,171,508,220,505,215,618,166"/>
+<area shape="rect" href="tables_8cpp.html" title=" " alt="" coords="593,211,788,265"/>
+<area shape="poly" title=" " alt="" coords="693,176,693,211,688,211,688,176"/>
+<area shape="poly" title=" " alt="" coords="849,260,800,268,419,327,419,322,800,263,848,255"/>
+<area shape="poly" title=" " alt="" coords="892,273,784,323,781,318,890,269"/>
+<area shape="rect" href="sys__tables_8cpp.html" title=" " alt="" coords="863,313,1057,368"/>
+<area shape="poly" title=" " alt="" coords="963,279,963,313,957,313,957,279"/>
+<area shape="poly" title=" " alt="" coords="1030,269,1123,311,1121,316,1028,273"/>
 <area shape="rect" href="app_8cpp.html" title=" " alt="" coords="5,423,200,463"/>
-<area shape="poly" title=" " alt="" coords="175,380,125,425,121,421,171,376"/>
+<area shape="poly" title=" " alt="" coords="253,376,145,426,143,421,251,371"/>
 <area shape="rect" href="models_8cpp.html" title=" " alt="" coords="224,416,419,471"/>
-<area shape="poly" title=" " alt="" coords="253,376,295,414,291,418,249,380"/>
+<area shape="poly" title=" " alt="" coords="324,382,324,416,319,416,319,382"/>
+<area shape="rect" href="mantisapp_8cpp.html" title="Standalone mantisapp executable entrypoint." alt="" coords="443,423,637,463"/>
+<area shape="poly" title=" " alt="" coords="392,371,500,421,498,426,389,376"/>
 </map>
 </div>
 </div>

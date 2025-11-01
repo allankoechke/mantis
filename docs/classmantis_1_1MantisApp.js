@@ -18,7 +18,7 @@ var classmantis_1_1MantisApp =
     [ "poolSize", "classmantis_1_1MantisApp.html#a0bed909bb11c21fb92ece716ca17c6c8", null ],
     [ "port", "classmantis_1_1MantisApp.html#ac72b0c02c8d627414a26639f77311190", null ],
     [ "publicDir", "classmantis_1_1MantisApp.html#a9df87a395333a5cec95cf759387bc05d", null ],
-    [ "router", "classmantis_1_1MantisApp.html#a19c58dfee147f79319bb8e96065038c8", null ],
+    [ "router", "classmantis_1_1MantisApp.html#a218c19e8e8b33c0c460f01eb08ace70a", null ],
     [ "run", "classmantis_1_1MantisApp.html#a8890e110135d4981a382adb0a824292c", null ],
     [ "scriptsDir", "classmantis_1_1MantisApp.html#a2e2bfcd06c879d8c4f7bf4876fc839b7", null ],
     [ "setDataDir", "classmantis_1_1MantisApp.html#aa39f3105148ae6918274963b724404f3", null ],

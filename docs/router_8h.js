@@ -1,4 +1,4 @@
 var router_8h =
 [
-    [ "mantis::Router", "classmantis_1_1Router.html", "classmantis_1_1Router" ]
+    [ "mantis::RouterUnit", "classmantis_1_1RouterUnit.html", "classmantis_1_1RouterUnit" ]
 ];
