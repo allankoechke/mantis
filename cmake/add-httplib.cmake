@@ -1,3 +1,5 @@
+add_definitions(-D_WIN32_WINNT=0x0A00)
+
 # Build static lib for httplib
 set(HTTPLIB_COMPILE OFF CACHE BOOL "")
 if(WIN32)
