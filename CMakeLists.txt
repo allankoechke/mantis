@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.2.11)
+project(mantisapp VERSION 0.2.12)
 set(CMAKE_CXX_STANDARD 20)
 
 # Set output directories to match SOCI's

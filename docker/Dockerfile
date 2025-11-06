@@ -1,6 +1,6 @@
 FROM ubuntu:latest
 
-ARG MANTIS_VERSION=0.2.11
+ARG MANTIS_VERSION=0.2.12
 ENV DEBIAN_FRONTEND=noninteractive
 
 RUN apt-get update && apt-get install -y --no-install-recommends \

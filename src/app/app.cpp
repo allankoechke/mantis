@@ -29,6 +29,11 @@ namespace mantis
     {
         TRACE_CLASS_METHOD()
 
+        if (!m_toStartServer) {
+            std::cout << std::endl;
+            Log::info("Exitting, nothing else to do. Did you intend to run the server? Try `mantisapp serve` instead.");
+        }
+
         // Terminate any shared pointers
         close();
 
