@@ -25,6 +25,8 @@
 
 > [!WARNING]  
 > Mantis is still under active development and API might change as the project stablizes.
+> We have started work on v0.3.x release changes that will rework whole codebase to create a stable API and improve performance. Follow the work on the [`v0.3-dev`](https://github.com/allankoechke/mantis/tree/v0.3-dev) branch.
+
 
 ## 🛠️ Tech Stack
 
