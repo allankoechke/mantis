@@ -15,8 +15,12 @@
 #include <filesystem>
 #include <chrono>
 #include <argparse/argparse.hpp>
-#include <dukglue/dukglue.h>
 #include <httplib.h>
+
+#ifdef MANTIS_ENABLE_SCRIPTING
+#include <dukglue/dukglue.h>
+#endif
+
 
 #include "../core/expr_evaluator.h"
 
@@ -275,8 +279,12 @@ namespace mantis
         [[nodiscard]] SettingsUnit& settings() const;
         /// Get the file unit object
         [[nodiscard]] FileUnit& files() const;
+
+#ifdef MANTIS_ENABLE_SCRIPTING
         /// Get the duktape context
         [[nodiscard]] duk_context* ctx() const;
+#endif
+
 
         /**
          * @brief Launch browser with the admin dashboard page. If all goes well, the default
@@ -336,6 +344,7 @@ namespace mantis
          */
         static std::string getUserValueSecurely(const std::string& prompt);
 
+#ifdef MANTIS_ENABLE_SCRIPTING
         /**
          * @brief Initialize JS engine and register Mantis functions to JS
          */
@@ -373,6 +382,7 @@ namespace mantis
          */
         [[nodiscard]] DatabaseUnit* duk_db() const;
         [[nodiscard]] RouterUnit* duk_router() const;
+#endif
 
         // Store commandline args passed in, to be used in the init phase.
         std::vector<std::string> m_cmdArgs;
@@ -406,7 +416,11 @@ namespace mantis
         std::unique_ptr<ExprEvaluator> m_exprEval;
         std::unique_ptr<SettingsUnit> m_settings;
         std::unique_ptr<FileUnit> m_files;
+
+#ifdef MANTIS_ENABLE_SCRIPTING
         duk_context* m_dukCtx; // For duktape context
+#endif
+
     };
 }
 

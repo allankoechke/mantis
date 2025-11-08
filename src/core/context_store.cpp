@@ -2,7 +2,9 @@
 #include "../../include/mantis/app/app.h"
 #include "../../include/mantis/core/logging.h"
 
-#include <dukglue/dukglue.h>
+#ifdef MANTIS_ENABLE_SCRIPTING
+    #include <dukglue/dukglue.h>
+#endif
 
 namespace mantis
 {
@@ -51,6 +53,7 @@ namespace mantis
         return data.contains(key);
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     DukValue ContextStore::get_duk(const std::string& key)
     {
         const auto it = data.find(key);
@@ -150,4 +153,5 @@ namespace mantis
             }
         }
     }
+#endif
 } // mantis

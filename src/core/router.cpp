@@ -9,7 +9,10 @@
 #include "../../include/mantis/core/settings.h"
 
 #include <cmrc/cmrc.hpp>
+
+#ifdef MANTIS_ENABLE_SCRIPTING
 #include <dukglue/dukglue.h>
+#endif
 
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);
@@ -313,11 +316,13 @@ namespace mantis
         return res;
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     void RouterUnit::registerDuktapeMethods()
     {
         const auto& ctx = MantisApp::instance().ctx();
         dukglue_register_method_varargs(ctx, &RouterUnit::bindRoute, "addRoute");
     }
+#endif
 
     bool RouterUnit::generateFileServingApi() const
     {
@@ -532,6 +537,7 @@ namespace mantis
         return true;
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     duk_ret_t RouterUnit::bindRoute(duk_context* ctx)
     {
         // Get method (GET, POST, etc.) from argument 0
@@ -683,4 +689,5 @@ namespace mantis
             Log::critical("Error Executing Route {} : {}", req.getPath(), e.what());
         }
     }
+#endif
 }

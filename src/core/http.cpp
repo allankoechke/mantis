@@ -282,6 +282,8 @@ namespace mantis
         return std::to_string(result);
     }
 
+
+#ifdef MANTIS_ENABLE_SCRIPTING
     void HttpUnit::registerDuktapeMethods()
     {
         const auto ctx = MantisApp::instance().ctx();
@@ -291,6 +293,8 @@ namespace mantis
         MantisResponse::registerDuktapeMethods();
         MantisRequest::registerDuktapeMethods();
     }
+#endif
+
 
     std::string HttpUnit::decompressResponseBody(const std::string& body, const std::string& encoding)
     {

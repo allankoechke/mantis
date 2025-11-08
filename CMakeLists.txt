@@ -19,6 +19,8 @@ configure_file(
     ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp
 )
 
+option(MANTIS_SCRIPTING_ENABLED "Enable JS Scripting" OFF)
+
 # Flag for building deps as shared/static libs
 set(MANTIS_SHARED_DEPS FALSE)
 if(MANTIS_SHARED_DEPS)
@@ -40,9 +42,7 @@ add_executable(mantisapp
     src/mantisapp.cpp
 )
 
-# Add library
-add_library(mantis
-    ${MANTIS_LIB_TYPE}
+set( MANTIS_SOURCES
     src/app/app.cpp
     src/core/database.cpp
     src/core/models/models.cpp
@@ -71,7 +71,6 @@ add_library(mantis
     src/utils/string_utils.cpp
     src/utils/path_utils.cpp
     src/utils/type_utils.cpp
-    src/utils/dukglue_utils_bindings.cpp
 
     include/mantis/core/private-impl/soci_custom_types.hpp
     include/mantis/app/config.hpp.in
@@ -84,6 +83,24 @@ add_library(mantis
     src/core/private-impl/duktape_request_wrapper.cpp
     src/core/private-impl/duktape_response_wrapper.cpp
 )
+
+if(MANTIS_SCRIPTING_ENABLED)
+    set( MANTIS_SOURCES
+            ${MANTIS_SOURCES}
+            src/utils/dukglue_utils_bindings.cpp
+    )
+endif ()
+
+# Add library
+add_library(mantis
+    ${MANTIS_LIB_TYPE}
+        ${MANTIS_SOURCES}
+)
+
+if(MANTIS_SCRIPTING_ENABLED)
+    message("-- Enabling Mantis Scripting via Duktape")
+    add_compile_definitions(mantis PUBLIC MANTIS_SCRIPTING_ENABLED=1)
+endif (MANTIS_SCRIPTING_ENABLED)
 
 # Add httplib
 include(cmake/add-httplib.cmake)
@@ -121,8 +138,10 @@ include(cmake/add-cmrc.cmake)
 # Include address sanitizer for Linux debug/releaseWithDebug builds
 include(cmake/add-asan.cmake)
 
-# Include duktape for ECMASCRIPT scripting in Mantis
-include(cmake/add-duktape.cmake)
+if(MANTIS_SCRIPTING_ENABLED)
+    # Include duktape for ECMASCRIPT scripting in Mantis
+    include(cmake/add-duktape.cmake)
+endif (MANTIS_SCRIPTING_ENABLED)
 
 # Link to libs
 target_link_libraries(mantis

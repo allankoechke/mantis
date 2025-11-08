@@ -293,6 +293,7 @@ namespace mantis
         return sql->is_connected();
     }
 
+#ifdef MANTIS_SCRIPTING_ENABLED
     void DatabaseUnit::registerDuktapeMethods()
     {
         const auto ctx = MantisApp::instance().ctx();
@@ -317,7 +318,10 @@ namespace mantis
         dukglue_register_method(ctx, &soci::session::get_backend_name, "getBackendName");
         dukglue_register_method(ctx, &soci::session::empty_blob, "emptyBlob");
     }
+#endif
 
+
+#ifdef MANTIS_SCRIPTING_ENABLED
     duk_ret_t DatabaseUnit::query(duk_context* ctx)
     {
         // TRACE_CLASS_METHOD();
@@ -461,6 +465,7 @@ namespace mantis
         duk_json_decode(ctx, -1);
         return 1; // Return the object
     }
+#endif
 
     void DatabaseUnit::writeCheckpoint() const
     {

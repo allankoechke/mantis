@@ -5,13 +5,17 @@
 #ifndef MANTISAPP_DUKTAPE_CUSTOM_TYPES_H
 #define MANTISAPP_DUKTAPE_CUSTOM_TYPES_H
 
+#ifdef MANTIS_ENABLE_SCRIPTING
 #include <dukglue/dukglue.h>
+#endif
+
 #include <mantis/core/http.h>
 #include <mantis/core/context_store.h>
 #include "../../utils/utils.h"
 
 namespace mantis
 {
+#ifdef MANTIS_ENABLE_SCRIPTING
     class DuktapeImpl
     {
     public:
@@ -21,6 +25,7 @@ namespace mantis
 
         static duk_ret_t nativeConsoleTable(duk_context* ctx);
     };
+#endif
 
     /**
      * @brief A wrapper class around `httplib::Request` offering a
@@ -125,10 +130,12 @@ namespace mantis
         }
 
     private:
+#ifdef MANTIS_ENABLE_SCRIPTING
         // Context Methods for setting and getting context values
         DukValue get_duk(const std::string& key);
         DukValue getOr_duk(const std::string& key, const DukValue& default_value);
         void set_duk(const std::string& key, const DukValue& value);
+#endif
     };
 
     /**
@@ -192,7 +199,9 @@ namespace mantis
 
         void send(int statusCode, const std::string& data = "", const std::string& content_type= "text/plain") const;
         void sendJson(int statusCode = 200, const json& data = json::object()) const;
+#ifdef MANTIS_ENABLE_SCRIPTING
         void sendJson(int statusCode, const DukValue& data) const;
+#endif
         void sendText(int statusCode = 200, const std::string& data = "") const;
         void sendHtml(int statusCode = 200, const std::string& data = "<p></p>") const;
         void sendEmpty(int statusCode = 204) const;

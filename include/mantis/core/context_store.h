@@ -6,8 +6,11 @@
 #define MANTISAPP_CONTEXTSTORE_H
 
 #include <nlohmann/json.hpp>
-#include <dukglue/dukglue.h>
 #include "../utils/utils.h"
+
+#ifdef MANTIS_ENABLE_SCRIPTING
+#include <dukglue/dukglue.h>
+#endif
 
 namespace mantis
 {
@@ -118,6 +121,7 @@ namespace mantis
             return std::any_cast<T&>(data.at(key));
         }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
         DukValue get_duk(const std::string& key);
 
         /**
@@ -136,6 +140,7 @@ namespace mantis
          * @param value Value to correspond to given `key`
          */
         void set_duk(const std::string& key, const DukValue& value);
+#endif
     };
 
 } // mantis

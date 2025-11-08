@@ -16,7 +16,10 @@
 #include <string>
 #include <vector>
 #include <nlohmann/json.hpp>
+
+#ifdef MANTIS_ENABLE_SCRIPTING
 #include <dukglue/dukglue.h>
+#endif
 
 #include "logging.h"
 #include "mantis/app/app.h"
@@ -202,7 +205,11 @@ namespace mantis
          */
         static std::string hashMultipartMetadata(const httplib::FormData& data);
 
+
+#ifdef MANTIS_ENABLE_SCRIPTING
         static void registerDuktapeMethods();
+#endif
+
 
         const std::string _class_ = "mantis::HttpUnit";
 

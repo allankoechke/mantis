@@ -19,7 +19,11 @@
 #include <nlohmann/json.hpp>
 
 #include "../core/logging.h"
+
+#ifdef MANTIS_ENABLE_SCRIPTING
 #include "dukglue/dukvalue.h"
+#endif
+
 
 // Wrap around std::format for compilers that do no support
 // std::format yet, especially on Windows
@@ -254,6 +258,7 @@ namespace mantis
                                  std::size_t maxLen = 50,
                                  std::size_t idLen = 12,
                                  std::string_view idSep = "_");
+
     std::string sanitizeFilename_JSWrapper(const std::string& original);
 
     // ----------------------------------------------------------------- //
@@ -291,7 +296,10 @@ namespace mantis
     std::tm strToTM(const std::string& value);
     std::string dbDateToString(const std::string& dbType, const soci::row& row, int index);
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     void registerUtilsToDuktapeEngine();
+#endif
+
 }
 
 #endif // MANTIS_UTILS_H

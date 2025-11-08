@@ -137,6 +137,7 @@ namespace mantis
         return m_req.is_multipart_form_data();
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     void MantisRequest::registerDuktapeMethods()
     {
         // Get Duktape Context
@@ -203,6 +204,7 @@ namespace mantis
         // `req.getOr("key", default_value)`
         dukglue_register_method(ctx, &MantisRequest::getOr_duk, "getOr");
     }
+#endif
 
     bool MantisRequest::hasKey(const std::string& key) const
     {
@@ -214,6 +216,7 @@ namespace mantis
         return get_bearer_token_auth(m_req);
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     DukValue MantisRequest::get_duk(const std::string& key)
     {
         return m_store.get_duk(key);
@@ -228,4 +231,5 @@ namespace mantis
     {
         m_store.set_duk(key, value);
     }
+#endif
 }

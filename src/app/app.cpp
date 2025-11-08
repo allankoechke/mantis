@@ -15,8 +15,11 @@ namespace mantis
 {
     MantisApp::MantisApp()
         : m_dbType(DbType::SQLITE),
-          m_startTime(std::chrono::steady_clock::now()),
-          m_dukCtx(duk_create_heap_default())
+          m_startTime(std::chrono::steady_clock::now())
+#ifdef MANTIS_ENABLE_SCRIPTING
+          , m_dukCtx(duk_create_heap_default())
+#endif
+
     {
         // Initialize Default Features in cparse
         cparse::cparse_init();
@@ -37,8 +40,10 @@ namespace mantis
         // Terminate any shared pointers
         close();
 
+#ifdef MANTIS_ENABLE_SCRIPTING
         // Destroy duk context
         duk_destroy_heap(m_dukCtx);
+#endif
     }
 
     void MantisApp::init(const int argc, char* argv[])
@@ -592,10 +597,12 @@ namespace mantis
         return *m_files;
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     duk_context* MantisApp::ctx() const
     {
         return m_dukCtx;
     }
+#endif
 
     void MantisApp::openBrowserOnStart() const
     {
@@ -818,6 +825,7 @@ namespace mantis
         return password;
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     void MantisApp::initJSEngine()
     {
         TRACE_CLASS_METHOD();
@@ -930,4 +938,5 @@ namespace mantis
     {
         return m_router.get();
     }
+#endif
 }

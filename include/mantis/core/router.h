@@ -10,8 +10,11 @@
 #include <vector>
 #include <nlohmann/json.hpp>
 
-#include "dukglue/dukvalue.h"
 #include "../utils/utils.h"
+
+#ifdef MANTIS_ENABLE_SCRIPTING
+#include "dukglue/dukvalue.h"
+#endif
 
 namespace mantis
 {
@@ -95,6 +98,7 @@ namespace mantis
          */
         bool generateAdminCrudApis() const;
 
+#ifdef MANTIS_ENABLE_SCRIPTING
         /**
          * @brief Add HTTP route given the `method`, `path`, and
          * at least one request handler and none or more middlewares.
@@ -133,6 +137,7 @@ namespace mantis
                           const DukValue& handler,
                           const std::vector<DukValue>& middlewares,
                           MantisRequest& req, MantisResponse& res);
+#endif
 
         std::shared_ptr<TableUnit> m_adminTable;
         std::shared_ptr<SysTablesUnit> m_tableRoutes;
