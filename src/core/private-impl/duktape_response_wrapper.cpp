@@ -145,6 +145,7 @@ namespace mantis
         send(statusCode, data.dump(), "application/json");
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     void MantisResponse::sendJson(const int statusCode, const DukValue& data) const
     {
         const auto ctx = MantisApp::instance().ctx();
@@ -164,6 +165,7 @@ namespace mantis
         Log::warn("Could not parse data to JSON");
         duk_error(ctx, DUK_ERR_TYPE_ERROR, "Could not parse data to JSON");
     }
+#endif
 
     void MantisResponse::sendHtml(const int statusCode, const std::string& data) const
     {
@@ -176,6 +178,7 @@ namespace mantis
         m_res.status = statusCode;
     }
 
+#ifdef MANTIS_ENABLE_SCRIPTING
     void MantisResponse::registerDuktapeMethods()
     {
         // Get Duktape context
@@ -229,4 +232,5 @@ namespace mantis
         // `res.reason` (get or set reason value)
         dukglue_register_property(ctx, &MantisResponse::getReason, &MantisResponse::setReason, "reason");
     }
+#endif
 }

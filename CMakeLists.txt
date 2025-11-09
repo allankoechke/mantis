@@ -14,12 +14,9 @@ set(CMAKE_POLICY_VERSION_MINIMUM 3.5)
 set(MANTIS_ADMIN_VERSION v0.1.7)
 set(MANTIS_ADMIN_HASH 184fe54ab4d003de49cc75565258fafe098486b8a177fb8f9405398015e16081)
 
-configure_file(
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
-    ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp
-)
-
 option(MANTIS_SCRIPTING_ENABLED "Enable JS Scripting" OFF)
+message(STATUS "MANTIS_SCRIPTING_ENABLED=${MANTIS_SCRIPTING_ENABLED}")
+
 
 # Flag for building deps as shared/static libs
 set(MANTIS_SHARED_DEPS FALSE)
@@ -79,7 +76,6 @@ set( MANTIS_SOURCES
     src/core/fileunit.cpp
     src/core/context_store.cpp
 
-    src/core/private-impl/duktape_custom_types.cpp
     src/core/private-impl/duktape_request_wrapper.cpp
     src/core/private-impl/duktape_response_wrapper.cpp
 )
@@ -87,6 +83,7 @@ set( MANTIS_SOURCES
 if(MANTIS_SCRIPTING_ENABLED)
     set( MANTIS_SOURCES
             ${MANTIS_SOURCES}
+            src/core/private-impl/duktape_custom_types.cpp
             src/utils/dukglue_utils_bindings.cpp
     )
 endif ()
@@ -99,7 +96,7 @@ add_library(mantis
 
 if(MANTIS_SCRIPTING_ENABLED)
     message("-- Enabling Mantis Scripting via Duktape")
-    add_compile_definitions(mantis PUBLIC MANTIS_SCRIPTING_ENABLED=1)
+    target_compile_definitions(mantis PRIVATE MANTIS_SCRIPTING_ENABLED=1)
 endif (MANTIS_SCRIPTING_ENABLED)
 
 # Add httplib
@@ -176,3 +173,8 @@ include(cmake/add-semver.cmake)
 # Add Tests
 option(MANTIS_BUILD_TESTS "Build Mantis Tests" OFF)
 include(cmake/add-tests.cmake)
+
+configure_file(
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp
+)

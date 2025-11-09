@@ -61,7 +61,10 @@ namespace mantis
         }
 
         parseArgs(); // Parse args & start units
+
+#ifdef MANTIS_ENABLE_SCRIPTING
         initJSEngine(); // Initialize JS engine
+#endif
     }
 
     MantisApp& MantisApp::instance()
@@ -320,7 +323,7 @@ namespace mantis
         const auto scripts_dir = dirFromPath(scriptsDir);
         setScriptsDir(scripts_dir.empty() ? dirFromPath("scripts") : scripts_dir);
 
-        Log::trace("Mantis Configured Paths:\n\t> Data Dir: {}\n\t> Public Dir: {}\n\t> Scripts Dir: {}",
+        Log::trace("Mantis Configured Paths:\n\t/data: {}\n\t/public: {}\n\t/scripts: {}",
                   data_dir, pub_dir, scripts_dir);
 
         // Ensure objects are first created, taking into account the cmd args passed in
@@ -538,8 +541,10 @@ namespace mantis
         // Set server start time
         m_startTime = std::chrono::steady_clock::now();
 
+#ifdef MANTIS_ENABLE_SCRIPTING
         // Load start script for Mantis
         loadStartScript();
+#endif
 
         // If server command is explicitly passed in, start listening,
         // else, exit!
@@ -775,12 +780,10 @@ namespace mantis
         if (!createDirs(resolvePath(m_publicDir)))
             return false;
 
-        std::cout << "Scripts Dir: " << resolvePath(m_scriptsDir) << std::endl;
+#ifdef MANTIS_ENABLE_SCRIPTING
         if (!createDirs(resolvePath(m_scriptsDir)))
-        {
-            std::cout << "Error creating scripts dir" << std::endl;
             return false;
-        }
+#endif
 
         return true;
     }
