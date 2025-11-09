@@ -15,8 +15,6 @@ set(MANTIS_ADMIN_VERSION v0.1.7)
 set(MANTIS_ADMIN_HASH 184fe54ab4d003de49cc75565258fafe098486b8a177fb8f9405398015e16081)
 
 option(MANTIS_SCRIPTING_ENABLED "Enable JS Scripting" OFF)
-message(STATUS "MANTIS_SCRIPTING_ENABLED=${MANTIS_SCRIPTING_ENABLED}")
-
 
 # Flag for building deps as shared/static libs
 set(MANTIS_SHARED_DEPS FALSE)
@@ -40,44 +38,46 @@ add_executable(mantisapp
 )
 
 set( MANTIS_SOURCES
-    src/app/app.cpp
-    src/core/database.cpp
-    src/core/models/models.cpp
-    src/core/logging.cpp
-    src/core/router.cpp
-    src/core/http.cpp
-    src/core/jwt.cpp
+        src/app/app.cpp
+        src/core/database.cpp
+        src/core/models/models.cpp
+        src/core/logging.cpp
+        src/core/router.cpp
+        src/core/http.cpp
+        src/core/jwt.cpp
 
-    # All table operations
-    src/core/tables/tables.cpp
-    src/core/tables/tables_crud.cpp
-    src/core/tables/tables_routes.cpp
-    src/core/tables/tables_auth.cpp
-    src/core/tables/tables_utils.cpp
-    src/core/tables/tables_validation.cpp
+        # All table operations
+        src/core/tables/tables.cpp
+        src/core/tables/tables_crud.cpp
+        src/core/tables/tables_routes.cpp
+        src/core/tables/tables_auth.cpp
+        src/core/tables/tables_utils.cpp
+        src/core/tables/tables_validation.cpp
 
-    # System Tables
-    src/core/tables/sys_tables.cpp
-    src/core/tables/sys_tables_crud.cpp
+        # System Tables
+        src/core/tables/sys_tables.cpp
+        src/core/tables/sys_tables_crud.cpp
 
-    # Expression evaluator
-    src/core/expr_evaluator.cpp
+        # Expression evaluator
+        src/core/expr_evaluator.cpp
 
-    # Utilities
-    src/utils/auth_utils.cpp
-    src/utils/string_utils.cpp
-    src/utils/path_utils.cpp
-    src/utils/type_utils.cpp
+        # Utilities
+        src/utils/auth_utils.cpp
+        src/utils/string_utils.cpp
+        src/utils/path_utils.cpp
+        src/utils/date_utils.cpp
 
-    include/mantis/core/private-impl/soci_custom_types.hpp
-    include/mantis/app/config.hpp.in
+        include/mantis/core/private-impl/soci_custom_types.hpp
+        include/mantis/app/config.hpp.in
 
-    src/core/settings.cpp
-    src/core/fileunit.cpp
-    src/core/context_store.cpp
+        src/core/settings.cpp
+        src/core/fileunit.cpp
+        src/core/context_store.cpp
 
-    src/core/private-impl/duktape_request_wrapper.cpp
-    src/core/private-impl/duktape_response_wrapper.cpp
+        src/core/private-impl/request_wrapper.cpp
+        src/core/private-impl/response_wrapper.cpp
+
+        src/core/models/entity.cpp
 )
 
 if(MANTIS_SCRIPTING_ENABLED)

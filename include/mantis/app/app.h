@@ -17,6 +17,8 @@
 #include <argparse/argparse.hpp>
 #include <httplib.h>
 
+#include "mantis/core/models/entity.h"
+
 #ifdef MANTIS_ENABLE_SCRIPTING
 #include <dukglue/dukglue.h>
 #endif
@@ -279,6 +281,15 @@ namespace mantis
         [[nodiscard]] SettingsUnit& settings() const;
         /// Get the file unit object
         [[nodiscard]] FileUnit& files() const;
+
+        /**
+         * @brief Fetch a table schema encapsulated by an `Entity` object from given the table name.
+         * If table does not exist yet, return an emty object.
+         *
+         * @param table_name Name of the table of interest
+         * @return Entity object for the selected table
+         */
+        Entity entity(const std::string& table_name);
 
 #ifdef MANTIS_ENABLE_SCRIPTING
         /// Get the duktape context

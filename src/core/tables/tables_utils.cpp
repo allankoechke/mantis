@@ -327,35 +327,4 @@ namespace mantis
     {
         return "mt_" + std::to_string(std::hash<std::string>{}(tablename));
     }
-
-    std::string TableUnit::getColTypeFromName(const std::string& col, const std::vector<json>& fields) const
-    {
-        for (const auto& field : fields)
-        {
-            if (field.value("name", "") == col && !col.empty())
-                return field.value("type", "");
-        }
-
-        return "";
-    }
-
-    bool TableUnit::recordExists(const std::string& id) const
-    {
-        try
-        {
-            int count;
-            const auto sql = MantisApp::instance().db().session();
-            *sql << "SELECT COUNT(*) FROM " + m_tableName + " WHERE id = :id LIMIT 1",
-                soci::use(id), soci::into(count);
-            return count > 0;
-        }
-        catch (soci::soci_error& e)
-        {
-            Log::trace("TablesUnit::RecordExists error: {}", e.what());
-
-            // If an error, return false. This means, if the id existed, we will end up throwing
-            // UNIQUE violation error from the SQL side to avoid infinite looping
-            return false;
-        }
-    }
 }

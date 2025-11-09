@@ -79,6 +79,30 @@ namespace mantis
         static void registerDuktapeMethods();
 #endif
 
+        json schemaCache(const std::string& table_name) {
+            return {};
+        }
+
+        void addSchemaCache(const std::string& table_name, const json& table_schema) {
+            m_schemaCache[table_name] = table_schema;
+        }
+
+        void addSchemaCache(const json& schemas) {
+            if (!schemas.is_array()) throw std::invalid_argument("Invalid schema array provided!");
+
+            for (const auto& sch : schemas) {
+                m_schemaCache[sch.get<std::string>()] = sch;
+            }
+        }
+
+        void updateSchemaCache(const std::string& table_name, const json& table_schema) {
+            m_schemaCache[table_name] = table_schema;
+        }
+
+        void removeSchemaCache(const std::string& table_name) {
+        }
+
+
         const std::string __class_name__ = "mantis::DatabaseUnit";
 
     private:
@@ -108,6 +132,7 @@ namespace mantis
         void writeCheckpoint() const;
 
         std::unique_ptr<soci::connection_pool> m_connPool;
+        std::unordered_map<std::string, json> m_schemaCache;
     };
 
     /**

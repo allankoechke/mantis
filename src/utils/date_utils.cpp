@@ -1,6 +1,8 @@
 #include "../../include/mantis/utils/utils.h"
 #include <private/soci-mktime.h>
 
+#include "mantis/app/app.h"
+
 namespace mantis
 {
     std::string tmToStr(const std::tm& t)
@@ -23,9 +25,9 @@ namespace mantis
         return t;
     }
 
-    std::string dbDateToString(const std::string& dbType, const soci::row& row, const int index)
+    std::string dbDateToString(const soci::row& row, const int index)
     {
-        if (dbType == "sqlite3")
+        if (const std::string& db_type = MantisApp::instance().dbTypeByName(); db_type == "sqlite3")
         {
             // Treat date as a string by default
             return row.get<std::string>(index);

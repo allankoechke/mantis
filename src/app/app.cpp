@@ -602,6 +602,15 @@ namespace mantis
         return *m_files;
     }
 
+    Entity MantisApp::entity(const std::string &table_name) {
+        if (table_name.empty()) throw std::invalid_argument("Table name is invalid!");
+
+        // Get schema cache from db, check if we have this data, return data if available
+        m_database.
+
+        return {};
+    }
+
 #ifdef MANTIS_ENABLE_SCRIPTING
     duk_context* MantisApp::ctx() const
     {

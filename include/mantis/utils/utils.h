@@ -294,7 +294,7 @@ namespace mantis
      */
     std::string tmToStr(const std::tm& t);
     std::tm strToTM(const std::string& value);
-    std::string dbDateToString(const std::string& dbType, const soci::row& row, int index);
+    std::string dbDateToString(const soci::row& row, int index);
 
 #ifdef MANTIS_ENABLE_SCRIPTING
     void registerUtilsToDuktapeEngine();
