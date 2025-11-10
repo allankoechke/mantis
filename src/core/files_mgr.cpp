@@ -1,11 +1,11 @@
 /**
- * @file fileunit.cpp
- * @brief Implementation for @see fileunit.h
+ * @file files_mgr.cpp
+ * @brief Implementation for @see files_mgr.h
  */
 
-#include "../../include/mantis/core/fileunit.h"
-#include "../../include/mantis/core/logging.h"
-#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/files_mgr.h"
+#include "../../include/mantis/core/logs_mgr.h"
+#include "../../include/mantis/mantisbase.h"
 
 #include <fstream>
 #include <filesystem>
@@ -14,9 +14,9 @@ namespace mantis
 {
     namespace fs = std::filesystem;
 
-    void FileUnit::createDir(const std::string& table) const
+    void FilesMgr::createDir(const std::string& table) const
     {
-        Log::trace("Creating directory: {}", dirPath(table));
+        logger::trace("Creating directory: {}", dirPath(table));
 
         if (table.empty()) return;
 
@@ -24,9 +24,9 @@ namespace mantis
             fs::create_directories(path);
     }
 
-    void FileUnit::renameDir(const std::string& old_name, const std::string& new_name) const
+    void FilesMgr::renameDir(const std::string& old_name, const std::string& new_name) const
     {
-        Log::trace("Renaming folder name from '{}' to '{}'", old_name, new_name);
+        logger::trace("Renaming folder name from '{}' to '{}'", old_name, new_name);
 
         // Rename folder if it exists, else, create it
         if (const auto old_path = dirPath(old_name); fs::exists(old_path))
@@ -36,13 +36,13 @@ namespace mantis
             createDir(new_name);
     }
 
-    void FileUnit::deleteDir(const std::string& table) const
+    void FilesMgr::deleteDir(const std::string& table) const
     {
-        Log::trace("Removing {}", dirPath(table));
+        logger::trace("Removing {}", dirPath(table));
         fs::remove_all(dirPath(table));
     }
 
-    std::optional<std::string> FileUnit::getFilePath(const std::string& table, const std::string& filename) const
+    std::optional<std::string> FilesMgr::getFilePath(const std::string& table, const std::string& filename) const
     {
         // Check if file exists, if so, return the path, else, return std::nullopt
         if (auto path = filePath(table, filename); fs::exists(path))
@@ -62,9 +62,9 @@ namespace mantis
     //     return true;
     // }
 
-    std::string FileUnit::dirPath(const std::string& table, bool create_if_missing) const
+    std::string FilesMgr::dirPath(const std::string& table, bool create_if_missing) const
     {
-        auto path = (fs::path(MantisApp::instance().dataDir()) / "files" / table).string();
+        auto path = (fs::path(MantisBase::instance().dataDir()) / "files" / table).string();
         if (!fs::exists(path) && create_if_missing)
         {
             fs::create_directories(path);
@@ -72,23 +72,23 @@ namespace mantis
         return path;
     }
 
-    std::string FileUnit::filePath(const std::string& table, const std::string& filename) const
+    std::string FilesMgr::filePath(const std::string& table, const std::string& filename) const
     {
-        return (fs::path(MantisApp::instance().dataDir()) / "files" / table / filename).string();
+        return (fs::path(MantisBase::instance().dataDir()) / "files" / table / filename).string();
     }
 
-    bool FileUnit::removeFile(const std::string& table, const std::string& filename) const
+    bool FilesMgr::removeFile(const std::string& table, const std::string& filename) const
     {
         try
         {
             if (table.empty() || filename.empty())
             {
-                Log::warn("Table name and filename are required!");
+                logger::warn("Table name and filename are required!");
                 return false;
             }
 
             const auto path = filePath(table, filename);
-            Log::trace("Removing file at `{}`", path);
+            logger::trace("Removing file at `{}`", path);
 
             // Remove the file, only if it exists
             if (fs::exists(path))
@@ -97,11 +97,11 @@ namespace mantis
                 return true;
             }
 
-            Log::warn("Could not remove file at `{}`, seems to be missing!", path);
+            logger::warn("Could not remove file at `{}`, seems to be missing!", path);
         }
         catch (const std::exception& e)
         {
-            Log::critical("Error removing file: {}", e.what());
+            logger::critical("Error removing file: {}", e.what());
         }
 
         return false;

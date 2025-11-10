@@ -35,9 +35,9 @@ file(GLOB TEST_FILES
         integration/*.cpp
 )
 
-add_executable(mantisapp_tests ${TEST_FILES})
-target_link_libraries(mantisapp_tests PRIVATE
-        mantis
+add_executable(mantisbase_tests ${TEST_FILES})
+target_link_libraries(mantisbase_tests PRIVATE
+        mantisbase_lib
         GTest::gtest
         GTest::gtest_main
         GTest::gmock_main
@@ -49,25 +49,25 @@ if(NOT WIN32) # For now, only enable ASAN for non-windows based builds
     include(../cmake/asan.cmake)
     set(ENABLE_ASAN ON)
 
-    enable_asan_for_target(mantisapp_tests)
+    enable_asan_for_target(mantisbase_tests)
 endif()
 
 # Include directories
-target_include_directories(mantisapp_tests
+target_include_directories(mantisbase_tests
         PRIVATE
         ${CMAKE_CURRENT_SOURCE_DIR}/../include
 )
 
-target_compile_definitions(mantisapp_tests PRIVATE
+target_compile_definitions(mantisbase_tests PRIVATE
         TEST_SOURCE_DIR="${CMAKE_CURRENT_SOURCE_DIR}"
 )
 
 if(WIN32 AND CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-    target_compile_options(mantisapp_tests PRIVATE
+    target_compile_options(mantisbase_tests PRIVATE
             -Wa,-mbig-obj  # Tell assembler to handle large objects
     )
 endif()
 
 # Register tests with CTest
 include(GoogleTest)
-add_test(NAME all_mantisapp_tests COMMAND mantisapp_tests)
+add_test(NAME all_mantisbase_tests COMMAND mantisbase_tests)

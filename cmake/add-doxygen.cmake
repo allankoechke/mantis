@@ -34,6 +34,6 @@ if(DOXYGEN_FOUND)
             ${CMAKE_CURRENT_BINARY_DIR}/docs/html/assets
     )
 else()
-    message("Doxygen not installed, skipping building docs")
+    message("-- Doxygen not installed, skipping building docs")
 endif()
 

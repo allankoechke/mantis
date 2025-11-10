@@ -74,7 +74,7 @@ namespace mantis {
 
     Record Entity::create(const json &record, const json &opts) const {
         // Database session & transaction instance
-        auto sql = MantisApp::instance().db().session();
+        auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         try {
@@ -137,13 +137,13 @@ namespace mantis {
         }
         catch (...) {
             // Handles anything else
-            // Log::critical("Error executing Entity::create()");
+            // logger::critical("Error executing Entity::create()");
             throw; // rethrow unknown exception
         }
     }
 
     Records Entity::list(const json &opts) const {
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
         auto pagination = opts.value("pagination", json::object());
         // TODO ...
         // if (pagination.at("count_pages").get<bool>()) {
@@ -179,7 +179,7 @@ namespace mantis {
 
     std::optional<Record> Entity::read(const std::string &id, const json &opts) const {
         // Get a soci::session from the pool
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         soci::row r; // To hold read data
         *sql << "SELECT * FROM " + name() + " WHERE id = :id", soci::use(id), soci::into(r);
@@ -199,7 +199,7 @@ namespace mantis {
 
     Record Entity::update(const std::string &id, const json &data, const json &opts) const {
         // Database session & transaction instance
-        auto sql = MantisApp::instance().db().session();
+        auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         try {
@@ -323,8 +323,8 @@ namespace mantis {
 
             // Delete files, if any were removed ...
             for (const auto &file: files_to_delete) {
-                if (!MantisApp::instance().files().removeFile(name(), file)) {
-                    Log::warn("Could not delete file `{}` maybe it's missing?", file);
+                if (!MantisBase::instance().files().removeFile(name(), file)) {
+                    logger::warn("Could not delete file `{}` maybe it's missing?", file);
                 }
             }
 
@@ -341,14 +341,14 @@ namespace mantis {
         }
     }
 
-    void Entity::remove(const std::string &id) {
+    void Entity::remove(const std::string &id) const {
         // TRACE_CLASS_METHOD()
         // Views should not reach here
         if (type() == "view")
             return throw
                     std::invalid_argument("Remove is not implemented for Entity of `view` type!");
 
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
@@ -374,15 +374,15 @@ namespace mantis {
             const auto &name = field["name"].get<std::string>();
             if (type == "file" && !record[name].is_null()) {
                 const auto &file = record.value(name, "");
-                if (!file.empty()) files_in_fields.push_back(file);
+                if (!file.empty()) files_in_fields.emplace_back(file);
             }
             if (type == "files" && !record[name].is_null() && record[name].is_array()) {
-                Log::trace("DEL FILES: '{}'", record[name].dump());
+                logger::trace("DEL FILES: '{}'", record[name].dump());
 
                 const auto &files = record.value(name, std::vector<std::string>{});
                 // Expand the array data out
                 for (const auto &file: files) {
-                    if (!file.empty()) files_in_fields.push_back(file);
+                    if (!file.empty()) files_in_fields.emplace_back(file);
                 }
             }
         });
@@ -390,7 +390,7 @@ namespace mantis {
         // For each file field, remove it in the filesystem
         for (const auto &file_name: files_in_fields) {
             [[maybe_unused]]
-                    auto _ = MantisApp::instance().files().removeFile(name(), file_name);
+                    auto _ = MantisBase::instance().files().removeFile(name(), file_name);
         }
     }
 
@@ -399,11 +399,11 @@ namespace mantis {
     bool Entity::recordExists(const std::string &id) const {
         int count = -1;
         try {
-            const auto sql = MantisApp::instance().db().session();
+            const auto sql = MantisBase::instance().db().session();
             *sql << "SELECT COUNT(id) FROM " + name() + " WHERE id = :id LIMIT 1",
                     soci::use(id), soci::into(count);
         } catch (soci::soci_error &e) {
-            Log::trace("TablesUnit::RecordExists error: {}", e.what());
+            logger::trace("TablesUnit::RecordExists error: {}", e.what());
         }
 
         return count > 0;
@@ -417,5 +417,25 @@ namespace mantis {
         }
 
         return std::nullopt;
+    }
+
+    std::optional<json> Entity::queryFromCols(const std::string &value, const std::vector<std::string> &columns) const {
+        // Get a session object
+        const auto sql = MantisBase::instance().db().session();
+
+        // Build dynamic WHERE clause
+        std::string where_clause;
+        for (size_t i = 0; i < columns.size(); ++i) {
+            if (i > 0) where_clause += " OR ";
+            where_clause += columns[i] + " = :value";
+        }
+
+        const std::string query = "SELECT * FROM " + name() + " WHERE " + where_clause + " LIMIT 1";
+
+        // Run query
+        soci::row r;
+        *sql << query, soci::use(value), soci::into(r);
+
+        return sql->got_data() ? sociRow2Json(r, fields()) : std::nullopt;
     }
 } // mantis

@@ -1,8 +1,8 @@
-#include "../../include/mantis/core/settings.h"
-#include "../../include/mantis/core/http.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
-#include "../../include/mantis/core/jwt.h"
+#include "../../include/mantis/core/settings_mgr.h"
+#include "../../include/mantis/core/http_mgr.h"
+#include "../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
+#include "../../include/mantis/core/jwt_mgr.h"
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/utils/utils.h"
 
@@ -12,9 +12,9 @@
 
 namespace mantis
 {
-    bool SettingsUnit::setupRoutes()
+    bool SettingsMgr::setupRoutes()
     {
-        TRACE_CLASS_METHOD()
+        // TRACE_CLASS_METHOD()
 
         try
         {
@@ -22,7 +22,7 @@ namespace mantis
         }
         catch (const std::exception& e)
         {
-            Log::critical("Error setting up settings routes: {}", e.what());
+            logger::critical("Error setting up settings routes: {}", e.what());
             return false;
         }
 
@@ -30,9 +30,9 @@ namespace mantis
         return true;
     }
 
-    void SettingsUnit::migrate()
+    void SettingsMgr::migrate()
     {
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         // Check if we have settings data already, if not so, add base settings
         json settings;
@@ -41,7 +41,7 @@ namespace mantis
         if (sql->got_data())
         {
             m_configs = settings;
-            Log::trace("Config Values: ", m_configs.dump());
+            logger::trace("Config Values: ", m_configs.dump());
         }
         // Create base data to config settings
         else
@@ -70,9 +70,9 @@ namespace mantis
         }
     }
 
-    bool SettingsUnit::hasAccess(MantisRequest& req, MantisResponse& res) const
+    bool SettingsMgr::hasAccess(MantisRequest& req, MantisResponse& res) const
     {
-        TRACE_CLASS_METHOD()
+        // TRACE_CLASS_METHOD()
 
         // Get the auth var from the context, resort to empty object if it's not set.
         auto& auth = req.getOr<json>("auth", json::object());
@@ -138,7 +138,7 @@ namespace mantis
         // the session context, queried by:
         //  ` ctx.get<json>("auth").value("id", ""); // returns the user ID
         //  ` ctx.get<json>("auth").value("name", ""); // returns the user's name
-        auto sql = MantisApp::instance().db().session();
+        auto sql = MantisBase::instance().db().session();
         soci::row r;
         std::string query = "SELECT * FROM __admins WHERE id = :id LIMIT 1";
         *sql << query, soci::use(_id), soci::into(r);
@@ -173,15 +173,15 @@ namespace mantis
         return REQUEST_HANDLED;
     }
 
-    json& SettingsUnit::configs()
+    json& SettingsMgr::configs()
     {
         return m_configs;
     }
 
-    json SettingsUnit::initSettingsConfig()
+    json SettingsMgr::initSettingsConfig()
     {
         // Get app session
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         // Fetch settings
         json settings;
@@ -196,12 +196,12 @@ namespace mantis
         return json::object();
     }
 
-    void SettingsUnit::setupConfigRoutes()
+    void SettingsMgr::setupConfigRoutes()
     {
-        TRACE_CLASS_METHOD()
+        // TRACE_CLASS_METHOD()
 
         // Set up settings get & update endpoints
-        MantisApp::instance().http().Get(
+        MantisBase::instance().http().Get(
             "/api/v1/settings/config",
             [this](MantisRequest& req, MantisResponse& res)
             {
@@ -213,14 +213,14 @@ namespace mantis
                     response["status"] = 200;
                     response["error"] = "";
                     response["data"] = m_configs;
-                    response["data"]["mantisVersion"] = MantisApp::appVersion();
+                    response["data"]["mantisVersion"] = MantisBase::appVersion();
 
                     res.sendJson(200, response);
                     return;
                 }
 
                 // Get app session
-                const auto sql = MantisApp::instance().db().session();
+                const auto sql = MantisBase::instance().db().session();
                 json response; // Response object
 
                 // Fetch settings
@@ -237,7 +237,7 @@ namespace mantis
                     response["status"] = 200;
                     response["error"] = "";
                     response["data"] = settings;
-                    response["data"]["mantisVersion"] = MantisApp::appVersion();
+                    response["data"]["mantisVersion"] = MantisBase::appVersion();
 
                     res.sendJson(200, response);
                     return;
@@ -261,7 +261,7 @@ namespace mantis
             });
 
         // Update settings config
-        MantisApp::instance().http().Patch(
+        MantisBase::instance().http().Patch(
             "/api/v1/settings/config",
             [this](MantisRequest& req, MantisResponse& res)
             {
@@ -283,7 +283,7 @@ namespace mantis
                 }
 
                 // Get app session
-                const auto sql = MantisApp::instance().db().session();
+                const auto sql = MantisBase::instance().db().session();
 
                 // Create base data before we update.
                 if (m_configs.empty()) migrate();
@@ -341,7 +341,7 @@ namespace mantis
                 response["status"] = 200;
                 response["error"] = "";
                 response["data"] = m_configs;
-                response["data"]["mantisVersion"] = MantisApp::appVersion();
+                response["data"]["mantisVersion"] = MantisBase::appVersion();
 
                 res.sendJson(200, response);
             }, {

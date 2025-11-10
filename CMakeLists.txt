@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(mantisapp VERSION 0.2.12)
+project(MantisBase VERSION 0.2.12)
 set(CMAKE_CXX_STANDARD 20)
 
 # Set output directories to match SOCI's
@@ -32,19 +32,14 @@ else()
     message("-- Building Mantis static libs")
 endif()
 
-# Add main executable
-add_executable(mantisapp
-    src/mantisapp.cpp
-)
-
 set( MANTIS_SOURCES
-        src/app/app.cpp
-        src/core/database.cpp
+        src/mantisbase.cpp
+        src/core/database_mgr.cpp
         src/core/models/models.cpp
-        src/core/logging.cpp
-        src/core/router.cpp
-        src/core/http.cpp
-        src/core/jwt.cpp
+        src/core/logs_mgr.cpp
+        src/core/router_mgr.cpp
+        src/core/http_mgr.cpp
+        src/core/jwt_mgr.cpp
 
         # All table operations
         src/core/tables/tables.cpp
@@ -68,16 +63,17 @@ set( MANTIS_SOURCES
         src/utils/date_utils.cpp
 
         include/mantis/core/private-impl/soci_custom_types.hpp
-        include/mantis/app/config.hpp.in
+        include/mantis/config.hpp.in
 
-        src/core/settings.cpp
-        src/core/fileunit.cpp
-        src/core/context_store.cpp
+        src/core/settings_mgr.cpp
+        src/core/files_mgr.cpp
+        src/core/context_store_mgr.cpp
 
         src/core/private-impl/request_wrapper.cpp
         src/core/private-impl/response_wrapper.cpp
 
         src/core/models/entity.cpp
+        src/parse_cmd.cpp
 )
 
 if(MANTIS_SCRIPTING_ENABLED)
@@ -89,10 +85,19 @@ if(MANTIS_SCRIPTING_ENABLED)
 endif ()
 
 # Add library
-add_library(mantis
+add_library(mantisbase_lib
     ${MANTIS_LIB_TYPE}
         ${MANTIS_SOURCES}
 )
+
+# Add main executable
+add_executable(mantisbase_app
+        src/main.cpp
+)
+
+# Ensure resultant name is always `mantisbase` despite targets names for consistency
+set_target_properties(mantisbase_lib PROPERTIES OUTPUT_NAME mantisbase)
+set_target_properties(mantisbase_app PROPERTIES OUTPUT_NAME mantisbase)
 
 if(MANTIS_SCRIPTING_ENABLED)
     message("-- Enabling Mantis Scripting via Duktape")
@@ -141,7 +146,7 @@ if(MANTIS_SCRIPTING_ENABLED)
 endif (MANTIS_SCRIPTING_ENABLED)
 
 # Link to libs
-target_link_libraries(mantis
+target_link_libraries(mantisbase_lib
     PUBLIC
     httplib::httplib
     spdlog::spdlog
@@ -149,7 +154,7 @@ target_link_libraries(mantis
 )
 
 # Include directories
-target_include_directories(mantis
+target_include_directories(mantisbase_lib
     PUBLIC
     ${CMAKE_CURRENT_SOURCE_DIR}/include
     ${CMAKE_CURRENT_SOURCE_DIR}/3rdParty/httplib-cpp
@@ -160,8 +165,8 @@ target_include_directories(mantis
     ${CMAKE_BINARY_DIR}/include
 )
 
-target_link_libraries(mantisapp
-    PRIVATE mantis
+target_link_libraries(mantisbase_app
+    PRIVATE mantisbase_lib
 )
 
 # Check if Doxygen is installed, then build docs
@@ -175,6 +180,6 @@ option(MANTIS_BUILD_TESTS "Build Mantis Tests" OFF)
 include(cmake/add-tests.cmake)
 
 configure_file(
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp.in
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/app/config.hpp
+        include/mantis/config.hpp.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/config.hpp
 )

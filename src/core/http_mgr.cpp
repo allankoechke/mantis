@@ -1,6 +1,6 @@
-#include "../../include/mantis/core/http.h"
-#include "../../include/mantis/core/logging.h"
-#include "../../include/mantis/app/app.h"
+#include "../../include/mantis/core/http_mgr.h"
+#include "../../include/mantis/core/logs_mgr.h"
+#include "../../include/mantis/mantisbase.h"
 #include "../../include/mantis/core/private-impl/duktape_custom_types.h"
 
 #include <chrono>
@@ -52,17 +52,17 @@ namespace mantis
             const auto err = std::format("Route for {} {} not found!", method, path);
             // We didn't find that route, return error
             res["error"] = err;
-            Log::warn("{}", err);
+            logger::warn("{}", err);
             return res;
         }
 
         // Remove item found at the iterator
         routes.erase(it);
-        Log::info("Route for {} {} erased!", method, path);
+        logger::info("Route for {} {} erased!", method, path);
         return res;
     }
 
-    HttpUnit::HttpUnit()
+    HttpMgr::HttpMgr()
     {
         // Let's fix timing initialization, set the start time to current time
         svr.set_pre_routing_handler([](const httplib::Request& req, httplib::Response& res)
@@ -90,7 +90,7 @@ namespace mantis
 
             if (res.status < 400)
             {
-                Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
+                logger::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
                           req.version, req.method, req.path, res.status, duration_ms);
             }
             else
@@ -98,7 +98,7 @@ namespace mantis
                 // Decompress if content is compressed
                 if (res.body.empty())
                 {
-                    Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
+                    logger::info("{} {:<7} {}  - Status: {}  - Time: {}ms",
                               req.version, req.method, req.path, res.status, duration_ms);
                 }
                 else
@@ -107,7 +107,7 @@ namespace mantis
                     const std::string encoding = res.get_header_value("Content-Encoding");
 
                     auto body = encoding.empty() ? res.body : decompressResponseBody(res.body, encoding);
-                    Log::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\t└──Body: {}",
+                    logger::info("{} {:<7} {}  - Status: {}  - Time: {}ms\n\t└──Body: {}",
                               req.version, req.method, req.path, res.status, duration_ms, body);
                 }
             }
@@ -141,12 +141,12 @@ namespace mantis
         });
     }
 
-    HttpUnit::~HttpUnit()
+    HttpMgr::~HttpMgr()
     {
         if (svr.is_running()) svr.stop();
     }
 
-    void HttpUnit::Get(const std::string& path,
+    void HttpMgr::Get(const std::string& path,
                        const RouteHandlerFunc& handler,
                        const std::initializer_list<MiddlewareFunc> middlewares)
     {
@@ -156,7 +156,7 @@ namespace mantis
         }, "GET", path, handler, middlewares);
     }
 
-    void HttpUnit::Post(const std::string& path,
+    void HttpMgr::Post(const std::string& path,
                         const RouteHandlerFunc& handler,
                         const std::initializer_list<MiddlewareFunc> middlewares)
     {
@@ -166,7 +166,7 @@ namespace mantis
         }, "POST", path, handler, middlewares);
     }
 
-    void HttpUnit::Post(const std::string& path,
+    void HttpMgr::Post(const std::string& path,
                         const RouteHandlerFuncWithContentReader& handler,
                         const std::initializer_list<MiddlewareFunc> middlewares)
     {
@@ -176,7 +176,7 @@ namespace mantis
         }, "POST", path, handler, middlewares);
     }
 
-    void HttpUnit::Patch(const std::string& path,
+    void HttpMgr::Patch(const std::string& path,
                          const RouteHandlerFunc& handler,
                          const std::initializer_list<MiddlewareFunc> middlewares)
     {
@@ -186,7 +186,7 @@ namespace mantis
         }, "PATCH", path, handler, middlewares);
     }
 
-    void HttpUnit::Patch(const std::string& path,
+    void HttpMgr::Patch(const std::string& path,
                          const RouteHandlerFuncWithContentReader& handler,
                          const std::initializer_list<MiddlewareFunc> middlewares)
     {
@@ -196,7 +196,7 @@ namespace mantis
         }, "PATCH", path, handler, middlewares);
     }
 
-    void HttpUnit::Delete(const std::string& path,
+    void HttpMgr::Delete(const std::string& path,
                           const RouteHandlerFunc& handler,
                           const std::initializer_list<MiddlewareFunc> middlewares)
     {
@@ -206,17 +206,17 @@ namespace mantis
         }, "DELETE", path, handler, middlewares);
     }
 
-    bool HttpUnit::listen(const std::string& host, const int& port)
+    bool HttpMgr::listen(const std::string& host, const int& port)
     {
         // Check if server can bind to port before launching
         if (!svr.is_valid())
         {
-            Log::critical("Server is not valid. Maybe port is in use or permissions issue.\n");
+            logger::critical("Server is not valid. Maybe port is in use or permissions issue.\n");
             return false;
         }
 
         // Launch logging/browser in separate thread after listen starts
-        std::thread notifier([=]() -> void
+        std::thread notifier([host, port]() -> void
         {
             // Wait a little for the server to be fully ready
             std::this_thread::sleep_for(std::chrono::milliseconds(500));
@@ -233,12 +233,12 @@ namespace mantis
                 "Starting Servers: \n\t├── API Endpoints: http://{}/api/v1/ \n\t└── Admin Dashboard: http://{}/admin\n",
                 endpoint, endpoint);
 
-            MantisApp::instance().openBrowserOnStart();
+            MantisBase::instance().openBrowserOnStart();
         });
 
         if (!svr.listen(host, port))
         {
-            Log::critical("Error: Failed to bind to {}:{}", host, port);
+            logger::critical("Error: Failed to bind to {}:{}", host, port);
             notifier.join();
             return false;
         }
@@ -247,26 +247,26 @@ namespace mantis
         return true;
     }
 
-    void HttpUnit::close()
+    void HttpMgr::close()
     {
         if (svr.is_running())
         {
             svr.stop();
-            Log::info("HTTP Server Stopped.\n\t ...");
+            logger::info("HTTP Server Stopped.\n\t ...");
         }
     }
 
-    RouteRegistry& HttpUnit::routeRegistry()
+    RouteRegistry& HttpMgr::routeRegistry()
     {
         return registry;
     }
 
-    httplib::Server& HttpUnit::server()
+    httplib::Server& HttpMgr::server()
     {
         return svr;
     }
 
-    std::string HttpUnit::hashMultipartMetadata(const httplib::FormData& data)
+    std::string HttpMgr::hashMultipartMetadata(const httplib::FormData& data)
     {
         constexpr std::hash<std::string> hasher;
         const size_t h1 = hasher(data.name);
@@ -296,7 +296,7 @@ namespace mantis
 #endif
 
 
-    std::string HttpUnit::decompressResponseBody(const std::string& body, const std::string& encoding)
+    std::string HttpMgr::decompressResponseBody(const std::string& body, const std::string& encoding)
     {
         std::string decompressed_content;
 
@@ -355,7 +355,7 @@ namespace mantis
         return decompressed_content;
     }
 
-    void HttpUnit::route(
+    void HttpMgr::route(
         const MethodBinder<httplib::Server::Handler>& bind_method,
         const std::string& method,
         const std::string& path,
@@ -392,7 +392,7 @@ namespace mantis
         });
     }
 
-    void HttpUnit::route(
+    void HttpMgr::route(
         const MethodBinder<httplib::Server::HandlerWithContentReader>& bind_method,
         const std::string& method, const std::string& path,
         const RouteHandlerFuncWithContentReader& handler,

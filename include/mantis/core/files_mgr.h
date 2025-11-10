@@ -24,10 +24,10 @@ namespace mantis
      * - Updating folder names when tables are renamed
      * - Deleting folder contents for dropped
      */
-    class FileUnit
+    class FilesMgr
     {
     public:
-        FileUnit() = default;
+        FilesMgr() = default;
 
         /**
          * @brief Create a directory matching passed in `table` name.

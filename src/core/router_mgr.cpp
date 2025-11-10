@@ -1,12 +1,12 @@
-#include "../../include/mantis/core/router.h"
+#include "../../include/mantis/core/router_mgr.h"
 #include "../../include/mantis/utils/utils.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
+#include "../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/core/tables/tables.h"
 #include "../../include/mantis/core/tables/sys_tables.h"
-#include "../../include/mantis/core/fileunit.h"
+#include "../../include/mantis/core/files_mgr.h"
 #include "../../include/mantis/core/private-impl/duktape_custom_types.h"
-#include "../../include/mantis/core/settings.h"
+#include "../../include/mantis/core/settings_mgr.h"
 
 #include <cmrc/cmrc.hpp>
 
@@ -21,7 +21,7 @@ CMRC_DECLARE(mantis);
 
 namespace mantis
 {
-    RouterUnit::RouterUnit()
+    RouterMgr::RouterMgr()
     {
         // Create admin table object, we'll use it to get JSON rep for use in
         // the TableUnit construction. Similar to what we do when creating routes.
@@ -42,7 +42,7 @@ namespace mantis
         m_tableRoutes->setRouteDisplayName("tables");
     }
 
-    bool RouterUnit::initialize()
+    bool RouterMgr::initialize()
     {
         if (!generateTableCrudApis())
             return false;
@@ -62,13 +62,13 @@ namespace mantis
         return true;
     }
 
-    bool RouterUnit::listen() const
+    bool RouterMgr::listen() const
     {
         try
         {
             // Quick hack to mute `This method can be made static` warning on CLion
             [[maybe_unused]] auto s = m_routes.size();
-            return MantisApp::instance().http().listen(MantisApp::instance().host(), MantisApp::instance().port());
+            return MantisBase::instance().http().listen(MantisBase::instance().host(), MantisBase::instance().port());
         }
         catch (const std::exception& e)
         {
@@ -82,13 +82,13 @@ namespace mantis
         return false;
     }
 
-    void RouterUnit::close()
+    void RouterMgr::close()
     {
-        MantisApp::instance().http().close();
+        MantisBase::instance().http().close();
         m_routes.clear();
     }
 
-    json RouterUnit::addRoute(const std::string& table)
+    json RouterMgr::addRoute(const std::string& table)
     {
         TRACE_CLASS_METHOD()
 
@@ -102,7 +102,7 @@ namespace mantis
 
         try
         {
-            const auto sql = MantisApp::instance().db().session();
+            const auto sql = MantisBase::instance().db().session();
 
             soci::row row;
             const std::string query = "SELECT id, name, type, schema, has_api FROM __tables WHERE name = :name";
@@ -149,7 +149,7 @@ namespace mantis
         return res;
     }
 
-    json RouterUnit::updateRoute(const json& table_data)
+    json RouterMgr::updateRoute(const json& table_data)
     {
         TRACE_CLASS_METHOD()
 
@@ -199,19 +199,19 @@ namespace mantis
 
         // Also, check if we have defined some routes for this one ...
         const auto basePath = "/api/v1/" + table_old_name;
-        MantisApp::instance().http().routeRegistry().remove("GET", basePath);
-        MantisApp::instance().http().routeRegistry().remove("GET", basePath + "/:id");
+        MantisBase::instance().http().routeRegistry().remove("GET", basePath);
+        MantisBase::instance().http().routeRegistry().remove("GET", basePath + "/:id");
 
         if (table_type != "view")
         {
-            MantisApp::instance().http().routeRegistry().remove("POST", basePath);
-            MantisApp::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
-            MantisApp::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
+            MantisBase::instance().http().routeRegistry().remove("POST", basePath);
+            MantisBase::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
+            MantisBase::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
         }
 
         if (table_type == "auth")
         {
-            MantisApp::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
+            MantisBase::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
         }
 
         // Remove tableUnit instance for the instance
@@ -220,7 +220,7 @@ namespace mantis
         return addRoute(table_name);
     }
 
-    json RouterUnit::updateRouteCache(const json& table_data)
+    json RouterMgr::updateRouteCache(const json& table_data)
     {
         TRACE_CLASS_METHOD()
 
@@ -250,7 +250,7 @@ namespace mantis
         return res;
     }
 
-    json RouterUnit::removeRoute(const json& table_data)
+    json RouterMgr::removeRoute(const json& table_data)
     {
         TRACE_CLASS_METHOD()
 
@@ -294,19 +294,19 @@ namespace mantis
         // Also, check if we have defined some routes for this one ...
 
         const auto basePath = "/api/v1/" + table_name;
-        MantisApp::instance().http().routeRegistry().remove("GET", basePath);
-        MantisApp::instance().http().routeRegistry().remove("GET", basePath + "/:id");
+        MantisBase::instance().http().routeRegistry().remove("GET", basePath);
+        MantisBase::instance().http().routeRegistry().remove("GET", basePath + "/:id");
 
         if (table_type != "view")
         {
-            MantisApp::instance().http().routeRegistry().remove("POST", basePath);
-            MantisApp::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
-            MantisApp::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
+            MantisBase::instance().http().routeRegistry().remove("POST", basePath);
+            MantisBase::instance().http().routeRegistry().remove("PATCH", basePath + "/:id");
+            MantisBase::instance().http().routeRegistry().remove("DELETE", basePath + "/:id");
         }
 
         if (table_type == "auth")
         {
-            MantisApp::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
+            MantisBase::instance().http().routeRegistry().remove("POST", basePath + "/auth-with-password");
         }
 
         // Remove tableUnit instance for the instance
@@ -324,13 +324,13 @@ namespace mantis
     }
 #endif
 
-    bool RouterUnit::generateFileServingApi() const
+    bool RouterMgr::generateFileServingApi() const
     {
         TRACE_CLASS_METHOD()
 
         try
         {
-            MantisApp::instance().http().Get(
+            MantisBase::instance().http().Get(
                 "/api/files/:table/:filename",
                 [](const MantisRequest& req, MantisResponse& res)
                 {
@@ -348,7 +348,7 @@ namespace mantis
                         return;
                     }
 
-                    const auto fileMgr = MantisApp::instance().files();
+                    const auto fileMgr = MantisBase::instance().files();
                     if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
                         path_opt.has_value())
                     {
@@ -377,11 +377,11 @@ namespace mantis
         return false;
     }
 
-    bool RouterUnit::generateTableCrudApis()
+    bool RouterMgr::generateTableCrudApis()
     {
         TRACE_CLASS_METHOD()
 
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         // id created updated schema has_api
         const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
@@ -411,15 +411,15 @@ namespace mantis
         return true;
     }
 
-    bool RouterUnit::generateMiscEndpoints() const
+    bool RouterMgr::generateMiscEndpoints() const
     {
         TRACE_CLASS_METHOD()
         // Add /health for server health check
-        MantisApp::instance().http().Get("/api/v1/health",
+        MantisBase::instance().http().Get("/api/v1/health",
                                          [](MantisRequest&, const MantisResponse& res)
                                          {
                                              // Compute system uptime and send to user
-                                             const auto& start_time = MantisApp::instance().startTime();
+                                             const auto& start_time = MantisBase::instance().startTime();
                                              auto uptime = std::chrono::duration_cast<std::chrono::seconds>(
                                                  std::chrono::steady_clock::now() - start_time).count();
 
@@ -432,7 +432,7 @@ namespace mantis
         return true;
     }
 
-    bool RouterUnit::generateAdminCrudApis() const
+    bool RouterMgr::generateAdminCrudApis() const
     {
         TRACE_CLASS_METHOD()
 
@@ -452,7 +452,7 @@ namespace mantis
                 return false;
             }
 
-            if (!MantisApp::instance().settings().setupRoutes())
+            if (!MantisBase::instance().settings().setupRoutes())
             {
                 Log::critical("Failed to setup settings routes");
                 return false;
@@ -469,7 +469,7 @@ namespace mantis
                 return "application/octet-stream";
             };
 
-            MantisApp::instance().http().Get(
+            MantisBase::instance().http().Get(
                 R"(/admin(.*))",
                 [getMimeType](MantisRequest& req, MantisResponse& res)
                 {
@@ -521,10 +521,10 @@ namespace mantis
                 });
 
             // Add /public static file serving directory
-            if (!MantisApp::instance().http().server().set_mount_point("/", MantisApp::instance().publicDir()))
+            if (!MantisBase::instance().http().server().set_mount_point("/", MantisBase::instance().publicDir()))
             {
                 Log::critical("Failed to setup mount point directory for '/' at '{}'",
-                              MantisApp::instance().publicDir());
+                              MantisBase::instance().publicDir());
                 return false;
             }
         }

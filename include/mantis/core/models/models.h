@@ -14,14 +14,14 @@ namespace mantis
 {
     using json = nlohmann::json;
 
-    class MantisApp;
+    class MantisBase;
 
-    class Validator
+    class ValidatorMgr
     {
         std::unordered_map<std::string, json> m_validators;
 
     public:
-        Validator();
+        ValidatorMgr();
 
         std::optional<json> find(const std::string& key);
 
@@ -94,8 +94,6 @@ namespace mantis
     std::optional<FieldType> getFieldType(const std::string& fieldName);
 
     bool fieldExists(const TableType& type, const std::string& fieldName);
-
-    bool isValidFieldType(const std::string& fieldType);
 
     // Access rule expression
     typedef std::string Rule;

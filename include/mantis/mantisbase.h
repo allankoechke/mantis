@@ -24,7 +24,7 @@
 #endif
 
 
-#include "../core/expr_evaluator.h"
+#include "core/expr_evaluator.h"
 
 // For password management ... // TODO get a proper library
 #ifdef _WIN32
@@ -40,45 +40,35 @@ namespace mantis
     class MantisRequest;
     namespace fs = std::filesystem;
 
-    class DatabaseUnit;
-    class HttpUnit;
-    class LoggingUnit;
-    class SettingsUnit;
-    class RouterUnit;
-    class Validator;
-    class FileUnit;
+    class DatabaseMgr;
+    class HttpMgr;
+    class LogsMgr;
+    class SettingsMgr;
+    class RouterMgr;
+    class ValidatorMgr;
+    class FilesMgr;
 
     /**
-     * @brief Enum for which database is currently selected
-     */
-    enum class DbType
-    {
-        SQLITE = 0x01, ///> SQLite Database
-        PSQL, ///> PostGreSQL Database
-        MYSQL ///> MySQL Database
-    };
-
-    /**
-     * @brief Mantis entry point.
+     * @brief MantisBase entry point.
      *
      * This class handles the entrypoint to the `Mantis` world, where we can
      * set/get application flags and variables, as well as access other
      * application units. These units are:
-     * - DatabaseUnit: For all database handling, @see DatabaseUnit for more information.
-     * - HttpUnit: Low-level http server operation and routing. @see HttpUnit for low-level access or @see Router for a high level routing methods.
-     * - LoggingUnit: For logging capabilities, @see LoggingUnit for more details.
-     * - Router: High level routing wrapper on top of @see HttpUnit, @see Router for more details.
-     * - Validator: A validation store using regex, @see Validator for more details.
+     * - DatabaseMgr: For all database handling, @see DatabaseMgr for more information.
+     * - HttpMgr: Low-level http server operation and routing. @see HttpMgr for low-level access or @see RouterMgr for a high level routing methods.
+     * - LogsMgr: For logging capabilities, @see LoggingMgr for more details.
+     * - RouterMgr: High level routing wrapper on top of @see HttpMgr, @see RouterMgr for more details.
+     * - ValidatorMgr: A validation store using regex, @see Validator for more details.
      */
-    class MantisApp
+    class MantisBase
     {
     public:
-        ~MantisApp();
+        ~MantisBase();
         /**
          * @brief Retrieve existing application instance.
          * @return A reference to the existing application instance.
          */
-        static MantisApp& instance();
+        static MantisBase& instance();
 
         /**
          * @brief Create class instance given cmd args passed in.
@@ -88,7 +78,7 @@ namespace mantis
          * @param argv Char array list
          * @return Reference to the created class instance
          */
-        static MantisApp& create(int argc, char** argv);
+        static MantisBase& create(int argc, char** argv);
 
         /**
          * @brief Convenience function to allow creating class instance given the
@@ -133,7 +123,7 @@ namespace mantis
          * @param config JSON Object bearing the cmd args values to be used
          * @return A reference to the created class instance
          */
-        static MantisApp& create(const json& config = json::object());
+        static MantisBase& create(const json& config = json::object());
 
         /**
          * @brief Start the http server and start listening for requests.
@@ -231,21 +221,13 @@ namespace mantis
          * @brief Retrieves the active database type.
          * @return Selected DatabaseType enum value.
          */
-        [[nodiscard]] DbType dbType() const;
+        [[nodiscard]] std::string dbType() const;
 
-        /**
-         * @brief Get the current database type as a string type
-         * matching the soci::get_backend_name() response to allow using this
-         * without fetching database session instance.
-         *
-         * @return string repr of the current db type
-         */
-        [[nodiscard]] std::string dbTypeByName() const;
         /**
          * Update the active database type for Mantis.
          * @param dbType New database type enum value.
          */
-        void setDbType(const DbType& dbType);
+        void setDbType(const std::string& dbType);
         /**
          * @brief Retrieve the JWT secret key.
          * @return JWT Secret value.
@@ -264,23 +246,23 @@ namespace mantis
         static int appPatchVersion();
 
         /// Get the database unit object
-        [[nodiscard]] DatabaseUnit& db() const;
+        [[nodiscard]] DatabaseMgr& db() const;
         /// Get the logging unit object
-        [[nodiscard]] LoggingUnit& log() const;
+        [[nodiscard]] LogsMgr& log() const;
         /// Get the http unit object
-        [[nodiscard]] HttpUnit& http() const;
+        [[nodiscard]] HttpMgr& http() const;
         /// Get the commandline parser object
         [[nodiscard]] argparse::ArgumentParser& cmd() const;
         /// Get the router object instance.
-        [[nodiscard]] RouterUnit& router() const;
-        /// Get the validators unit object instance in MantisApp.
-        [[nodiscard]] Validator& validators() const;
+        [[nodiscard]] RouterMgr& router() const;
+        /// Get the validators unit object instance in MantisBase.
+        [[nodiscard]] ValidatorMgr& validators() const;
         /// Get the `cparse` expression evaluator unit object instance.
-        [[nodiscard]] ExprEvaluator& evaluator() const;
+        [[nodiscard]] ExprMgr& evaluator() const;
         /// Get the settings unit object
-        [[nodiscard]] SettingsUnit& settings() const;
+        [[nodiscard]] SettingsMgr& settings() const;
         /// Get the file unit object
-        [[nodiscard]] FileUnit& files() const;
+        [[nodiscard]] FilesMgr& files() const;
 
         /**
          * @brief Fetch a table schema encapsulated by an `Entity` object from given the table name.
@@ -289,7 +271,7 @@ namespace mantis
          * @param table_name Name of the table of interest
          * @return Entity object for the selected table
          */
-        Entity entity(const std::string& table_name);
+        Entity entity(const std::string& table_name) const;
 
 #ifdef MANTIS_ENABLE_SCRIPTING
         /// Get the duktape context
@@ -315,17 +297,17 @@ namespace mantis
         bool isDevMode() const;
 
     private:
-        const std::string __class_name__ = "mantis::MantisApp";
+        const std::string __class_name__ = "mantis::MantisBase";
 
         // Make class creation private to enforce
         // singleton app pattern.
-        MantisApp();
+        MantisBase();
 
         // Disable copying and moving
-        MantisApp(const MantisApp&) = delete;
-        MantisApp& operator=(const MantisApp&) = delete;
-        MantisApp(MantisApp&&) = delete;
-        MantisApp& operator=(MantisApp&&) = delete;
+        MantisBase(const MantisBase&) = delete;
+        MantisBase& operator=(const MantisBase&) = delete;
+        MantisBase(MantisBase&&) = delete;
+        MantisBase& operator=(MantisBase&&) = delete;
 
         /**
          * @brief Run initialization actions for Mantis, ensuring all objects are initialized properly before use.
@@ -337,7 +319,7 @@ namespace mantis
          *
          * @return instance of the MantisApp class
          */
-        static MantisApp& getInstanceImpl();
+        static MantisBase& getInstanceImpl();
 
         // Private members
         void parseArgs(); ///> Parse command-line arguments
@@ -391,8 +373,8 @@ namespace mantis
          *
          * @return DatabaseUnit instance pointer
          */
-        [[nodiscard]] DatabaseUnit* duk_db() const;
-        [[nodiscard]] RouterUnit* duk_router() const;
+        [[nodiscard]] DatabaseMgr* duk_db() const;
+        [[nodiscard]] RouterMgr* duk_router() const;
 #endif
 
         // Store commandline args passed in, to be used in the init phase.
@@ -404,7 +386,7 @@ namespace mantis
         std::string m_publicDir;
         std::string m_dataDir;
         std::string m_scriptsDir;
-        DbType m_dbType;
+        std::string m_dbType;
 
         // System uptime checkpoint
         std::chrono::time_point<std::chrono::steady_clock> m_startTime;
@@ -418,15 +400,15 @@ namespace mantis
         bool m_launchAdminPanel = false;
         bool m_isDevMode = false;
 
-        std::unique_ptr<DatabaseUnit> m_database;
-        std::unique_ptr<LoggingUnit> m_logger;
-        std::unique_ptr<HttpUnit> m_http;
+        std::unique_ptr<DatabaseMgr> m_database;
+        std::unique_ptr<LogsMgr> m_logger;
+        std::unique_ptr<HttpMgr> m_http;
         std::unique_ptr<argparse::ArgumentParser> m_opts;
-        std::unique_ptr<RouterUnit> m_router;
-        std::unique_ptr<Validator> m_validators;
-        std::unique_ptr<ExprEvaluator> m_exprEval;
-        std::unique_ptr<SettingsUnit> m_settings;
-        std::unique_ptr<FileUnit> m_files;
+        std::unique_ptr<RouterMgr> m_router;
+        std::unique_ptr<ValidatorMgr> m_validators;
+        std::unique_ptr<ExprMgr> m_exprEval;
+        std::unique_ptr<SettingsMgr> m_settings;
+        std::unique_ptr<FilesMgr> m_files;
 
 #ifdef MANTIS_ENABLE_SCRIPTING
         duk_context* m_dukCtx; // For duktape context

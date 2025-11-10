@@ -1,5 +1,5 @@
 /**
- * @file database.h
+ * @file database_mgr.h
  * @brief Database Unit file for managing base database functionality: connecton, pooling, logging, etc.
  */
 
@@ -15,14 +15,13 @@
 #include <dukglue/dukglue.h>
 #endif
 
-#include "../app/app.h"
+#include "../mantisbase.h"
 #include "../utils/utils.h"
-#include "logging.h"
+#include "logs_mgr.h"
 
 #define __file__ "core/tables/database.h"
 
-namespace mantis
-{
+namespace mantis {
     using json = nlohmann::json;
 
     /**
@@ -30,19 +29,18 @@ namespace mantis
      *
      * The class handles database connections, pooling and sessions.
      */
-    class DatabaseUnit
-    {
+    class DatabaseMgr {
     public:
-        DatabaseUnit();
-        ~DatabaseUnit();
+        DatabaseMgr();
+
+        ~DatabaseMgr();
 
         /**
          * @brief Initializes the connection pool & connects to specific database.
-         * @param backend Database Type selected [SQLITE, PSQL, MYSQL, etc.]
          * @param conn_str Connection string for database containing username, password, etc. Not used for SQLite dbs.
          * @return A flag whether connection was successful or not.
          */
-        bool connect(DbType backend, const std::string& conn_str);
+        bool connect(const std::string &conn_str);
 
         /**
          * @brief CLose all database connections and destroy connection pools.
@@ -65,9 +63,7 @@ namespace mantis
          * Access to the underlying soci connection_pool instance
          * @return A reference to the soci::connection_pool instance
          */
-        [[nodiscard]] soci::connection_pool& connectionPool() const;
-
-        static nlohmann::json rowToJson(const soci::row& r);
+        [[nodiscard]] soci::connection_pool &connectionPool() const;
 
         /**
          * @brief Check if the database is connected
@@ -79,31 +75,20 @@ namespace mantis
         static void registerDuktapeMethods();
 #endif
 
-        json schemaCache(const std::string& table_name) {
-            return {};
-        }
+        // Returns a reference to cached schema, throws if not found
+        const json &schemaCache(const std::string &table_name) const;
 
-        void addSchemaCache(const std::string& table_name, const json& table_schema) {
-            m_schemaCache[table_name] = table_schema;
-        }
+        // Add or replace a single table schema
+        void addSchemaCache(const std::string &table_name, const json &table_schema);
 
-        void addSchemaCache(const json& schemas) {
-            if (!schemas.is_array()) throw std::invalid_argument("Invalid schema array provided!");
+        // Add or replace multiple schemas from array
+        void addSchemaCache(const json &schemas);
 
-            for (const auto& sch : schemas) {
-                m_schemaCache[sch.get<std::string>()] = sch;
-            }
-        }
+        // Update existing schema (same as add in this context)
+        void updateSchemaCache(const std::string &table_name, const json &table_schema);
 
-        void updateSchemaCache(const std::string& table_name, const json& table_schema) {
-            m_schemaCache[table_name] = table_schema;
-        }
-
-        void removeSchemaCache(const std::string& table_name) {
-        }
-
-
-        const std::string __class_name__ = "mantis::DatabaseUnit";
+        // Remove schema if exists
+        void removeSchemaCache(const std::string &table_name);
 
     private:
         /**
@@ -123,7 +108,7 @@ namespace mantis
          * pushed directly to the JS context
          */
 #ifdef MANTIS_SCRIPTING_ENABLED
-        duk_ret_t query(duk_context* ctx);
+        duk_ret_t query(duk_context *ctx);
 #endif
 
         /**
@@ -133,21 +118,20 @@ namespace mantis
 
         std::unique_ptr<soci::connection_pool> m_connPool;
         std::unordered_map<std::string, json> m_schemaCache;
+        const std::string __class_name__ = "mantis::DatabaseUnit";
     };
 
     /**
      * @brief Logger implementation for soci, allowing us to override the default logging behaviour
      * with our own custom logger.
      */
-    class MantisLoggerImpl : public soci::logger_impl
-    {
+    class MantisLoggerImpl : public soci::logger_impl {
     public:
         /**
          * @brief Called before query is executed by soci, we can log the query here.
          * @param query SQL Query to be executed
          */
-        void start_query(std::string const& query) override
-        {
+        void start_query(std::string const &query) override {
             logger_impl::start_query(query);
             Log::trace("$ sql << {}", query);
             // Log::trace("$ sql << {}\n\t└── Values ({})", query, params);
@@ -158,8 +142,7 @@ namespace mantis
          * @brief Obtain a pointer to the logger implementation
          * @return Logger implementation pointer
          */
-        logger_impl* do_clone() const override
-        {
+        logger_impl *do_clone() const override {
             return new MantisLoggerImpl();
         }
     };

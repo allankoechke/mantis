@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
     {
         try
         {
-            auto& app = tFix.mantisApp();
+            auto& app = tFix.app();
             [[maybe_unused]] auto res = app.run();
         }
         catch (const std::exception& e)

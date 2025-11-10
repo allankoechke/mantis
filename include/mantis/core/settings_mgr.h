@@ -5,7 +5,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <mantis/core/http.h>
+#include <mantis/core/http_mgr.h>
 #include <nlohmann/json.hpp>
 #include "../utils/utils.h"
 
@@ -13,15 +13,15 @@ namespace mantis
 {
     using json = nlohmann::json;
 
-    class MantisApp;
+    class MantisBase;
 
     /**
      * @brief Manages application settings
      */
-    class SettingsUnit
+    class SettingsMgr
     {
     public:
-        SettingsUnit() = default;
+        SettingsMgr() = default;
 
         /**
          * @brief Initialize and set up routes for fetching settings data

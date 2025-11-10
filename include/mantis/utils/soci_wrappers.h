@@ -6,7 +6,7 @@
 #define MANTISAPP_SOCI_WRAPPERS_H
 
 #include "utils.h"
-#include "mantis/app/app.h"
+#include "../mantisbase.h"
 #include "soci/values.h"
 
 namespace mantis {

@@ -25,9 +25,9 @@ namespace mantis
     /**
      * @brief Struct instance for handling evaluation of database access rules.
      */
-    struct ExprEvaluator
+    struct ExprMgr
     {
-        ExprEvaluator() = default;
+        ExprMgr() = default;
 
         /**
          * @brief Evaluates a given expression in a context of the given TokenMap variables.

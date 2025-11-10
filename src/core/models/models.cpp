@@ -1,7 +1,7 @@
 #include "../../../include/mantis/mantis.h"
 #include "soci/sqlite3/soci-sqlite3.h"
 
-mantis::Validator::Validator()
+mantis::ValidatorMgr::ValidatorMgr()
 {
     m_validators.clear();
     m_validators["email"] = json{
@@ -20,7 +20,7 @@ mantis::Validator::Validator()
     };
 }
 
-std::optional<json> mantis::Validator::find(const std::string& key)
+std::optional<json> mantis::ValidatorMgr::find(const std::string& key)
 {
     if (const auto it = m_validators.find(key); it != m_validators.end())
     {
@@ -30,7 +30,7 @@ std::optional<json> mantis::Validator::find(const std::string& key)
     return std::nullopt;
 }
 
-mantis::json mantis::Validator::validate(const std::string& key, const std::string& value)
+mantis::json mantis::ValidatorMgr::validate(const std::string& key, const std::string& value)
 {
     json response{{"error", ""}, {"validated", false}};
 
@@ -106,19 +106,6 @@ bool mantis::fieldExists(const TableType& type, const std::string& fieldName)
         }
     default: return false;
     }
-}
-
-bool mantis::isValidFieldType(const std::string& fieldType)
-{
-    // Valid field types for our backend
-    std::vector<std::string> fieldTypes{
-        "xml", "string", "double", "date",
-        "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64",
-        "blob", "json", "bool", "file", "files"
-    };
-
-    const auto it = std::ranges::find(fieldTypes, fieldType);
-    return it != fieldTypes.end();
 }
 
 mantis::Field::Field(std::string n, const FieldType t, const bool req, const bool pk, const bool sys, json opts)
@@ -279,7 +266,7 @@ std::string mantis::Table::to_sql() const
     };
 
     // Get DB Session
-    const auto sql = MantisApp::instance().db().session();
+    const auto sql = MantisBase::instance().db().session();
 
     std::ostringstream ddl;
     ddl << "CREATE TABLE IF NOT EXISTS " << name << " (";

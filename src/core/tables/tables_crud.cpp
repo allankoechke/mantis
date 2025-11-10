@@ -1,8 +1,8 @@
 #include "../../include/mantis/core/tables/tables.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
+#include "../../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/utils/utils.h"
-#include "../../include/mantis/core/fileunit.h"
+#include "../../include/mantis/core/files_mgr.h"
 #include <cmath>
 
 #define __file__ "core/tables/tables_crud.cpp"
@@ -19,7 +19,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql = MantisApp::instance().db().session();
+        auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -139,7 +139,7 @@ namespace mantis
         TRACE_CLASS_METHOD()
 
         // Get a soci::session from the pool
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         soci::row r; // To hold read data
         *sql << "SELECT * FROM " + m_tableName + " WHERE id = :id", soci::use(id), soci::into(r);
@@ -167,7 +167,7 @@ namespace mantis
         result["error"] = "";
 
         // Database session & transaction instance
-        auto sql = MantisApp::instance().db().session();
+        auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         try
@@ -313,15 +313,15 @@ namespace mantis
 
             // Bind values, then execute
             *sql << sql_query, soci::use(vals);
-            // Log::trace(">> $ sql << {}\n\t└── Values ({})", sql->get_query(), sql->get_last_query_context());
+            // logger::trace(">> $ sql << {}\n\t└── Values ({})", sql->get_query(), sql->get_last_query_context());
             tr.commit();
 
             // Delete files, if any were removed ...
             for (const auto& file : files_to_delete)
             {
-                if (!MantisApp::instance().files().removeFile(m_tableName, file))
+                if (!MantisBase::instance().files().removeFile(m_tableName, file))
                 {
-                    Log::warn("Could not delete file, is it missing?\n\t- `{}`", file);
+                    logger::warn("Could not delete file, is it missing?\n\t- `{}`", file);
                 }
             }
 
@@ -370,7 +370,7 @@ namespace mantis
         // Views should not reach here
         if (tableType() == "view") return false;
 
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         // Check if item exists of given id
@@ -418,7 +418,7 @@ namespace mantis
         for (const auto& file_name : files_in_fields)
         {
             [[maybe_unused]]
-                auto _ = MantisApp::instance().files().removeFile(m_tableName, file_name);
+                auto _ = MantisBase::instance().files().removeFile(m_tableName, file_name);
         }
         return true;
     }
@@ -427,7 +427,7 @@ namespace mantis
     {
         TRACE_CLASS_METHOD()
         json response = {{"error", ""}, {"pagination", json::object()}, {"data", json::array()}};
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         auto pagination = opts.value("pagination", json::object());
         int count = -1;

@@ -1,12 +1,12 @@
 #include "../../../include/mantis/core/tables/sys_tables.h"
-#include "../../../include/mantis/app/app.h"
-#include "../../../include/mantis/core/database.h"
+#include "../../../include/mantis/mantisbase.h"
+#include "../../../include/mantis/core/database_mgr.h"
 #include "../../../include/mantis/core/models/models.h"
 #include "../../../include/mantis/core/tables/tables.h"
-#include "../../../include/mantis/core/logging.h"
+#include "../../../include/mantis/core/logs_mgr.h"
 #include "../../../include/mantis/utils/utils.h"
-#include "../../../include/mantis/core/fileunit.h"
-#include "../../../include/mantis/core/router.h"
+#include "../../../include/mantis/core/files_mgr.h"
+#include "../../../include/mantis/core/router_mgr.h"
 
 #include <soci/soci.h>
 #include <private/soci-mktime.h>
@@ -36,7 +36,7 @@ namespace mantis
             // Hash the name for the ID
             std::string id = generateTableId(name);
 
-            Log::trace("Creating table: {} with id: {}", name, id);
+            logger::trace("Creating table: {} with id: {}", name, id);
 
             // Check if item exits already in db
             if (itemExists(name, id))
@@ -46,14 +46,14 @@ namespace mantis
                 return result;
             }
 
-            Log::trace("Table: {} will be created", name);
+            logger::trace("Table: {} will be created", name);
 
             // Create default time values
             std::time_t t = time(nullptr);
             std::tm* created_tm = std::localtime(&t);
 
             // Database session & transaction instance
-            auto sql = MantisApp::instance().db().session();
+            auto sql = MantisBase::instance().db().session();
             soci::transaction tr(*sql);
 
             std::string schema_str, table_ddl;
@@ -61,7 +61,7 @@ namespace mantis
 
             for (const auto& field : fields)
             {
-                Log::trace("Field: {} data = {}", field.value("name", ""), field.dump());
+                logger::trace("Field: {} data = {}", field.value("name", ""), field.dump());
                 auto _autoGeneratePattern = field.value("autoGeneratePattern", "");
                 auto _defaultValue = field.value("defaultValue", "");
                 auto _maxValue = field.value("maxValue", "");
@@ -166,8 +166,8 @@ namespace mantis
             }
 
             // Execute DDL & Save to DB
-            Log::debug("Schema: {}", schema_str);
-            Log::debug("Table DDL: {}", table_ddl);
+            logger::debug("Schema: {}", schema_str);
+            logger::debug("Table DDL: {}", table_ddl);
 
             try
             {
@@ -194,13 +194,13 @@ namespace mantis
                 result["data"] = obj;
 
                 // Create files directory
-                MantisApp::instance().files().createDir(name);
+                MantisBase::instance().files().createDir(name);
 
                 // Add created table to the routes
-                if (auto res = MantisApp::instance().router().addRoute(name);
+                if (auto res = MantisBase::instance().router().addRoute(name);
                     !res.value("success", false))
                 {
-                    Log::warn("Restart server to get new route changes! {}",
+                    logger::warn("Restart server to get new route changes! {}",
                               res.value("error", ""));
                 }
             }
@@ -224,7 +224,7 @@ namespace mantis
         }
         catch (std::exception& e)
         {
-            Log::critical("SysTablesUnit::SysTablesUnit: {}", e.what());
+            logger::critical("SysTablesUnit::SysTablesUnit: {}", e.what());
             json err;
             err["error"] = e.what();
             err["status"] = 500;
@@ -235,7 +235,7 @@ namespace mantis
 
     std::optional<json> SysTablesUnit::read(const std::string& id, const json& opts)
     {
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
 
         soci::row r;
         *sql << "SELECT has_api, name, type, schema FROM __tables WHERE id = :id", soci::use(id), soci::into(r);
@@ -262,7 +262,7 @@ namespace mantis
 
     json SysTablesUnit::update(const std::string& id, const json& entity, const json& opts)
     {
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
         json response;
         response["data"] = json::object();
@@ -327,19 +327,19 @@ namespace mantis
                     // If the field is valid, generate drop colum statement and execute!
                     *sql << sql->get_backend()->drop_column(t_name, trim(field_name));
 
-                    // Log::trace("Fields array size before removing {} = {}", field_name, t_fields.size());
+                    // logger::trace("Fields array size before removing {} = {}", field_name, t_fields.size());
                     // Remove the field from the array as well.
                     t_fields.erase(std::remove_if(t_fields.begin(), t_fields.end(), [&](const auto& field)
                     {
                         return field.value("name", "") == trim(field_name);
                     }));
-                    // Log::trace("Fields array size after removing {} = {}", field_name, t_fields.size());
+                    // logger::trace("Fields array size after removing {} = {}", field_name, t_fields.size());
                 }
             }
 
             for (const auto& field : entity.value("fields", std::vector<json>{}))
             {
-                // Log::trace("Field: {}", field.value("name", ""), field.dump());
+                // logger::trace("Field: {}", field.value("name", ""), field.dump());
 
                 // Ensure field name is provided, if not so, throw an error!
                 const auto field_name = field.value("name", "");
@@ -371,19 +371,19 @@ namespace mantis
 
                 std::string search_field_name = field_name;
 
-                Log::trace("Field: {}", field.dump());
+                logger::trace("Field: {}", field.dump());
 
                 // If old_name is set, let's use it to search
                 if (field.contains("old_name") && !field["old_name"].is_null() && !field["old_name"].empty())
                 {
                     search_field_name = field["old_name"].get<std::string>();
-                    Log::trace("Old Field Name: {}\t New Field: {}", field_name, search_field_name);
+                    logger::trace("Old Field Name: {}\t New Field: {}", field_name, search_field_name);
                 }
 
                 int found_index = -1, i = 0;
                 for (const auto& t_field_i : t_fields)
                 {
-                    // Log::trace("Field: {}", _field.dump());
+                    // logger::trace("Field: {}", _field.dump());
                     if (t_field_i.value("name", "") == search_field_name)
                     {
                         found_index = i;
@@ -535,7 +535,7 @@ namespace mantis
 
                             // TODO test on all database types
                             // Fails on SQLite?
-                            Log::trace("Attempt to change column type ...");
+                            logger::trace("Attempt to change column type ...");
 
                             // Update field data type in our json object ...
                             old_field["type"] = t;
@@ -550,7 +550,7 @@ namespace mantis
                     if (!_type.has_value())
                     {
                         tr.rollback();
-                        Log::critical("Error parsing field type of {} in {}", old_field.value("type", ""), field_name);
+                        logger::critical("Error parsing field type of {} in {}", old_field.value("type", ""), field_name);
 
                         response["error"] = "Error parsing field type!";
                         return response;
@@ -653,7 +653,7 @@ namespace mantis
             if (t_name != old_name)
             {
                 // Update file table folder name
-                MantisApp::instance().files().renameDir(old_name, t_name);
+                MantisBase::instance().files().renameDir(old_name, t_name);
 
                 // Update route for this table
                 const json obj{
@@ -662,11 +662,11 @@ namespace mantis
                     {"old_type", old_type}
                 };
 
-                Log::trace("Update With: {}", obj.dump());
-                if (auto res = MantisApp::instance().router().updateRoute(obj);
+                logger::trace("Update With: {}", obj.dump());
+                if (auto res = MantisBase::instance().router().updateRoute(obj);
                     !res.value("success", false))
                 {
-                    Log::warn("Restart server to get new route changes! {}",
+                    logger::warn("Restart server to get new route changes! {}",
                               res.value("error", ""));
                 }
             }
@@ -676,10 +676,10 @@ namespace mantis
                 {
                     // We have data
                     const auto j = r.get<json>(3); // Store updated schema
-                    if (auto res = MantisApp::instance().router().updateRouteCache(j);
+                    if (auto res = MantisBase::instance().router().updateRouteCache(j);
                         !res.value("success", false))
                     {
-                        Log::warn("Restart server to update table changes! {}",
+                        logger::warn("Restart server to update table changes! {}",
                                   res.value("error", ""));
                     }
                 }
@@ -690,7 +690,7 @@ namespace mantis
             response["error"] = e.what();
             response["status"] = 500;
 
-            Log::critical("Error Updating Table Schema: {}", e.what());
+            logger::critical("Error Updating Table Schema: {}", e.what());
         }
 
         return response;
@@ -698,7 +698,7 @@ namespace mantis
 
     bool SysTablesUnit::remove(const std::string& id, const json& opts)
     {
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
 
         json response;
@@ -720,14 +720,14 @@ namespace mantis
         tr.commit();
 
         // Delete files directory
-        MantisApp::instance().files().deleteDir(name);
+        MantisBase::instance().files().deleteDir(name);
 
         // Update route for this table
         const json obj{{"name", name}, {"type", type}};
-        if (const auto res = MantisApp::instance().router().removeRoute(obj);
+        if (const auto res = MantisBase::instance().router().removeRoute(obj);
             !res.value("success", false))
         {
-            Log::warn("Restart server to get new route changes! {}",
+            logger::warn("Restart server to get new route changes! {}",
                       res.value("error", ""));
         }
 
@@ -736,7 +736,7 @@ namespace mantis
 
     std::vector<json> SysTablesUnit::list(const json& opts)
     {
-        const auto sql = MantisApp::instance().db().session();
+        const auto sql = MantisBase::instance().db().session();
         const soci::rowset<soci::row> rs = (sql->prepare <<
             "SELECT id, name, type, schema, has_api, created, updated FROM __tables");
 
@@ -774,14 +774,14 @@ namespace mantis
         try
         {
             int count;
-            const auto sql = MantisApp::instance().db().session();
+            const auto sql = MantisBase::instance().db().session();
             const std::string query = "SELECT COUNT(id) FROM " + tableName + " WHERE id = :id";
             *sql << query, soci::use(id), soci::into(count);
             return sql->got_data();
         }
         catch (soci::soci_error& e)
         {
-            Log::trace("SysTablesUnit::itemExists error: {}", e.what());
+            logger::trace("SysTablesUnit::itemExists error: {}", e.what());
             return false;
         }
     }

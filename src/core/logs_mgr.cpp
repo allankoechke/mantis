@@ -1,8 +1,8 @@
-#include "../../include/mantis/core/logging.h"
+#include "../../include/mantis/core/logs_mgr.h"
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include "spdlog/sinks/ansicolor_sink.h"
 
-void mantis::LoggingUnit::setLogLevel(const LogLevel& level)
+void mantis::LogsMgr::setLogLevel(const LogLevel& level)
 {
     const auto set_spdlog_level = [&](const spdlog::level::level_enum lvl)
     {
@@ -35,7 +35,7 @@ void mantis::LoggingUnit::setLogLevel(const LogLevel& level)
     }
 }
 
-void mantis::LoggingUnit::init()
+void mantis::LogsMgr::init()
 {
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
     console_sink->set_level(spdlog::level::info);

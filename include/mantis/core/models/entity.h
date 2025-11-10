@@ -7,6 +7,7 @@
 
 #include <string>
 #include "mantis/mantis.h"
+#include "mantis/utils/soci_wrappers.h"
 
 namespace mantis {
     using Record = json;
@@ -23,25 +24,25 @@ namespace mantis {
         // --------------- DB TABLE OPS ------------------ //
         [[nodiscard]] std::string id() const;
 
-        [[nodiscard]] const std::string& name() const;
+        [[nodiscard]] const std::string &name() const;
 
-        [[nodiscard]] const std::string& type() const;
+        [[nodiscard]] const std::string &type() const;
 
         [[nodiscard]] bool isSystem() const;
 
         [[nodiscard]] bool hasApi() const;
 
-        [[nodiscard]] const std::vector<json>& fields() const;
+        [[nodiscard]] const std::vector<json> &fields() const;
 
-        [[nodiscard]] const std::string& listRule() const;
+        [[nodiscard]] const std::string &listRule() const;
 
-        [[nodiscard]] const std::string& getRule() const;
+        [[nodiscard]] const std::string &getRule() const;
 
-        [[nodiscard]] const std::string& addRule() const;
+        [[nodiscard]] const std::string &addRule() const;
 
-        [[nodiscard]] const std::string& updateRule() const;
+        [[nodiscard]] const std::string &updateRule() const;
 
-        [[nodiscard]] const std::string& deleteRule() const;
+        [[nodiscard]] const std::string &deleteRule() const;
 
         // --------------- DB CRUD OPS ------------------ //
         [[nodiscard]] Record create(const ::json &Record, const json &opts = json::object()) const;
@@ -52,14 +53,17 @@ namespace mantis {
 
         [[nodiscard]] Record update(const std::string &id, const json &data, const json &opts = json::object()) const;
 
-        void remove(const std::string &id);
+        void remove(const std::string &id) const;
 
         // --------------- SCHEMA OPS ------------------ //
-        const json &schema() const;
+        [[nodiscard]] const json &schema() const;
 
         // --------------- UTILITY OPS ------------------ //
         [[nodiscard]] bool recordExists(const std::string &id) const;
-        [[nodiscard]] std::optional<json> findField(const std::string& field_name) const;
+
+        [[nodiscard]] std::optional<json> findField(const std::string &field_name) const;
+
+        [[nodiscard]] std::optional<json> queryFromCols(const std::string &value, const std::vector<std::string> &columns) const;
 
     private:
         json m_schema;

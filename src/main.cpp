@@ -1,6 +1,6 @@
 /**
- * @file mantisapp.cpp
- * @brief Standalone `mantisapp` executable entrypoint
+ * @file main.cpp
+ * @brief Standalone `mantisbase` executable entrypoint
  *
  * Created by allan on 08/05/2025.
  */
@@ -15,8 +15,8 @@
  */
 int main(const int argc, char* argv[])
 {
-    // Create `MantisApp` instance with the passed in arguments
-    auto& app = mantis::MantisApp::create(argc, argv);
+    // Create `MantisBase` instance with the passed in arguments
+    auto& app = mantis::MantisBase::create(argc, argv);
 
     // Or simply
     // Create the JSON object
@@ -27,7 +27,7 @@ int main(const int argc, char* argv[])
     //     }
     // }
     // const json args{{"dev", nullptr}, {"serve", {{"port", 9089}}}};
-    // auto& app = mantis::MantisApp::create(args);
+    // auto& app = mantis::MantisBase::create(args);
 
     // Run the http server listening loop
     return app.run();

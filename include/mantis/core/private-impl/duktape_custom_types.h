@@ -9,8 +9,8 @@
 #include <dukglue/dukglue.h>
 #endif
 
-#include <mantis/core/http.h>
-#include <mantis/core/context_store.h>
+#include <mantis/core/http_mgr.h>
+#include <mantis/core/context_store_mgr.h>
 #include "../../utils/utils.h"
 
 namespace mantis

@@ -1,6 +1,6 @@
 #include "../../include/mantis/core/tables/tables.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
+#include "../../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/utils/utils.h"
 
 #define __file__ "core/tables/tables_validation.cpp"
@@ -190,7 +190,7 @@ namespace mantis
             const auto& field_type = field["type"].get<std::string>();
 
             // Check if we have a regex or typed validator from our store
-            const auto opt =  MantisApp::instance().validators().find(pattern);
+            const auto opt =  MantisBase::instance().validators().find(pattern);
             if (opt.has_value() && field_type == "string")
             {
                 // Since we have a regex string, lets validate it and return if it fails ...

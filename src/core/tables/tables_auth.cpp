@@ -1,9 +1,9 @@
 #include "../../include/mantis/core/tables/tables.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
+#include "../../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/utils/utils.h"
-#include "../../include/mantis/core/jwt.h"
-#include "../../include/mantis/core/router.h"
+#include "../../include/mantis/core/jwt_mgr.h"
+#include "../../include/mantis/core/router_mgr.h"
 
 #define __file__ "core/tables/tables_auth.cpp"
 
@@ -52,7 +52,7 @@ namespace mantis
             const auto password = body.value("password", "");
 
             // Find user with an email passed in ....
-            const auto sql = MantisApp::instance().db().session();
+            const auto sql = MantisBase::instance().db().session();
 
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
@@ -79,7 +79,7 @@ namespace mantis
                 response["error"] = "No user found matching given email/password combination.";
 
                 res.sendJson(404, response);
-                Log::warn("No user found for given email/password combination");
+                logger::warn("No user found for given email/password combination");
             }
 
             // Create JWT Token and return to the user ...
@@ -124,7 +124,7 @@ namespace mantis
             response["error"] = e.what();
 
             res.sendJson(500, response);
-            Log::critical("Error Processing Request: {}", e.what());
+            logger::critical("Error Processing Request: {}", e.what());
         }
         catch (...)
         {
@@ -133,7 +133,7 @@ namespace mantis
             response["error"] = "Internal Server Error";
 
             res.sendJson(500, response);
-            Log::critical("Internal Server Error");
+            logger::critical("Internal Server Error");
         }
     }
 
@@ -141,9 +141,9 @@ namespace mantis
     {
         TRACE_CLASS_METHOD();
 
-        [[maybe_unused]] auto sql = MantisApp::instance().db().session();
+        [[maybe_unused]] auto sql = MantisBase::instance().db().session();
 
-        Log::trace("Resetting password on record, endpoint {}", req.getPath());
+        logger::trace("Resetting password on record, endpoint {}", req.getPath());
         //res.sendJson(200, req);
     }
 
@@ -177,7 +177,7 @@ namespace mantis
         // Get the auth var from the context, resort to empty object if it's not set.
         auto auth = req.getOr<json>("auth", json::object());
 
-        Log::trace("Auth Obj: `{}`", auth.dump());
+        logger::trace("Auth Obj: `{}`", auth.dump());
 
         auto method = req.getMethod();
         if (!(method == "GET"
@@ -203,7 +203,7 @@ namespace mantis
                                ? m_updateRule
                                : m_deleteRule;
 
-        Log::trace("Rule: `{}`", rule);
+        logger::trace("Rule: `{}`", rule);
 
         // Remove whitespaces
         rule = trim(rule);
@@ -219,7 +219,7 @@ namespace mantis
             // If token validation worked, lets get data from database
             if (const auto resp = JwtUnit::verifyJwtToken(token); resp.at("verified").get<bool>())
             {
-                Log::trace("Token Verified: `{}`", token);
+                logger::trace("Token Verified: `{}`", token);
                 const auto user_id = resp.at("id").get<std::string>();
                 const auto user_table = resp.at("table").get<std::string>();
 
@@ -228,7 +228,7 @@ namespace mantis
                 // the session context, queried by:
                 //  ` req.get<json>("auth").value("id", ""); // returns the user ID
                 //  ` req.get<json>("auth").value("name", ""); // returns the user's name
-                auto sql = MantisApp::instance().db().session();
+                auto sql = MantisBase::instance().db().session();
                 std::string query = "SELECT * FROM " + user_table + " WHERE id = :id LIMIT 1";
 
                 soci::row user_row;
@@ -240,7 +240,7 @@ namespace mantis
                     // Populate the auth object with additional data from the database
                     // remove `password` field if available
                     auto user = user_table == "__admins"
-                                    ? parseDbRowToJson(user_row, MantisApp::instance().router().adminTableFields)
+                                    ? parseDbRowToJson(user_row, MantisBase::instance().router().adminTableFields)
                                     : parseDbRowToJson(user_row);
 
                     // Populate the `auth` object
@@ -261,7 +261,7 @@ namespace mantis
                     req.set("auth", auth);
 
                     // Add `auth` data to the TokenMap
-                    vars["auth"] = MantisApp::instance().evaluator().jsonToTokenMap(auth);
+                    vars["auth"] = MantisBase::instance().evaluator().jsonToTokenMap(auth);
                 }
             }
         }
@@ -279,7 +279,7 @@ namespace mantis
             {
                 // Parse request body and add it to the request TokenMap
                 auto request = json::parse(req.getMethod());
-                reqMap["body"] = MantisApp::instance().evaluator().jsonToTokenMap(request);
+                reqMap["body"] = MantisBase::instance().evaluator().jsonToTokenMap(request);
             }
         }
         catch (...)
@@ -303,7 +303,7 @@ namespace mantis
                 return REQUEST_PENDING;
             }
 
-            Log::trace("Table: `{}`", auth.at("table").get<std::string>());
+            logger::trace("Table: `{}`", auth.at("table").get<std::string>());
 
             // User was not an admin, lets return access denied error
             json response;
@@ -315,11 +315,11 @@ namespace mantis
             return REQUEST_HANDLED;
         }
 
-        Log::trace("Expression Rule = {}", rule);
+        logger::trace("Expression Rule = {}", rule);
 
         // If expression evaluation returns true, lets return allowing execution
         // continuation. Else, we'll craft an error response.
-        if (MantisApp::instance().evaluator().evaluate(rule, vars))
+        if (MantisBase::instance().evaluator().evaluate(rule, vars))
             return REQUEST_PENDING; // Proceed to next middleware
 
         // Evaluation yielded false, return generic access denied error

@@ -33,11 +33,11 @@ namespace mantis
      * A wrapper class around the `spdlog's` logging functions.
      * For more info, check docs here: @see https://github.com/gabime/spdlog
      */
-    class LoggingUnit
+    class LogsMgr
     {
     public:
-        LoggingUnit() = default;
-        ~LoggingUnit() = default;
+        LogsMgr() = default;
+        ~LogsMgr() = default;
 
         static void init();
         static void setLogLevel(const LogLevel& level = LogLevel::INFO);
@@ -73,7 +73,7 @@ namespace mantis
         }
     };
 
-    using Log = LoggingUnit;
+    using logger = LogsMgr;
 
     /**
      * @brief A class for tracing function execution [entry, exit]

@@ -28,12 +28,12 @@ namespace mantis
     /**
      * @brief Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.
      */
-    class RouterUnit
+    class RouterMgr
     {
     public:
-        explicit RouterUnit();
+        explicit RouterMgr();
 
-        ~RouterUnit() = default;
+        ~RouterMgr() = default;
 
         /// Initialize the router instance creating tables and admin routes.
         bool initialize();

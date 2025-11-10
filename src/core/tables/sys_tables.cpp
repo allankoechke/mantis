@@ -1,9 +1,9 @@
 #include "../../../include/mantis/core/tables/sys_tables.h"
-#include "../../../include/mantis/core/database.h"
-#include "../../../include/mantis/app/app.h"
+#include "../../../include/mantis/core/database_mgr.h"
+#include "../../../include/mantis/mantisbase.h"
 #include "../../../include/mantis/utils/utils.h"
-#include "../../../include/mantis/core/router.h"
-#include "../../../include/mantis/core/jwt.h"
+#include "../../../include/mantis/core/router_mgr.h"
+#include "../../../include/mantis/core/jwt_mgr.h"
 
 #define __file__ "core/tables/sys_tables.cpp"
 
@@ -28,8 +28,8 @@ namespace mantis
         try
         {
             // Fetch All Records
-            Log::debug("Creating route: [{:>6}] {}", "GET", basePath);
-            MantisApp::instance().http().Get(
+            logger::debug("Creating route: [{:>6}] {}", "GET", basePath);
+            MantisBase::instance().http().Get(
                 basePath,
                 [this](MantisRequest& req, MantisResponse& res)-> void
                 {
@@ -48,8 +48,8 @@ namespace mantis
             );
 
             // Fetch Single Record
-            Log::debug("Creating route: [{:>6}] {}/:id", "GET", basePath);
-            MantisApp::instance().http().Get(
+            logger::debug("Creating route: [{:>6}] {}/:id", "GET", basePath);
+            MantisBase::instance().http().Get(
                 basePath + "/:id",
                 [this](MantisRequest& req, MantisResponse& res)-> void
                 {
@@ -68,8 +68,8 @@ namespace mantis
             );
 
             // Add Record
-            Log::debug("Creating route: [{:>6}] {}", "POST", basePath);
-            MantisApp::instance().http().Post(
+            logger::debug("Creating route: [{:>6}] {}", "POST", basePath);
+            MantisBase::instance().http().Post(
                 basePath,
                 [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                 {
@@ -88,8 +88,8 @@ namespace mantis
             );
 
             // Update Record
-            Log::debug("Creating route: [{:>6}] {}/:id", "PATCH", basePath);
-            MantisApp::instance().http().Patch(
+            logger::debug("Creating route: [{:>6}] {}/:id", "PATCH", basePath);
+            MantisBase::instance().http().Patch(
                 basePath + "/:id",
                 [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                 {
@@ -108,8 +108,8 @@ namespace mantis
             );
 
             // Delete Record
-            Log::debug("Creating route: [{:>6}] {}/:id", "DELETE", basePath);
-            MantisApp::instance().http().Delete(
+            logger::debug("Creating route: [{:>6}] {}/:id", "DELETE", basePath);
+            MantisBase::instance().http().Delete(
                 basePath + "/:id",
                 [this](MantisRequest& req, MantisResponse& res)-> void
                 {
@@ -128,8 +128,8 @@ namespace mantis
             );
 
             // Add Record
-            Log::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
-            MantisApp::instance().http().Post(
+            logger::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
+            MantisBase::instance().http().Post(
                 basePath + "/auth-with-password",
                 [this](MantisRequest& req, MantisResponse& res) -> void
                 {
@@ -142,14 +142,14 @@ namespace mantis
 
         catch (const std::exception& e)
         {
-            Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
+            logger::critical("Failed to create routes for table '{}' of '{}' type: {}",
                           m_tableName, m_tableType, e.what());
             return false;
         }
 
         catch (...)
         {
-            Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
+            logger::critical("Failed to create routes for table '{}' of '{}' type: {}",
                           m_tableName, m_tableType, "Unknown Error!");
             return false;
         }
@@ -283,7 +283,7 @@ namespace mantis
         if (validate_res.has_value())
         {
             res.sendJson(validate_res.value()["status"].get<int>(), validate_res.value());
-            Log::critical("Failed to create table, reason: {}", validate_res.value().dump());
+            logger::critical("Failed to create table, reason: {}", validate_res.value().dump());
             return;
         }
 
@@ -298,7 +298,7 @@ namespace mantis
 
             res.sendJson(status, response);
 
-            Log::critical("Failed to create table, reason: {}", resp.dump());
+            logger::critical("Failed to create table, reason: {}", resp.dump());
             return;
         }
 
@@ -376,7 +376,7 @@ namespace mantis
 
             res.sendJson(status, response);
 
-            Log::critical("Failed to update table, id = {}, reason: {}", id, respObj.dump());
+            logger::critical("Failed to update table, id = {}, reason: {}", id, respObj.dump());
             return;
         }
 
@@ -482,7 +482,7 @@ namespace mantis
         try
         {
             // Find user with an email passed in ....
-            const auto sql = MantisApp::instance().db().session();
+            const auto sql = MantisBase::instance().db().session();
 
             soci::row r;
             const auto query = "SELECT * FROM " + m_tableName + " WHERE email = :email LIMIT 1;";
@@ -508,7 +508,7 @@ namespace mantis
                 response["error"] = "No user found matching given email/password combination.";
 
                 res.sendJson(404, response);
-                Log::warn("No user found for given email/password combination.");
+                logger::warn("No user found for given email/password combination.");
                 return;
             }
 
@@ -534,13 +534,13 @@ namespace mantis
         }
         catch (std::exception& e)
         {
-            Log::critical("Error on admin login: {}", e.what());
+            logger::critical("Error on admin login: {}", e.what());
             response["status"] = 500;
             response["data"] = json::object();
             response["error"] = e.what();
 
             res.sendJson(500, response);
-            Log::critical("Error Processing Request: {}", e.what());
+            logger::critical("Error Processing Request: {}", e.what());
         }
     }
 
@@ -598,7 +598,7 @@ namespace mantis
         // the session context, queried by:
         //  ` req.get<json>("auth").value("id", ""); // returns the user ID
         //  ` req.get<json>("auth").value("name", ""); // returns the user's name
-        auto sql = MantisApp::instance().db().session();
+        auto sql = MantisBase::instance().db().session();
 
         soci::row admin_row;
         *sql << "SELECT id, email, created, updated FROM __admins WHERE id = :id LIMIT 1",
@@ -658,7 +658,7 @@ namespace mantis
             response["error"] = "Internal Server Error while parsing user record!";
 
             res.sendJson(500, response);
-            Log::critical("Error parsing logged user: {}", e.what());
+            logger::critical("Error parsing logged user: {}", e.what());
             return REQUEST_HANDLED;
         }
 
@@ -666,7 +666,7 @@ namespace mantis
         req.set("auth", auth);
 
         const auto table_name = auth.value("table", "");
-        // Log::trace("Auth table is: {}", table_name);
+        // logger::trace("Auth table is: {}", table_name);
         // Check if user is logged in as Admin
         if (table_name == "__admins")
         {

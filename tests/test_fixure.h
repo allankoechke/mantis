@@ -11,8 +11,8 @@
 #include <iostream>
 #include <filesystem>
 
-#include "mantis/app/app.h"
-#include "mantis/core/http.h"
+#include "../include/mantis/app.h"
+#include "mantis/core/http_mgr.h"
 #include "mantis/utils/utils.h"
 
 namespace fs = std::filesystem;
@@ -21,9 +21,9 @@ inline fs::path getBaseDir()
 {
     // Base test directory for files and SQLite data
 #ifdef _WIN32
-    auto base_path = fs::temp_directory_path() / "mantisapp_tests" / mantis::generateShortId();
+    auto base_path = fs::temp_directory_path() / "mantisbase_tests" / mantis::generateShortId();
 #else
-    auto base_path = fs::path("/tmp") / "mantisapp_tests" / mantis::generateShortId();
+    auto base_path = fs::path("/tmp") / "mantisbase_tests" / mantis::generateShortId();
 #endif
 
     try
@@ -41,11 +41,11 @@ inline fs::path getBaseDir()
 struct TestFixture
 {
     int port = 7075;
-    mantis::MantisApp& mApp;
+    mantis::MantisBase& mApp;
 
 private:
     TestFixture(const mantis::json& config)
-        : mApp(mantis::MantisApp::create(config))
+        : mApp(mantis::MantisBase::create(config))
     {
         std::cout << "[TestFixture] Setting up DB and starting server...\n";
     }
@@ -57,9 +57,9 @@ public:
         return _instance;
     }
 
-    mantis::MantisApp& mantisApp() const
+    mantis::MantisBase& app() const
     {
-        return mantis::MantisApp::instance();
+        return mantis::MantisBase::instance();
     }
 
     // Wait until the server port responds
@@ -80,7 +80,7 @@ public:
         std::cout << "[TestFixture] Shutting down server...\n";
 
         // Graceful shutdown
-        mantisApp().close();
+        app().close();
 
         // Cleanup the temporary directory & files
         try

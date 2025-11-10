@@ -1,6 +1,6 @@
 #include "../../include/mantis/core/tables/tables.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
+#include "../../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/utils/utils.h"
 
 #include <iomanip>
@@ -19,44 +19,6 @@ namespace mantis
         }
 
         return std::nullopt;
-    }
-
-    json TableUnit::checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const
-    {
-        // default response object
-        json res{{"error", ""}, {"data", json::object()}};
-
-        // Get a session object
-        const auto sql = MantisApp::instance().db().session();
-
-        try
-        {
-            // Build dynamic WHERE clause
-            std::string whereClause;
-            for (size_t i = 0; i < columns.size(); ++i)
-            {
-                if (i > 0) whereClause += " OR ";
-                whereClause += columns[i] + " = :value";
-            }
-
-            const std::string query = "SELECT * FROM " + m_tableName + " WHERE " + whereClause + " LIMIT 1";
-
-            // Run query
-            soci::row r;
-            *sql << query, soci::use(value), soci::into(r);
-
-            const auto obj = parseDbRowToJson(r);
-            res["data"] = obj;
-        }
-        catch (const soci::soci_error& e)
-        {
-            res["error"] = e.what();
-        }
-        catch (const std::exception& e)
-        {
-            res["error"] = e.what();
-        }
-        return res;
     }
 
     json TableUnit::parseDbRowToJson(const soci::row& row) const
@@ -104,7 +66,7 @@ namespace mantis
             }
             else if (colType == "date")
             {
-                j[colName] = mantis::dbDateToString(MantisApp::instance().dbTypeByName(), row, i);
+                j[colName] = mantis::dbDateToString(row, i);
             }
             else if (colType == "int8")
             {

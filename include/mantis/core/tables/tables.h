@@ -9,9 +9,9 @@
 #include <nlohmann/json.hpp>
 
 #include "../models/models.h"
-#include "../http.h"
+#include "../http_mgr.h"
 #include "../crud/crud.h"
-#include "../../app/app.h"
+#include "../../mantisbase.h"
 #include "../../utils/utils.h"
 
 namespace mantis

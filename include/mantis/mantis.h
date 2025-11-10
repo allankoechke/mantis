@@ -9,20 +9,20 @@
 #include "utils/utils.h"
 
 // Core application
-#include "app/app.h"
+#include "mantisbase.h"
 
 // Core components
-#include "core/database.h"
+#include "core/database_mgr.h"
 #include "core/expr_evaluator.h"
-#include "core/http.h"
-#include "core/logging.h"
-#include "core/router.h"
-#include "core/context_store.h"
-#include "core/fileunit.h"
-#include "core/settings.h"
+#include "core/http_mgr.h"
+#include "core/logs_mgr.h"
+#include "core/router_mgr.h"
+#include "core/context_store_mgr.h"
+#include "core/files_mgr.h"
+#include "core/settings_mgr.h"
 
 // CRUD and JWT
-#include "core/jwt.h"
+#include "core/jwt_mgr.h"
 #include "core/crud/crud.h"
 
 // Models and data structures

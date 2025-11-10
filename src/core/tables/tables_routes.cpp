@@ -1,8 +1,8 @@
 #include "../../include/mantis/core/tables/tables.h"
-#include "../../include/mantis/app/app.h"
-#include "../../include/mantis/core/database.h"
+#include "../../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/utils/utils.h"
-#include "../../include/mantis/core/fileunit.h"
+#include "../../include/mantis/core/files_mgr.h"
 
 #include <iostream>
 #include <fstream>
@@ -21,8 +21,8 @@ namespace mantis
         try
         {
             // Fetch All Records
-            Log::debug("Creating route: [{:>6}] {}", "GET", basePath);
-            MantisApp::instance().http().Get(
+            logger::debug("Creating route: [{:>6}] {}", "GET", basePath);
+            MantisBase::instance().http().Get(
                 basePath,
                 [this](MantisRequest& req, MantisResponse& res)-> void
                 {
@@ -41,8 +41,8 @@ namespace mantis
             );
 
             // Fetch Single Record
-            Log::debug("Creating route: [{:>6}] {}{}", "GET/1", basePath, "/:id");
-            MantisApp::instance().http().Get(
+            logger::debug("Creating route: [{:>6}] {}{}", "GET/1", basePath, "/:id");
+            MantisBase::instance().http().Get(
                 basePath + "/:id",
                 [this](MantisRequest& req, MantisResponse& res)-> void
                 {
@@ -64,8 +64,8 @@ namespace mantis
             if (m_tableType != "view")
             {
                 // Add Record
-                Log::debug("Creating route: [{:>6}] {}", "POST", basePath);
-                MantisApp::instance().http().Post(
+                logger::debug("Creating route: [{:>6}] {}", "POST", basePath);
+                MantisBase::instance().http().Post(
                     basePath, [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                     {
                         createRecord(req, res, reader);
@@ -83,8 +83,8 @@ namespace mantis
                 );
 
                 // Update Record
-                Log::debug("Creating route: [{:>6}] {}{}", "PATCH", basePath, "/:id");
-                MantisApp::instance().http().Patch(
+                logger::debug("Creating route: [{:>6}] {}{}", "PATCH", basePath, "/:id");
+                MantisBase::instance().http().Patch(
                     basePath + "/:id",
                     [this](MantisRequest& req, MantisResponse& res, const MantisContentReader& reader)-> void
                     {
@@ -103,8 +103,8 @@ namespace mantis
                 );
 
                 // Delete Record
-                Log::debug("Creating route: [{:>6}] {}{}", "DELETE", basePath, "/:id");
-                MantisApp::instance().http().Delete(
+                logger::debug("Creating route: [{:>6}] {}{}", "DELETE", basePath, "/:id");
+                MantisBase::instance().http().Delete(
                     basePath + "/:id",
                     [this](MantisRequest& req, MantisResponse& res)-> void
                     {
@@ -127,8 +127,8 @@ namespace mantis
             if (m_tableType == "auth")
             {
                 // Add Record
-                Log::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
-                MantisApp::instance().http().Post(
+                logger::debug("Creating route: [{:>6}] {}/auth-with-password", "POST", basePath);
+                MantisBase::instance().http().Post(
                     basePath + "/auth-with-password",
                     [this](MantisRequest& req, MantisResponse& res) -> void
                     {
@@ -142,14 +142,14 @@ namespace mantis
 
         catch (const std::exception& e)
         {
-            Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
+            logger::critical("Failed to create routes for table '{}' of '{}' type: {}",
                           m_tableName, m_tableType, e.what());
             return false;
         }
 
         catch (...)
         {
-            Log::critical("Failed to create routes for table '{}' of '{}' type: {}",
+            logger::critical("Failed to create routes for table '{}' of '{}' type: {}",
                           m_tableName, m_tableType, "Unknown Error!");
             return false;
         }
@@ -342,7 +342,7 @@ namespace mantis
                     }
 
                     // Handle file upload
-                    const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
+                    const auto dir = MantisBase::instance().files().dirPath(m_tableName, true);
                     const auto new_filename = sanitizeFilename(file.filename);
 
                     // Create filepath for writing file contents
@@ -353,7 +353,7 @@ namespace mantis
                     file_record["filename"] = new_filename;
                     file_record["path"] = filepath; // Path on disk to write the file
                     file_record["name"] = file.name; // Original file name as passed by the user
-                    file_record["hash"] = MantisApp::instance().http().hashMultipartMetadata(file);
+                    file_record["hash"] = MantisBase::instance().http().hashMultipartMetadata(file);
 
                     if (it->at("type").get<std::string>() == "file")
                     {
@@ -376,7 +376,7 @@ namespace mantis
                         }
                         catch (std::exception& e)
                         {
-                            Log::critical("Error Parsing Files: {}", e.what());
+                            logger::critical("Error Parsing Files: {}", e.what());
 
                             response["status"] = 500;
                             response["error"] = e.what();
@@ -446,7 +446,7 @@ namespace mantis
                                 response["error"] = e.what();
 
                                 res.sendJson(500, response);
-                                Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
+                                logger::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
                                               file.content);
                                 return;
                             }
@@ -459,7 +459,7 @@ namespace mantis
                         response["error"] = e.what();
 
                         res.sendJson(500, response);
-                        Log::critical("Error parsing field data: {}", e.what());
+                        logger::critical("Error parsing field data: {}", e.what());
                         return;
                     }
                 }
@@ -501,7 +501,7 @@ namespace mantis
             response["data"] = json::object();
 
             res.sendJson(400, response);
-            Log::critical("Error Validating Request Body: {}", resp.value());
+            logger::critical("Error Validating Request Body: {}", resp.value());
             return;
         };
 
@@ -519,7 +519,7 @@ namespace mantis
 
             auto it = std::ranges::find_if(file_list, [&](const json& f)
             {
-                return f["hash"].get<std::string>() == MantisApp::instance().http().hashMultipartMetadata(file);
+                return f["hash"].get<std::string>() == MantisBase::instance().http().hashMultipartMetadata(file);
             });
 
             if (it == file_list.end())
@@ -555,7 +555,7 @@ namespace mantis
                 for (const auto& f : saved_files)
                 {
                     [[maybe_unused]]
-                        auto _ = MantisApp::instance().files().removeFile(m_tableName, f);
+                        auto _ = MantisBase::instance().files().removeFile(m_tableName, f);
                 }
 
                 return;
@@ -575,20 +575,20 @@ namespace mantis
 
             for (const auto& f : saved_files)
             {
-                if (!MantisApp::instance().files().removeFile(m_tableName, f))
+                if (!MantisBase::instance().files().removeFile(m_tableName, f))
                 {
-                    Log::warn("Could not delete: `{}`", f);
+                    logger::warn("Could not delete: `{}`", f);
                 }
             }
 
-            Log::critical("Failed to create record, reason: {}", respObj.dump());
+            logger::critical("Failed to create record, reason: {}", respObj.dump());
             return;
         }
 
         // Get the data, for auth types, redact the password information
         // it's not useful data to return in the response despite being hashed
         auto record = respObj.at("data");
-        Log::trace("Record creation successful: {}", record.dump());
+        logger::trace("Record creation successful: {}", record.dump());
 
         // For auth types, remove the password field from the response
         if (m_tableType == "auth" && record.contains("password"))
@@ -687,7 +687,7 @@ namespace mantis
                     }
 
                     // Handle file upload
-                    const auto dir = MantisApp::instance().files().dirPath(m_tableName, true);
+                    const auto dir = MantisBase::instance().files().dirPath(m_tableName, true);
                     const auto new_filename = sanitizeFilename(file.filename);
 
                     // Create filepath for writing file contents
@@ -698,7 +698,7 @@ namespace mantis
                     file_record["filename"] = new_filename;
                     file_record["path"] = filepath; // Path on disk to write the file
                     file_record["name"] = file.name; // Original file name as passed by the user
-                    file_record["hash"] = MantisApp::instance().http().hashMultipartMetadata(file);
+                    file_record["hash"] = MantisBase::instance().http().hashMultipartMetadata(file);
 
                     if (it->at("type").get<std::string>() == "file")
                     {
@@ -721,7 +721,7 @@ namespace mantis
                         }
                         catch (std::exception& e)
                         {
-                            Log::critical("Error Parsing Files: {}", e.what());
+                            logger::critical("Error Parsing Files: {}", e.what());
 
                             response["status"] = 500;
                             response["error"] = e.what();
@@ -792,7 +792,7 @@ namespace mantis
                                 response["error"] = e.what();
 
                                 res.sendJson(500, response);
-                                Log::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
+                                logger::critical("Error parsing field data: {}\n\t- Data: {}: {}", e.what(), file.name,
                                               file.content);
                                 return;
                             }
@@ -805,7 +805,7 @@ namespace mantis
                         response["error"] = e.what();
 
                         res.sendJson(500, response);
-                        Log::critical("Error parsing field data: {}", e.what());
+                        logger::critical("Error parsing field data: {}", e.what());
                         return;
                     }
                 }
@@ -842,7 +842,7 @@ namespace mantis
             response["data"] = json::object();
 
             res.sendJson(400, response);
-            Log::critical("Error Validating Field: {}", resp.value());
+            logger::critical("Error Validating Field: {}", resp.value());
             return;
         };
 
@@ -860,7 +860,7 @@ namespace mantis
 
             auto it = std::ranges::find_if(file_list, [&](const json& f)
             {
-                return f["hash"].get<std::string>() == MantisApp::instance().http().hashMultipartMetadata(file);
+                return f["hash"].get<std::string>() == MantisBase::instance().http().hashMultipartMetadata(file);
             });
 
             if (it == file_list.end())
@@ -895,9 +895,9 @@ namespace mantis
                 // Remove any written files
                 for (const auto& f : saved_files)
                 {
-                    if (!MantisApp::instance().files().removeFile(m_tableName, f))
+                    if (!MantisBase::instance().files().removeFile(m_tableName, f))
                     {
-                        Log::warn("Could not delete: `{}`", f);
+                        logger::warn("Could not delete: `{}`", f);
                     }
                 }
 
@@ -918,20 +918,20 @@ namespace mantis
 
             for (const auto& f : saved_files)
             {
-                if (!MantisApp::instance().files().removeFile(m_tableName, f))
+                if (!MantisBase::instance().files().removeFile(m_tableName, f))
                 {
-                    Log::warn("Could not delete: `{}`", f);
+                    logger::warn("Could not delete: `{}`", f);
                 }
             }
 
-            Log::critical("Failed to update record, id = {}, reason: {}", id, respObj.dump());
+            logger::critical("Failed to update record, id = {}, reason: {}", id, respObj.dump());
             return;
         }
 
         // Get the data, for auth types, redact the password information
         // it's not useful data to return in the response despite being hashed
         auto record = respObj.at("data");
-        Log::trace("Record update successful: {}", record.dump());
+        logger::trace("Record update successful: {}", record.dump());
 
         // For auth types, remove the password field from the response
         if (m_tableType == "auth" && record.contains("password"))
@@ -949,7 +949,7 @@ namespace mantis
 
     void TableUnit::deleteRecord(MantisRequest& req, MantisResponse& res)
     {
-        Log::trace("Deleting record, endpoint {}", req.getPath());
+        logger::trace("Deleting record, endpoint {}", req.getPath());
 
         // Extract request ID and check that it's not empty
         const auto id = req.getPathParamValue("id");

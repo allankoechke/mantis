@@ -21,8 +21,8 @@
 #include <dukglue/dukglue.h>
 #endif
 
-#include "logging.h"
-#include "mantis/app/app.h"
+#include "logs_mgr.h"
+#include "../mantisbase.h"
 #include "private-impl/duktape_custom_types.h"
 #include "../utils/utils.h"
 
@@ -31,7 +31,7 @@
 
 namespace mantis
 {
-    class MantisApp;
+    class MantisBase;
 
     /// Shorten JSON namespace
     using json = nlohmann::json;
@@ -141,11 +141,11 @@ namespace mantis
      *
      * Also, to allow sharing data between middlewares and handler func, we are adding Context in the handler functions.
      */
-    class HttpUnit
+    class HttpMgr
     {
     public:
-        HttpUnit();
-        ~HttpUnit();
+        HttpMgr();
+        ~HttpMgr();
 
         void Get(const std::string& path,
                  const RouteHandlerFunc& handler,

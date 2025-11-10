@@ -1,6 +1,6 @@
-#include "../../../include/mantis/core/jwt.h"
-#include "../../../include/mantis/app/app.h"
-#include "../../../include/mantis/core/settings.h"
+#include "../../../include/mantis/core/jwt_mgr.h"
+#include "../../include/mantis/mantisbase.h"
+#include "../../../include/mantis/core/settings_mgr.h"
 
 #include <cstring>
 #include <jwt-cpp/traits/nlohmann-json/defaults.h>
@@ -10,14 +10,14 @@ namespace mantis
     std::string JwtUnit::createJWTToken(const json& claims_params, const int timeout)
     {
         // Get signing key for JWT ...
-        const auto secretKey = MantisApp::jwtSecretKey();
+        const auto secretKey = MantisBase::jwtSecretKey();
         if (claims_params.empty() || !claims_params.contains("id") || !claims_params.contains("table"))
         {
             throw std::invalid_argument("Missing `id` and/or `table` fields in token claims.");
         }
 
         // Give access token based on login type, `admin` or `user`
-        const auto& config = MantisApp::instance().settings().configs();
+        const auto& config = MantisBase::instance().settings().configs();
         const int expiry_t = timeout > 0
                                  ? timeout // Use `timeout` value if provided
                                  : claims_params.at("table").get<std::string>() == "__admins"
@@ -63,12 +63,12 @@ namespace mantis
             // Decode the token
             const auto decoded = jwt::decode(token);
 
-            const auto secretKey = MantisApp::jwtSecretKey();
+            const auto secretKey = MantisBase::jwtSecretKey();
             // Create verifier with your validation rules
             auto verifier = jwt::verify()
                 .allow_algorithm(jwt::algorithm::hs256{secretKey});
 
-            const auto& config = MantisApp::instance().settings().configs();
+            const auto& config = MantisBase::instance().settings().configs();
             // Add JWT Issuer if enabled
             if (!config.value("jwtEnableSetIssuer", false))
             {

@@ -1,0 +1,378 @@
+#include "../../include/mantis/core/database_mgr.h"
+#include "../../include/mantis/mantisbase.h"
+#include "../../include/mantis/core/logs_mgr.h"
+#include "../../include/mantis/core/settings_mgr.h"
+#include "../../include/mantis/core/models/models.h"
+#include "../../include/mantis/utils/utils.h"
+
+#include <private/soci-mktime.h>
+#include <soci/sqlite3/soci-sqlite3.h>
+
+#if MANTIS_HAS_POSTGRESQL
+#include <soci/postgresql/soci-postgresql.h>
+#endif
+
+#define __file__ "core/tables/sys_tables.cpp"
+
+namespace mantis {
+    DatabaseMgr::DatabaseMgr() : m_connPool(nullptr) {
+    }
+
+    DatabaseMgr::~DatabaseMgr() {
+        disconnect();
+    }
+
+    bool DatabaseMgr::connect(const std::string &conn_str) {
+        // If pool size is invalid, just return
+        if (MantisBase::instance().poolSize() <= 0)
+            throw std::runtime_error("Session pool size must be greater than 0");
+
+        // All databases apart from SQLite should pass in a connection string
+        if (MantisBase::instance().dbType() != "sqlite3" && conn_str.empty())
+            throw std::runtime_error("Connection string for database connection is required!");
+
+        try {
+            // Create connection pool instance
+            m_connPool = std::make_unique<soci::connection_pool>(MantisBase::instance().poolSize());
+
+            const auto db_type = MantisBase::instance().dbType();
+
+            // Populate the pools with db connections
+            for (int i = 0; i < MantisBase::instance().poolSize(); ++i) {
+                if (db_type == "sqlite3") {
+                    // For SQLite, lets explicitly define location and name of the database
+                    // we intend to use within the `dataDir`
+                    auto sqlite_db_path = joinPaths(MantisBase::instance().dataDir(), "mantis.db").string();
+                    soci::session &sql = m_connPool->at(i);
+
+                    auto sqlite_conn_str = std::format(
+                        "db={} timeout=30 shared_cache=true synchronous=normal foreign_keys=on", sqlite_db_path);
+                    sql.open(soci::sqlite3, sqlite_conn_str);
+                    sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+
+                    // Log SQL insert values in DevMode only!
+                    if (MantisBase::instance().isDevMode())
+                        sql.set_query_context_logging_mode(soci::log_context::always);
+                    else
+                        sql.set_query_context_logging_mode(soci::log_context::on_error);
+
+                    // Open SQLite in WAL mode, helps in enabling multiple readers, single writer
+                    sql << "PRAGMA journal_mode=WAL";
+                    sql << "PRAGMA wal_autocheckpoint=500"; // Checkpoint every 500 pages
+                }
+                if (db_type == "postgresql") {
+#if MANTIS_HAS_POSTGRESQL
+                    // Connection Options
+                    ///> Basic: "dbname=mydb user=scott password=tiger"
+                    ///> With Host: "host=localhost port=5432 dbname=test user=postgres password=postgres");
+                    ///> With Config: "dbname=mydatabase user=myuser password=mypass singlerows=true"
+
+                    soci::session &sql = m_connPool->at(i);
+                    sql.open(soci::postgresql, conn_str);
+                    sql.set_logger(new MantisLoggerImpl()); // Set custom query logger
+
+                    // Log SQL insert values in DevMode only!
+                    if (MantisBase::instance().isDevMode())
+                        sql.set_query_context_logging_mode(soci::log_context::always);
+                    else
+                        sql.set_query_context_logging_mode(soci::log_context::on_error);
+
+                    break;
+#else
+                    logger::warn("Database Connection for `PostgreSQL` has not been implemented yet!");
+                    return false;
+#endif
+                }
+
+                if (db_type == "mysql") {
+                    logger::warn("Database Connection for `MySQL` not implemented yet!");
+                    return false;
+                } else {
+                    logger::warn("Database Connection to `{}` Not Implemented Yet!", conn_str);
+                    return false;
+                }
+            }
+        } catch (const std::exception &e) {
+            logger::critical("Database Connection error: {}", e.what());
+            return false;
+        } catch (...) {
+            logger::critical("Database Connection error: Unknown Error");
+            return false;
+        }
+
+        if (MantisBase::instance().dbType() == "sqlite3") writeCheckpoint();
+
+        return true;
+    }
+
+    void DatabaseMgr::disconnect() const {
+        // Write checkpoint out
+        writeCheckpoint();
+
+        // Pool size cast
+        const auto pool_size = static_cast<size_t>(MantisBase::instance().poolSize());
+        // Close all sessions in the pool
+        for (std::size_t i = 0; i < pool_size; ++i) {
+            try {
+                if (soci::session &sess = m_connPool->at(i); sess.is_connected()) {
+                    // Check if session is connected
+                    sess.close();
+                }
+            } catch (const soci::soci_error &e) {
+                logger::critical("Database disconnection soci::error at index `{}`: {}", i, e.what());
+            }
+        }
+    }
+
+    bool DatabaseMgr::migrate() const {
+        // Create system tables as follows:
+        // __tables for managing user tables & schema
+        // __admins for managing system admin users
+        // __settings for managing settings in a key - value fashion
+
+        try {
+            const auto sql = session();
+            soci::transaction tr{*sql};
+
+            // Create admin table, for managing and auth for admin accounts
+            AdminTable admin;
+            admin.name = "__admins";
+            *sql << admin.to_sql();
+
+            // Create and manage other db tables, keeping track of access rules, schema, etc.!
+            SystemTable tables;
+            tables.name = "__tables";
+            tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
+            tables.fields.emplace_back("type", FieldType::STRING, true, false, true);
+            tables.fields.emplace_back("schema", FieldType::STRING, true, false, true);
+            tables.fields.emplace_back("has_api", FieldType::UINT8, true, false, true);
+            *sql << tables.to_sql();
+
+            // A Key - Value settings store, where the key is hashed as the table id
+            SystemTable _sys;
+            _sys.name = "__settings";
+            _sys.fields.emplace_back("value", FieldType::JSON, true, false, true);
+            *sql << _sys.to_sql();
+
+            // Commit changes
+            tr.commit();
+
+            // Enforce migration once settings object is created!
+            MantisBase::instance().settings().migrate();
+
+            return true;
+        } catch (std::exception &e) {
+            logger::critical("Create System Tables Failed: {}", e.what());
+        }
+        return false;
+    }
+
+    std::shared_ptr<soci::session> DatabaseMgr::session() const {
+        return std::make_shared<soci::session>(*m_connPool);
+    }
+
+    soci::connection_pool &DatabaseMgr::connectionPool() const {
+        return *m_connPool;
+    }
+
+    bool DatabaseMgr::isConnected() const {
+        if (m_connPool == nullptr) return false;
+
+        const auto sql = session();
+        return sql->is_connected();
+    }
+
+#ifdef MANTIS_SCRIPTING_ENABLED
+    void DatabaseUnit::registerDuktapeMethods() {
+        const auto ctx = MantisApp::instance().ctx();
+
+        // DatabaseUnit methods
+        dukglue_register_property(ctx, &DatabaseUnit::isConnected, nullptr, "connected");
+        dukglue_register_method(ctx, &DatabaseUnit::session, "session");
+        dukglue_register_method_varargs(ctx, &DatabaseUnit::query, "query");
+
+        // soci::session methods
+        dukglue_register_method(ctx, &soci::session::close, "close");
+        dukglue_register_method(ctx, &soci::session::reconnect, "reconnect");
+        dukglue_register_property(ctx, &soci::session::is_connected, nullptr, "connected");
+        dukglue_register_method(ctx, &soci::session::begin, "begin");
+        dukglue_register_method(ctx, &soci::session::commit, "commit");
+        dukglue_register_method(ctx, &soci::session::rollback, "rollback");
+        dukglue_register_method(ctx, &soci::session::get_query, "getQuery");
+        dukglue_register_method(ctx, &soci::session::get_last_query, "getLastQuery");
+        dukglue_register_method(ctx, &soci::session::get_last_query_context, "getLastQueryContext");
+        dukglue_register_method(ctx, &soci::session::got_data, "gotData");
+        // dukglue_register_method(ctx, &soci::session::get_last_insert_id, "getLastInsertId");
+        dukglue_register_method(ctx, &soci::session::get_backend_name, "getBackendName");
+        dukglue_register_method(ctx, &soci::session::empty_blob, "emptyBlob");
+    }
+#endif
+
+
+#ifdef MANTIS_SCRIPTING_ENABLED
+    duk_ret_t DatabaseUnit::query(duk_context *ctx) {
+        // TRACE_CLASS_METHOD();
+
+        // Get number of arguments
+        const int nargs = duk_get_top(ctx);
+
+        if (nargs < 1) {
+            logger::critical("[JS] Expected at least 1 argument (query string)");
+            duk_error(ctx, DUK_ERR_TYPE_ERROR, "Expected at least 1 argument (query string)");
+            return DUK_RET_TYPE_ERROR;
+        }
+
+        // First argument is the SQL query
+        const char *query = duk_require_string(ctx, 0);
+        // logger::trace("[JS] SQL Query: `{}`", query);
+
+        // Collect remaining arguments (bind parameters)
+        soci::values vals;
+
+        try {
+            for (int i = 1; i < nargs; i++) {
+                if (!duk_is_object(ctx, i)) {
+                    logger::critical("[JS] Arguments after query must be objects.");
+                    duk_error(ctx, DUK_ERR_TYPE_ERROR, "Arguments after query must be objects");
+                    return DUK_RET_TYPE_ERROR;
+                }
+
+                // Convert JavaScript object to JSON string
+                duk_dup(ctx, i); // Duplicate the object at index i
+                const char *json_char = duk_json_encode(ctx, -1);
+
+                // Create a string out of the char*, else, json::parse throws an exception
+                const std::string json_str = json_char ? std::string(json_char) : std::string();
+
+                duk_pop(ctx); // Pop the encoded string
+
+                nlohmann::json json_obj = json::object();
+                try {
+                    // Parse into nlohmann::json
+                    json_obj = nlohmann::json::parse(json_str);
+                } catch (const std::exception &e) {
+                    logger::critical("[JS] Parsing exception: {}", e.what());
+                } catch (const char *e) {
+                    logger::critical("[JS] Unknown Parsing exception");
+                }
+                logger::trace("After Parsing, object? `{}`", json_obj.dump());
+
+                for (auto &[key, value]: json_obj.items()) {
+                    if (value.is_string()) {
+                        auto str_val = value.get<std::string>();
+                        logger::trace("[JS] Str Value: `{}` - `{}`", key, str_val);
+                        vals.set(key, str_val);
+                        logger::trace("[JS] After Set Value");
+                        logger::trace("[JS] After Set Value To: `{}`", vals.get<std::string>(key));
+                    } else if (value.is_number_integer()) {
+                        int int_val = value.get<int>();
+                        logger::trace("[JS] Int Value: `{}`", int_val);
+                        vals.set(key, int_val);
+                    } else if (value.is_number_float()) {
+                        double double_val = value.get<double>();
+                        logger::trace("[JS] Double Value: `{}`", double_val);
+                        vals.set(key, double_val);
+                    } else if (value.is_boolean()) {
+                        bool bool_val = value.get<bool>();
+                        logger::trace("[JS] Bool Value: `{}`", bool_val);
+                        vals.set(key, bool_val);
+                    } else if (value.is_null()) {
+                        std::optional<int> val;
+                        logger::trace("[JS] Null Value: `null`");
+                        vals.set(key, val, soci::i_null);
+                    } else if (value.is_object() || value.is_array()) {
+                        logger::trace("[JS] JSON Value: `{}`", value.dump());
+                        vals.set(key, value);
+                    } else {
+                        auto err = std::format("Could not cast type at {} to DB supported types.", (i - 1));
+                        logger::critical("[JS] Casting Value > {}", err);
+                        duk_error(ctx, DUK_ERR_TYPE_ERROR, err.c_str());
+                        return DUK_RET_TYPE_ERROR;
+                    }
+                }
+            }
+        } catch (const std::exception &e) {
+            logger::critical("[JS] Getting Binding Values Failed: Why? {}", e.what());
+        }
+
+        // Get SQL Session
+        auto sql = session();
+
+        logger::trace("[JS] soci::value binding? {}", nargs - 1);
+
+        // Execute SQL Statement
+        soci::row data_row;
+        soci::statement st = nargs < 2 // If only the query is provided, no binding values
+                                 ? (sql->prepare << query, soci::into(data_row)) // Execute only the query
+                                 : (sql->prepare << query, soci::use(vals), soci::into(data_row));
+        st.execute(); // Execute statement
+
+        json results = json::array();
+        while (st.fetch()) {
+            nlohmann::json obj = rowToJson(data_row);
+            results.push_back(obj);
+        }
+
+        logger::trace("[JS] Results: {}", results.dump());
+
+        if (results.empty()) {
+            // Return null
+            duk_push_null(ctx);
+            return 1;
+        }
+
+        // Convert nlohmann::json to JavaScript object
+        std::string results_str = results.size() == 1 ? results[0].dump() : results.dump();
+        duk_push_string(ctx, results_str.c_str());
+        duk_json_decode(ctx, -1);
+        return 1; // Return the object
+    }
+#endif
+
+    const json &DatabaseMgr::schemaCache(const std::string &table_name) const {
+        const auto it = m_schemaCache.find(table_name);
+        if (it == m_schemaCache.end())
+            throw std::out_of_range("Schema not found for table: " + table_name);
+        return it->second;
+    }
+
+    void DatabaseMgr::addSchemaCache(const std::string &table_name, const json &table_schema) {
+        m_schemaCache[table_name] = table_schema;
+    }
+
+    void DatabaseMgr::addSchemaCache(const json &schemas) {
+        if (!schemas.is_array())
+            throw std::invalid_argument("Invalid schema array provided!");
+
+        for (const auto &sch: schemas) {
+            if (!sch.contains("name") || !sch["name"].is_string())
+                throw std::invalid_argument("Schema missing table name key or not a string");
+            m_schemaCache[sch["name"].get<std::string>()] = sch;
+        }
+    }
+
+    void DatabaseMgr::updateSchemaCache(const std::string &table_name, const json &table_schema) {
+        const auto it = m_schemaCache.find(table_name);
+        if (it == m_schemaCache.end())
+            throw std::out_of_range("Cannot update, schema not found for table: " + table_name);
+        it->second = table_schema;
+    }
+
+    void DatabaseMgr::removeSchemaCache(const std::string &table_name) {
+        m_schemaCache.erase(table_name);
+    }
+
+    void DatabaseMgr::writeCheckpoint() const {
+        // Enable this write checkpoint for SQLite databases ONLY
+        if (MantisBase::instance().dbType() == "sqlite3") {
+            try {
+                // Write out the WAL data to db file & truncate it
+                if (const auto sql = session(); sql->is_connected()) {
+                    *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+                }
+            } catch (std::exception &e) {
+                logger::critical("Database Connection SOCI::Error: {}", e.what());
+            }
+        }
+    }
+} // namespace mantis
