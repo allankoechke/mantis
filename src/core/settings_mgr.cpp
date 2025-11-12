@@ -1,5 +1,5 @@
 #include "../../include/mantis/core/settings_mgr.h"
-#include "../../include/mantis/core/http_mgr.h"
+#include "../../include/mantis/core/route_registry.h"
 #include "../../include/mantis/mantisbase.h"
 #include "../../include/mantis/core/database_mgr.h"
 #include "../../include/mantis/core/jwt_mgr.h"
@@ -7,6 +7,8 @@
 #include "../../include/mantis/utils/utils.h"
 
 #include <soci/soci.h>
+
+#include "mantis/core/router.h"
 
 #define __file__ "core/settings.cpp"
 
@@ -201,7 +203,7 @@ namespace mantis
         // TRACE_CLASS_METHOD()
 
         // Set up settings get & update endpoints
-        MantisBase::instance().http().Get(
+        MantisBase::instance().router().Get(
             "/api/v1/settings/config",
             [this](MantisRequest& req, MantisResponse& res)
             {
@@ -261,7 +263,7 @@ namespace mantis
             });
 
         // Update settings config
-        MantisBase::instance().http().Patch(
+        MantisBase::instance().router().Patch(
             "/api/v1/settings/config",
             [this](MantisRequest& req, MantisResponse& res)
             {

@@ -9,9 +9,9 @@
 #include <dukglue/dukglue.h>
 #endif
 
-#include <mantis/core/http_mgr.h>
+#include <mantis/core/route_registry.h>
 #include <mantis/core/context_store_mgr.h>
-#include "../../utils/utils.h"
+#include "../utils/utils.h"
 
 namespace mantis
 {
@@ -203,7 +203,7 @@ namespace mantis
         void sendJson(int statusCode, const DukValue& data) const;
 #endif
         void sendText(int statusCode = 200, const std::string& data = "") const;
-        void sendHtml(int statusCode = 200, const std::string& data = "<p></p>") const;
+        void sendHtml(int statusCode = 200, const std::string& data = "") const;
         void sendEmpty(int statusCode = 204) const;
 
         static void registerDuktapeMethods();

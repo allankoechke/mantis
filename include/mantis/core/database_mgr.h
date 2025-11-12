@@ -133,8 +133,8 @@ namespace mantis {
          */
         void start_query(std::string const &query) override {
             logger_impl::start_query(query);
-            Log::trace("$ sql << {}", query);
-            // Log::trace("$ sql << {}\n\t└── Values ({})", query, params);
+            logger::trace("$ sql << {}", query);
+            // logger::trace("$ sql << {}\n\t└── Values ({})", query, params);
         }
 
     private:

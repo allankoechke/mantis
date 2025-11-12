@@ -1,68 +1,6 @@
 #include "../../../include/mantis/mantis.h"
 #include "soci/sqlite3/soci-sqlite3.h"
 
-mantis::ValidatorMgr::ValidatorMgr()
-{
-    m_validators.clear();
-    m_validators["email"] = json{
-        {"regex", R"(^[a-zA-Z0-9._%+\-]+@[a-zA-Z0-9.\-]+\.[a-zA-Z]{2,}$)"},
-        {"error", "Email format is not valid"}
-    };
-
-    m_validators["password"] = json{
-        {"regex", R"(^\S{8,}$)"},
-        {"error", "Expected 8 chars minimum with no whitespaces."}
-    };
-
-    m_validators["password-long"] = json{
-        {"regex", R"(^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$)"},
-        {"error", "Expected at least one lowercase, uppercase, digit, special character, and a min 8 chars."}
-    };
-}
-
-std::optional<json> mantis::ValidatorMgr::find(const std::string& key)
-{
-    if (const auto it = m_validators.find(key); it != m_validators.end())
-    {
-        return it->second;
-    }
-
-    return std::nullopt;
-}
-
-mantis::json mantis::ValidatorMgr::validate(const std::string& key, const std::string& value)
-{
-    json response{{"error", ""}, {"validated", false}};
-
-    if (trim(key).empty())
-    {
-        response["error"] = "Validator key can't be empty!";
-        return response;
-    }
-
-    const auto v = find(key).value_or(json::object());
-    if (v.empty())
-    {
-        response["error"] = "Validator key is not available!";
-        return response;
-    }
-
-    // Since we have a regex string, lets validate it and return if it fails ...
-    const auto& reg = v["regex"].get<std::string>();
-    const auto& err = v["error"].get<std::string>();
-
-    if (const std::regex r_pattern(reg); !std::regex_match(value, r_pattern))
-    {
-        response["error"] = err;
-        return response;
-    }
-
-    // If we reach here, then, all was validated correctly!
-    response["error"] = "";
-    response["validated"] = true;
-    return response;
-}
-
 std::optional<mantis::FieldType> mantis::getFieldType(const std::string& fieldName)
 {
     if (fieldName == "xml") return FieldType::XML;

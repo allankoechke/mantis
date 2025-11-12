@@ -14,23 +14,22 @@
 // Core components
 #include "core/database_mgr.h"
 #include "core/expr_evaluator.h"
-#include "core/http_mgr.h"
+#include "core/route_registry.h"
 #include "core/logs_mgr.h"
-#include "core/router_mgr.h"
+#include "core/router.h"
 #include "core/context_store_mgr.h"
 #include "core/files_mgr.h"
 #include "core/settings_mgr.h"
 
 // CRUD and JWT
 #include "core/jwt_mgr.h"
-#include "core/crud/crud.h"
 
 // Models and data structures
 #include "core/models/models.h"
 
 // Table operations
-#include "core/tables/sys_tables.h"
-#include "core/tables/tables.h"
+// #include "core/tables/sys_tables.h"
+// #include "core/tables/tables.h"
 
 // For convenience to using json,
 // lets include it here

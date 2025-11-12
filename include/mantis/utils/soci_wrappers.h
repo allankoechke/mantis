@@ -10,7 +10,7 @@
 #include "soci/values.h"
 
 namespace mantis {
-    inline soci::values json2SociValue(const json &entity, const json &fields) const {
+    inline soci::values json2SociValue(const json &entity, const json &fields) {
         if (!fields.is_array()) throw std::invalid_argument("Fields must be an array");
 
         soci::values vals;

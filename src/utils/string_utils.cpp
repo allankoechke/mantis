@@ -14,7 +14,7 @@ namespace mantis
         }
         catch (const std::exception& e)
         {
-            Log::critical("JSON parse error: {}", e.what());
+            logger::critical("JSON parse error: {}", e.what());
             return std::nullopt;
         }
     }

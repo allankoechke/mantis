@@ -5,9 +5,10 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <mantis/core/http_mgr.h>
+#include <mantis/core/route_registry.h>
 #include <nlohmann/json.hpp>
 #include "../utils/utils.h"
+#include "http.h"
 
 namespace mantis
 {

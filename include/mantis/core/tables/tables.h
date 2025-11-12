@@ -9,8 +9,7 @@
 #include <nlohmann/json.hpp>
 
 #include "../models/models.h"
-#include "../http_mgr.h"
-#include "../crud/crud.h"
+#include "../route_registry.h"
 #include "../../mantisbase.h"
 #include "../../utils/utils.h"
 
@@ -27,7 +26,7 @@ namespace mantis
      * - Helper functions (parsing table data, validation, etc.)
      * - etc.
      */
-    class TableUnit : public CrudInterface<json>
+    class TableUnit
     {
     public:
         explicit TableUnit(std::string tableName,
@@ -35,7 +34,7 @@ namespace mantis
                            std::string tableType = "base");
         explicit TableUnit(const json& schema = json::object());
 
-        virtual ~TableUnit() override = default;
+        virtual ~TableUnit() = default;
 
         // CRUD endpoints handlers
         virtual void fetchRecord(MantisRequest& req, MantisResponse& res);
@@ -92,11 +91,11 @@ namespace mantis
 
         // CRUD endpoints
         // Create/read/list/update/delete record(s), use opts to config optional params
-        json create(const json& entity, const json& opts) override;
-        std::optional<json> read(const std::string& id, const json& opts) override;
-        json update(const std::string& id, const json& entity, const json& opts) override;
-        bool remove(const std::string& id, const json& opts) override;
-        std::vector<json> list(const json& opts) override { return json::array(); }; // Remove
+        json create(const json& entity, const json& opts);
+        std::optional<json> read(const std::string& id, const json& opts);
+        json update(const std::string& id, const json& entity, const json& opts);
+        bool remove(const std::string& id, const json& opts);
+        std::vector<json> list(const json& opts) { return json::array(); }; // Remove
         json list_records(const json& opts);
 
         // Helper methods
@@ -131,13 +130,6 @@ namespace mantis
         bool recordExists(const std::string& id) const;
         std::optional<json> findFieldByKey(const std::string& key) const;
         json checkValueInColumns(const std::string& value, const std::vector<std::string>& columns) const;
-
-        // Validators ...
-        static std::pair<bool, std::string> minimumConstraintCheck(const json& field, const json& entity);
-        static std::pair<bool, std::string> maximumConstraintCheck(const json& field, const json& entity);
-        static std::pair<bool, std::string> requiredConstraintCheck(const json& field, const json& entity);
-        static std::pair<bool, std::string> validatorConstraintCheck(const json& field, const json& entity);
-        static std::pair<bool, std::string> viewTypeSQLCheck(const json& entity);
 
         static std::optional<json> validateTableSchema(const json& entity);
 

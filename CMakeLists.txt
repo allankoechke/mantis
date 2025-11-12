@@ -37,21 +37,21 @@ set( MANTIS_SOURCES
         src/core/database_mgr.cpp
         src/core/models/models.cpp
         src/core/logs_mgr.cpp
-        src/core/router_mgr.cpp
-        src/core/http_mgr.cpp
+        src/core/router.cpp
+        src/core/route_registry.cpp
         src/core/jwt_mgr.cpp
 
         # All table operations
-        src/core/tables/tables.cpp
-        src/core/tables/tables_crud.cpp
-        src/core/tables/tables_routes.cpp
-        src/core/tables/tables_auth.cpp
-        src/core/tables/tables_utils.cpp
-        src/core/tables/tables_validation.cpp
+#        src/core/tables/tables.cpp
+#        src/core/tables/tables_crud.cpp
+#        src/core/tables/tables_routes.cpp
+#        src/core/tables/tables_auth.cpp
+#        src/core/tables/tables_utils.cpp
+#        src/core/tables/tables_validation.cpp
 
         # System Tables
-        src/core/tables/sys_tables.cpp
-        src/core/tables/sys_tables_crud.cpp
+#        src/core/tables/sys_tables.cpp
+#        src/core/tables/sys_tables_crud.cpp
 
         # Expression evaluator
         src/core/expr_evaluator.cpp
@@ -69,18 +69,21 @@ set( MANTIS_SOURCES
         src/core/files_mgr.cpp
         src/core/context_store_mgr.cpp
 
-        src/core/private-impl/request_wrapper.cpp
-        src/core/private-impl/response_wrapper.cpp
+        src/core/http_request.cpp
+        src/core/http_response.cpp
 
         src/core/models/entity.cpp
         src/parse_cmd.cpp
+        src/core/models/validators.cpp
 )
 
 if(MANTIS_SCRIPTING_ENABLED)
     set( MANTIS_SOURCES
             ${MANTIS_SOURCES}
-            src/core/private-impl/duktape_custom_types.cpp
             src/utils/dukglue_utils_bindings.cpp
+            src/core/private-impl/duktape_wrapper.cpp
+            include/mantis/core/middlewares.h
+            src/core/middlewares.cpp
     )
 endif ()
 

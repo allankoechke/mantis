@@ -24,25 +24,25 @@ namespace mantis
         SysTablesUnit(const std::string& tableName,
                       const std::string& tableId,
                       const std::string& tableType = "auth");
-        ~SysTablesUnit() override = default;
+        ~SysTablesUnit() = default;
 
-        bool setupRoutes() override;
+        bool setupRoutes();
 
-        void fetchRecord(MantisRequest& req, MantisResponse& res) override;
-        void fetchRecords(MantisRequest& req, MantisResponse& res) override;
-        void createRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader) override;
-        void updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader) override;
-        void deleteRecord(MantisRequest& req, MantisResponse& res) override;
+        void fetchRecord(MantisRequest& req, MantisResponse& res);
+        void fetchRecords(MantisRequest& req, MantisResponse& res);
+        void createRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader);
+        void updateRecord(MantisRequest& req, MantisResponse& res, const MantisContentReader& reader);
+        void deleteRecord(MantisRequest& req, MantisResponse& res);
 
         // Auth Routes Handlers
-        void authWithEmailAndPassword(MantisRequest& req, MantisResponse& res) override;
-        bool hasAccess(MantisRequest& req, MantisResponse& res) override;
+        void authWithEmailAndPassword(MantisRequest& req, MantisResponse& res);
+        bool hasAccess(MantisRequest& req, MantisResponse& res);
 
-        json create(const json& entity, const json& opts) override;
-        std::optional<json> read(const std::string& id, const json& opts) override;
-        json update(const std::string& id, const json& entity, const json& opts) override;
-        bool remove(const std::string& id, const json& opts) override;
-        std::vector<json> list(const json& opts) override;
+        json create(const json& entity, const json& opts);
+        std::optional<json> read(const std::string& id, const json& opts);
+        json update(const std::string& id, const json& entity, const json& opts);
+        bool remove(const std::string& id, const json& opts);
+        std::vector<json> list(const json& opts);
 
     private:
         bool itemExists(const std::string& tableName, const std::string& id) const;

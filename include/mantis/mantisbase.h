@@ -15,9 +15,6 @@
 #include <filesystem>
 #include <chrono>
 #include <argparse/argparse.hpp>
-#include <httplib.h>
-
-#include "mantis/core/models/entity.h"
 
 #ifdef MANTIS_ENABLE_SCRIPTING
 #include <dukglue/dukglue.h>
@@ -41,12 +38,11 @@ namespace mantis
     namespace fs = std::filesystem;
 
     class DatabaseMgr;
-    class HttpMgr;
     class LogsMgr;
     class SettingsMgr;
-    class RouterMgr;
-    class ValidatorMgr;
+    class Router;
     class FilesMgr;
+    class Entity;
 
     /**
      * @brief MantisBase entry point.
@@ -249,14 +245,10 @@ namespace mantis
         [[nodiscard]] DatabaseMgr& db() const;
         /// Get the logging unit object
         [[nodiscard]] LogsMgr& log() const;
-        /// Get the http unit object
-        [[nodiscard]] HttpMgr& http() const;
         /// Get the commandline parser object
         [[nodiscard]] argparse::ArgumentParser& cmd() const;
         /// Get the router object instance.
-        [[nodiscard]] RouterMgr& router() const;
-        /// Get the validators unit object instance in MantisBase.
-        [[nodiscard]] ValidatorMgr& validators() const;
+        [[nodiscard]] Router& router() const;
         /// Get the `cparse` expression evaluator unit object instance.
         [[nodiscard]] ExprMgr& evaluator() const;
         /// Get the settings unit object
@@ -374,7 +366,7 @@ namespace mantis
          * @return DatabaseUnit instance pointer
          */
         [[nodiscard]] DatabaseMgr* duk_db() const;
-        [[nodiscard]] RouterMgr* duk_router() const;
+        [[nodiscard]] Router* duk_router() const;
 #endif
 
         // Store commandline args passed in, to be used in the init phase.
@@ -402,10 +394,8 @@ namespace mantis
 
         std::unique_ptr<DatabaseMgr> m_database;
         std::unique_ptr<LogsMgr> m_logger;
-        std::unique_ptr<HttpMgr> m_http;
         std::unique_ptr<argparse::ArgumentParser> m_opts;
-        std::unique_ptr<RouterMgr> m_router;
-        std::unique_ptr<ValidatorMgr> m_validators;
+        std::unique_ptr<Router> m_router;
         std::unique_ptr<ExprMgr> m_exprEval;
         std::unique_ptr<SettingsMgr> m_settings;
         std::unique_ptr<FilesMgr> m_files;

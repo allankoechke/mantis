@@ -436,6 +436,9 @@ namespace mantis {
         soci::row r;
         *sql << query, soci::use(value), soci::into(r);
 
-        return sql->got_data() ? sociRow2Json(r, fields()) : std::nullopt;
+        if (sql->got_data())
+            return sociRow2Json(r, fields());
+
+        return std::nullopt;
     }
 } // mantis

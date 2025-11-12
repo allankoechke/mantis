@@ -6,7 +6,7 @@
 #include "../../../include/mantis/core/logs_mgr.h"
 #include "../../../include/mantis/utils/utils.h"
 #include "../../../include/mantis/core/files_mgr.h"
-#include "../../../include/mantis/core/router_mgr.h"
+#include "../../../include/mantis/core/router.h"
 
 #include <soci/soci.h>
 #include <private/soci-mktime.h>

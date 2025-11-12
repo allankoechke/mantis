@@ -16,19 +16,6 @@ namespace mantis
 
     class MantisBase;
 
-    class ValidatorMgr
-    {
-        std::unordered_map<std::string, json> m_validators;
-
-    public:
-        ValidatorMgr();
-
-        std::optional<json> find(const std::string& key);
-
-        json validate(const std::string& key, const std::string& value);
-    };
-
-
     // Enum of the table type created,
     // base table types provide `index`, `created`, `updated`
     // auth table type provide `base` type + `email`, `password`, `name`

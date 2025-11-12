@@ -8,6 +8,8 @@
 
 #include <argparse/argparse.hpp>
 
+#include "mantis/core/models/validators.h"
+
 namespace mantis {
     void MantisBase::parseArgs() {
         // Main program parser with global arguments
@@ -136,7 +138,7 @@ namespace mantis {
         }
 
         // Initialize database connection & Migration
-        if (!m_database->connect(m_dbType, connString)) {
+        if (!m_database->connect(connString)) {
             // Connection to database failed
             quit(-1, "Database connection failed, exiting!");
         }
@@ -169,7 +171,7 @@ namespace mantis {
                     .value_or(std::vector<std::string>{});
 
             if (admins_command.is_used("--add")) {
-                if (const auto ev = validators().validate("email", admin_user.at(0));
+                if (const auto ev = Validators::validatePreset("email", admin_user.at(0));
                     !ev.at("error").get<std::string>().empty()) {
                     logger::critical("Error validating admin email: {}", ev.at("error").get<std::string>());
                     quit(-1, "Email validation failed!");
@@ -184,7 +186,7 @@ namespace mantis {
                 }
 
                 // Validate password against regex stored
-                if (const auto ev = validators().validate("password", password);
+                if (const auto ev = Validators::validatePreset("password", password);
                     !ev.at("error").get<std::string>().empty()) {
                     logger::critical("Error validating email: {}", ev.at("error").get<std::string>());
                     quit(-1, "Email validation failed!");

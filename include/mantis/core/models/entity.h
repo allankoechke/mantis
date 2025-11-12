@@ -45,7 +45,7 @@ namespace mantis {
         [[nodiscard]] const std::string &deleteRule() const;
 
         // --------------- DB CRUD OPS ------------------ //
-        [[nodiscard]] Record create(const ::json &Record, const json &opts = json::object()) const;
+        [[nodiscard]] Record create(const json &Record, const json &opts = json::object()) const;
 
         [[nodiscard]] Records list(const json &opts = json::object()) const;
 

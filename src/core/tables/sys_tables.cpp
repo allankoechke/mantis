@@ -2,7 +2,7 @@
 #include "../../../include/mantis/core/database_mgr.h"
 #include "../../../include/mantis/mantisbase.h"
 #include "../../../include/mantis/utils/utils.h"
-#include "../../../include/mantis/core/router_mgr.h"
+#include "../../../include/mantis/core/router.h"
 #include "../../../include/mantis/core/jwt_mgr.h"
 
 #define __file__ "core/tables/sys_tables.cpp"

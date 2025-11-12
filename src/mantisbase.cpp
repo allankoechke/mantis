@@ -2,7 +2,8 @@
 #include "../include/mantis/config.hpp"
 #include "../include/mantis/core/settings_mgr.h"
 #include "../include/mantis/core/files_mgr.h"
-#include "../include/mantis/core/http_mgr.h"
+#include "../include/mantis/core/route_registry.h"
+#include "../include/mantis/core/models/entity.h"
 
 #include <builtin_features.h>
 #include <cmrc/cmrc.hpp>
@@ -222,11 +223,9 @@ namespace mantis
         m_logger = std::make_unique<LogsMgr>();
         m_exprEval = std::make_unique<ExprMgr>(); // depends on log()
         m_database = std::make_unique<DatabaseMgr>(); // depends on log()
-        m_http = std::make_unique<HttpMgr>(); // depends on db()
-        m_router = std::make_unique<RouterMgr>(); // depends on db() & http()
+        m_router = std::make_unique<Router>(); // depends on db() & http()
         m_settings = std::make_unique<SettingsMgr>(); // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
-        m_validators = std::make_unique<ValidatorMgr>();
         m_files = std::make_unique<FilesMgr>(); // depends on log()
     }
 
@@ -247,11 +246,9 @@ namespace mantis
     {
         // Destroy instance objects
         if (m_files) m_files.reset();
-        if (m_validators) m_validators.reset();
         if (m_opts) m_opts.reset();
         if (m_settings) m_settings.reset();
         if (m_router) m_router.reset();
-        if (m_http) m_http.reset();
         if (m_database) m_database.reset();
         if (m_exprEval) m_exprEval.reset();
         if (m_logger) m_logger.reset();
@@ -274,7 +271,7 @@ namespace mantis
         // else, exit!
         if (m_toStartServer)
         {
-            if (!m_http->listen(m_host, m_port))
+            if (!m_router->listen())
                 return -1;
         }
 
@@ -291,24 +288,14 @@ namespace mantis
         return *m_logger;
     }
 
-    HttpMgr& MantisBase::http() const
-    {
-        return *m_http;
-    }
-
     argparse::ArgumentParser& MantisBase::cmd() const
     {
         return *m_opts;
     }
 
-    RouterMgr& MantisBase::router() const
+    Router& MantisBase::router() const
     {
         return *m_router;
-    }
-
-    ValidatorMgr& MantisBase::validators() const
-    {
-        return *m_validators;
     }
 
     ExprMgr& MantisBase::evaluator() const

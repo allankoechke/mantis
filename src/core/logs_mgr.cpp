@@ -50,10 +50,10 @@ void mantis::LogsMgr::init()
 
 mantis::FuncLogger::FuncLogger(const std::string& msg): m_msg(msg)
 {
-    Log::trace("Enter: {}", m_msg);
+    logger::trace("Enter: {}", m_msg);
 }
 
 mantis::FuncLogger::~FuncLogger()
 {
-    Log::trace("Exit:  {}", m_msg);
+    logger::trace("Exit:  {}", m_msg);
 }
