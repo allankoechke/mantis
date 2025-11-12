@@ -39,7 +39,7 @@ namespace mantis
 
     class DatabaseMgr;
     class LogsMgr;
-    class SettingsMgr;
+    // class SettingsMgr;
     class Router;
     class FilesMgr;
     class Entity;
@@ -251,8 +251,8 @@ namespace mantis
         [[nodiscard]] Router& router() const;
         /// Get the `cparse` expression evaluator unit object instance.
         [[nodiscard]] ExprMgr& evaluator() const;
-        /// Get the settings unit object
-        [[nodiscard]] SettingsMgr& settings() const;
+        // /// Get the settings unit object
+        // [[nodiscard]] SettingsMgr& settings() const;
         /// Get the file unit object
         [[nodiscard]] FilesMgr& files() const;
 
@@ -397,7 +397,7 @@ namespace mantis
         std::unique_ptr<argparse::ArgumentParser> m_opts;
         std::unique_ptr<Router> m_router;
         std::unique_ptr<ExprMgr> m_exprEval;
-        std::unique_ptr<SettingsMgr> m_settings;
+        // std::unique_ptr<SettingsMgr> m_settings;
         std::unique_ptr<FilesMgr> m_files;
 
 #ifdef MANTIS_ENABLE_SCRIPTING

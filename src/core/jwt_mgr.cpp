@@ -1,6 +1,6 @@
 #include "../../../include/mantis/core/jwt_mgr.h"
 #include "../../include/mantis/mantisbase.h"
-#include "../../../include/mantis/core/settings_mgr.h"
+// #include "../../../include/mantis/core/settings_mgr.h"
 
 #include <cstring>
 #include <jwt-cpp/traits/nlohmann-json/defaults.h>
@@ -17,7 +17,7 @@ namespace mantis
         }
 
         // Give access token based on login type, `admin` or `user`
-        const auto& config = MantisBase::instance().settings().configs();
+        const auto& config = json::object(); // MantisBase::instance().settings().configs();
         const int expiry_t = timeout > 0
                                  ? timeout // Use `timeout` value if provided
                                  : claims_params.at("table").get<std::string>() == "__admins"
@@ -68,7 +68,7 @@ namespace mantis
             auto verifier = jwt::verify()
                 .allow_algorithm(jwt::algorithm::hs256{secretKey});
 
-            const auto& config = MantisBase::instance().settings().configs();
+            const auto& config = json::object(); // MantisBase::instance().settings().configs();
             // Add JWT Issuer if enabled
             if (!config.value("jwtEnableSetIssuer", false))
             {

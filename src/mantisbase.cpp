@@ -1,6 +1,6 @@
 #include "../include/mantis/mantis.h"
 #include "../include/mantis/config.hpp"
-#include "../include/mantis/core/settings_mgr.h"
+// #include "../include/mantis/core/settings_mgr.h"
 #include "../include/mantis/core/files_mgr.h"
 #include "../include/mantis/core/route_registry.h"
 #include "../include/mantis/core/models/entity.h"
@@ -224,7 +224,7 @@ namespace mantis
         m_exprEval = std::make_unique<ExprMgr>(); // depends on log()
         m_database = std::make_unique<DatabaseMgr>(); // depends on log()
         m_router = std::make_unique<Router>(); // depends on db() & http()
-        m_settings = std::make_unique<SettingsMgr>(); // depends on db(), router() & http()
+        // m_settings = std::make_unique<SettingsMgr>(); // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
         m_files = std::make_unique<FilesMgr>(); // depends on log()
     }
@@ -247,7 +247,7 @@ namespace mantis
         // Destroy instance objects
         if (m_files) m_files.reset();
         if (m_opts) m_opts.reset();
-        if (m_settings) m_settings.reset();
+        // if (m_settings) m_settings.reset();
         if (m_router) m_router.reset();
         if (m_database) m_database.reset();
         if (m_exprEval) m_exprEval.reset();
@@ -303,10 +303,10 @@ namespace mantis
         return *m_exprEval;
     }
 
-    SettingsMgr& MantisBase::settings() const
-    {
-        return *m_settings;
-    }
+    // SettingsMgr& MantisBase::settings() const
+    // {
+    //     return *m_settings;
+    // }
 
     FilesMgr& MantisBase::files() const
     {
@@ -364,10 +364,10 @@ namespace mantis
 
     void MantisBase::setDbType(const std::string& dbType)
     {
-        if (dbType != "sqlite3" || m_dbType != "postgresql")
-            throw std::invalid_argument("Expected database type of either `sqlite3` or `postgresql`");
+        if (dbType == "sqlite3" || dbType == "postgresql")
+            m_dbType = dbType;
 
-        m_dbType = dbType;
+        throw std::invalid_argument("Expected database type of either `sqlite3` or `postgresql`");
     }
 
     std::string MantisBase::jwtSecretKey()

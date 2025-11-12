@@ -135,30 +135,30 @@ namespace mantis {
             soci::transaction tr{*sql};
 
             // Create admin table, for managing and auth for admin accounts
-            AdminTable admin;
-            admin.name = "__admins";
-            *sql << admin.to_sql();
+            // AdminTable admin;
+            // admin.name = "__admins";
+            // *sql << admin.to_sql();
 
             // Create and manage other db tables, keeping track of access rules, schema, etc.!
-            SystemTable tables;
-            tables.name = "__tables";
-            tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
-            tables.fields.emplace_back("type", FieldType::STRING, true, false, true);
-            tables.fields.emplace_back("schema", FieldType::STRING, true, false, true);
-            tables.fields.emplace_back("has_api", FieldType::UINT8, true, false, true);
-            *sql << tables.to_sql();
+            // SystemTable tables;
+            // tables.name = "__tables";
+            // tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
+            // tables.fields.emplace_back("type", FieldType::STRING, true, false, true);
+            // tables.fields.emplace_back("schema", FieldType::STRING, true, false, true);
+            // tables.fields.emplace_back("has_api", FieldType::UINT8, true, false, true);
+            // *sql << tables.to_sql();
 
             // A Key - Value settings store, where the key is hashed as the table id
-            SystemTable _sys;
-            _sys.name = "__settings";
-            _sys.fields.emplace_back("value", FieldType::JSON, true, false, true);
-            *sql << _sys.to_sql();
+            // SystemTable _sys;
+            // _sys.name = "__settings";
+            // _sys.fields.emplace_back("value", FieldType::JSON, true, false, true);
+            // *sql << _sys.to_sql();
 
             // Commit changes
             tr.commit();
 
             // Enforce migration once settings object is created!
-            MantisBase::instance().settings().migrate();
+            // MantisBase::instance().settings().migrate();
 
             return true;
         } catch (std::exception &e) {

@@ -8,6 +8,7 @@
 
 #include <soci/soci.h>
 
+#include "mantis/core/middlewares.h"
 #include "mantis/core/router.h"
 
 #define __file__ "core/settings.cpp"
@@ -251,16 +252,16 @@ namespace mantis
                 response["data"] = json::object();
 
                 res.sendJson(404, response);
-            }, {
-                [](MantisRequest& req, MantisResponse& res)-> bool
-                {
-                    return TableUnit::getAuthToken(req, res);
-                },
-                [this](MantisRequest& req, MantisResponse& res)-> bool
-                {
-                    return hasAccess(req, res);
-                }
-            });
+            }, { getAuthToken, hasAccess });
+                // [](MantisRequest& req, MantisResponse& res)-> bool
+                // {
+                //     return TableUnit::getAuthToken(req, res);
+                // },
+                // [this](MantisRequest& req, MantisResponse& res)-> bool
+                // {
+                //     return hasAccess(req, res);
+                // }
+            // });
 
         // Update settings config
         MantisBase::instance().router().Patch(

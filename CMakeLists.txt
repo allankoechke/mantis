@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.22)
-project(MantisBase VERSION 0.2.12)
+project(MantisBase VERSION 0.3.0)
 set(CMAKE_CXX_STANDARD 20)
 
 # Set output directories to match SOCI's
@@ -65,7 +65,7 @@ set( MANTIS_SOURCES
         include/mantis/core/private-impl/soci_custom_types.hpp
         include/mantis/config.hpp.in
 
-        src/core/settings_mgr.cpp
+        # src/core/settings_mgr.cpp
         src/core/files_mgr.cpp
         src/core/context_store_mgr.cpp
 
@@ -84,6 +84,10 @@ if(MANTIS_SCRIPTING_ENABLED)
             src/core/private-impl/duktape_wrapper.cpp
             include/mantis/core/middlewares.h
             src/core/middlewares.cpp
+            include/mantis/core/models/entity_schema.cpp
+            include/mantis/core/models/entity_schema.h
+            include/mantis/core/models/entity_schema_field.cpp
+            include/mantis/core/models/entity_schema_field.h
     )
 endif ()
 
