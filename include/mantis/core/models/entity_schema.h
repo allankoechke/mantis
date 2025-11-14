@@ -16,10 +16,12 @@ namespace mantis {
 
         // Allow copy constructors & assignment ops for easy cloning
         EntitySchema(const EntitySchema &);
+
         EntitySchema &operator=(const EntitySchema &);
 
         // Delete move constructors
         EntitySchema(EntitySchema &&) = delete;
+
         EntitySchema &operator=(EntitySchema &&) = delete;
 
         ~EntitySchema();
@@ -84,10 +86,12 @@ namespace mantis {
 
         json toDDL() const;
 
-        bool fieldExists(const std::string& type, const std::string& fieldName) const;
+        bool fieldExists(const std::string &type, const std::string &fieldName) const;
+
+        static std::string toDefaultSqlValue(const std::string &type, const nlohmann::json &v);
 
     private:
-        std::string getFieldType(const std::string &type, const std::shared_ptr<soci::session> &sql);
+        static std::string getFieldType(const std::string &type, std::shared_ptr<soci::session> sql);
 
         std::string m_name;
         std::string m_type;

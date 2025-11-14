@@ -25,11 +25,10 @@
 #include "core/jwt_mgr.h"
 
 // Models and data structures
-#include "core/models/models.h"
-
-// Table operations
-// #include "core/tables/sys_tables.h"
-// #include "core/tables/tables.h"
+#include "core/models/validators.h"
+#include "core/models/entity.h"
+#include "core/models/entity_schema.h"
+#include "core/models/entity_schema_field.h"
 
 // For convenience to using json,
 // lets include it here

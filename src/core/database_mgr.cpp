@@ -2,7 +2,6 @@
 #include "../../include/mantis/mantisbase.h"
 #include "../../include/mantis/core/logs_mgr.h"
 #include "../../include/mantis/core/settings_mgr.h"
-#include "../../include/mantis/core/models/models.h"
 #include "../../include/mantis/utils/utils.h"
 
 #include <private/soci-mktime.h>

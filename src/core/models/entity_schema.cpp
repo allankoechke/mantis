@@ -6,20 +6,7 @@
 
 namespace mantis {
     EntitySchema::EntitySchema() = default;
-
-    EntitySchema::EntitySchema(const EntitySchema &other)
-        : m_name(other.m_name),
-          m_type(other.m_type),
-          m_viewSqlQuery(other.m_viewSqlQuery),
-          m_isSystem(other.m_isSystem),
-          m_hasApi(other.m_hasApi),
-          m_fields(other.m_fields),
-          m_listRule(other.m_listRule),
-          m_getRule(other.m_getRule),
-          m_addRule(other.m_addRule),
-          m_updateRule(other.m_updateRule),
-          m_deleteRule(other.m_deleteRule) {
-    }
+    EntitySchema::EntitySchema(const EntitySchema &other) = default;
 
     EntitySchema &EntitySchema::operator=(const EntitySchema &other) {
         if (this != &other) {
@@ -214,7 +201,6 @@ namespace mantis {
     }
 
     json EntitySchema::toDDL() const {
-        // Get DB Session
         const auto sql = MantisBase::instance().db().session();
 
         std::ostringstream ddl;
@@ -230,9 +216,8 @@ namespace mantis {
             if (field.isPrimaryKey()) ddl << " PRIMARY KEY";
             if (field.required()) ddl << " NOT NULL";
             if (field.isUnique()) ddl << " UNIQUE";
-            // if (field.constraints().contains("default_value") && field.constraints()["default_value"].is_null())
-            //     ddl << " DEFAULT '" << field.constraints()["default_value"] << "'";
-            // TODO add default values conversion
+            if (field.constraints().contains("default_value") && field.constraints()["default_value"].is_null())
+                ddl << " DEFAULT " << toDefaultSqlValue(field.type(), field.constraints()["default_value"]);
         }
         ddl << ");";
 
@@ -253,7 +238,32 @@ namespace mantis {
         return false;
     }
 
-    std::string EntitySchema::getFieldType(const std::string &type, const std::shared_ptr<soci::session> &sql) {
+    std::string EntitySchema::toDefaultSqlValue(const std::string &type, const nlohmann::json &v) {
+        if (type.empty())
+            throw std::invalid_argument("Required field type can't be empty!");
+
+        if (v.is_null()) return "NULL";
+
+        if (type == "xml" || type == "string") {
+            return "'" + v.dump() + "'";
+        }
+
+        if (type == "double" || type == "int8" || type == "uint8"
+            || type == "int16" || type == "uint16" || type == "int32"
+            || type == "uint32" || type == "int64" || type == "uint64"
+            || type == "date" || type == "json" || type == "blob"
+            || type == "date" || type == "file"|| type == "files") {
+            return v.dump();
+        }
+
+        if (type == "bool") {
+            return v.get<bool>() ? "1" : "0";
+        }
+
+        throw std::runtime_error("Unsupported field type `" + type + "`");
+    }
+
+    std::string EntitySchema::getFieldType(const std::string &type, std::shared_ptr<soci::session> sql) {
         const auto db_type = sql->get_backend()->get_backend_name();
         // For date types, enforce `text` type SQLite ONLY
         if (db_type == "sqlite3" && type == "date") {
@@ -273,6 +283,6 @@ namespace mantis {
         }
 
         // General catch for all other types
-        return sql->get_backend()->create_column_type(EntitySchema::toSociType(type), 0, 0);
+        return sql->get_backend()->create_column_type(EntitySchemaField::toSociType(type), 0, 0);
     }
 } // mantis
