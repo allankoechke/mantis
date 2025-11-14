@@ -35,7 +35,7 @@ endif()
 set( MANTIS_SOURCES
         src/mantisbase.cpp
         src/core/database_mgr.cpp
-        src/core/models/models.cpp
+        # src/core/models/models.cpp
         src/core/logs_mgr.cpp
         src/core/router.cpp
         src/core/route_registry.cpp
@@ -74,7 +74,12 @@ set( MANTIS_SOURCES
 
         src/core/models/entity.cpp
         src/parse_cmd.cpp
+
         src/core/models/validators.cpp
+        src/core/middlewares.cpp
+
+        src/core/models/entity_schema.cpp
+        src/core/models/entity_schema_field.cpp
 )
 
 if(MANTIS_SCRIPTING_ENABLED)
@@ -82,12 +87,6 @@ if(MANTIS_SCRIPTING_ENABLED)
             ${MANTIS_SOURCES}
             src/utils/dukglue_utils_bindings.cpp
             src/core/private-impl/duktape_wrapper.cpp
-            include/mantis/core/middlewares.h
-            src/core/middlewares.cpp
-            include/mantis/core/models/entity_schema.cpp
-            include/mantis/core/models/entity_schema.h
-            include/mantis/core/models/entity_schema_field.cpp
-            include/mantis/core/models/entity_schema_field.h
     )
 endif ()
 
