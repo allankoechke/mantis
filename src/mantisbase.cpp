@@ -99,6 +99,8 @@ namespace mantis
         if (app.m_isCreated)
             throw std::runtime_error("MantisBase already created, use MantisBase::instance() instead.");
 
+        logger::trace("MantisBase Config: {}", config.dump());
+
         app.m_cmdArgs.emplace_back("mantisapp"); // Arg[0] should be the app name
 
         // dataDir publicDir scriptsDir serve [port host] admins [add remove]
@@ -317,7 +319,7 @@ namespace mantis
         if (table_name.empty()) throw std::invalid_argument("Table name is invalid!");
 
         // Get schema cache from db, check if we have this data, return data if available
-        const auto schema = m_database->schemaCache(table_name);
+        const auto schema = m_router->schemaCache(table_name);
 
         return Entity{schema};
     }

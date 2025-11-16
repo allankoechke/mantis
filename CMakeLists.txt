@@ -73,6 +73,7 @@ set( MANTIS_SOURCES
         src/core/models/entity_schema_field.cpp
 
         src/core/exceptions.cpp
+        src/core/models/entity_routes_handlers.cpp
 )
 
 if(MANTIS_SCRIPTING_ENABLED)

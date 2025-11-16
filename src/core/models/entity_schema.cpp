@@ -207,18 +207,18 @@ namespace mantis {
     std::string EntitySchema::type() const { return m_type; }
 
     EntitySchema &EntitySchema::setType(const std::string &type) {
-        if (type == "base" || type == "auth" || type == "view")
+        if (!(type == "base" || type == "auth" || type == "view"))
             throw std::invalid_argument("Type should either be `base`, `auth` or `view` only.");
 
-        if (type == "view") m_fields.clear(); // Clear all fields if we are turning it to a view type
-        else {
+        if (type == "view")
+            m_fields.clear(); // Clear all fields if we are turning it to a view type
+
+        else if (type == "base") {
             // Add base fields if they don't exist yet ...
             addFieldsIfNotExist("base");
-
-            if (type == "auth") {
-                // Add auth specific system fields ...
-                addFieldsIfNotExist("auth");
-            }
+        } else {
+            // Add auth specific system fields ...
+            addFieldsIfNotExist("auth");
         }
 
         m_type = type;
@@ -456,13 +456,13 @@ namespace mantis {
 
     void EntitySchema::addFieldsIfNotExist(const std::string &type) {
         if (type == "base") {
-            for (const auto& field: EntitySchema::defaultBaseFieldsSchema()) {
+            for (const auto &field: EntitySchema::defaultBaseFieldsSchema()) {
                 if (!hasField(field.name())) {
                     addField(field);
                 }
             }
         } else if (type == "auth") {
-            for (const auto& field: EntitySchema::defaultAuthFieldsSchema()) {
+            for (const auto &field: EntitySchema::defaultAuthFieldsSchema()) {
                 if (!hasField(field.name())) {
                     addField(field);
                 }

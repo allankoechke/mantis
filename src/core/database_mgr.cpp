@@ -61,7 +61,7 @@ namespace mantis {
                     sql << "PRAGMA journal_mode=WAL";
                     sql << "PRAGMA wal_autocheckpoint=500"; // Checkpoint every 500 pages
                 }
-                if (db_type == "postgresql") {
+                else if (db_type == "postgresql") {
 #if MANTIS_HAS_POSTGRESQL
                     // Connection Options
                     ///> Basic: "dbname=mydb user=scott password=tiger"
@@ -85,10 +85,11 @@ namespace mantis {
 #endif
                 }
 
-                if (db_type == "mysql") {
+                else if (db_type == "mysql") {
                     logger::warn("Database Connection for `MySQL` not implemented yet!");
                     return false;
-                } else {
+                }
+                else {
                     logger::warn("Database Connection to `{}` Not Implemented Yet!", conn_str);
                     return false;
                 }
@@ -131,20 +132,24 @@ namespace mantis {
         try {
             const auto sql = session();
             soci::transaction tr{*sql};
+
             // Create admin table, for managing and auth for admin accounts
-            EntitySchema admin_schema("_admins", "auth");
+            EntitySchema admin_schema{"_admins", "auth"};
             *sql << admin_schema.toDDL();
+            std::cout << admin_schema.toJson().dump() << std::endl;
 
             // Create and manage other db tables, keeping track of access rules, schema, etc.!
-            EntitySchema tables_schema("_tables", "base");
+            EntitySchema tables_schema{"_tables", "base"};
             tables_schema.addField(EntitySchemaField({{"name", "name"}, {"type", "string"}, {"required", true}, {"system", true}}));
             tables_schema.addField(EntitySchemaField({{"name", "schema"}, {"type", "json"}, {"required", true}, {"system", true}}));
             *sql << tables_schema.toDDL();
 
+            std::cout << tables_schema.toJson().dump() << std::endl;
+
             // A Key - Value settings store, where the key is hashed as the table id
-            EntitySchema store_schema("_store", "base");
-            tables_schema.addField(EntitySchemaField({{"name", "value"}, {"type", "json"}, {"required", true}, {"system", true}}));
-            *sql << tables_schema.toDDL();
+            EntitySchema store_schema{"_store", "base"};
+            store_schema.addField(EntitySchemaField({{"name", "value"}, {"type", "json"}, {"required", true}, {"system", true}}));
+            *sql << store_schema.toDDL();
 
             // Commit changes
             tr.commit();
@@ -174,6 +179,19 @@ namespace mantis {
         return sql->is_connected();
     }
 
+    void DatabaseMgr::writeCheckpoint() const {
+        // Enable this write checkpoint for SQLite databases ONLY
+        if (MantisBase::instance().dbType() == "sqlite3") {
+            try {
+                // Write out the WAL data to db file & truncate it
+                if (const auto sql = session(); sql->is_connected()) {
+                    *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
+                }
+            } catch (std::exception &e) {
+                logger::critical("Database Connection SOCI::Error: {}", e.what());
+            }
+        }
+    }
 #ifdef MANTIS_SCRIPTING_ENABLED
     void DatabaseUnit::registerDuktapeMethods() {
         const auto ctx = MantisApp::instance().ctx();
@@ -320,51 +338,4 @@ namespace mantis {
         return 1; // Return the object
     }
 #endif
-
-    const json &DatabaseMgr::schemaCache(const std::string &table_name) const {
-        const auto it = m_schemaCache.find(table_name);
-        if (it == m_schemaCache.end())
-            throw std::out_of_range("Schema not found for table: " + table_name);
-        return it->second;
-    }
-
-    void DatabaseMgr::addSchemaCache(const std::string &table_name, const json &table_schema) {
-        m_schemaCache[table_name] = table_schema;
-    }
-
-    void DatabaseMgr::addSchemaCache(const json &schemas) {
-        if (!schemas.is_array())
-            throw std::invalid_argument("Invalid schema array provided!");
-
-        for (const auto &sch: schemas) {
-            if (!sch.contains("name") || !sch["name"].is_string())
-                throw std::invalid_argument("Schema missing table name key or not a string");
-            m_schemaCache[sch["name"].get<std::string>()] = sch;
-        }
-    }
-
-    void DatabaseMgr::updateSchemaCache(const std::string &table_name, const json &table_schema) {
-        const auto it = m_schemaCache.find(table_name);
-        if (it == m_schemaCache.end())
-            throw std::out_of_range("Cannot update, schema not found for table: " + table_name);
-        it->second = table_schema;
-    }
-
-    void DatabaseMgr::removeSchemaCache(const std::string &table_name) {
-        m_schemaCache.erase(table_name);
-    }
-
-    void DatabaseMgr::writeCheckpoint() const {
-        // Enable this write checkpoint for SQLite databases ONLY
-        if (MantisBase::instance().dbType() == "sqlite3") {
-            try {
-                // Write out the WAL data to db file & truncate it
-                if (const auto sql = session(); sql->is_connected()) {
-                    *sql << "PRAGMA wal_checkpoint(TRUNCATE)";
-                }
-            } catch (std::exception &e) {
-                logger::critical("Database Connection SOCI::Error: {}", e.what());
-            }
-        }
-    }
 } // namespace mantis

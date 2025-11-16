@@ -20,7 +20,7 @@ namespace mantis {
                         "constraints", {
                             {"min-value", 6},
                             {"max_value", nullptr},
-                            {"validator", "password"},
+                            {"validator", "@password"},
                             {"default_value", nullptr},
                         }
                     },
@@ -69,6 +69,60 @@ namespace mantis {
     const std::vector<EntitySchemaField> &EntitySchema::defaultAuthFieldsSchema() {
         static const std::vector _auth_field_schema = {
             EntitySchemaField{
+                    {
+                        {"name", "id"},
+                        {"type", "string"},
+                        {"required", true},
+                        {"primary_key", true},
+                        {"system", true},
+                        {"unique", false},
+                        {
+                            "constraints", {
+                                {"min-value", 6},
+                                {"max_value", nullptr},
+                                {"validator", "@password"},
+                                {"default_value", nullptr},
+                            }
+                        },
+                    }
+            },
+            EntitySchemaField{
+                    {
+                        {"name", "created"},
+                        {"type", "date"},
+                        {"required", true},
+                        {"primary_key", false},
+                        {"system", true},
+                        {"unique", false},
+                        {
+                            "constraints", {
+                                {"min-value", nullptr},
+                                {"max_value", nullptr},
+                                {"validator", nullptr},
+                                {"default_value", nullptr},
+                            }
+                        },
+                    }
+            },
+            EntitySchemaField{
+                    {
+                        {"name", "updated"},
+                        {"type", "date"},
+                        {"required", true},
+                        {"primary_key", false},
+                        {"system", true},
+                        {"unique", false},
+                        {
+                            "constraints", {
+                                {"min-value", nullptr},
+                                {"max_value", nullptr},
+                                {"validator", nullptr},
+                                {"default_value", nullptr},
+                            }
+                        },
+                    }
+            },
+            EntitySchemaField{
                 {
                     //User NAME
                     {"name", "name"},
@@ -79,9 +133,9 @@ namespace mantis {
                     {"unique", false},
                     {
                         "constraints", {
-                            {"min-value", 6},
+                            {"min-value", 3},
                             {"max_value", nullptr},
-                            {"validator", "password"},
+                            {"validator", nullptr},
                             {"default_value", nullptr},
                         }
                     },
@@ -98,7 +152,7 @@ namespace mantis {
                     {"unique", true},
                     {
                         "constraints", {
-                            {"min-value", nullptr},
+                            {"min-value", 5},
                             {"max_value", nullptr},
                             {"validator", "@email"},
                             {"default_value", nullptr},

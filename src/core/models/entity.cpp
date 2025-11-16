@@ -7,7 +7,7 @@
 #include "mantis/utils/soci_wrappers.h"
 
 namespace mantis {
-    Entity::Entity(const json &schema) {
+    Entity::Entity(const nlohmann::json &schema) {
         if (!schema.contains("name") || !schema.contains("type"))
             throw std::invalid_argument("Missing required fields `name` and `type` in schema!");
 
@@ -25,15 +25,15 @@ namespace mantis {
     }
 
     std::string Entity::id() const {
-        return "mt_" + std::to_string(std::hash<std::string>{}(m_schema.at("id").get<std::string>()));
+        return "mbt_" + std::to_string(std::hash<std::string>{}(m_schema.at("id").get<std::string>()));
     }
 
-    const std::string& Entity::name() const {
-        return m_schema.at("name").get_ref<const std::string&>();
+    const std::string &Entity::name() const {
+        return m_schema.at("name").get_ref<const std::string &>();
     }
 
-    const std::string& Entity::type() const {
-        return m_schema.at("type").get_ref<const std::string&>();
+    const std::string &Entity::type() const {
+        return m_schema.at("type").get_ref<const std::string &>();
     }
 
     bool Entity::isSystem() const {
@@ -44,28 +44,28 @@ namespace mantis {
         return m_schema.contains("has_api") ? m_schema.at("has_api").get<bool>() : false;
     }
 
-    const std::vector<json>& Entity::fields() const {
-        return m_schema.at("fields").get_ref<const std::vector<json>&>();
+    const std::vector<json> &Entity::fields() const {
+        return m_schema.at("fields").get_ref<const std::vector<json> &>();
     }
 
-    const std::string& Entity::listRule() const {
-        return m_schema.at("list_rule").get_ref<const std::string&>();
+    const std::string &Entity::listRule() const {
+        return m_schema.at("list_rule").get_ref<const std::string &>();
     }
 
-    const std::string& Entity::getRule() const {
-        return m_schema.at("get_rule").get_ref<const std::string&>();
+    const std::string &Entity::getRule() const {
+        return m_schema.at("get_rule").get_ref<const std::string &>();
     }
 
-    const std::string& Entity::addRule() const {
-        return m_schema.at("add_rule").get_ref<const std::string&>();
+    const std::string &Entity::addRule() const {
+        return m_schema.at("add_rule").get_ref<const std::string &>();
     }
 
-    const std::string& Entity::updateRule() const {
-        return m_schema.at("update_rule").get_ref<const std::string&>();
+    const std::string &Entity::updateRule() const {
+        return m_schema.at("update_rule").get_ref<const std::string &>();
     }
 
-    const std::string& Entity::deleteRule() const {
-        return m_schema.at("delete_rule").get_ref<const std::string&>();
+    const std::string &Entity::deleteRule() const {
+        return m_schema.at("delete_rule").get_ref<const std::string &>();
     }
 
     // --------------------------------------------------------------------------- //
@@ -134,8 +134,7 @@ namespace mantis {
             // Remove user password from the response
             if (type() == "auth") added_row.erase("password");
             return added_row;
-        }
-        catch (...) {
+        } catch (...) {
             // Handles anything else
             // logger::critical("Error executing Entity::create()");
             throw; // rethrow unknown exception
@@ -345,8 +344,7 @@ namespace mantis {
         // TRACE_CLASS_METHOD()
         // Views should not reach here
         if (type() == "view")
-            return throw
-                    std::invalid_argument("Remove is not implemented for Entity of `view` type!");
+            throw std::invalid_argument("Remove is not implemented for Entity of `view` type!");
 
         const auto sql = MantisBase::instance().db().session();
         soci::transaction tr(*sql);
@@ -397,16 +395,16 @@ namespace mantis {
     const json &Entity::schema() const { return m_schema; }
 
     bool Entity::recordExists(const std::string &id) const {
-        int count = -1;
         try {
+            std::string _nid;
             const auto sql = MantisBase::instance().db().session();
-            *sql << "SELECT COUNT(id) FROM " + name() + " WHERE id = :id LIMIT 1",
-                    soci::use(id), soci::into(count);
+            *sql << "SELECT id FROM " + name() + " WHERE id = :id LIMIT 1",
+                    soci::use(id), soci::into(_nid);
+            return sql->got_data();
         } catch (soci::soci_error &e) {
             logger::trace("TablesUnit::RecordExists error: {}", e.what());
+            return false;
         }
-
-        return count > 0;
     }
 
     std::optional<json> Entity::findField(const std::string &field_name) const {

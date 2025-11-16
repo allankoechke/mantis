@@ -17,6 +17,8 @@
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include <spdlog/sinks/ansicolor_sink.h>
 
+#include "mantis/core/exceptions.h"
+
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);
 
@@ -101,6 +103,33 @@ namespace mantis {
     }
 
     bool Router::initialize() {
+        {
+            const auto sql = MantisBase::instance().db().session();
+            const soci::rowset rows = (sql->prepare << "SELECT schema FROM _tables");
+
+            if (sql->got_data()) {
+                for (const auto &row: rows) {
+                    const auto schema = row.get<nlohmann::json>("schema");
+
+                    // Create entity based on the schema
+                    Entity entity{schema};
+
+                    // Create routes based on the entity type
+                    if (entity.hasApi()) entity.createEntityRoutes();
+
+                    // Store this object to keep alive function pointers
+                    // if not, possible access violation error
+                    m_entityMap.emplace(entity.name(), std::move(entity));
+                }
+            }
+        }
+
+        // Add admin routes
+
+        // Misc
+        generateMiscEndpoints();
+
+        return true;
     }
 
     bool Router::listen() {
@@ -160,6 +189,10 @@ namespace mantis {
         }
     }
 
+    httplib::Server &Router::server() {
+        return svr;
+    }
+
     void Router::Get(const std::string &path, HandlerFn handler, Middlewares middlewares) {
         m_routeRegistry.add("GET", path, handler, middlewares);
         globalRouteHandler("GET", path);
@@ -194,7 +227,7 @@ namespace mantis {
             const auto sql = MantisBase::instance().db().session();
 
             soci::row row;
-            const std::string query = "SELECT id, name, type, schema, has_api FROM __tables WHERE name = :name";
+            const std::string query = "SELECT id, schema FROM _tables WHERE name = :name";
             *sql << query, soci::use(table), soci::into(row);
 
             if (!sql->got_data()) {
@@ -387,8 +420,35 @@ namespace mantis {
         return res;
     }
 
+    const json &Router::schemaCache(const std::string &table_name) const {
+        if (m_entityMap.contains(table_name)) {
+            return m_entityMap.at(table_name).schema();
+        }
+
+        throw std::out_of_range("Table does not contain schema");
+    }
+
+    void Router::addSchemaCache(const std::string &table_name, const nlohmann::json &table_schema) {
+        if (m_entityMap.contains(table_name)) {
+            updateSchemaCache(table_name, table_schema);
+        } else {
+            m_entityMap.insert_or_assign(table_name, Entity(table_schema));
+        }
+    }
+
+    void Router::updateSchemaCache(const std::string &table_name, const json &table_schema) {
+        if (!m_entityMap.contains(table_name))
+            throw std::out_of_range("Cannot update, schema not found for table: " + table_name);
+
+        // it->second = table_schema;
+    }
+
+    void Router::removeSchemaCache(const std::string &table_name) {
+        m_entityMap.erase(table_name);
+    }
+
     void Router::globalRouteHandler(const std::string &method, const std::string &path) {
-        const auto handlerFunc = [this, method, path](const httplib::Request &req, httplib::Response &res) {
+        const std::function handlerFunc = [this, method, path](const httplib::Request &req, httplib::Response &res) {
             MantisRequest ma_req{req};
             MantisResponse ma_res{res};
 
@@ -421,25 +481,93 @@ namespace mantis {
         };
 
         if (method == "GET") {
-            svr.Get(path, [handlerFunc](const httplib::Request &req, httplib::Response &res) {
-                handlerFunc(req, res);
-            });
+            svr.Get(path, handlerFunc);
         } else if (method == "PATCH") {
-            svr.Patch(path, [handlerFunc](const httplib::Request &req, httplib::Response &res) {
-                handlerFunc(req, res);
-            });
+            svr.Patch(path, handlerFunc);
         } else if (method == "POST") {
-            svr.Post(path, [handlerFunc](const httplib::Request &req, httplib::Response &res) {
-                handlerFunc(req, res);
-            });
+            svr.Post(path, handlerFunc);
         } else if (method == "DELETE") {
-            svr.Delete(path, [handlerFunc](const httplib::Request &req, httplib::Response &res) {
-                handlerFunc(req, res);
-            });
+            svr.Delete(path, handlerFunc);
         } else {
-            // Throw an error ?
-            // TODO ...
+            throw MantisException(500, "Router method `" + method + "` is not supported!");
         }
+    }
+
+    void Router::generateMiscEndpoints() const {
+        logger::trace("Generate MiscEndpoints");
+        // Add /health for server health check
+        auto &router = MantisBase::instance().router();
+        router.Get("/api/v1/healthcheck",
+                   [](MantisRequest &, const MantisResponse &res) {
+                logger::trace("HEALTH ...");
+                       // Compute system uptime and send to user
+                       const auto &start_time = MantisBase::instance().startTime();
+                       auto uptime = std::chrono::duration_cast<std::chrono::seconds>(
+                           std::chrono::steady_clock::now() - start_time).count();
+
+                       json response;
+                       response["status"] = "ok";
+                       response["uptime"] = uptime;
+                       res.sendJson(200, response);
+                   }
+        );
+
+        router.Get(
+            R"(/admin(.*))", [](const MantisRequest &req, MantisResponse &res) {
+                logger::trace("ADMIN ...");
+                try {
+                    const auto fs = cmrc::mantis::get_filesystem();
+                    std::string path = req.matches()[1];
+
+                    // Normalize the path
+                    if (path.empty() || path == "/") {
+                        path = "/qrc/index.html";
+                    } else {
+                        path = std::format("/qrc{}", path);
+                    }
+
+                    if (!fs.exists(path)) {
+                        logger::trace("{} path does not exists", path);
+
+                        // fallback to index.html for React routes
+                        path = "/qrc/index.html";
+                    }
+
+                    try {
+                        const auto file = fs.open(path);
+                        const auto mime = Router::getMimeType(path);
+                        res.setContent(file.begin(), file.size(), mime);
+                        res.setStatus(200);
+                    } catch (const std::exception &e) {
+                        const auto file = fs.open("/qrc/404.html");
+                        const auto mime = Router::getMimeType("404.html");
+
+                        res.setContent(file.begin(), file.size(), mime);
+                        res.setStatus(404);
+                        logger::critical("Error processing /admin response: {}", e.what());
+                    }
+                } catch (const std::exception &e) {
+                    res.setStatus(500);
+                    logger::critical("Error processing /admin request: {}", e.what());
+                }
+            });
+
+        // Add /public static file serving directory
+        const auto mount_ok = router.server().set_mount_point("/", MantisBase::instance().publicDir());
+        if (!mount_ok) {
+            logger::critical("Failed to setup mount point directory for '/' at '{}'",
+                             MantisBase::instance().publicDir());
+        }
+    }
+
+    std::string Router::getMimeType(const std::string &path) {
+        if (path.ends_with(".js")) return "application/javascript";
+        if (path.ends_with(".css")) return "text/css";
+        if (path.ends_with(".html")) return "text/html";
+        if (path.ends_with(".json")) return "application/json";
+        if (path.ends_with(".png")) return "image/png";
+        if (path.ends_with(".svg")) return "image/svg+xml";
+        return "application/octet-stream";
     }
 
     // bool Router::generateFileServingApi() const {
@@ -486,56 +614,6 @@ namespace mantis {
     //     return false;
     // }
     //
-    // bool Router::generateTableCrudApis() {
-    //     TRACE_CLASS_METHOD()
-    //
-    //     const auto sql = MantisBase::instance().db().session();
-    //
-    //     // id created updated schema has_api
-    //     const soci::rowset<soci::row> rs = (sql->prepare << "SELECT id, name, type, schema, has_api FROM __tables");
-    //
-    //     for (const auto &row: rs) {
-    //         const auto id = row.get<std::string>("id");
-    //         const auto name = row.get<std::string>("name");
-    //         const auto type = row.get<std::string>("type");
-    //         const auto hasApi = row.get<bool>("has_api");
-    //
-    //         // If `hasApi` is set, schema is valid, then, add API endpoints
-    //         if (const auto schema = row.get<json>("schema"); (hasApi && !schema.empty())) {
-    //             // We need to persist this instance, else it'll be cleaned up causing a crash
-    //             const auto tableUnit = std::make_shared<TableUnit>(schema);
-    //             tableUnit->setTableName(name);
-    //             tableUnit->setTableId(id);
-    //
-    //             if (!tableUnit->setupRoutes())
-    //                 return false;
-    //
-    //             m_routes.push_back(tableUnit);
-    //         }
-    //     }
-    //
-    //     return true;
-    // }
-    //
-    // bool Router::generateMiscEndpoints() const {
-    //     TRACE_CLASS_METHOD()
-    //     // Add /health for server health check
-    //     Get("/api/v1/health",
-    //         [](MantisRequest &, const MantisResponse &res) {
-    //             // Compute system uptime and send to user
-    //             const auto &start_time = MantisBase::instance().startTime();
-    //             auto uptime = std::chrono::duration_cast<std::chrono::seconds>(
-    //                 std::chrono::steady_clock::now() - start_time).count();
-    //
-    //             json response;
-    //             response["status"] = "ok";
-    //             response["uptime"] = uptime;
-    //             res.sendJson(200, response);
-    //         });
-    //
-    //     return true;
-    // }
-    //
     // bool Router::generateAdminCrudApis() const {
     //     TRACE_CLASS_METHOD()
     //
@@ -557,62 +635,7 @@ namespace mantis {
     //             return false;
     //         }
     //
-    //         auto getMimeType = [](const std::string &path) -> std::string {
-    //             if (path.ends_with(".js")) return "application/javascript";
-    //             if (path.ends_with(".css")) return "text/css";
-    //             if (path.ends_with(".html")) return "text/html";
-    //             if (path.ends_with(".json")) return "application/json";
-    //             if (path.ends_with(".png")) return "image/png";
-    //             if (path.ends_with(".svg")) return "image/svg+xml";
-    //             return "application/octet-stream";
-    //         };
-    //
-    //         MantisBase::instance().http().Get(
-    //             R"(/admin(.*))",
-    //             [getMimeType](MantisRequest &req, MantisResponse &res) {
-    //                 try {
-    //                     const auto fs = cmrc::mantis::get_filesystem();
-    //                     std::string path = req.matches()[1];
-    //
-    //                     // Normalize the path
-    //                     if (path.empty() || path == "/") {
-    //                         path = "/qrc/index.html";
-    //                     } else {
-    //                         path = std::format("/qrc{}", path);
-    //                     }
-    //
-    //                     if (!fs.exists(path)) {
-    //                         logger::trace("{} path does not exists", path);
-    //
-    //                         // fallback to index.html for React routes
-    //                         path = "/qrc/index.html";
-    //                     }
-    //
-    //                     try {
-    //                         const auto file = fs.open(path);
-    //                         const auto mime = getMimeType(path);
-    //                         res.setContent(file.begin(), file.size(), mime);
-    //                         res.setStatus(200);
-    //                     } catch (const std::exception &e) {
-    //                         const auto file = fs.open("/qrc/404.html");
-    //                         const auto mime = getMimeType("404.html");
-    //
-    //                         res.setContent(file.begin(), file.size(), mime);
-    //                         res.setStatus(404);
-    //                         logger::critical("Error processing /admin response: {}", e.what());
-    //                     }
-    //                 } catch (const std::exception &e) {
-    //                     res.setStatus(500);
-    //                     logger::critical("Error processing /admin request: {}", e.what());
-    //                 }
-    //             });
-    //
-    //         // Add /public static file serving directory
-    //         if (!MantisBase::instance().http().server().set_mount_point("/", MantisBase::instance().publicDir())) {
-    //             logger::critical("Failed to setup mount point directory for '/' at '{}'",
-    //                              MantisBase::instance().publicDir());
-    //             return false;
-    //         }
+
     //     } catch (const std::exception &e) {
     //         logger::critical("Error creating admin routes: ", e.what());
     //         return false;

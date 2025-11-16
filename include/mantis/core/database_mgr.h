@@ -75,21 +75,6 @@ namespace mantis {
         static void registerDuktapeMethods();
 #endif
 
-        // Returns a reference to cached schema, throws if not found
-        const json &schemaCache(const std::string &table_name) const;
-
-        // Add or replace a single table schema
-        void addSchemaCache(const std::string &table_name, const json &table_schema);
-
-        // Add or replace multiple schemas from array
-        void addSchemaCache(const json &schemas);
-
-        // Update existing schema (same as add in this context)
-        void updateSchemaCache(const std::string &table_name, const json &table_schema);
-
-        // Remove schema if exists
-        void removeSchemaCache(const std::string &table_name);
-
     private:
         /**
          * @brief Execute an SQL script, bound to any given values and return a single or no
@@ -117,8 +102,6 @@ namespace mantis {
         void writeCheckpoint() const;
 
         std::unique_ptr<soci::connection_pool> m_connPool;
-        std::unordered_map<std::string, json> m_schemaCache;
-        const std::string __class_name__ = "mantis::DatabaseUnit";
     };
 
     /**

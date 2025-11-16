@@ -7,10 +7,11 @@
 
 #include <string>
 #include "mantis/mantis.h"
+#include "mantis/core/exceptions.h"
 #include "mantis/utils/soci_wrappers.h"
 
 namespace mantis {
-    using Record = json;
+    using Record = nlohmann::json;
     using Records = std::vector<Record>;
 
     class Entity {
@@ -19,7 +20,7 @@ namespace mantis {
          * @brief `Entity`
          * @param schema Table schema
          */
-        explicit Entity(const json &schema);
+        explicit Entity(const nlohmann::json &schema);
 
         // --------------- DB TABLE OPS ------------------ //
         [[nodiscard]] std::string id() const;
@@ -63,7 +64,23 @@ namespace mantis {
 
         [[nodiscard]] std::optional<json> findField(const std::string &field_name) const;
 
-        [[nodiscard]] std::optional<json> queryFromCols(const std::string &value, const std::vector<std::string> &columns) const;
+        [[nodiscard]] std::optional<json> queryFromCols(const std::string &value,
+                                                        const std::vector<std::string> &columns) const;
+
+        // --------------- SCHEMA ROUTING ------------------ //
+        HandlerFn getOneRouteHandler() const;
+
+        HandlerFn getManyRouteHandler() const;
+
+        HandlerFn postRouteHandler() const;
+
+        HandlerFn patchRouteHandler() const;
+
+        HandlerFn deleteRouteHandler() const;
+
+        HandlerFn authRouteHandler() const;
+
+        void createEntityRoutes() const;
 
     private:
         json m_schema;

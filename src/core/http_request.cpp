@@ -216,6 +216,16 @@ namespace mantis
         return get_bearer_token_auth(m_req);
     }
 
+    std::pair<nlohmann::json, std::string> MantisRequest::getBodyAsJson() const {
+        try {
+            auto b = getBody();
+            auto obj = b.empty() ? nlohmann::json::object() : nlohmann::json::parse(b);
+            return {obj, ""};
+        } catch (const std::exception &e) {
+            return {nlohmann::json::object(), e.what()};
+        }
+    }
+
 #ifdef MANTIS_ENABLE_SCRIPTING
     DukValue MantisRequest::get_duk(const std::string& key)
     {
