@@ -3,60 +3,93 @@
 //
 
 #include "../../../include/mantis/core/models/entity_schema_field.h"
+#include "../../../include/mantis/utils/utils.h"
 
 namespace mantis {
-    std::vector<std::string> EntitySchemaField::defaultBaseFields = {"id", "created", "updated"};
-    std::vector<std::string> EntitySchemaField::defaultAuthFields = {
-        "id", "created", "updated", "name", "email", "password"
-    };
-    std::vector<std::string> EntitySchemaField::defaultEntityFieldTypes = {
-        "xml", "string", "double", "date", "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64",
-        "blob", "json", "bool", "file", "files"
-    };
-
-    EntitySchemaField::EntitySchemaField(const std::string &field_name, const std::string &field_type)
-        : m_name(field_name), m_type(field_type) {
+    EntitySchemaField::EntitySchemaField(std::string field_name, std::string field_type)
+        : m_name(std::move(field_name)), m_type(std::move(field_type)) {
     }
 
-    EntitySchemaField::EntitySchemaField(const nlohmann::json &field) {
-        // nlohmann::json m_constraints; // "min-value", "max_value", "validator", "default_value"
-        if (!field.contains("name") || field["name"].is_null())
+    EntitySchemaField::EntitySchemaField(const nlohmann::json &field_schema) {
+        if (!field_schema.contains("name") || field_schema["name"].is_null())
             throw std::invalid_argument("Field name is required!");
-        setName(field["name"].get<std::string>());
+        setName(field_schema["name"].get<std::string>());
 
-        if (!field.contains("type") || field["type"].is_null())
+        if (!field_schema.contains("type") || field_schema["type"].is_null())
             throw std::invalid_argument("Field type is required!");
-        setType(field["type"].get<std::string>());
+        setType(field_schema["type"].get<std::string>());
 
-        if (field.contains("required") && field["required"].is_boolean())
-            setRequired(field["required"].get<bool>());
+        if (field_schema.contains("id") && field_schema["id"].is_string())
+            setId(field_schema.at("id").get<std::string>());
 
-        if (field.contains("primary_key") && field["primary_key"].is_boolean())
-            setIsPrimaryKey(field["primary_key"].get<bool>());
+        if (field_schema.contains("required") && field_schema["required"].is_boolean())
+            setRequired(field_schema["required"].get<bool>());
 
-        if (field.contains("system") && field["system"].is_boolean())
-            setIsSystem(field["system"].get<bool>());
+        if (field_schema.contains("primary_key") && field_schema["primary_key"].is_boolean())
+            setIsPrimaryKey(field_schema["primary_key"].get<bool>());
 
-        if (field.contains("unique") && field["unique"].is_boolean())
-            setRequired(field["unique"].get<bool>());
+        if (field_schema.contains("system") && field_schema["system"].is_boolean())
+            setIsSystem(field_schema["system"].get<bool>());
 
-        if (field.contains("constraints") && field["constraints"].is_object())
-            setConstraints(field["constraints"].get<nlohmann::json>());
+        if (field_schema.contains("unique") && field_schema["unique"].is_boolean())
+            setRequired(field_schema["unique"].get<bool>());
+
+        if (field_schema.contains("constraints") && field_schema["constraints"].is_object())
+            setConstraints(field_schema["constraints"].get<nlohmann::json>());
+    }
+
+    void EntitySchemaField::updateWith(const nlohmann::json &field_schema) {
+        if (field_schema.contains("name") && !field_schema["name"].is_null())
+            setName(field_schema["name"].get<std::string>());
+
+        if (field_schema.contains("type") && !field_schema["type"].is_null())
+            setType(field_schema["type"].get<std::string>());
+
+        if (field_schema.contains("id") && field_schema["id"].is_string())
+            setId(field_schema.at("id").get<std::string>());
+
+        if (field_schema.contains("required") && field_schema["required"].is_boolean())
+            setRequired(field_schema["required"].get<bool>());
+
+        if (field_schema.contains("primary_key") && field_schema["primary_key"].is_boolean())
+            setIsPrimaryKey(field_schema["primary_key"].get<bool>());
+
+        if (field_schema.contains("system") && field_schema["system"].is_boolean())
+            setIsSystem(field_schema["system"].get<bool>());
+
+        if (field_schema.contains("unique") && field_schema["unique"].is_boolean())
+            setRequired(field_schema["unique"].get<bool>());
+
+        if (field_schema.contains("constraints") && field_schema["constraints"].is_object())
+            setConstraints(field_schema["constraints"].get<nlohmann::json>());
+    }
+
+    std::string EntitySchemaField::id() const {
+        return m_id.empty() ? EntitySchemaField::genFieldId(m_name) : m_id;
+    }
+
+    EntitySchemaField & EntitySchemaField::setId(const std::string &id) {
+        m_name = trim(id);
+        return *this;
     }
 
     std::string EntitySchemaField::name() const { return m_name; }
 
     EntitySchemaField &EntitySchemaField::setName(const std::string &name) {
-        if (name.empty()) throw std::invalid_argument("Field name is required!");
-        m_name = name;
+        if (trim(name).empty()) throw std::invalid_argument("Field name is required!");
+        m_name = trim(name);
         return *this;
     }
 
     std::string EntitySchemaField::type() const { return m_type; }
 
     EntitySchemaField &EntitySchemaField::setType(const std::string &type) {
-        if (type.empty()) throw std::invalid_argument("Field type is required!");
-        // TODO check that the type is valid
+        if (type.empty())
+            throw std::invalid_argument("Field type is required!");
+
+        if (!isValidFieldType(type))
+            throw std::invalid_argument("Invalid field type `" + type + "`");
+
         m_type = type;
         return *this;
     }
@@ -97,22 +130,26 @@ namespace mantis {
 
     EntitySchemaField &EntitySchemaField::setConstraints(const nlohmann::json &opts) {
         if (m_constraints.is_null())
-            m_constraints = opts;
+            m_constraints = {
+                {"min-value", nullptr},
+                {"max_value", nullptr},
+                {"validator", nullptr},
+                {"default_value", nullptr}
+            };
 
         nlohmann::json constraints = nlohmann::json::object();
         if (opts.contains("validator"))
-            constraints["validator"] = opts["validator"];
+            m_constraints["validator"] = opts["validator"];
 
         if (opts.contains("default_value"))
-            constraints["default_value"] = opts["default_value"];
+            m_constraints["default_value"] = opts["default_value"];
 
         if (opts.contains("min_value") && opts["min_value"].is_number())
-            constraints["min_value"] = opts["min_value"];
+            m_constraints["min_value"] = opts["min_value"];
 
         if (opts.contains("max_value") && opts["max_value"].is_number())
-            constraints["max_value"] = opts["max_value"];
+            m_constraints["max_value"] = opts["max_value"];
 
-        m_constraints = constraints;
         return *this;
     }
 
@@ -167,8 +204,19 @@ namespace mantis {
         throw std::invalid_argument("Unknown field type");
     }
 
+    std::optional<std::string> EntitySchemaField::validate() const {
+        if (m_name.empty()) return "Entity field name is empty";
+        if (m_type.empty()) return "Entity field type is empty";
+        return std::nullopt;
+    }
+
     bool EntitySchemaField::isValidFieldType(const std::string &type) {
         const auto it = std::ranges::find(defaultEntityFieldTypes, type);
+        logger::trace("Is Valid type? ", it != defaultEntityFieldTypes.end());
         return it != defaultEntityFieldTypes.end();
+    }
+
+    std::string EntitySchemaField::genFieldId(const std::string &id) {
+        return "mbf_" + std::to_string(std::hash<std::string>{}(id));
     }
 } // mantis

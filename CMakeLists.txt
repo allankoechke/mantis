@@ -20,7 +20,9 @@ option(MANTIS_SCRIPTING_ENABLED "Enable JS Scripting" OFF)
 set(MANTIS_SHARED_DEPS FALSE)
 if(MANTIS_SHARED_DEPS)
     set(BUILD_SHARED_LIBS TRUE)
-    set(MANTIS_LIB_TYPE SHARED)
+    set(MANTIS_LIB_TYPE SHARED
+            include/mantis/core/exceptions.cpp
+            include/mantis/core/exceptions.h)
     message("-- Building Mantis dynamic libs")
 else()
     set(BUILD_SHARED_LIBS FALSE)
@@ -35,23 +37,10 @@ endif()
 set( MANTIS_SOURCES
         src/mantisbase.cpp
         src/core/database_mgr.cpp
-        # src/core/models/models.cpp
         src/core/logs_mgr.cpp
         src/core/router.cpp
         src/core/route_registry.cpp
         src/core/jwt_mgr.cpp
-
-        # All table operations
-#        src/core/tables/tables.cpp
-#        src/core/tables/tables_crud.cpp
-#        src/core/tables/tables_routes.cpp
-#        src/core/tables/tables_auth.cpp
-#        src/core/tables/tables_utils.cpp
-#        src/core/tables/tables_validation.cpp
-
-        # System Tables
-#        src/core/tables/sys_tables.cpp
-#        src/core/tables/sys_tables_crud.cpp
 
         # Expression evaluator
         src/core/expr_evaluator.cpp
@@ -79,7 +68,11 @@ set( MANTIS_SOURCES
         src/core/middlewares.cpp
 
         src/core/models/entity_schema.cpp
+        src/core/models/entity_schema_base_fields.cpp
+        src/core/models/entity_schema_crud.cpp
         src/core/models/entity_schema_field.cpp
+
+        src/core/exceptions.cpp
 )
 
 if(MANTIS_SCRIPTING_ENABLED)

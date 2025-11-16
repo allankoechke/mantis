@@ -7,6 +7,8 @@
 #include <private/soci-mktime.h>
 #include <soci/sqlite3/soci-sqlite3.h>
 
+#include "mantis/core/models/entity_schema.h"
+
 #if MANTIS_HAS_POSTGRESQL
 #include <soci/postgresql/soci-postgresql.h>
 #endif
@@ -124,34 +126,25 @@ namespace mantis {
     }
 
     bool DatabaseMgr::migrate() const {
-        // Create system tables as follows:
-        // __tables for managing user tables & schema
-        // __admins for managing system admin users
-        // __settings for managing settings in a key - value fashion
+        logger::trace("Database migration ...");
 
         try {
             const auto sql = session();
             soci::transaction tr{*sql};
-
             // Create admin table, for managing and auth for admin accounts
-            // AdminTable admin;
-            // admin.name = "__admins";
-            // *sql << admin.to_sql();
+            EntitySchema admin_schema("_admins", "auth");
+            *sql << admin_schema.toDDL();
 
             // Create and manage other db tables, keeping track of access rules, schema, etc.!
-            // SystemTable tables;
-            // tables.name = "__tables";
-            // tables.fields.emplace_back("name", FieldType::STRING, true, false, true);
-            // tables.fields.emplace_back("type", FieldType::STRING, true, false, true);
-            // tables.fields.emplace_back("schema", FieldType::STRING, true, false, true);
-            // tables.fields.emplace_back("has_api", FieldType::UINT8, true, false, true);
-            // *sql << tables.to_sql();
+            EntitySchema tables_schema("_tables", "base");
+            tables_schema.addField(EntitySchemaField({{"name", "name"}, {"type", "string"}, {"required", true}, {"system", true}}));
+            tables_schema.addField(EntitySchemaField({{"name", "schema"}, {"type", "json"}, {"required", true}, {"system", true}}));
+            *sql << tables_schema.toDDL();
 
             // A Key - Value settings store, where the key is hashed as the table id
-            // SystemTable _sys;
-            // _sys.name = "__settings";
-            // _sys.fields.emplace_back("value", FieldType::JSON, true, false, true);
-            // *sql << _sys.to_sql();
+            EntitySchema store_schema("_store", "base");
+            tables_schema.addField(EntitySchemaField({{"name", "value"}, {"type", "json"}, {"required", true}, {"system", true}}));
+            *sql << tables_schema.toDDL();
 
             // Commit changes
             tr.commit();

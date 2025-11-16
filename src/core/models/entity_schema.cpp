@@ -4,8 +4,13 @@
 
 #include "../../../include/mantis/core/models/entity_schema.h"
 
+#include "mantis/core/exceptions.h"
+
 namespace mantis {
-    EntitySchema::EntitySchema() = default;
+    EntitySchema::EntitySchema(const std::string &entity_name, const std::string &entity_type) {
+        setName(entity_name).setType(entity_type);
+    }
+
     EntitySchema::EntitySchema(const EntitySchema &other) = default;
 
     EntitySchema &EntitySchema::operator=(const EntitySchema &other) {
@@ -77,18 +82,31 @@ namespace mantis {
 
     std::string EntitySchema::id() const {
         if (m_name.empty()) throw std::invalid_argument("Expected table name is empty!");
-        return "mt_" + std::to_string(std::hash<std::string>{}(m_name));
+        return EntitySchema::genEntityId(m_name);
     }
 
     EntitySchemaField &EntitySchema::field(const std::string &field_name) {
-        if (field_name.empty()) throw std::invalid_argument("Empty field name");
+        if (field_name.empty()) throw std::invalid_argument("Empty field name.");
 
         const auto it = std::ranges::find_if(m_fields, [field_name](const auto &field) {
             return field_name == field.name();
         });
 
         if (it == m_fields.end())
-            throw std::out_of_range("Field not found: " + field_name);
+            throw std::out_of_range("Field not found for name `" + field_name + "`");
+
+        return *it;
+    }
+
+    EntitySchemaField &EntitySchema::fieldById(const std::string &field_id) {
+        if (field_id.empty()) throw std::invalid_argument("Empty field id.");
+
+        const auto it = std::ranges::find_if(m_fields, [field_id](const auto &field) {
+            return field_id == field.id();
+        });
+
+        if (it == m_fields.end())
+            throw std::out_of_range("Field not found for id `" + field_id + "`");
 
         return *it;
     }
@@ -104,6 +122,81 @@ namespace mantis {
         return *this;
     }
 
+    void EntitySchema::updateWith(const nlohmann::json &new_data) {
+        if (new_data.empty()) return;
+
+        if (new_data.contains("deleted_fields")) {
+            for (const auto &field: new_data["deleted_fields"]) {
+                removeField(field.get<std::string>());
+            }
+        }
+
+        if (new_data.contains("name")) {
+            setName(new_data["name"].get<std::string>());
+        }
+
+        if (new_data.contains("type")) {
+            setType(new_data["type"].get<std::string>());
+        }
+
+        if (new_data.contains("system"))
+            setSystem(new_data.at("system").get<bool>());
+
+        if (new_data.contains("has_api"))
+            setHasApi(new_data.at("has_api").get<bool>());
+
+        if (new_data.contains("list_rule"))
+            setListRule(new_data.at("list_rule").get<std::string>());
+
+        if (new_data.contains("get_rule"))
+            setListRule(new_data.at("get_rule").get<std::string>());
+
+        if (new_data.contains("add_rule"))
+            setListRule(new_data.at("add_rule").get<std::string>());
+
+        if (new_data.contains("update_rule"))
+            setListRule(new_data.at("update_rule").get<std::string>());
+
+        if (new_data.contains("delete_rule"))
+            setListRule(new_data.at("delete_rule").get<std::string>());
+
+        // 'auth' and 'base' types have 'fields' key ...
+        if ((m_type == "base" || m_type == "auth") && new_data.contains("fields") && new_data["fields"].
+            is_array()) {
+            for (const auto &field: new_data["fields"]) {
+                const auto name = field.contains("name") && field["name"].is_string()
+                                      ? field["name"].get<std::string>()
+                                      : "";
+                const auto id = field.contains("id") && field["id"].is_string()
+                                    ? field["id"].get<std::string>()
+                                    : "";
+
+                if (name.empty() && id.empty())
+                    throw MantisException(
+                        400, "At least field `id` or `name` should be provided for each field entry.");
+
+                if (id.empty() && hasFieldById(id)) {
+                    // Update existing item by id
+                    auto &f = fieldById(id);
+                    f.updateWith(field);
+                } else if (!name.empty() && hasField(name)) {
+                    // try updating via name
+                    auto &f = EntitySchema::field(name);
+                    f.updateWith(field);
+                } else {
+                    // create new field
+                    m_fields.emplace_back(field);
+                }
+            }
+        }
+
+        // For 'view' types, check for 'view_query'
+        if (m_type == "view" && new_data.contains("view_query") && new_data["view_query"].is_string()
+            && !new_data.at("view_query").get<std::string>().empty()) {
+            setViewQuery(new_data.at("view_query").get<std::string>());
+        }
+    }
+
     std::string EntitySchema::name() const { return m_name; }
 
     EntitySchema &EntitySchema::setName(const std::string &name) {
@@ -116,6 +209,17 @@ namespace mantis {
     EntitySchema &EntitySchema::setType(const std::string &type) {
         if (type == "base" || type == "auth" || type == "view")
             throw std::invalid_argument("Type should either be `base`, `auth` or `view` only.");
+
+        if (type == "view") m_fields.clear(); // Clear all fields if we are turning it to a view type
+        else {
+            // Add base fields if they don't exist yet ...
+            addFieldsIfNotExist("base");
+
+            if (type == "auth") {
+                // Add auth specific system fields ...
+                addFieldsIfNotExist("auth");
+            }
+        }
 
         m_type = type;
         return *this;
@@ -173,11 +277,24 @@ namespace mantis {
     std::vector<EntitySchemaField> EntitySchema::fields() const { return m_fields; }
 
     EntitySchema &EntitySchema::addField(const EntitySchemaField &field) {
+        const auto _ = field.validate();
         m_fields.push_back(field);
         return *this;
     }
 
-    json EntitySchema::toJson() const {
+    bool EntitySchema::removeField(const std::string &field_name) {
+        // If the field does not exist yet, return false
+        if (!hasField(field_name)) return false;
+
+        std::erase_if(
+            m_fields,
+            [&](const EntitySchemaField &field) { return field.name() == field_name; }
+        );
+
+        return true;
+    }
+
+    nlohmann::json EntitySchema::toJson() const {
         json j;
         j["id"] = id();
         j["name"] = m_name;
@@ -200,7 +317,7 @@ namespace mantis {
         return j;
     }
 
-    json EntitySchema::toDDL() const {
+    std::string EntitySchema::toDDL() const {
         const auto sql = MantisBase::instance().db().session();
 
         std::ostringstream ddl;
@@ -216,7 +333,7 @@ namespace mantis {
             if (field.isPrimaryKey()) ddl << " PRIMARY KEY";
             if (field.required()) ddl << " NOT NULL";
             if (field.isUnique()) ddl << " UNIQUE";
-            if (field.constraints().contains("default_value") && field.constraints()["default_value"].is_null())
+            if (field.constraints().contains("default_value") && !field.constraints()["default_value"].is_null())
                 ddl << " DEFAULT " << toDefaultSqlValue(field.type(), field.constraints()["default_value"]);
         }
         ddl << ");";
@@ -224,18 +341,21 @@ namespace mantis {
         return ddl.str();
     }
 
-    bool EntitySchema::fieldExists(const std::string &type, const std::string &fieldName) const {
-        // Find if field exists ...
-        const auto contains = [&](const std::vector<std::string> &vec, const std::string &field_name) -> bool {
-            return std::ranges::find(vec, field_name) != vec.end();
-        };
-
+    bool EntitySchema::hasField(const std::string &field_name) const {
         if (m_type == "view") return false;
-        if (m_type == "base")
-            return contains(EntitySchemaField::defaultBaseFields, fieldName);
-        if (m_type == "auth")
-            return contains(EntitySchemaField::defaultBaseFields, fieldName);
-        return false;
+
+        return std::ranges::find_if(m_fields, [field_name](const EntitySchemaField &field) {
+            return field.name() == field_name;
+        }) != m_fields.end();
+    }
+
+    bool EntitySchema::hasFieldById(const std::string &field_id) const {
+        if (field_id.empty()) return false;
+        if (m_type == "view") return false;
+
+        return std::ranges::find_if(m_fields, [field_id](const EntitySchemaField &field) {
+            return field.id() == field_id;
+        }) != m_fields.end();
     }
 
     std::string EntitySchema::toDefaultSqlValue(const std::string &type, const nlohmann::json &v) {
@@ -252,7 +372,7 @@ namespace mantis {
             || type == "int16" || type == "uint16" || type == "int32"
             || type == "uint32" || type == "int64" || type == "uint64"
             || type == "date" || type == "json" || type == "blob"
-            || type == "date" || type == "file"|| type == "files") {
+            || type == "date" || type == "file" || type == "files") {
             return v.dump();
         }
 
@@ -261,6 +381,54 @@ namespace mantis {
         }
 
         throw std::runtime_error("Unsupported field type `" + type + "`");
+    }
+
+    std::string EntitySchema::genEntityId(const std::string &entity_name) {
+        return "mbt_" + std::to_string(std::hash<std::string>{}(entity_name));
+    }
+
+    std::optional<std::string> EntitySchema::validate(const EntitySchema &table_schema) {
+        if (trim(table_schema.name()).empty())
+            return "Entity schema name is empty!";
+
+        if (!(table_schema.type() == "base" || table_schema.type() == "view" || table_schema.type() == "auth")) {
+            return "Entity schema type is invalid!";
+        }
+
+        if (table_schema.type() == "view") {
+            if (trim(table_schema.viewQuery()).empty())
+                return "Entity schema view query is empty!";
+            // TODO check if query is a valid SQL view query
+        } else {
+            // First validate each field
+            for (const auto &field: table_schema.fields()) {
+                if (auto err = field.validate(); err.has_value())
+                    return err.value();
+            }
+
+            // Check that base fields are present
+            if (table_schema.type() == "base") {
+                for (const auto &field_name: EntitySchemaField::defaultBaseFields) {
+                    if (!table_schema.hasField(field_name))
+                        return "Entity schema does not have field: `" + field_name + "` required for `" + table_schema.
+                               type() + "` types.";
+                }
+            }
+
+            if (table_schema.type() == "auth") {
+                for (const auto &field_name: EntitySchemaField::defaultAuthFields) {
+                    if (!table_schema.hasField(field_name))
+                        return "Entity schema does not have field: `" + field_name + "` required for `" + table_schema.
+                               type() + "` types.";
+                }
+            }
+        }
+
+        return std::nullopt;
+    }
+
+    std::optional<std::string> EntitySchema::validate() const {
+        return validate(*this);
     }
 
     std::string EntitySchema::getFieldType(const std::string &type, std::shared_ptr<soci::session> sql) {

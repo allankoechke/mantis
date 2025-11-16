@@ -13,58 +13,75 @@
 
 namespace mantis {
     class EntitySchemaField {
-        std::string m_name;
-        std::string m_type;
-        bool m_required = false, m_primaryKey = false, m_isSystem = false, m_isUnique = false;
-        nlohmann::json m_constraints; // "min-value", "max_value", "validator", "default_value"
-
     public:
         static std::vector<std::string> defaultBaseFields;
         static std::vector<std::string> defaultAuthFields;
         static std::vector<std::string> defaultEntityFieldTypes;
 
         // Convenience constructor
-        EntitySchemaField(const std::string &field_name, const std::string &field_type);
+        EntitySchemaField(std::string field_name, std::string field_type);
 
-        EntitySchemaField(const nlohmann::json &field);
+        explicit EntitySchemaField(const nlohmann::json &field_schema);
 
-        std::string name() const;
+        void updateWith(const nlohmann::json &field_schema);
+
+        // ----------------- SCHEMA FIELD METHODS ---------------------- //
+        [[nodiscard]] std::string id() const;
+
+        EntitySchemaField &setId(const std::string &id);
+
+        [[nodiscard]] std::string name() const;
 
         EntitySchemaField &setName(const std::string &name);
 
-        std::string type() const;
+        [[nodiscard]] std::string type() const;
 
         EntitySchemaField &setType(const std::string &type);
 
-        bool required() const;
+        [[nodiscard]] bool required() const;
 
         EntitySchemaField &setRequired(bool required);
 
-        bool isPrimaryKey() const;
+        [[nodiscard]] bool isPrimaryKey() const;
 
         EntitySchemaField &setIsPrimaryKey(bool pk);
 
-        bool isSystem() const;
+        [[nodiscard]] bool isSystem() const;
 
         EntitySchemaField &setIsSystem(bool system);
 
-        bool isUnique() const;
+        [[nodiscard]] bool isUnique() const;
 
-        EntitySchemaField &setIsUnique(const bool unique);
+        EntitySchemaField &setIsUnique(bool unique);
 
-        nlohmann::json constraints() const;
+        [[nodiscard]] nlohmann::json constraints() const;
 
-        nlohmann::json constraints(const std::string& key) const;
+        [[nodiscard]] nlohmann::json constraints(const std::string& key) const;
 
         EntitySchemaField &setConstraints(const nlohmann::json &opts);
 
+        // ----------------- SCHEMA FIELD OPS ---------------------- //
         [[nodiscard]] nlohmann::json toJson() const;
 
         [[nodiscard]] soci::db_type toSociType() const;
 
         [[nodiscard]] static soci::db_type toSociType(const std::string &type);
 
+        [[nodiscard]] std::optional<std::string> validate() const;
+
         static bool isValidFieldType(const std::string &type);
+
+        static std::string genFieldId(const std::string& id);
+
+    private:
+        std::string m_id, m_name, m_type;
+        bool m_required = false, m_primaryKey = false, m_isSystem = false, m_isUnique = false;
+        nlohmann::json m_constraints = {
+            {"min-value", nullptr},
+            {"max_value", nullptr},
+            {"validator", nullptr},
+            {"default_value", nullptr}
+        };
     };
 } // mantis
 
