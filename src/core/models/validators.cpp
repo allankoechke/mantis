@@ -202,7 +202,7 @@ namespace mantis {
                                                     field["type"].get<std::string>(), field["name"].get<std::string>());
                 }
 
-                if (!isValidFieldType(trim(field["type"].get<std::string>()))) {
+                if (!EntitySchemaField::isValidFieldType(trim(field["type"].get<std::string>()))) {
                                         return std::format("Field type `{}` for `{}` is not recognized!",
                                                     field["type"].get<std::string>(), field["name"].get<std::string>());
                 }

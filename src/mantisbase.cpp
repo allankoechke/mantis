@@ -13,7 +13,7 @@
 #include "../include/mantis/core/private-impl/duktape_custom_types.h"
 #endif
 
-#define __file__ "app/app.cpp"
+// #define __file__ "app/app.cpp"
 
 namespace mantis
 {
@@ -364,8 +364,10 @@ namespace mantis
 
     void MantisBase::setDbType(const std::string& dbType)
     {
-        if (dbType == "sqlite3" || dbType == "postgresql")
+        if (dbType == "sqlite3" || dbType == "postgresql") {
             m_dbType = dbType;
+            return;
+        }
 
         throw std::invalid_argument("Expected database type of either `sqlite3` or `postgresql`");
     }

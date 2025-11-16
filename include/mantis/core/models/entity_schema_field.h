@@ -14,9 +14,9 @@
 namespace mantis {
     class EntitySchemaField {
     public:
-        static std::vector<std::string> defaultBaseFields;
-        static std::vector<std::string> defaultAuthFields;
-        static std::vector<std::string> defaultEntityFieldTypes;
+        static const std::vector<std::string>& defaultBaseFields();
+        static const std::vector<std::string>& defaultAuthFields();
+        static const std::vector<std::string>& defaultEntityFieldTypes();
 
         // Convenience constructor
         EntitySchemaField(std::string field_name, std::string field_type);

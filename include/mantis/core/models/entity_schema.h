@@ -121,16 +121,14 @@ namespace mantis {
         static std::string genEntityId(const std::string& entity_name);
 
         static std::optional<std::string> validate(const EntitySchema& table_schema);
-        std::optional<std::string> validate() const;
+        [[nodiscard]] std::optional<std::string> validate() const;
 
     private:
         static std::string getFieldType(const std::string &type, std::shared_ptr<soci::session> sql);
-        void addFieldsIfNotExist(const std::string& type) {
+        void addFieldsIfNotExist(const std::string& type);
 
-        }
-
-        static std::vector<EntitySchemaField> defaultBaseFieldsSchema;
-        static std::vector<EntitySchemaField> defaultAuthFieldsSchema;
+        static const std::vector<EntitySchemaField>& defaultBaseFieldsSchema();
+        static const std::vector<EntitySchemaField>& defaultAuthFieldsSchema();
 
         std::string m_name;
         std::string m_type;

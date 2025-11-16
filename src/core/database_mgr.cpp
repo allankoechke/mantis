@@ -13,7 +13,7 @@
 #include <soci/postgresql/soci-postgresql.h>
 #endif
 
-#define __file__ "core/tables/sys_tables.cpp"
+// #define __file__ "core/tables/sys_tables.cpp"
 
 namespace mantis {
     DatabaseMgr::DatabaseMgr() : m_connPool(nullptr) {

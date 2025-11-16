@@ -211,9 +211,8 @@ namespace mantis {
     }
 
     bool EntitySchemaField::isValidFieldType(const std::string &type) {
-        const auto it = std::ranges::find(defaultEntityFieldTypes, type);
-        logger::trace("Is Valid type? ", it != defaultEntityFieldTypes.end());
-        return it != defaultEntityFieldTypes.end();
+        const auto it = std::ranges::find(defaultEntityFieldTypes(), type);
+        return it != defaultEntityFieldTypes().end();
     }
 
     std::string EntitySchemaField::genFieldId(const std::string &id) {

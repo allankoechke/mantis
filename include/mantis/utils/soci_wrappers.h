@@ -7,6 +7,7 @@
 
 #include "utils.h"
 #include "../mantisbase.h"
+#include "mantis/core/models/entity_schema_field.h"
 #include "soci/values.h"
 
 namespace mantis {
@@ -89,19 +90,7 @@ namespace mantis {
         return vals;
     }
 
-    static bool isValidFieldType(const std::string& field_type) {
-        // Valid field types for our backend
-        std::vector<std::string> fieldTypes{
-            "xml", "string", "double", "date",
-            "int8", "uint8", "int16", "uint16", "int32", "uint32", "int64", "uint64",
-            "blob", "json", "bool", "file", "files"
-        };
-
-        const auto it = std::ranges::find(fieldTypes, field_type);
-        return it != fieldTypes.end();
-    }
-
-    static std::string getColumnType(const std::string& column_name, const std::vector<json>& fields)
+    inline std::string getColumnType(const std::string& column_name, const std::vector<json>& fields)
     {
         if (!column_name.empty()) throw std::invalid_argument("Column name can't be empty!");
 
@@ -114,7 +103,7 @@ namespace mantis {
         throw std::runtime_error("No field type found matching column `" + column_name + "'");
     }
 
-    static json sociRow2Json(const soci::row& row, const std::vector<json>& entity_fields)
+    inline json sociRow2Json(const soci::row& row, const std::vector<json>& entity_fields)
     {
         // Guard against empty reference schema fields
         if (entity_fields.empty())
@@ -128,7 +117,7 @@ namespace mantis {
             const auto colType = getColumnType(colName, entity_fields);
 
             // Check column type is valid type
-            if (colType.empty() || !isValidFieldType(colType)) // Or not in expected types
+            if (colType.empty() || !EntitySchemaField::isValidFieldType(colType)) // Or not in expected types
             {
                 // Throw an error for unknown types
                 throw std::runtime_error(std::format("Unknown column type `{}` for column `{}`", colType, colName));

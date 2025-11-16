@@ -408,7 +408,7 @@ namespace mantis {
 
             // Check that base fields are present
             if (table_schema.type() == "base") {
-                for (const auto &field_name: EntitySchemaField::defaultBaseFields) {
+                for (const auto &field_name: EntitySchemaField::defaultBaseFields()) {
                     if (!table_schema.hasField(field_name))
                         return "Entity schema does not have field: `" + field_name + "` required for `" + table_schema.
                                type() + "` types.";
@@ -416,7 +416,7 @@ namespace mantis {
             }
 
             if (table_schema.type() == "auth") {
-                for (const auto &field_name: EntitySchemaField::defaultAuthFields) {
+                for (const auto &field_name: EntitySchemaField::defaultAuthFields()) {
                     if (!table_schema.hasField(field_name))
                         return "Entity schema does not have field: `" + field_name + "` required for `" + table_schema.
                                type() + "` types.";
@@ -452,5 +452,23 @@ namespace mantis {
 
         // General catch for all other types
         return sql->get_backend()->create_column_type(EntitySchemaField::toSociType(type), 0, 0);
+    }
+
+    void EntitySchema::addFieldsIfNotExist(const std::string &type) {
+        if (type == "base") {
+            for (const auto& field: EntitySchema::defaultBaseFieldsSchema()) {
+                if (!hasField(field.name())) {
+                    addField(field);
+                }
+            }
+        } else if (type == "auth") {
+            for (const auto& field: EntitySchema::defaultAuthFieldsSchema()) {
+                if (!hasField(field.name())) {
+                    addField(field);
+                }
+            }
+        } else {
+            throw MantisException(500, "Operation not supported for `view` types.");
+        }
     }
 } // mantis

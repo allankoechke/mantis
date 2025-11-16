@@ -225,7 +225,7 @@ namespace mantis
      * @param c Character to check.
      * @return true if the character is invalid in a filename, false otherwise.
      */
-    static bool invalidChar(unsigned char c);
+    bool invalidChar(unsigned char c);
 
     /**
      * @brief Sanitize a string in-place by removing or replacing invalid characters.
@@ -235,7 +235,7 @@ namespace mantis
      *
      * @param s Reference to the string to sanitize.
      */
-    static void sanitizeInPlace(std::string& s);
+    void sanitizeInPlace(std::string& s);
 
     /**
      * @brief Sanitize a filename and ensure uniqueness.
