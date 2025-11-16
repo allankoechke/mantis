@@ -1,19 +1,12 @@
-//
-// Created by allan on 18/10/2025.
-//
-
-#ifndef MANTISAPP_TEST_FIXTURE_H
-#define MANTISAPP_TEST_FIXTURE_H
+#ifndef MANTISBASE_TEST_FIXTURE_H
+#define MANTISBASE_TEST_FIXTURE_H
 
 #include <thread>
 #include <chrono>
-#include <httplib.h>
 #include <iostream>
 #include <filesystem>
 
-#include "../include/mantis/app.h"
-#include "mantis/core/http_mgr.h"
-#include "mantis/utils/utils.h"
+#include "../include/mantis/mantis.h"
 
 namespace fs = std::filesystem;
 
@@ -57,13 +50,13 @@ public:
         return _instance;
     }
 
-    mantis::MantisBase& app() const
+    static mantis::MantisBase& app()
     {
         return mantis::MantisBase::instance();
     }
 
     // Wait until the server port responds
-    bool waitForServer(const int retries = 50, const int delayMs = 500) const
+    [[nodiscard]] bool waitForServer(const int retries = 50, const int delayMs = 500) const
     {
         httplib::Client cli("http://localhost", port);
         for (int i = 0; i < retries; ++i)
@@ -102,4 +95,4 @@ public:
     }
 };
 
-#endif //MANTISAPP_TEST_FIXTURE_H
+#endif //MANTISBASE_TEST_FIXTURE_H

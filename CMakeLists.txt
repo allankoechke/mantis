@@ -144,14 +144,6 @@ if(MANTIS_SCRIPTING_ENABLED)
     include(cmake/add-duktape.cmake)
 endif (MANTIS_SCRIPTING_ENABLED)
 
-# Link to libs
-target_link_libraries(mantisbase_lib
-    PUBLIC
-    httplib::httplib
-    spdlog::spdlog
-    cparse
-)
-
 # Include directories
 target_include_directories(mantisbase_lib
     PUBLIC
@@ -175,10 +167,18 @@ include(cmake/add-doxygen.cmake)
 include(cmake/add-semver.cmake)
 
 # Add Tests
-option(MANTIS_BUILD_TESTS "Build Mantis Tests" OFF)
+option(MANTIS_BUILD_TESTS "Build Mantis Tests" ON)
 include(cmake/add-tests.cmake)
 
 configure_file(
         include/mantis/config.hpp.in
         ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/config.hpp
+)
+
+# Link to libs
+target_link_libraries(mantisbase_lib
+        PUBLIC
+        httplib::httplib
+        spdlog::spdlog
+        cparse
 )
