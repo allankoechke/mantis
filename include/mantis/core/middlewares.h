@@ -7,18 +7,17 @@
 
 #include <functional>
 #include <string>
+#include "types.h"
 
 namespace mantis {
-    class MantisResponse;
-    class MantisRequest;
-
-    std::function<bool(MantisRequest&, MantisResponse&)> getAuthToken();
-    std::function<bool(MantisRequest&, MantisResponse&)> hasAccess();
-    std::function<bool(MantisRequest&, MantisResponse&)> requireExprEval(const std::string& expr);
-    std::function<bool(MantisRequest&, MantisResponse&)> requireGuestOnly();
-    std::function<bool(MantisRequest&, MantisResponse&)> requireAdminAuth();
-    std::function<bool(MantisRequest&, MantisResponse&)> requireAdminOrEntityAuth(const std::string& entity_name);
-    std::function<bool(MantisRequest&, MantisResponse&)> requireEntityAuth(const std::string& entity_name);
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> getAuthToken();
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> hasAccess();
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireExprEval(const std::string& expr);
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireGuestOnly();
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireAdminAuth();
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireAdminOrEntityAuth(const std::string& entity_name);
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireEntityAuth(const std::string& entity_name);
+    // Redirect middleware ?
 }
 
 #endif //MANTISBASE_MIDDLEWARES_H

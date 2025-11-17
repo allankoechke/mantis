@@ -12,6 +12,7 @@
 #include <mantis/core/route_registry.h>
 #include <mantis/core/context_store_mgr.h>
 #include "../utils/utils.h"
+#include "types.h"
 
 namespace mantis {
 #ifdef MANTIS_ENABLE_SCRIPTING

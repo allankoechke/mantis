@@ -74,6 +74,8 @@ set( MANTIS_SOURCES
 
         src/core/exceptions.cpp
         src/core/models/entity_routes_handlers.cpp
+        src/core/router_httplib_internals.cpp
+        include/mantis/core/types.h
 )
 
 if(MANTIS_SCRIPTING_ENABLED)

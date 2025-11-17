@@ -7,7 +7,7 @@
 #include "mantis/core/models/entity.h"
 
 namespace mantis {
-    std::function<bool(MantisRequest&, MantisResponse&)> getAuthToken()
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> getAuthToken()
     {
         return [](MantisRequest& req, MantisResponse& _) {
             // If we have an auth header, extract it into the ctx, else
@@ -28,11 +28,11 @@ namespace mantis {
 
             // Update the context
             req.set("auth", auth);
-            return REQUEST_PENDING;
+            return HandlerResponse::Unhandled;
         };
     }
 
-    std::function<bool(MantisRequest&, MantisResponse&)> hasAccess()
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> hasAccess()
     {
         return [](MantisRequest& req, MantisResponse& res) {
             // Get the auth var from the context, resort to empty object if it's not set.
@@ -52,7 +52,7 @@ namespace mantis {
                 response["error"] = "Unsupported method";
 
                 res.sendJson(400, response);
-                return REQUEST_HANDLED;
+                return HandlerResponse::Handled;
             }
 
             // Store rule, depending on the request type
@@ -201,31 +201,31 @@ namespace mantis {
     }
 
 
-    std::function<bool(MantisRequest&, MantisResponse&)> requireExprEval(const std::string& expr) {
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireExprEval(const std::string& expr) {
         return [expr](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };
     }
 
-    std::function<bool(MantisRequest &, MantisResponse &)> requireGuestOnly() {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireGuestOnly() {
         return [](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };
     }
 
-    std::function<bool(MantisRequest &, MantisResponse &)> requireAdminAuth() {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireAdminAuth() {
         return [](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };
     }
 
-    std::function<bool(MantisRequest &, MantisResponse &)> requireAdminOrEntityAuth(const std::string &entity_name) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireAdminOrEntityAuth(const std::string &entity_name) {
         return [entity_name](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };
     }
 
-    std::function<bool(MantisRequest &, MantisResponse &)> requireEntityAuth(const std::string &entity_name) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireEntityAuth(const std::string &entity_name) {
         return [entity_name](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };

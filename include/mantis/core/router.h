@@ -12,14 +12,11 @@
 #include <httplib.h>
 
 #include "route_registry.h"
-#include "../utils/utils.h"
 #include "models/entity.h"
+#include "../utils/utils.h"
+#include  "types.h"
 
 namespace mantis {
-    class MantisRequest;
-    class MantisResponse;
-    using json = nlohmann::json;
-
     /**
      * @brief Router class allows for managing routes as well as acting as a top-wrapper on the HttpUnit.
      */
@@ -40,16 +37,16 @@ namespace mantis {
         /// Calls @see HttpUnit::close()
         void close();
 
-        httplib::Server& server();
+        httplib::Server &server();
 
         // ----------- HTTP METHODS ----------- //
-        void Get(const std::string &path, HandlerFn handler, Middlewares middlewares = {});
+        void Get(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares = {});
 
-        void Post(const std::string &path, HandlerFn handler, Middlewares middlewares = {});
+        void Post(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares = {});
 
-        void Patch(const std::string &path, HandlerFn handler, Middlewares middlewares = {});
+        void Patch(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares = {});
 
-        void Delete(const std::string &path, HandlerFn handler, Middlewares middlewares = {});
+        void Delete(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares = {});
 
         // Manage routes
         [[nodiscard]]
@@ -83,12 +80,30 @@ namespace mantis {
 
         void removeSchemaCache(const std::string &table_name);
 
+        std::string decompressResponseBody(const std::string &body, const std::string &encoding);
+
     private:
         void globalRouteHandler(const std::string &method, const std::string &path);
 
-        void generateMiscEndpoints() const;
+        void generateMiscEndpoints();
 
-        static std::string getMimeType(const std::string &path);;
+        std::function<void(const MantisRequest &, MantisResponse &)> handleAdminDashboardRoute() const;
+
+        std::function<void(const MantisRequest &, MantisResponse &)> fileServingHandler() const;
+
+        std::function<void(const MantisRequest &, MantisResponse &)> healthCheckHandler() const;
+
+        static std::string getMimeType(const std::string &path);
+
+        std::function<HandlerResponse(const httplib::Request &, httplib::Response &)> preRoutingHandler();
+
+        std::function<void(const httplib::Request &, httplib::Response &)> postRoutingHandler();
+
+        std::function<void(const httplib::Request &, httplib::Response &)> optionsHandler();
+
+        std::function<void(const httplib::Request &, const httplib::Response &)> routingLogger();
+
+        std::function<void(const httplib::Request &, httplib::Response &)> routingErrorHandler();
 
         httplib::Server svr;
         RouteRegistry m_routeRegistry;

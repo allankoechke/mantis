@@ -17,38 +17,11 @@
 #include <nlohmann/json.hpp>
 
 #include "../utils/utils.h"
+#include  "types.h"
 #include "logs_mgr.h"
-
-#define REQUEST_HANDLED false
-#define REQUEST_PENDING true
 
 namespace mantis
 {
-    class MantisBase;
-    class MantisRequest;
-    class MantisResponse;
-
-    /// Shorten JSON namespace
-    using json = nlohmann::json;
-
-    ///> Middleware shorthand for the content reader
-    using MantisContentReader = httplib::ContentReader;
-    ///> Route Handler function shorthand
-    using HandlerFn = std::function<void(MantisRequest&, MantisResponse&)>;
-    ///> Route Handler function with content reader shorthand
-    using HandlerWithContentReaderFn = std::function<void(MantisRequest&, MantisResponse&,
-                                                                 const MantisContentReader&)>;
-    ///> Middleware shorthand for the function
-    using MiddlewareFn = std::function<bool(MantisRequest&, MantisResponse&)>;
-    ///> Middleware function arrays
-    using Middlewares = std::vector<MiddlewareFn>;
-    ///> Syntactic sugar for request method which is a std::string
-    using Method = std::string;
-    ///> Syntactic sugar for request path which is a std::string
-    using Path = std::string;
-    ///> Shorthand notation for the request's method, path pair.
-    using RouteKey = std::pair<Method, Path>;
-
     /**
      * Structure to allow for hashing of the `RouteKey` for use in std::unordered_map as a key.
      */

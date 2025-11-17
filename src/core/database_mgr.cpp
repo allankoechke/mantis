@@ -60,8 +60,7 @@ namespace mantis {
                     // Open SQLite in WAL mode, helps in enabling multiple readers, single writer
                     sql << "PRAGMA journal_mode=WAL";
                     sql << "PRAGMA wal_autocheckpoint=500"; // Checkpoint every 500 pages
-                }
-                else if (db_type == "postgresql") {
+                } else if (db_type == "postgresql") {
 #if MANTIS_HAS_POSTGRESQL
                     // Connection Options
                     ///> Basic: "dbname=mydb user=scott password=tiger"
@@ -83,13 +82,10 @@ namespace mantis {
                     logger::warn("Database Connection for `PostgreSQL` has not been implemented yet!");
                     return false;
 #endif
-                }
-
-                else if (db_type == "mysql") {
+                } else if (db_type == "mysql") {
                     logger::warn("Database Connection for `MySQL` not implemented yet!");
                     return false;
-                }
-                else {
+                } else {
                     logger::warn("Database Connection to `{}` Not Implemented Yet!", conn_str);
                     return false;
                 }
@@ -127,28 +123,30 @@ namespace mantis {
     }
 
     bool DatabaseMgr::migrate() const {
-        logger::trace("Database migration ...");
+        const auto sql = session();
+        soci::transaction tr{*sql};
 
         try {
-            const auto sql = session();
-            soci::transaction tr{*sql};
-
             // Create admin table, for managing and auth for admin accounts
             EntitySchema admin_schema{"_admins", "auth"};
+            admin_schema.removeField("name");
             *sql << admin_schema.toDDL();
-            std::cout << admin_schema.toJson().dump() << std::endl;
 
             // Create and manage other db tables, keeping track of access rules, schema, etc.!
             EntitySchema tables_schema{"_tables", "base"};
-            tables_schema.addField(EntitySchemaField({{"name", "name"}, {"type", "string"}, {"required", true}, {"system", true}}));
-            tables_schema.addField(EntitySchemaField({{"name", "schema"}, {"type", "json"}, {"required", true}, {"system", true}}));
+            tables_schema.addField(EntitySchemaField({
+                {"name", "name"}, {"type", "string"}, {"required", true}, {"system", true}
+            }));
+            tables_schema.addField(EntitySchemaField({
+                {"name", "schema"}, {"type", "json"}, {"required", true}, {"system", true}
+            }));
             *sql << tables_schema.toDDL();
-
-            std::cout << tables_schema.toJson().dump() << std::endl;
 
             // A Key - Value settings store, where the key is hashed as the table id
             EntitySchema store_schema{"_store", "base"};
-            store_schema.addField(EntitySchemaField({{"name", "value"}, {"type", "json"}, {"required", true}, {"system", true}}));
+            store_schema.addField(EntitySchemaField({
+                {"name", "value"}, {"type", "json"}, {"required", true}, {"system", true}
+            }));
             *sql << store_schema.toDDL();
 
             // Commit changes
@@ -159,9 +157,10 @@ namespace mantis {
 
             return true;
         } catch (std::exception &e) {
+            tr.rollback();
             logger::critical("Create System Tables Failed: {}", e.what());
+            return false;
         }
-        return false;
     }
 
     std::shared_ptr<soci::session> DatabaseMgr::session() const {
