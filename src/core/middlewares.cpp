@@ -2,9 +2,9 @@
 // Created by codeart on 12/11/2025.
 //
 
-#include "../include/mantis/core/middlewares.h"
-#include "../include/mantis/mantis.h"
-#include "../include/mantis/core/models/entity.h"
+#include "../include/mantisbase/core/middlewares.h"
+#include "../include/mantisbase/mantis.h"
+#include "../include/mantisbase/core/models/entity.h"
 
 namespace mantis {
     std::function<HandlerResponse(MantisRequest &, MantisResponse &)> getAuthToken() {
@@ -44,7 +44,7 @@ namespace mantis {
 
                 // If token validation worked, lets get data from database
                 const auto resp = JwtUnit::verifyJwtToken(token);
-                const auto verified = resp.at("verified").get<bool>();
+                // const auto verified = resp.at("verified").get<bool>();
 
                 const auto user_id = resp.at("id").get<std::string>();
                 const auto user_table = resp.at("table").get<std::string>();

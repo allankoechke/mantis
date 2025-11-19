@@ -7,8 +7,8 @@
 
 #include <string>
 
-#include "mantis/core/database_mgr.h"
-#include "mantis/core/models/entity.h"
+#include "mantisbase/core/database_mgr.h"
+#include "mantisbase/core/models/entity.h"
 #include "nlohmann/json.hpp"
 
 

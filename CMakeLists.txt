@@ -21,8 +21,8 @@ set(MANTIS_SHARED_DEPS FALSE)
 if(MANTIS_SHARED_DEPS)
     set(BUILD_SHARED_LIBS TRUE)
     set(MANTIS_LIB_TYPE SHARED
-            include/mantis/core/exceptions.cpp
-            include/mantis/core/exceptions.h)
+            include/mantisbase/core/exceptions.cpp
+            include/mantisbase/core/exceptions.h)
     message("-- Building Mantis dynamic libs")
 else()
     set(BUILD_SHARED_LIBS FALSE)
@@ -51,8 +51,8 @@ set( MANTIS_SOURCES
         src/utils/path_utils.cpp
         src/utils/date_utils.cpp
 
-        include/mantis/core/private-impl/soci_custom_types.hpp
-        include/mantis/config.hpp.in
+        include/mantisbase/core/private-impl/soci_custom_types.hpp
+        include/mantisbase/config.hpp.in
 
         # src/core/settings_mgr.cpp
         src/core/files_mgr.cpp
@@ -75,7 +75,7 @@ set( MANTIS_SOURCES
         src/core/exceptions.cpp
         src/core/models/entity_routes_handlers.cpp
         src/core/router_httplib_internals.cpp
-        include/mantis/core/types.h
+        include/mantisbase/core/types.h
 )
 
 if(MANTIS_SCRIPTING_ENABLED)
@@ -175,8 +175,8 @@ option(MANTIS_BUILD_TESTS "Build Mantis Tests" ON)
 include(cmake/add-tests.cmake)
 
 configure_file(
-        include/mantis/config.hpp.in
-        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantis/config.hpp
+        include/mantisbase/config.hpp.in
+        ${CMAKE_CURRENT_SOURCE_DIR}/include/mantisbase/config.hpp
 )
 
 # Link to libs

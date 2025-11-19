@@ -9,8 +9,8 @@
 #include <dukglue/dukglue.h>
 #endif
 
-#include <mantis/core/route_registry.h>
-#include <mantis/core/context_store_mgr.h>
+#include <mantisbase/core/route_registry.h>
+#include <mantisbase/core/context_store_mgr.h>
 #include "../utils/utils.h"
 #include "types.h"
 

@@ -6,7 +6,7 @@
 #include <iostream>
 #include <filesystem>
 
-#include "../include/mantis/mantis.h"
+#include "../include/mantisbase/mantis.h"
 
 namespace fs = std::filesystem;
 

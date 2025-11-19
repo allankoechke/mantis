@@ -1,6 +1,6 @@
-#include "../../include/mantis/core/context_store_mgr.h"
-#include "../../include/mantis/mantisbase.h"
-#include "../../include/mantis/core/logs_mgr.h"
+#include "../../include/mantisbase/core/context_store_mgr.h"
+#include "../../include/mantisbase/mantisbase.h"
+#include "../../include/mantisbase/core/logs_mgr.h"
 
 #ifdef MANTIS_ENABLE_SCRIPTING
     #include <dukglue/dukglue.h>

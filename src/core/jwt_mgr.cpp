@@ -1,5 +1,5 @@
-#include "../../../include/mantis/core/jwt_mgr.h"
-#include "../../include/mantis/mantisbase.h"
+#include "../../../include/mantisbase/core/jwt_mgr.h"
+#include "../../include/mantisbase/mantisbase.h"
 // #include "../../../include/mantis/core/settings_mgr.h"
 
 #include <cstring>

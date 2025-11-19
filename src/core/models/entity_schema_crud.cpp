@@ -2,12 +2,12 @@
 // Created by codeart on 12/11/2025.
 //
 
-#include "../../../include/mantis/core/models/entity_schema.h"
-#include "../../../include/mantis/utils/utils.h"
+#include "../../../include/mantisbase/core/models/entity_schema.h"
+#include "../../../include/mantisbase/utils/utils.h"
 
 #include <soci/soci.h>
 
-#include "mantis/core/exceptions.h"
+#include "mantisbase/core/exceptions.h"
 
 namespace mantis {
     nlohmann::json EntitySchema::listTables(const json &) {

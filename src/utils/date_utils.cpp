@@ -1,7 +1,7 @@
-#include "../../include/mantis/utils/utils.h"
+#include "../../include/mantisbase/utils/utils.h"
 #include <private/soci-mktime.h>
 
-#include "../../include/mantis/mantisbase.h"
+#include "../../include/mantisbase/mantisbase.h"
 
 namespace mantis
 {

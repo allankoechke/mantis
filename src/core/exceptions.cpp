@@ -2,7 +2,7 @@
 // Created by codeart on 15/11/2025.
 //
 
-#include "../../include/mantis/core/exceptions.h"
+#include "../../include/mantisbase/core/exceptions.h"
 
 namespace mantis {
     MantisException::MantisException(const int code, std::string message): m_code(code), m_msg(std::move(message)) {}

@@ -2,13 +2,13 @@
 // Created by codeart on 10/11/2025.
 //
 
-#include "../include/mantis/mantisbase.h"
-#include "../include/mantis/core/logs_mgr.h"
-#include "../include/mantis/mantis.h"
+#include "../include/mantisbase/mantisbase.h"
+#include "../include/mantisbase/core/logs_mgr.h"
+#include "../include/mantisbase/mantis.h"
 
 #include <argparse/argparse.hpp>
 
-#include "mantis/core/models/validators.h"
+#include "mantisbase/core/models/validators.h"
 
 namespace mantis {
     void MantisBase::parseArgs() {

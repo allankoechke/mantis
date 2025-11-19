@@ -2,8 +2,8 @@
 // Created by codeart on 12/11/2025.
 //
 
-#include "../../../include/mantis/core/models/entity_schema.h"
-#include "../../../include/mantis/core/models/entity_schema_field.h"
+#include "../../../include/mantisbase/core/models/entity_schema.h"
+#include "../../../include/mantisbase/core/models/entity_schema_field.h"
 
 namespace mantis {
     const std::vector<EntitySchemaField> &EntitySchema::defaultBaseFieldsSchema() {

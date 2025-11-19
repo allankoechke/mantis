@@ -1,8 +1,8 @@
-#include "../../include/mantis/core/route_registry.h"
-#include "../../include/mantis/core/logs_mgr.h"
-#include "../../include/mantis/mantisbase.h"
-#include "../../include/mantis/core/http.h"
-#include "../../include/mantis/core/http.h"
+#include "../../include/mantisbase/core/route_registry.h"
+#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/mantisbase.h"
+#include "../../include/mantisbase/core/http.h"
+#include "../../include/mantisbase/core/http.h"
 
 
 #define __file__ "core/http.cpp"

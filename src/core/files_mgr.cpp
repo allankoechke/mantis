@@ -3,9 +3,9 @@
  * @brief Implementation for @see files_mgr.h
  */
 
-#include "../../include/mantis/core/files_mgr.h"
-#include "../../include/mantis/core/logs_mgr.h"
-#include "../../include/mantis/mantisbase.h"
+#include "../../include/mantisbase/core/files_mgr.h"
+#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/mantisbase.h"
 
 #include <fstream>
 #include <filesystem>

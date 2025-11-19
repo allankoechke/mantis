@@ -9,7 +9,7 @@
 #include <memory>
 #include <soci/soci.h>
 #include <nlohmann/json.hpp>
-#include <mantis/core/private-impl/soci_custom_types.hpp>
+#include <mantisbase/core/private-impl/soci_custom_types.hpp>
 
 #ifdef MANTIS_SCRIPTING_ENABLED
 #include <dukglue/dukglue.h>

@@ -5,7 +5,7 @@
  * Created by allan on 08/05/2025.
  */
 
-#include "../include/mantis/mantis.h"
+#include "../include/mantisbase/mantis.h"
 
 /**
  * @brief MantisApp standalone entrypoint

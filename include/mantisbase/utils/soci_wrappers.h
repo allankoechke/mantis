@@ -7,7 +7,7 @@
 
 #include "utils.h"
 #include "../mantisbase.h"
-#include "mantis/core/models/entity_schema_field.h"
+#include "mantisbase/core/models/entity_schema_field.h"
 #include "soci/values.h"
 
 namespace mantis {

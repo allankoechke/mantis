@@ -1,13 +1,13 @@
-#include "../../include/mantis/core/database_mgr.h"
-#include "../../include/mantis/mantisbase.h"
-#include "../../include/mantis/core/logs_mgr.h"
-#include "../../include/mantis/core/settings_mgr.h"
-#include "../../include/mantis/utils/utils.h"
+#include "../../include/mantisbase/core/database_mgr.h"
+#include "../../include/mantisbase/mantisbase.h"
+#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/core/settings_mgr.h"
+#include "../../include/mantisbase/utils/utils.h"
 
 #include <private/soci-mktime.h>
 #include <soci/sqlite3/soci-sqlite3.h>
 
-#include "mantis/core/models/entity_schema.h"
+#include "mantisbase/core/models/entity_schema.h"
 
 #if MANTIS_HAS_POSTGRESQL
 #include <soci/postgresql/soci-postgresql.h>

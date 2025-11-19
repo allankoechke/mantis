@@ -6,9 +6,9 @@
 #define MANTISAPP_ENTITY_H
 
 #include <string>
-#include "mantis/mantis.h"
-#include "mantis/core/exceptions.h"
-#include "mantis/utils/soci_wrappers.h"
+#include "mantisbase/mantis.h"
+#include "mantisbase/core/exceptions.h"
+#include "mantisbase/utils/soci_wrappers.h"
 
 namespace mantis {
     using Record = nlohmann::json;

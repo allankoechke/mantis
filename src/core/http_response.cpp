@@ -1,5 +1,5 @@
-#include "../../include/mantis/core/http.h"
-#include "../../../include/mantis/mantisbase.h"
+#include "../../include/mantisbase/core/http.h"
+#include "../../../include/mantisbase/mantisbase.h"
 
 #define __file__ "duktape_response_wrapper.cpp"
 

@@ -5,7 +5,7 @@
 #ifndef SETTINGS_H
 #define SETTINGS_H
 
-#include <mantis/core/route_registry.h>
+#include <mantisbase/core/route_registry.h>
 #include <nlohmann/json.hpp>
 #include "../utils/utils.h"
 #include "http.h"

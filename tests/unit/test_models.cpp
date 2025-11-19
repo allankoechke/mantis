@@ -2,10 +2,10 @@
 // Created by allan on 18/06/2025.
 //
 #include <gtest/gtest.h>
-#include "mantis/core/models/entity.h"
-#include "mantis/core/models/entity_schema.h"
-#include "mantis/core/models/entity_schema_field.h"
-#include <mantis/mantis.h>
+#include "mantisbase/core/models/entity.h"
+#include "mantisbase/core/models/entity_schema.h"
+#include "mantisbase/core/models/entity_schema_field.h"
+#include <mantisbase/mantis.h>
 
 TEST(EntitySchema, EntitySchemaBaseType) {
     // Base field type

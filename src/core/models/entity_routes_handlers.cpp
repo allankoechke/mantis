@@ -2,7 +2,7 @@
 // Created by codeart on 16/11/2025.
 //
 
-#include "../../include/mantis/core/models/entity.h"
+#include "../../include/mantisbase/core/models/entity.h"
 #include "spdlog/fmt/bundled/std.h"
 
 namespace mantis {

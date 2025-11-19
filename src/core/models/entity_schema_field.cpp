@@ -2,8 +2,8 @@
 // Created by codeart on 13/11/2025.
 //
 
-#include "../../../include/mantis/core/models/entity_schema_field.h"
-#include "../../../include/mantis/utils/utils.h"
+#include "../../../include/mantisbase/core/models/entity_schema_field.h"
+#include "../../../include/mantisbase/utils/utils.h"
 
 namespace mantis {
     EntitySchemaField::EntitySchemaField(std::string field_name, std::string field_type)

@@ -1,10 +1,10 @@
-#include "../../include/mantis/core/router.h"
-#include "../../include/mantis/utils/utils.h"
-#include "../../include/mantis/mantisbase.h"
-#include "../../include/mantis/core/database_mgr.h"
-#include "../../include/mantis/core/files_mgr.h"
-#include "../../include/mantis/core/http.h"
-#include "../../include/mantis/core/settings_mgr.h"
+#include "../../include/mantisbase/core/router.h"
+#include "../../include/mantisbase/utils/utils.h"
+#include "../../include/mantisbase/mantisbase.h"
+#include "../../include/mantisbase/core/database_mgr.h"
+#include "../../include/mantisbase/core/files_mgr.h"
+#include "../../include/mantisbase/core/http.h"
+#include "../../include/mantisbase/core/settings_mgr.h"
 
 #include <cmrc/cmrc.hpp>
 #include <chrono>
@@ -14,8 +14,8 @@
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include <spdlog/sinks/ansicolor_sink.h>
 
-#include "mantis/core/exceptions.h"
-#include "mantis/core/middlewares.h"
+#include "mantisbase/core/exceptions.h"
+#include "mantisbase/core/middlewares.h"
 
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);

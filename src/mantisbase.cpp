@@ -1,9 +1,9 @@
-#include "../include/mantis/mantis.h"
-#include "../include/mantis/config.hpp"
+#include "../include/mantisbase/mantis.h"
+#include "../include/mantisbase/config.hpp"
 // #include "../include/mantis/core/settings_mgr.h"
-#include "../include/mantis/core/files_mgr.h"
-#include "../include/mantis/core/route_registry.h"
-#include "../include/mantis/core/models/entity.h"
+#include "../include/mantisbase/core/files_mgr.h"
+#include "../include/mantisbase/core/route_registry.h"
+#include "../include/mantisbase/core/models/entity.h"
 
 #include <builtin_features.h>
 #include <cmrc/cmrc.hpp>

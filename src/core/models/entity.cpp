@@ -2,9 +2,9 @@
 // Created by codeart on 09/11/2025.
 //
 
-#include "../../../include/mantis/core/models/entity.h"
-#include "../../../include/mantis/utils/uuidv7.h"
-#include "mantis/utils/soci_wrappers.h"
+#include "../../../include/mantisbase/core/models/entity.h"
+#include "../../../include/mantisbase/utils/uuidv7.h"
+#include "mantisbase/utils/soci_wrappers.h"
 
 namespace mantis {
     Entity::Entity(const nlohmann::json &schema) {

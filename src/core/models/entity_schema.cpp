@@ -2,9 +2,9 @@
 // Created by codeart on 12/11/2025.
 //
 
-#include "../../../include/mantis/core/models/entity_schema.h"
+#include "../../../include/mantisbase/core/models/entity_schema.h"
 
-#include "mantis/core/exceptions.h"
+#include "mantisbase/core/exceptions.h"
 
 namespace mantis {
     EntitySchema::EntitySchema(const std::string &entity_name, const std::string &entity_type) {
