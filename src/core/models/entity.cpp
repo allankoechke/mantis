@@ -14,15 +14,24 @@ namespace mantis {
         m_schema = schema;
 
         // Ensure we have defaults for any missing fields so that T& does not fail
-        if (!m_schema.contains("id")) m_schema["id"] = EntitySchema::genEntityId(m_schema.at("name").get<std::string>());
-        if (!m_schema.contains("system")) m_schema["system"] = false;
-        if (!m_schema.contains("has_api")) m_schema["has_api"] = true;
-        if (!m_schema.contains("fields")) m_schema["fields"] = json::array();
-        if (!m_schema.contains("list_rule")) m_schema["list_rule"] = "";
-        if (!m_schema.contains("get_rule")) m_schema["get_rule"] = "";
-        if (!m_schema.contains("add_rule")) m_schema["add_rule"] = "";
-        if (!m_schema.contains("update_rule")) m_schema["update_rule"] = "";
-        if (!m_schema.contains("delete_rule")) m_schema["delete_rule"] = "";
+        if (!m_schema.contains("id"))
+            m_schema["id"] = EntitySchema::genEntityId(m_schema.at("name").get<std::string>());
+        if (!m_schema.contains("system"))
+            m_schema["system"] = false;
+        if (!m_schema.contains("has_api"))
+            m_schema["has_api"] = true;
+        if (!m_schema.contains("fields"))
+            m_schema["fields"] = json::array();
+        if (!m_schema.contains("list_rule"))
+            m_schema["list_rule"] = "";
+        if (!m_schema.contains("get_rule"))
+            m_schema["get_rule"] = "";
+        if (!m_schema.contains("add_rule"))
+            m_schema["add_rule"] = "";
+        if (!m_schema.contains("update_rule"))
+            m_schema["update_rule"] = "";
+        if (!m_schema.contains("delete_rule"))
+            m_schema["delete_rule"] = "";
 
         logger::trace("Creating Entity\n: {}", m_schema.dump());
     }
@@ -32,9 +41,6 @@ namespace mantis {
     }
 
     std::string Entity::name() const {
-
-        std::cout << "Dump Entity Name? " << std::endl;
-        std::cout << "Dump Entity Name? " << m_schema["name"].dump() << std::endl;
         return m_schema.at("name").get<std::string>();
     }
 

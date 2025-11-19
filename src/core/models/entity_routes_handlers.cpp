@@ -7,20 +7,39 @@
 
 namespace mantis {
     HandlerFn Entity::getOneRouteHandler() const {
-        HandlerFn handler = [this](const MantisRequest &req, const MantisResponse &res) {
+        // Capture entity name, currently we get an error if we capture `this` directly.
+        const std::string entity_name = name();
+
+        HandlerFn handler = [entity_name](const MantisRequest &req, const MantisResponse &res) {
             try {
+                // Get entity object for given name
+                const auto entity = MantisBase::instance().entity(entity_name);
+
+                // Extract path `id` value [REQUIRED]
                 const auto entity_id = trim(req.getPathParamValue("id"));
                 if (entity_id.empty())
                     throw MantisException(400, "Entity `id` is required!");
 
-                const auto record = read(entity_id);
-                res.sendJson(200,
-                             {
-                                 {"data", record},
-                                 {"error", ""},
-                                 {"status", 200}
-                             }
-                );
+                // Read for entity matching given `id` if it exists, return it, else error `404`
+                if (const auto record = entity.read(entity_id); record.has_value()) {
+                    res.sendJson(200,
+                                 {
+                                     {"data", record},
+                                     {"error", ""},
+                                     {"status", 200}
+                                 }
+                    );
+                }
+                else
+                {
+                    res.sendJson(404,
+                                 {
+                                     {"data", json::object()},
+                                     {"error", "Resource not found!"},
+                                     {"status", 404}
+                                 }
+                    );
+                }
             } catch (const std::exception &e) {
                 res.sendJson(500, {
                                  {"data", json::object()},
@@ -35,16 +54,23 @@ namespace mantis {
     }
 
     HandlerFn Entity::getManyRouteHandler() const {
-        HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+        // Capture entity name, currently we get an error if we capture `this` directly.
+        const std::string entity_name = name();
+
+        HandlerFn handler = [entity_name](MantisRequest &req, MantisResponse &res) {
             try {
+                // Get entity object for given `name`
+                const auto entity = MantisBase::instance().entity(entity_name);
+
                 // nlohmann::json opts;
                 // opts["pagination"] = {
                 //     {"page_index", 1},
                 //     {"per_page", 100},
                 //     {"skip_total_count", false}
                 // };
+                std::cout << "List for `" << entity.name() << "`: \n";
 
-                const auto records = list();
+                const auto records = entity.list();
                 res.sendJson(200, {
                                  {"data", records},
                                  {"error", ""},
@@ -65,14 +91,26 @@ namespace mantis {
     }
 
     HandlerFn Entity::postRouteHandler() const {
-        HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+        // Capture entity name, currently we get an error if we capture `this` directly.
+        const std::string entity_name = name();
+
+        HandlerFn handler = [entity_name](MantisRequest &req, MantisResponse &res) {
+            // Get entity object for given name
+            const auto entity = MantisBase::instance().entity(entity_name);
+
         };
 
         return handler;
     }
 
     HandlerFn Entity::patchRouteHandler() const {
-        HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+        // Capture entity name, currently we get an error if we capture `this` directly.
+        const std::string entity_name = name();
+
+        HandlerFn handler = [entity_name](MantisRequest &req, MantisResponse &res) {
+            // Get entity object for given name
+            const auto entity = MantisBase::instance().entity(entity_name);
+
             const auto entity_id = trim(req.getPathParamValue("id"));
 
             if (entity_id.empty())
@@ -87,7 +125,7 @@ namespace mantis {
                              });
             }
 
-            if (const auto &val_err = Validators::validateRequestBody(*this, body);
+            if (const auto &val_err = Validators::validateRequestBody(entity, body);
                 val_err.has_value()) {
                 res.sendJson(400, {
                                  {"data", json::object()},
@@ -97,7 +135,7 @@ namespace mantis {
                 return;
             }
 
-            const auto record = update(entity_id, body);
+            const auto record = entity.update(entity_id, body);
             res.sendJson(200, record);
             return;
         };
@@ -106,21 +144,32 @@ namespace mantis {
     }
 
     HandlerFn Entity::deleteRouteHandler() const {
-        HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+        // Capture entity name, currently we get an error if we capture `this` directly.
+        const std::string entity_name = name();
+
+        HandlerFn handler = [entity_name](MantisRequest &req, MantisResponse &res) {
+            // Get entity object for given name
+            const auto entity = MantisBase::instance().entity(entity_name);
+
             const auto entity_id = trim(req.getPathParamValue("id"));
             if (entity_id.empty())
                 throw MantisException(400, "Entity `id` is required!");
 
-            remove(entity_id);
+            entity.remove(entity_id);
             res.sendEmpty();
-            return;
         };
 
         return handler;
     }
 
     HandlerFn Entity::authRouteHandler() const {
-        HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+        // Capture entity name, currently we get an error if we capture `this` directly.
+        const std::string entity_name = name();
+
+        HandlerFn handler = [entity_name](MantisRequest &req, MantisResponse &res) {
+            // Get entity object for given name
+            const auto entity = MantisBase::instance().entity(entity_name);
+
             const auto &[body, err] = req.getBodyAsJson();
             if (!err.empty()) {
                 res.sendJson(400, {
@@ -144,7 +193,10 @@ namespace mantis {
     }
 
     void Entity::createEntityRoutes() const {
+        // logger::trace("Entity::createEntityRoutes() for Entity `{}`", name());
+
         auto &router = MantisBase::instance().router();
+
         // All types do /get /get/:id
         router.Get("/api/v1/" + name(), getManyRouteHandler());
         router.Get("/api/v1/" + name() + "/:id", getOneRouteHandler());

@@ -403,7 +403,7 @@ namespace mantis {
 
             logger::trace("Req: [{}] {}", method, path);
 
-            const auto route = m_routeRegistry.find(req.method, req.path);
+            const auto route = m_routeRegistry.find(method, path);
             if (!route) {
                 json response;
                 response["status"] = 404;
@@ -414,20 +414,28 @@ namespace mantis {
                 return;
             }
 
+            logger::trace("Route Found, executing global middlewares ...");
+
             // First, execute global middlewares
             for (const auto &g_mw: m_globalMiddlewares) {
                 if (g_mw(ma_req, ma_res) == HandlerResponse::Handled) return;
             }
+
+            logger::trace("Executing route specific middlewares ...");
 
             // Secondly, execute route specific middlewares
             for (const auto &mw: route->middlewares) {
                 if (mw(ma_req, ma_res) == HandlerResponse::Handled) return;
             }
 
+            logger::trace("Calling route handler finally ...");
+
             // Finally, execute the handler function
             if (const auto func = std::get_if<HandlerFn>(&route->handler)) {
                 (*func)(ma_req, ma_res);
             }
+
+            logger::trace("Route execution completed ...");
         };
 
         if (method == "GET") {
