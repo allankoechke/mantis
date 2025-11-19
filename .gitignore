@@ -44,3 +44,21 @@ cmake-build-*/
 qrc/
 docker/data/
 docker/www/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+*.swo
+*.user
+*.sln
+*.vcxproj*
+*.opensdf
+*.sdf
+
+# Backup files
+*~
+*.bak
+*.tmp
+*.orig
+*.rej
