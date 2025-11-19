@@ -87,13 +87,13 @@ namespace mantis {
 
         void generateMiscEndpoints();
 
+        static std::string getMimeType(const std::string &path);
+
         std::function<void(const MantisRequest &, MantisResponse &)> handleAdminDashboardRoute() const;
 
-        std::function<void(const MantisRequest &, MantisResponse &)> fileServingHandler() const;
+        static std::function<void(const MantisRequest &, MantisResponse &)> fileServingHandler() ;
 
-        std::function<void(const MantisRequest &, MantisResponse &)> healthCheckHandler() const;
-
-        static std::string getMimeType(const std::string &path);
+        static std::function<void(const MantisRequest &, MantisResponse &)> healthCheckHandler() ;
 
         std::function<HandlerResponse(const httplib::Request &, httplib::Response &)> preRoutingHandler();
 

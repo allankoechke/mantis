@@ -7,7 +7,28 @@
 
 namespace mantis {
     HandlerFn Entity::getOneRouteHandler() const {
-        HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+        HandlerFn handler = [this](const MantisRequest &req, const MantisResponse &res) {
+            try {
+                const auto entity_id = trim(req.getPathParamValue("id"));
+                if (entity_id.empty())
+                    throw MantisException(400, "Entity `id` is required!");
+
+                const auto record = read(entity_id);
+                res.sendJson(200,
+                             {
+                                 {"data", record},
+                                 {"error", ""},
+                                 {"status", 200}
+                             }
+                );
+            } catch (const std::exception &e) {
+                res.sendJson(500, {
+                                 {"data", json::object()},
+                                 {"error", e.what()},
+                                 {"status", 500}
+                             }
+                );
+            }
         };
 
         return handler;
@@ -15,6 +36,29 @@ namespace mantis {
 
     HandlerFn Entity::getManyRouteHandler() const {
         HandlerFn handler = [this](MantisRequest &req, MantisResponse &res) {
+            try {
+                // nlohmann::json opts;
+                // opts["pagination"] = {
+                //     {"page_index", 1},
+                //     {"per_page", 100},
+                //     {"skip_total_count", false}
+                // };
+
+                const auto records = list();
+                res.sendJson(200, {
+                                 {"data", records},
+                                 {"error", ""},
+                                 {"status", 200}
+                             }
+                );
+            } catch (const std::exception &e) {
+                res.sendJson(500, {
+                                 {"data", json::object()},
+                                 {"error", e.what()},
+                                 {"status", 500}
+                             }
+                );
+            }
         };
 
         return handler;
@@ -100,14 +144,14 @@ namespace mantis {
     }
 
     void Entity::createEntityRoutes() const {
-        auto& router = MantisBase::instance().router();
+        auto &router = MantisBase::instance().router();
         // All types do /get /get/:id
         router.Get("/api/v1/" + name(), getManyRouteHandler());
         router.Get("/api/v1/" + name() + "/:id", getOneRouteHandler());
 
         // base & auth /post/:id /delete/:id
         if (type() == "base" || type() == "auth") {
-            router.Post("/api/v1/" + name(), postRouteHandler());   // Create Entity
+            router.Post("/api/v1/" + name(), postRouteHandler()); // Create Entity
             router.Patch("/api/v1/" + name() + "/:id", patchRouteHandler()); // Update Entity
             router.Delete("/api/v1/" + name() + "/:id", deleteRouteHandler()); // Delete Entity
         }

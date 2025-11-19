@@ -11,6 +11,7 @@
 
 namespace mantis {
     std::function<HandlerResponse(MantisRequest&, MantisResponse&)> getAuthToken();
+    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> hydrateContextData();
     std::function<HandlerResponse(MantisRequest&, MantisResponse&)> hasAccess();
     std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireExprEval(const std::string& expr);
     std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireGuestOnly();

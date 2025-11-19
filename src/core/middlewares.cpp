@@ -4,23 +4,22 @@
 
 #include "../include/mantis/core/middlewares.h"
 #include "../include/mantis/mantis.h"
-#include "mantis/core/models/entity.h"
+#include "../include/mantis/core/models/entity.h"
 
 namespace mantis {
-    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> getAuthToken()
-    {
-        return [](MantisRequest& req, MantisResponse& _) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> getAuthToken() {
+        return [](MantisRequest &req, MantisResponse &_) {
             // If we have an auth header, extract it into the ctx, else
             // add a guest user type. The auth if present, should have
             // the user id, auth table, etc.
             json auth;
             auth["type"] = "guest"; // or 'user' or 'admin'
-            auth["token"] = nullptr;
-            auth["id"] = nullptr;
-            auth["table"] = nullptr;
+            auth["token"] = nullptr; // User token from header ...
+            auth["id"] = nullptr; // Hold user `id` from auth user
+            auth["table"] = nullptr; // Hold user table if valid
+            auth["user"] = nullptr; // Hold hydrated user if valid
 
-            if (req.hasHeader("Authorization"))
-            {
+            if (req.hasHeader("Authorization")) {
                 const auto token = req.getBearerTokenAuth();
                 auth["token"] = trim(token);
                 auth["type"] = "user";
@@ -32,9 +31,39 @@ namespace mantis {
         };
     }
 
-    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> hasAccess()
-    {
-        return [](MantisRequest& req, MantisResponse& res) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> hydrateContextData() {
+        return [](MantisRequest &req, MantisResponse &res) {
+            // Get the auth var from the context, resort to empty object if it's not set.
+            auto auth = req.getOr<json>("auth", json::object());
+
+            logger::trace("Auth Obj: `{}`", auth.dump());
+
+            // Expand logged user if token is present and query user information if it exists
+            if (auth.contains("token") && !auth["token"].is_null() && !auth["token"].empty()) {
+                const auto token = auth.at("token").get<std::string>();
+
+                // If token validation worked, lets get data from database
+                const auto resp = JwtUnit::verifyJwtToken(token);
+                const auto verified = resp.at("verified").get<bool>();
+
+                const auto user_id = resp.at("id").get<std::string>();
+                const auto user_table = resp.at("table").get<std::string>();
+
+                try {
+                    const auto user_entity = MantisBase::instance().entity(user_table);
+                    if (auto user = user_entity.read(user_id); user.has_value()) {
+                        auth["user"] = user;
+                    }
+                } catch (...){} // Ignore errors for now
+            }
+
+            req.set("auth", auth); // Update the `auth` data
+            return HandlerResponse::Unhandled;
+        };
+    }
+
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> hasAccess() {
+        return [](MantisRequest &req, MantisResponse &res) {
             // Get the auth var from the context, resort to empty object if it's not set.
             auto auth = req.getOr<json>("auth", json::object());
 
@@ -42,10 +71,9 @@ namespace mantis {
 
             auto method = req.getMethod();
             if (!(method == "GET"
-                || method == "POST"
-                || method == "PATCH"
-                || method == "DELETE"))
-            {
+                  || method == "POST"
+                  || method == "PATCH"
+                  || method == "DELETE")) {
                 json response;
                 response["status"] = 400;
                 response["data"] = json::object();
@@ -79,13 +107,11 @@ namespace mantis {
             TokenMap vars;
 
             // Expand logged user if token is present and query user information if it exists
-            if (auth.contains("token") && !auth["token"].is_null() && !auth["token"].empty())
-            {
+            if (auth.contains("token") && !auth["token"].is_null() && !auth["token"].empty()) {
                 const auto token = auth.at("token").get<std::string>();
 
                 // If token validation worked, lets get data from database
-                if (const auto resp = JwtUnit::verifyJwtToken(token); resp.at("verified").get<bool>())
-                {
+                if (const auto resp = JwtUnit::verifyJwtToken(token); resp.at("verified").get<bool>()) {
                     logger::trace("Token Verified: `{}`", token);
                     const auto user_id = resp.at("id").get<std::string>();
                     const auto user_table = resp.at("table").get<std::string>();
@@ -102,12 +128,12 @@ namespace mantis {
                     *sql << query, soci::use(user_id), soci::into(user_row);
 
                     // Let's only populate TokenVars for now, no returning
-                    if (sql->got_data())
-                    {
+                    if (sql->got_data()) {
                         // Populate the auth object with additional data from the database
                         // remove `password` field if available
                         auto user = user_table == "__admins"
-                                        ? sociRow2Json(user_row, {}) // MantisBase::instance().router().adminTableFields)
+                                        ? sociRow2Json(user_row, {})
+                                        // MantisBase::instance().router().adminTableFields)
                                         : sociRow2Json(user_row, {}); // TODO ... get table ...
 
                         // Populate the `auth` object
@@ -116,8 +142,7 @@ namespace mantis {
                         auth["table"] = user_table;
 
                         // Populate auth obj with user details ...
-                        for (const auto& [key, value] : user.items())
-                        {
+                        for (const auto &[key, value]: user.items()) {
                             auth[key] = value;
                         }
 
@@ -140,27 +165,23 @@ namespace mantis {
             reqMap["localAddr"] = req.getLocalAddr();
             reqMap["localPort"] = req.getLocalPort();
 
-            try
-            {
+            try {
                 if (req.getMethod() == "POST" && !req.getBody().empty()) // TODO handle formdata
                 {
                     // Parse request body and add it to the request TokenMap
                     auto request = json::parse(req.getMethod());
                     reqMap["body"] = MantisBase::instance().evaluator().jsonToTokenMap(request);
                 }
-            }
-            catch (...)
-            {
+            } catch (...) {
             }
 
             // Add the request map to the vars
             vars["req"] = reqMap;
 
             // If the rule is empty, enforce admin authorization
-            if (rule.empty())
-            {
+            if (rule.empty()) {
                 // Check if user is logged in as Admin
-                if (auth.contains("table")  // Has `table` key
+                if (auth.contains("table") // Has `table` key
                     && !auth["table"].is_null() // `table` value is not null
                     && auth.at("table").get<std::string>() == "__admins"
                 ) // Check table value not null
@@ -201,7 +222,7 @@ namespace mantis {
     }
 
 
-    std::function<HandlerResponse(MantisRequest&, MantisResponse&)> requireExprEval(const std::string& expr) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireExprEval(const std::string &expr) {
         return [expr](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };
@@ -219,13 +240,15 @@ namespace mantis {
         };
     }
 
-    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireAdminOrEntityAuth(const std::string &entity_name) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireAdminOrEntityAuth(
+        const std::string &entity_name) {
         return [entity_name](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };
     }
 
-    std::function<HandlerResponse(MantisRequest &, MantisResponse &)> requireEntityAuth(const std::string &entity_name) {
+    std::function<HandlerResponse(MantisRequest &, MantisResponse &)>
+    requireEntityAuth(const std::string &entity_name) {
         return [entity_name](MantisRequest &req, MantisResponse &res) {
             return REQUEST_PENDING;
         };

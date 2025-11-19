@@ -14,6 +14,7 @@ namespace mantis {
         m_schema = schema;
 
         // Ensure we have defaults for any missing fields so that T& does not fail
+        if (!m_schema.contains("id")) m_schema["id"] = EntitySchema::genEntityId(m_schema.at("name").get<std::string>());
         if (!m_schema.contains("system")) m_schema["system"] = false;
         if (!m_schema.contains("has_api")) m_schema["has_api"] = true;
         if (!m_schema.contains("fields")) m_schema["fields"] = json::array();
@@ -22,18 +23,23 @@ namespace mantis {
         if (!m_schema.contains("add_rule")) m_schema["add_rule"] = "";
         if (!m_schema.contains("update_rule")) m_schema["update_rule"] = "";
         if (!m_schema.contains("delete_rule")) m_schema["delete_rule"] = "";
+
+        logger::trace("Creating Entity\n: {}", m_schema.dump());
     }
 
     std::string Entity::id() const {
-        return "mbt_" + std::to_string(std::hash<std::string>{}(m_schema.at("id").get<std::string>()));
+        return m_schema.at("id").get<std::string>();
     }
 
-    const std::string &Entity::name() const {
-        return m_schema.at("name").get_ref<const std::string &>();
+    std::string Entity::name() const {
+
+        std::cout << "Dump Entity Name? " << std::endl;
+        std::cout << "Dump Entity Name? " << m_schema["name"].dump() << std::endl;
+        return m_schema.at("name").get<std::string>();
     }
 
-    const std::string &Entity::type() const {
-        return m_schema.at("type").get_ref<const std::string &>();
+    std::string Entity::type() const {
+        return m_schema.at("type").get<std::string>();
     }
 
     bool Entity::isSystem() const {
@@ -48,24 +54,24 @@ namespace mantis {
         return m_schema.at("fields").get_ref<const std::vector<json> &>();
     }
 
-    const std::string &Entity::listRule() const {
-        return m_schema.at("list_rule").get_ref<const std::string &>();
+    std::string Entity::listRule() const {
+        return m_schema.at("list_rule").get<std::string>();
     }
 
-    const std::string &Entity::getRule() const {
-        return m_schema.at("get_rule").get_ref<const std::string &>();
+    std::string Entity::getRule() const {
+        return m_schema.at("get_rule").get<std::string>();
     }
 
-    const std::string &Entity::addRule() const {
-        return m_schema.at("add_rule").get_ref<const std::string &>();
+    std::string Entity::addRule() const {
+        return m_schema.at("add_rule").get<std::string>();
     }
 
-    const std::string &Entity::updateRule() const {
-        return m_schema.at("update_rule").get_ref<const std::string &>();
+    std::string Entity::updateRule() const {
+        return m_schema.at("update_rule").get<std::string>();
     }
 
-    const std::string &Entity::deleteRule() const {
-        return m_schema.at("delete_rule").get_ref<const std::string &>();
+    std::string Entity::deleteRule() const {
+        return m_schema.at("delete_rule").get<std::string>();
     }
 
     // --------------------------------------------------------------------------- //
@@ -143,7 +149,6 @@ namespace mantis {
 
     Records Entity::list(const json &opts) const {
         const auto sql = MantisBase::instance().db().session();
-        auto pagination = opts.value("pagination", json::object());
         // TODO ...
         // if (pagination.at("count_pages").get<bool>()) {
         //     int count = -1;
@@ -151,9 +156,18 @@ namespace mantis {
         //     *sql << "SELECT COUNT(id) FROM " + name(), soci::into(count);
         // }
 
-        // Extract the page number and page size
-        const auto page = pagination.at("page_index").get<int>();
-        const auto per_page = pagination.at("per_page").get<int>();
+        int page = 1;
+        int per_page = 100;
+
+        if (opts.contains("pagination") && opts["pagination"].is_object()) {
+            auto &pagination = opts["pagination"];
+
+            // Extract the page number and page size
+            if (pagination.contains("page_index") && pagination["page_index"].is_number())
+                page = pagination["page_index"].get<int>();
+            if (pagination.contains("per_page") && pagination["per_page"].is_number())
+                per_page = pagination["per_page"].get<int>();
+        }
 
         if (per_page <= 0) throw std::invalid_argument("Page size, `per_page` value must be greater than 0");
         if (page <= 0) throw std::invalid_argument("Page number, `page` value must be greater than 0");
@@ -161,7 +175,7 @@ namespace mantis {
         const auto offset = (page - 1) * per_page;
 
         const auto query = "SELECT * FROM " + name() + " ORDER BY created DESC LIMIT :limit OFFSET :offset";
-        const soci::rowset<soci::row> rs = (sql->prepare << query, soci::use(per_page), soci::use(offset));
+        const soci::rowset rs = (sql->prepare << query, soci::use(per_page), soci::use(offset));
         nlohmann::json record_list = nlohmann::json::array();
 
         for (const auto &row: rs) {
@@ -188,6 +202,11 @@ namespace mantis {
 
         // Parse returned record to JSON
         auto record = sociRow2Json(r, fields());
+
+        if (opts.contains("keep_passwords") &&
+            opts["keep_passwords"].is_boolean() &&
+            opts["keep_passwords"].get<bool>())
+            return record; // Skip redacting passwords
 
         // Remove user password from the response
         if (type() == "auth") record.erase("password");

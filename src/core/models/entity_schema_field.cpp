@@ -155,6 +155,7 @@ namespace mantis {
 
     nlohmann::json EntitySchemaField::toJson() const {
         return {
+            {"id", genFieldId(m_name)},
             {"name", m_name},
             {"type", m_type},
             {"required", m_required},

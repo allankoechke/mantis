@@ -15,6 +15,7 @@
 #include <spdlog/sinks/ansicolor_sink.h>
 
 #include "mantis/core/exceptions.h"
+#include "mantis/core/middlewares.h"
 
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);
@@ -34,6 +35,10 @@ namespace mantis {
 
         // Set Error Handler
         svr.set_error_handler(routingErrorHandler());
+
+        // Add global middlewares to work across all routes
+        m_globalMiddlewares.push_back(getAuthToken()); // Get auth token from the header
+        m_globalMiddlewares.push_back(hydrateContextData()); // Fill request context with necessary data
     }
 
     Router::~Router() {
@@ -69,7 +74,6 @@ namespace mantis {
         auto admin_entity = admin_schema.toEntity();
         admin_entity.createEntityRoutes();
         m_entityMap.emplace(admin_entity.name(), std::move(admin_entity));
-
 
         // Misc
         generateMiscEndpoints();
@@ -496,7 +500,7 @@ namespace mantis {
         };
     }
 
-    std::function<void(const MantisRequest &, MantisResponse &)> Router::fileServingHandler() const {
+    std::function<void(const MantisRequest &, MantisResponse &)> Router::fileServingHandler() {
         logger::trace("Registering /api/files/:entity/:file GET endpoint ...");
         return [](const MantisRequest &req, MantisResponse &res) {
             std::cout << "fileServingHandler()" << std::endl;
@@ -531,7 +535,7 @@ namespace mantis {
         };
     }
 
-    std::function<void(const MantisRequest &, MantisResponse &)> Router::healthCheckHandler() const {
+    std::function<void(const MantisRequest &, MantisResponse &)> Router::healthCheckHandler() {
         return [](const MantisRequest &, const MantisResponse &res) {
             // Compute system uptime and send to user
             const auto &start_time = MantisBase::instance().startTime();
@@ -539,7 +543,7 @@ namespace mantis {
                 std::chrono::steady_clock::now() - start_time).count();
 
             json response;
-            response["status"] = "ok";
+            response["status"] = "OK";
             response["uptime"] = uptime;
             res.sendJson(200, response);
         };
@@ -554,36 +558,4 @@ namespace mantis {
         if (path.ends_with(".svg")) return "image/svg+xml";
         return "application/octet-stream";
     }
-
-
-
-    // bool Router::generateAdminCrudApis() const {
-    //     TRACE_CLASS_METHOD()
-    //
-    //     try {
-    //         // Setup routes for the admin users fetch/create/update/delete
-    //         if (!m_adminTable->setupRoutes()) {
-    //             logger::critical("Failed to setup admin table routes");
-    //             return false;
-    //         }
-    //
-    //         // Setup routes to manage database tables fetch/create/update/delete
-    //         if (!m_tableRoutes->setupRoutes()) {
-    //             logger::critical("Failed to setup database table routes");
-    //             return false;
-    //         }
-    //
-    //         if (!MantisBase::instance().settings().setupRoutes()) {
-    //             logger::critical("Failed to setup settings routes");
-    //             return false;
-    //         }
-    //
-
-    //     } catch (const std::exception &e) {
-    //         logger::critical("Error creating admin routes: ", e.what());
-    //         return false;
-    //     }
-    //
-    //     return true;
-    // }
 }

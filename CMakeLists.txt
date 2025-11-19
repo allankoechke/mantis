@@ -140,7 +140,7 @@ include(cmake/add-bcrypt.cmake)
 include(cmake/add-cmrc.cmake)
 
 # Include address sanitizer for Linux debug/releaseWithDebug builds
-option(MANTIS_BUILD_WITH_ASAN "Enable ASAN build for UNIX" OFF)
+option(MANTIS_BUILD_WITH_ASAN "Enable ASAN build for UNIX" ON)
 include(cmake/add-asan.cmake)
 
 if(MANTIS_SCRIPTING_ENABLED)

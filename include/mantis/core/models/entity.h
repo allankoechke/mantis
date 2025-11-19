@@ -25,9 +25,9 @@ namespace mantis {
         // --------------- DB TABLE OPS ------------------ //
         [[nodiscard]] std::string id() const;
 
-        [[nodiscard]] const std::string &name() const;
+        [[nodiscard]] std::string name() const;
 
-        [[nodiscard]] const std::string &type() const;
+        [[nodiscard]] std::string type() const;
 
         [[nodiscard]] bool isSystem() const;
 
@@ -35,15 +35,15 @@ namespace mantis {
 
         [[nodiscard]] const std::vector<json> &fields() const;
 
-        [[nodiscard]] const std::string &listRule() const;
+        [[nodiscard]] std::string listRule() const;
 
-        [[nodiscard]] const std::string &getRule() const;
+        [[nodiscard]] std::string getRule() const;
 
-        [[nodiscard]] const std::string &addRule() const;
+        [[nodiscard]] std::string addRule() const;
 
-        [[nodiscard]] const std::string &updateRule() const;
+        [[nodiscard]] std::string updateRule() const;
 
-        [[nodiscard]] const std::string &deleteRule() const;
+        [[nodiscard]] std::string deleteRule() const;
 
         // --------------- DB CRUD OPS ------------------ //
         [[nodiscard]] Record create(const json &Record, const json &opts = json::object()) const;
@@ -68,22 +68,22 @@ namespace mantis {
                                                         const std::vector<std::string> &columns) const;
 
         // --------------- SCHEMA ROUTING ------------------ //
-        HandlerFn getOneRouteHandler() const;
+        [[nodiscard]] HandlerFn getOneRouteHandler() const;
 
-        HandlerFn getManyRouteHandler() const;
+        [[nodiscard]] HandlerFn getManyRouteHandler() const;
 
-        HandlerFn postRouteHandler() const;
+        [[nodiscard]] HandlerFn postRouteHandler() const;
 
-        HandlerFn patchRouteHandler() const;
+        [[nodiscard]] HandlerFn patchRouteHandler() const;
 
-        HandlerFn deleteRouteHandler() const;
+        [[nodiscard]] HandlerFn deleteRouteHandler() const;
 
-        HandlerFn authRouteHandler() const;
+        [[nodiscard]] HandlerFn authRouteHandler() const;
 
         void createEntityRoutes() const;
 
     private:
-        json m_schema;
+        nlohmann::json m_schema;
     };
 } // mantis
 
