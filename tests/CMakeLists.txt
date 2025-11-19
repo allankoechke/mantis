@@ -23,6 +23,7 @@ endif ()
 
 file(GLOB TEST_FILES
         main.cpp
+        unit/test_database.cpp
         unit/test_models.cpp
         # unit/*.cpp
         # integration/*.cpp

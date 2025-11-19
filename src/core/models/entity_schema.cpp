@@ -36,8 +36,9 @@ namespace mantis {
         if (!entity_schema.contains("name") || !entity_schema.contains("type"))
             throw std::invalid_argument("Missing required fields `name` and `type` in schema!");
 
-        const auto type = entity_schema.at("type").get<std::string>();
-        setName(entity_schema.at("name").get<std::string>()).setType(type);
+        const auto _name = entity_schema.at("name").get<std::string>();
+        const auto _type = entity_schema.at("type").get<std::string>();
+        setName(_name).setType(_type);
 
         if (entity_schema.contains("system") && entity_schema["system"].is_boolean())
             setSystem(entity_schema.at("system").get<bool>());
@@ -61,13 +62,16 @@ namespace mantis {
             setListRule(entity_schema.at("delete_rule").get<std::string>());
 
         // 'auth' and 'base' types have 'fields' key ...
-        if ((type == "base" || type == "auth") && entity_schema.contains("fields") && entity_schema["fields"].
+        if ((_type == "base" || _type == "auth") && entity_schema.contains("fields") && entity_schema["fields"].
             is_array()) {
-            m_fields.emplace_back(EntitySchemaField(entity_schema["fields"]));
+            // For each defined field, create the field schema and push to the fields array ...
+            for (const auto &field: entity_schema["fields"]) {
+                m_fields.emplace_back(EntitySchemaField(field));
+            }
         }
 
         // For 'view' types, check for 'view_query'
-        if (type == "view" && entity_schema.contains("view_query") && entity_schema["view_query"].is_string()
+        if (_type == "view" && entity_schema.contains("view_query") && entity_schema["view_query"].is_string()
             && !entity_schema.at("view_query").get<std::string>().empty()) {
             setViewQuery(entity_schema.at("view_query").get<std::string>());
         }
@@ -299,6 +303,7 @@ namespace mantis {
         j["id"] = id();
         j["name"] = m_name;
         j["type"] = m_type;
+        j["system"] = m_isSystem;
         j["has_api"] = m_hasApi;
         j["list_rule"] = m_listRule;
         j["get_rule"] = m_getRule;

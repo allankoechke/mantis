@@ -71,6 +71,7 @@ namespace mantis {
         // Add admin routes
         EntitySchema admin_schema{"_admins", "auth"};
         admin_schema.removeField("name");
+        admin_schema.setSystem(true);
         auto admin_entity = admin_schema.toEntity();
         admin_entity.createEntityRoutes();
         m_entityMap.emplace(admin_entity.name(), std::move(admin_entity));

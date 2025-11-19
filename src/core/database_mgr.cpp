@@ -130,10 +130,12 @@ namespace mantis {
             // Create admin table, for managing and auth for admin accounts
             EntitySchema admin_schema{"_admins", "auth"};
             admin_schema.removeField("name");
+            admin_schema.setSystem(true);
             *sql << admin_schema.toDDL();
 
             // Create and manage other db tables, keeping track of access rules, schema, etc.!
             EntitySchema tables_schema{"_tables", "base"};
+            tables_schema.setSystem(true);
             tables_schema.addField(EntitySchemaField({
                 {"name", "name"}, {"type", "string"}, {"required", true}, {"system", true}
             }));
@@ -144,6 +146,7 @@ namespace mantis {
 
             // A Key - Value settings store, where the key is hashed as the table id
             EntitySchema store_schema{"_store", "base"};
+            store_schema.setSystem(true);
             store_schema.addField(EntitySchemaField({
                 {"name", "value"}, {"type", "json"}, {"required", true}, {"system", true}
             }));

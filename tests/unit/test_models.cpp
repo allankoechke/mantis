@@ -34,7 +34,7 @@ TEST(EntitySchema, EntitySchemaAuthType) {
     // Auth Type
     mantis::EntitySchema auth{"test", "auth"};
 
-    EXPECT_EQ(auth.type(), "base");
+    EXPECT_EQ(auth.type(), "auth");
     EXPECT_EQ(auth.name(), "test");
     EXPECT_TRUE(auth.hasApi());
     EXPECT_FALSE(auth.isSystem());
@@ -67,7 +67,7 @@ TEST(EntitySchema, EntitySchemaViewType) {
     // View Type
     mantis::EntitySchema view{"test", "view"};
 
-    EXPECT_EQ(view.type(), "base");
+    EXPECT_EQ(view.type(), "view");
     EXPECT_EQ(view.name(), "test");
     EXPECT_TRUE(view.hasApi());
     EXPECT_FALSE(view.isSystem());
