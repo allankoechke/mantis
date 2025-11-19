@@ -44,3 +44,18 @@ cmake-build-*/
 qrc/
 docker/data/
 docker/www/
+
+# IDE specific files
+.vscode/
+.idea/
+*.swp
+
+
+# Logs and databases
+*.log
+*.sql
+*.sqlite
+*.db
+*.db-journal
+*.pid
+*.seed
