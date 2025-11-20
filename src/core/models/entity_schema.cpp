@@ -32,52 +32,90 @@ namespace mantis {
 
     EntitySchema::~EntitySchema() = default;
 
-    EntitySchema::EntitySchema(const json &entity_schema) {
+    EntitySchema EntitySchema::fromSchema(const json &entity_schema) {
+        EntitySchema eSchema;
+
         if (!entity_schema.contains("name") || !entity_schema.contains("type"))
             throw std::invalid_argument("Missing required fields `name` and `type` in schema!");
 
         const auto _name = entity_schema.at("name").get<std::string>();
         const auto _type = entity_schema.at("type").get<std::string>();
-        setName(_name).setType(_type);
+
+        eSchema.setName(_name);
+        eSchema.setType(_type);
 
         if (entity_schema.contains("system") && entity_schema["system"].is_boolean())
-            setSystem(entity_schema.at("system").get<bool>());
+            eSchema.setSystem(entity_schema.at("system").get<bool>());
 
         if (entity_schema.contains("has_api") && entity_schema["has_api"].is_boolean())
-            setHasApi(entity_schema.at("has_api").get<bool>());
+            eSchema.setHasApi(entity_schema.at("has_api").get<bool>());
 
         if (entity_schema.contains("list_rule") && entity_schema["list_rule"].is_string())
-            setListRule(entity_schema.at("list_rule").get<std::string>());
+            eSchema.setListRule(entity_schema.at("list_rule").get<std::string>());
 
         if (entity_schema.contains("get_rule") && entity_schema["get_rule"].is_string())
-            setListRule(entity_schema.at("get_rule").get<std::string>());
+            eSchema.setListRule(entity_schema.at("get_rule").get<std::string>());
 
         if (entity_schema.contains("add_rule") && entity_schema["add_rule"].is_string())
-            setListRule(entity_schema.at("add_rule").get<std::string>());
+            eSchema.setListRule(entity_schema.at("add_rule").get<std::string>());
 
         if (entity_schema.contains("update_rule") && entity_schema["update_rule"].is_string())
-            setListRule(entity_schema.at("update_rule").get<std::string>());
+            eSchema.setListRule(entity_schema.at("update_rule").get<std::string>());
 
         if (entity_schema.contains("delete_rule") && entity_schema["delete_rule"].is_string())
-            setListRule(entity_schema.at("delete_rule").get<std::string>());
+            eSchema.setListRule(entity_schema.at("delete_rule").get<std::string>());
 
         // 'auth' and 'base' types have 'fields' key ...
         if ((_type == "base" || _type == "auth") && entity_schema.contains("fields") && entity_schema["fields"].
             is_array()) {
             // For each defined field, create the field schema and push to the fields array ...
             for (const auto &field: entity_schema["fields"]) {
-                m_fields.emplace_back(EntitySchemaField(field));
+                eSchema.fields().emplace_back(field);
             }
         }
 
         // For 'view' types, check for 'view_query'
         if (_type == "view" && entity_schema.contains("view_query") && entity_schema["view_query"].is_string()
             && !entity_schema.at("view_query").get<std::string>().empty()) {
-            setViewQuery(entity_schema.at("view_query").get<std::string>());
+            eSchema.setViewQuery(entity_schema.at("view_query").get<std::string>());
         }
+
+        return eSchema;
     }
 
-    EntitySchema::EntitySchema(const Entity &entity) : EntitySchema(entity.schema()) {
+    EntitySchema EntitySchema::fromEntity(const Entity &entity) {
+        EntitySchema eSchema;
+
+        // Default schema fields
+        eSchema.setName(entity.name());
+        eSchema.setType(entity.type());
+        eSchema.setHasApi(entity.hasApi());
+        eSchema.setSystem(entity.isSystem());
+
+        // Reset fields to clear default added fields
+        eSchema.fields().clear();
+
+        // Rules
+        eSchema.setAddRule(entity.addRule());
+        eSchema.setGetRule(entity.getRule());
+        eSchema.setListRule(entity.listRule());
+        eSchema.setUpdateRule(entity.updateRule());
+        eSchema.setDeleteRule(entity.deleteRule());
+
+        // Fields ...
+        if (entity.type() != "view") {
+            eSchema.fields().reserve(entity.fields().size());
+            for (const auto &field: entity.fields()) {
+                eSchema.fields().emplace_back(field);
+            }
+        }
+
+        // For 'view' types, check for 'view_query'
+        if (entity.type() == "view" && !entity.viewQuery().empty()) {
+            eSchema.setViewQuery(entity.viewQuery());
+        }
+
+        return eSchema;
     }
 
     Entity EntitySchema::toEntity() const {

@@ -9,6 +9,7 @@
 #include "mantisbase/mantis.h"
 #include "mantisbase/core/exceptions.h"
 #include "mantisbase/utils/soci_wrappers.h"
+#include "../types.h"
 
 namespace mantis {
     using Record = nlohmann::json;
@@ -21,6 +22,7 @@ namespace mantis {
          * @param schema Table schema
          */
         explicit Entity(const nlohmann::json &schema);
+        explicit Entity(const std::string &name, const std::string& type);
 
         // --------------- DB TABLE OPS ------------------ //
         [[nodiscard]] std::string id() const;
@@ -33,7 +35,11 @@ namespace mantis {
 
         [[nodiscard]] bool hasApi() const;
 
+        [[nodiscard]] std::string viewQuery() const;
+
         [[nodiscard]] const std::vector<json> &fields() const;
+        [[nodiscard]] std::optional<json> field(const std::string& field_name) const;
+        [[nodiscard]] std::optional<json> hasField(const std::string& field_name) const;
 
         [[nodiscard]] std::string listRule() const;
 

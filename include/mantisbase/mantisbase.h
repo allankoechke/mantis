@@ -263,7 +263,7 @@ namespace mantis
          * @param table_name Name of the table of interest
          * @return Entity object for the selected table
          */
-        Entity entity(const std::string& table_name) const;
+        [[nodiscard]] Entity entity(const std::string& table_name) const;
 
 #ifdef MANTIS_ENABLE_SCRIPTING
         /// Get the duktape context

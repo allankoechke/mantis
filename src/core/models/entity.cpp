@@ -3,6 +3,8 @@
 //
 
 #include "../../../include/mantisbase/core/models/entity.h"
+#include "../../../include/mantisbase/core/models/entity_schema.h"
+#include "../../../include/mantisbase/core/models/entity_schema_field.h"
 #include "../../../include/mantisbase/utils/uuidv7.h"
 #include "mantisbase/utils/soci_wrappers.h"
 
@@ -20,8 +22,6 @@ namespace mantis {
             m_schema["system"] = false;
         if (!m_schema.contains("has_api"))
             m_schema["has_api"] = true;
-        if (!m_schema.contains("fields"))
-            m_schema["fields"] = json::array();
         if (!m_schema.contains("list_rule"))
             m_schema["list_rule"] = "";
         if (!m_schema.contains("get_rule"))
@@ -33,7 +33,19 @@ namespace mantis {
         if (!m_schema.contains("delete_rule"))
             m_schema["delete_rule"] = "";
 
+        if (type() == "view") {
+            if (!m_schema.contains("view_query"))
+                m_schema["view_query"] = "";
+        } else {
+            if (!m_schema.contains("fields"))
+                m_schema["fields"] = json::array();
+        }
+
         logger::trace("Creating Entity\n: {}", m_schema.dump());
+    }
+
+    Entity::Entity(const std::string &name, const std::string &type)
+        : Entity({{"name", name}, {"type", type}}) {
     }
 
     std::string Entity::id() const {
@@ -56,8 +68,31 @@ namespace mantis {
         return m_schema.contains("has_api") ? m_schema.at("has_api").get<bool>() : false;
     }
 
+    std::string Entity::viewQuery() const {
+        if (type() != "view")
+            throw MantisException(500, "View Query only allowed for `view` types!");
+
+        if (m_schema.contains("view_query"))
+            throw std::invalid_argument("Missing view_query statement!");
+
+        return m_schema.at("view_query").get<std::string>();
+    }
+
     const std::vector<json> &Entity::fields() const {
         return m_schema.at("fields").get_ref<const std::vector<json> &>();
+    }
+
+    std::optional<json> Entity::field(const std::string& field_name) const {
+        if (!m_schema.contains("fields")) return std::nullopt;
+        for (auto _field : m_schema["fields"]) {
+            if (_field.contains("name") && _field["name"].get<std::string>() == field_name)
+                return _field;
+        }
+        return std::nullopt;
+    }
+
+    std::optional<json> Entity::hasField(const std::string& field_name) const {
+        return field(field_name).has_value();
     }
 
     std::string Entity::listRule() const {

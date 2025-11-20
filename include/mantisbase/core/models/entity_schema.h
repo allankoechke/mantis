@@ -21,19 +21,16 @@ namespace mantis {
 
         // Allow copy constructors & assignment ops for easy cloning
         EntitySchema(const EntitySchema &);
-
         EntitySchema &operator=(const EntitySchema &);
 
-        // Delete move constructors
-        EntitySchema(EntitySchema &&) = delete;
-
-        EntitySchema &operator=(EntitySchema &&) = delete;
+        // Move operators ...
+        EntitySchema(EntitySchema&&) noexcept = default;
+        EntitySchema& operator=(EntitySchema&&) noexcept = default;
 
         ~EntitySchema();
 
-        explicit EntitySchema(const json &entity_schema);
-
-        explicit EntitySchema(const Entity &entity);
+        static EntitySchema fromSchema(const json &entity_schema);
+        static EntitySchema fromEntity(const Entity &entity);
 
         [[nodiscard]] Entity toEntity() const;
 

@@ -319,11 +319,11 @@ namespace mantis
         if (table_name.empty()) throw std::invalid_argument("Table name is invalid!");
 
         // Get schema cache from db, check if we have this data, return data if available
-        const auto schema = m_router->schemaCache(table_name);
+        const auto entity_obj = m_router->schemaCacheEntity(table_name);
 
-        logger::trace("Fetched entity JSON: `{}`", schema.dump());
+        logger::trace("Fetched entity JSON: `{}`", entity_obj.schema().dump());
 
-        return Entity{schema};
+        return entity_obj;
     }
 
 #ifdef MANTIS_ENABLE_SCRIPTING

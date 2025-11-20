@@ -74,6 +74,8 @@ namespace mantis {
 
         const json &schemaCache(const std::string &table_name) const;
 
+        Entity schemaCacheEntity(const std::string &table_name) const;
+
         void addSchemaCache(const std::string &table_name, const nlohmann::json &table_schema);
 
         void updateSchemaCache(const std::string &table_name, const json &table_schema);
@@ -105,6 +107,7 @@ namespace mantis {
 
         std::function<void(const httplib::Request &, httplib::Response &)> routingErrorHandler();
 
+        MantisBase& mApp;
         httplib::Server svr;
         RouteRegistry m_routeRegistry;
         std::vector<MiddlewareFn> m_globalMiddlewares;

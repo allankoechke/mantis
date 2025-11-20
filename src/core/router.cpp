@@ -21,7 +21,8 @@
 CMRC_DECLARE(mantis);
 
 namespace mantis {
-    Router::Router() {
+    Router::Router()
+        : mApp(MantisBase::instance()) {
         // Let's fix timing initialization, set the start time to current time
         svr.set_pre_routing_handler(preRoutingHandler());
 
@@ -46,9 +47,8 @@ namespace mantis {
             svr.stop();
     }
 
-    bool Router::initialize() {
-        {
-            const auto sql = MantisBase::instance().db().session();
+    bool Router::initialize() { {
+            const auto sql = mApp.db().session();
             const soci::rowset rows = (sql->prepare << "SELECT schema FROM _tables");
 
             if (sql->got_data()) {
@@ -90,8 +90,8 @@ namespace mantis {
                 return false;
             }
 
-            const auto host = MantisBase::instance().host();
-            const auto port = MantisBase::instance().port();
+            const auto host = mApp.host();
+            const auto port = mApp.port();
 
             // Launch logging/browser in separate thread after listen starts
             std::thread notifier([host, port]() -> void {
@@ -131,10 +131,9 @@ namespace mantis {
     }
 
     void Router::close() {
-        // MantisBase::instance().http().close();
-        // m_routes.clear();
         if (svr.is_running()) {
             svr.stop();
+            m_entityMap.clear();
             logger::info("HTTP Server Stopped.\n\t ...");
         }
     }
@@ -143,17 +142,17 @@ namespace mantis {
         return svr;
     }
 
-    void Router::Get(const std::string &path, const HandlerFn &handler, const Middlewares& middlewares) {
+    void Router::Get(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares) {
         m_routeRegistry.add("GET", path, handler, middlewares);
         globalRouteHandler("GET", path);
     }
 
-    void Router::Post(const std::string &path, const HandlerFn &handler, const Middlewares& middlewares) {
+    void Router::Post(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares) {
         m_routeRegistry.add("POST", path, handler, middlewares);
         globalRouteHandler("POST", path);
     }
 
-    void Router::Patch(const std::string &path, const HandlerFn &handler, const Middlewares& middlewares) {
+    void Router::Patch(const std::string &path, const HandlerFn &handler, const Middlewares &middlewares) {
         m_routeRegistry.add("PATCH", path, handler, middlewares);
         globalRouteHandler("PATCH", path);
     }
@@ -174,7 +173,7 @@ namespace mantis {
         }
 
         try {
-            const auto sql = MantisBase::instance().db().session();
+            const auto sql = mApp.db().session();
 
             soci::row row;
             const std::string query = "SELECT id, schema FROM _tables WHERE name = :name";
@@ -313,7 +312,7 @@ namespace mantis {
     json Router::removeRoute(const json &table_data) {
         // TRACE_CLASS_METHOD()
 
-        json res;
+        mantis::json res;
         res["success"] = false;
         res["error"] = "";
 
@@ -378,6 +377,14 @@ namespace mantis {
         throw std::out_of_range("Table does not contain schema");
     }
 
+    Entity Router::schemaCacheEntity(const std::string &table_name) const {
+        if (m_entityMap.contains(table_name)) {
+            return m_entityMap.at(table_name);
+        }
+
+        throw std::out_of_range("Table does not contain schema");
+    }
+
     void Router::addSchemaCache(const std::string &table_name, const nlohmann::json &table_schema) {
         if (m_entityMap.contains(table_name)) {
             updateSchemaCache(table_name, table_schema);
@@ -402,8 +409,6 @@ namespace mantis {
             MantisRequest ma_req{req};
             MantisResponse ma_res{res};
 
-            logger::trace("Req: [{}] {}", method, path);
-
             const auto route = m_routeRegistry.find(method, path);
             if (!route) {
                 json response;
@@ -415,28 +420,20 @@ namespace mantis {
                 return;
             }
 
-            logger::trace("Route Found, executing global middlewares ...");
-
             // First, execute global middlewares
             for (const auto &g_mw: m_globalMiddlewares) {
                 if (g_mw(ma_req, ma_res) == HandlerResponse::Handled) return;
             }
-
-            logger::trace("Executing route specific middlewares ...");
 
             // Secondly, execute route specific middlewares
             for (const auto &mw: route->middlewares) {
                 if (mw(ma_req, ma_res) == HandlerResponse::Handled) return;
             }
 
-            logger::trace("Calling route handler finally ...");
-
             // Finally, execute the handler function
             if (const auto func = std::get_if<HandlerFn>(&route->handler)) {
                 (*func)(ma_req, ma_res);
             }
-
-            logger::trace("Route execution completed ...");
         };
 
         if (method == "GET") {
@@ -453,27 +450,23 @@ namespace mantis {
     }
 
     void Router::generateMiscEndpoints() {
-        auto &router = MantisBase::instance().router();
-        router.Get("/api/v1/healthcheck", healthCheckHandler());
+        auto &router = mApp.router();
+        router.Get("/api/healthcheck", healthCheckHandler());
         router.Get("/api/files/:entity/:file", fileServingHandler());
         router.Get(R"(/admin(.*))", handleAdminDashboardRoute());
 
         // Add /public static file serving directory
-        const auto mount_ok = svr.set_mount_point("/", MantisBase::instance().publicDir());
-        if (!mount_ok) {
+        if (const auto mount_ok = svr.set_mount_point("/", mApp.publicDir()); !mount_ok) {
             logger::critical("Failed to setup mount point directory for '/' at '{}'",
-                             MantisBase::instance().publicDir());
+                             mApp.publicDir());
         }
     }
 
     std::function<void(const MantisRequest &, MantisResponse &)> Router::handleAdminDashboardRoute() const {
         return [this](const MantisRequest &req, MantisResponse &res) {
-            logger::trace("ADMIN ...");
             try {
                 const auto fs = cmrc::mantis::get_filesystem();
                 std::string path = req.matches()[1];
-
-                std::cout << "PATH: " << path << std::endl;
 
                 // Normalize the path
                 if (path.empty() || path == "/") {
@@ -526,7 +519,7 @@ namespace mantis {
                 return;
             }
 
-            const auto& fileMgr = MantisBase::instance().files();
+            const auto &fileMgr = MantisBase::instance().files();
             if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
                 path_opt.has_value()) {
                 // Return requested file
@@ -546,15 +539,8 @@ namespace mantis {
 
     std::function<void(const MantisRequest &, MantisResponse &)> Router::healthCheckHandler() {
         return [](const MantisRequest &, const MantisResponse &res) {
-            // Compute system uptime and send to user
-            const auto &start_time = MantisBase::instance().startTime();
-            auto uptime = std::chrono::duration_cast<std::chrono::seconds>(
-                std::chrono::steady_clock::now() - start_time).count();
-
-            json response;
-            response["status"] = "OK";
-            response["uptime"] = uptime;
-            res.sendJson(200, response);
+            res.setHeader("Cache-Control", "no-cache");
+            res.send(200, R"({"status": "OK"})", "application/json");
         };
     }
 

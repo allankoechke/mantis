@@ -32,7 +32,7 @@ namespace mantis {
             setIsSystem(field_schema["system"].get<bool>());
 
         if (field_schema.contains("unique") && field_schema["unique"].is_boolean())
-            setRequired(field_schema["unique"].get<bool>());
+            setIsUnique(field_schema["unique"].get<bool>());
 
         if (field_schema.contains("constraints") && field_schema["constraints"].is_object())
             setConstraints(field_schema["constraints"].get<nlohmann::json>());
