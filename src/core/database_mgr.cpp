@@ -122,7 +122,7 @@ namespace mantis {
         }
     }
 
-    bool DatabaseMgr::migrate() const {
+    bool DatabaseMgr::createSysTables() const {
         const auto sql = session();
         soci::transaction tr{*sql};
 

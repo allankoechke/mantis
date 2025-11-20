@@ -143,15 +143,22 @@ namespace mantis {
             std::string columns, placeholders;
 
             // Clone record for editing ...
-            json new_record;
+            json new_record = record;
 
             // Force default values here ...
             new_record["id"] = "";
             new_record["created"] = nullptr;
             new_record["updated"] = nullptr;
 
+            columns += "id";
+            placeholders += ":id";
+            columns += ", created";
+            placeholders += ", :created";
+            columns += ", updated";
+            placeholders += ", :updated";
+
             // Create the field cols and value cols as concatenated strings
-            for (const auto &[field_name, _]: new_record.items()) {
+            for (const auto &[field_name, _]: record.items()) {
                 // First, ensure the key exists in our schema fields
                 if (auto field_schema = findField(field_name); !field_schema.has_value()) continue;
 

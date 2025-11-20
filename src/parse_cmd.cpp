@@ -13,7 +13,7 @@
 namespace mantis {
     void MantisBase::parseArgs() {
         // Main program parser with global arguments
-        argparse::ArgumentParser program("mantisapp", appVersion());
+        argparse::ArgumentParser program("mantisbase", appVersion());
         program.add_argument("--database", "-d")
                 .nargs(1)
                 .help("<type> Database type ['SQLITE', 'PSQL', 'MYSQL'] (default: SQLITE)");
@@ -46,33 +46,55 @@ namespace mantis {
                 .help("<pool size> Size of database connection pools >= 1");
 
         // Admins subcommand with nested subcommands
+        // admins add user@doe.com 123456789
+        // admins rm user@doe.com  # by email
+        // admins rm 7r6r656-896-8y97587-897AB7587 # by ID
         argparse::ArgumentParser admins_command("admins");
-        // Create mutually exclusive group for --add and --rm
-        auto &group = admins_command.add_mutually_exclusive_group(true);
-        group.add_argument("--add")
-                .nargs(1)
-                .help("<email> Add a new admin user.");
-        group.add_argument("--rm")
-                .nargs(1)
-                .help("<email/id> Remove existing admin user.");
+        admins_command.add_description("Admin accounts management commands");
+
+        // Create the 'add' subcommand
+        argparse::ArgumentParser add_command("add");
+        add_command.add_description("Add a new admin");
+        add_command.add_argument("email")
+                .help("Admin email address");
+        add_command.add_argument("password")
+                .help("Admin password");
+
+        // Create the 'rm' subcommand
+        argparse::ArgumentParser rm_command("rm");
+        rm_command.add_description("Remove an admin");
+        rm_command.add_argument("identifier")
+                .help("Admin email or GUID");
+
+        // Add subcommands to admins
+        admins_command.add_subparser(add_command);
+        admins_command.add_subparser(rm_command);
 
         // Migrations subcommand with nested subcommands
-        argparse::ArgumentParser migrations_command("migrate");
-        admins_command.add_argument("--up")
-                .nargs(1)
-                .help("<file> Initiate Migration from .json file.");
-        admins_command.add_argument("--down")
-                .nargs(1)
-                .help(".");
+        argparse::ArgumentParser migrate_command("migrate");
+        migrate_command.add_description("Migration management commands");
 
-        // Migrations subcommand with nested subcommands
-        argparse::ArgumentParser sync_command("sync");
+        // Create the 'load' subcommand
+        argparse::ArgumentParser load_command("load");
+        load_command.add_description("Load admin data from file");
+        load_command.add_argument("file")
+                .help("File to load (json or zip format)");
+
+        // Create the 'create' subcommand
+        argparse::ArgumentParser create_command("create");
+        create_command.add_description("Create new admin");
+        create_command.add_argument("filename")
+                .help("Optional filename for output")
+                .nargs(argparse::nargs_pattern::optional);
+
+        // Add subcommands to admins
+        migrate_command.add_subparser(load_command);
+        migrate_command.add_subparser(create_command);
 
         // Add main subparsers
         program.add_subparser(serve_command);
         program.add_subparser(admins_command);
-        program.add_subparser(migrations_command);
-        program.add_subparser(sync_command);
+        program.add_subparser(migrate_command);
 
         try {
             // Create a vector of `const char*` pointing to the owned `std::string`s
@@ -86,10 +108,8 @@ namespace mantis {
             program.parse_args(static_cast<int>(argv.size()), argv.data());
         } catch (const std::exception &err) {
             std::cerr << err.what() << std::endl;
-            std::stringstream ss;
-            ss << program;
-            logger::trace("{}", ss.str());
-            quit(1, err.what());
+            std::cout << program << std::endl;
+            quit(500, err.what());
         }
 
         // Get main program args
@@ -118,9 +138,6 @@ namespace mantis {
         const auto scripts_dir = dirFromPath(scriptsDir);
         setScriptsDir(scripts_dir.empty() ? dirFromPath("scripts") : scripts_dir);
 
-        logger::trace("Mantis Configured Paths:\n\t/data: {}\n\t/public: {}\n\t/scripts: {}",
-                   data_dir, pub_dir, scripts_dir);
-
         // Ensure objects are first created, taking into account the cmd args passed in
         // esp. the directory paths
         init_units();
@@ -142,21 +159,25 @@ namespace mantis {
             // Connection to database failed
             quit(-1, "Database connection failed, exiting!");
         }
-        if (!m_database->migrate()) {
+        if (!m_database->createSysTables()) {
             quit(-1, "Database migration failed, exiting!");
         }
 
         if (!m_database->isConnected()) {
-            logger::critical("Database was not opened");
+            logger::critical("Database was not opened!");
             quit(-1, "Database opening failed!");
         }
+
+        // Initialize router here to ensure schemas are loaded
+        if (!m_router->initialize())
+            quit(-1, "Failed to initialize router!");
 
         // Check which commands were used
         if (program.is_subcommand_used("serve")) {
             const auto host = serve_command.get<std::string>("--host");
             const auto port = serve_command.get<int>("--port");
 
-            int default_pool_size = m_dbType == "sqlite3" ? 4 :  10;
+            int default_pool_size = m_dbType == "sqlite3" ? 4 : 10;
             const auto pools = serve_command.present<int>("--poolSize").value_or(default_pool_size);
 
             setHost(host);
@@ -167,80 +188,83 @@ namespace mantis {
             // running the listen on port & host above.
             m_toStartServer = true;
         } else if (program.is_subcommand_used("admins")) {
-            const auto admin_user = admins_command.present<std::vector<std::string> >("--add")
-                    .value_or(std::vector<std::string>{});
+            // Check which subcommand was used
+            if (admins_command.is_subcommand_used("add")) {
+                std::string email = add_command.get("email");
+                std::string password = add_command.get("password");
 
-            if (admins_command.is_used("--add")) {
-                if (const auto ev = Validators::validatePreset("email", admin_user.at(0));
-                    !ev.at("error").get<std::string>().empty()) {
-                    logger::critical("Error validating admin email: {}", ev.at("error").get<std::string>());
+                if (const auto val_err = Validators::validatePreset("email", email);
+                    val_err.has_value()) {
+                    logger::critical("Error validating admin email: {}", val_err.value());
                     quit(-1, "Email validation failed!");
                 }
 
-                // Get password from user then validate it!
-                auto password = trim(getUserValueSecurely("Getting Admin Password"));
-                if (auto c_password = trim(getUserValueSecurely("Confirm Admin Password"));
-                    password != c_password) {
-                    logger::critical("Passwords do not match!");
-                    quit(-1, "Passwords do not match!");
-                }
-
-                // Validate password against regex stored
-                if (const auto ev = Validators::validatePreset("password", password);
-                    !ev.at("error").get<std::string>().empty()) {
-                    logger::critical("Error validating email: {}", ev.at("error").get<std::string>());
+                if (const auto val_pswd_err = Validators::validatePreset("password", password);
+                    val_pswd_err.has_value()) {
+                    logger::critical("Error validating email: {}", val_pswd_err.value());
                     quit(-1, "Email validation failed!");
                 }
 
                 try {
-                    auto admin_entity = entity("__admins");
+                    auto admin_entity = entity("_admins");
 
                     // Create new admin user
-                    json new_admin{{"email", admin_user.at(0)}, {"password", password}};
-                    const auto admin_user = admin_entity.create(new_admin);
+                    const auto admin_user = admin_entity.create({{"email", email}, {"password", password}});
 
                     // Admin User was created!
                     logger::info("Admin account created, use '{}' to access the `/admin` dashboard.",
-                              admin_user.at("email").get<std::string>());
+                                 admin_user.at("email").get<std::string>());
                     quit(0, "");
                 } catch (const std::exception &e) {
                     logger::critical("Failed to created Admin user: {}", e.what());
-                    quit(-1, e.what());
+                    quit(500, e.what());
                 }
-            } else if (admins_command.is_used("--rm")) {
-                const auto admin_email_or_id = admins_command.present<std::string>("--rm")
-                        .value_or("");
-                if (trim(admin_email_or_id).length() < 5) {
-                    logger::critical("Invalid Admin email or id provided!");
-                    quit(1, "");
+            } else if (admins_command.is_subcommand_used("rm")) {
+                std::string identifier = rm_command.get("identifier");
+                // Process rm command - identifier could be email or GUID
+                if (identifier.empty()) {
+                    logger::critical("Invalid admin `email` or `id` provided!");
+                    quit(400, "");
                 }
 
-                auto admin_entity = entity("__admins");
-                auto resp = admin_entity.queryFromCols(admin_email_or_id, {"id", "email"});
+                auto admin_entity = entity("_admins");
+                auto resp = admin_entity.queryFromCols(identifier, {"id", "email"});
                 if (!resp.has_value()) {
-                    logger::critical("Failed to get admin account matching `id` or `email` provided '{}'",
-                                  admin_email_or_id);
-                    quit(-1, "");
+                    logger::critical("Admin not found matching id/email on '{}'",
+                                     identifier);
+                    quit(404, "");
                 }
 
                 try {
-                    const auto data = resp.value().at("data").get<json>();
-                    logger::trace("Admin Data: {}", data.dump());
-                    admin_entity.remove(data.at("id").get<std::string>());
+                    admin_entity.remove(resp.value().at("id").get<std::string>());
                     logger::info("Admin removed successfully.");
                     quit(0, "");
                 } catch (const std::exception &e) {
                     logger::critical("Failed to remove admin account: {}", e.what());
+                    quit(500, e.what());
                 }
-
-                quit(-1, "");
+            } else {
+                std::cout << std::endl << "Unknown arguments to `admins` subcommand.\n\n" << admins_command << std::endl;
             }
         } else if (program.is_subcommand_used("migrate")) {
             // Do migration stuff here
             logger::info("Migration CMD support has not been implemented yet! ");
-        } else if (program.is_subcommand_used("sync")) {
-            // Do sync actions
-            logger::info("Sync CMD support has not been implemented yet!");
+
+            if (admins_command.is_subcommand_used("load")) {
+                std::string file = load_command.get("file");
+                // Process load command
+            } else if (admins_command.is_subcommand_used("create")) {
+                bool use_json = create_command.get<bool>("--json");
+                bool use_zip = create_command.get<bool>("--zip");
+
+                if (create_command.is_used("filename")) {
+                    std::string filename = create_command.get("filename");
+                    // Process with filename
+                }
+                // Process create command
+            }
+        } else {
+            std::cout << "Unknown command, try one of the following:\n" << program;
         }
     }
 }

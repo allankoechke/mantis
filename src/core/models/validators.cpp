@@ -37,33 +37,24 @@ namespace mantis {
         return std::nullopt;
     }
 
-    json Validators::validatePreset(const std::string &key, const std::string &value) {
-        json response{{"error", ""}, {"validated", false}};
-
-        if (trim(key).empty()) {
-            response["error"] = "Validator key can't be empty!";
-            return response;
-        }
+    std::optional<std::string> Validators::validatePreset(const std::string &key, const std::string &value) {
+        if (key.empty())
+            throw MantisException(500, "Validator key can't be empty!");
 
         const auto v = findPreset(key).value_or(json::object());
-        if (v.empty()) {
-            response["error"] = "Validator key is not available!";
-            return response;
-        }
+        if (v.empty())
+            throw MantisException(500, "Validator key is not available!");
 
         // Since we have a regex string, lets validate it and return if it fails ...
         const auto &reg = v["regex"].get<std::string>();
         const auto &err = v["error"].get<std::string>();
 
         if (const std::regex r_pattern(reg); !std::regex_match(value, r_pattern)) {
-            response["error"] = err;
-            return response;
+            throw MantisException(500, err);
         }
 
         // If we reach here, then, all was validated correctly!
-        response["error"] = "";
-        response["validated"] = true;
-        return response;
+        return std::nullopt;
     }
 
     std::optional<std::string> Validators::minimumConstraintCheck(const json &field, const json &body) {
@@ -199,12 +190,12 @@ namespace mantis {
                 if (!field.contains("type") || field["type"].is_null() || trim(field["type"].get<std::string>()).
                     empty()) {
                     return std::format("Field type `{}` for `{}` is empty!",
-                                                    field["type"].get<std::string>(), field["name"].get<std::string>());
+                                       field["type"].get<std::string>(), field["name"].get<std::string>());
                 }
 
                 if (!EntitySchemaField::isValidFieldType(trim(field["type"].get<std::string>()))) {
-                                        return std::format("Field type `{}` for `{}` is not recognized!",
-                                                    field["type"].get<std::string>(), field["name"].get<std::string>());
+                    return std::format("Field type `{}` for `{}` is not recognized!",
+                                       field["type"].get<std::string>(), field["name"].get<std::string>());
                 }
             }
         }
@@ -220,14 +211,15 @@ namespace mantis {
     std::optional<std::string> Validators::validateRequestBody(const Entity &table, const json &body) {
         // If the table type is of view type, check that the SQL is passed in ...
         if (table.type() == "view") {
-            if (const auto err= viewTypeSQLCheck(body); err.has_value()) return err;
+            if (const auto err = viewTypeSQLCheck(body); err.has_value()) return err;
         } else // For `base` and `auth` types
         {
             // Create default base object
             for (const auto &field: table.fields()) {
                 // Skip system generated fields
                 if (const auto &name = field.value("name", "");
-                    name == "id" || name == "created" || name == "updated") continue;
+                    name == "id" || name == "created" || name == "updated")
+                    continue;
 
                 {
                     // REQUIRED CONSTRAINT CHECK

@@ -234,12 +234,10 @@ namespace mantis
     int MantisBase::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
     {
         // Stop server if running
-        MantisBase::instance().close();
+        instance().close();
 
         if (exitCode != 0)
             logger::critical("Exiting Application with Code = {}", exitCode);
-        else
-            logger::info("Application exiting normally!");
 
         std::exit(exitCode);
     }
@@ -258,9 +256,6 @@ namespace mantis
 
     int MantisBase::run()
     {
-        if (!m_router->initialize())
-            quit(-1, "Failed to initialize router!");
-
         // Set server start time
         m_startTime = std::chrono::steady_clock::now();
 
@@ -274,7 +269,7 @@ namespace mantis
         if (m_toStartServer)
         {
             if (!m_router->listen())
-                return -1;
+                return 500;
         }
 
         return 0;

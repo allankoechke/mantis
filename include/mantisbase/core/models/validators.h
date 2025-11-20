@@ -19,7 +19,7 @@ namespace mantis {
     public:
         static std::optional<json> findPreset(const std::string &key);
 
-        static json validatePreset(const std::string &key, const std::string &value);
+        static std::optional<std::string> validatePreset(const std::string &key, const std::string &value);
 
         static std::optional<std::string> minimumConstraintCheck(const json &field, const json &body);
 

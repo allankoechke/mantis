@@ -92,7 +92,7 @@ namespace mantis {
 
     inline std::string getColumnType(const std::string& column_name, const std::vector<json>& fields)
     {
-        if (!column_name.empty()) throw std::invalid_argument("Column name can't be empty!");
+        if (column_name.empty()) throw std::invalid_argument("Column name can't be empty!");
 
         for (const auto& field : fields)
         {
