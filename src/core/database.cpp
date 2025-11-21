@@ -1,7 +1,7 @@
-#include "../../include/mantisbase/core/database_mgr.h"
+#include "../../include/mantisbase/core/database.h"
 #include "../../include/mantisbase/mantisbase.h"
-#include "../../include/mantisbase/core/logs_mgr.h"
-#include "../../include/mantisbase/core/settings_mgr.h"
+#include "../../include/mantisbase/core/logger.h"
+#include "../../include/mantisbase/core/kv_store.h"
 #include "../../include/mantisbase/utils/utils.h"
 
 #include <private/soci-mktime.h>
@@ -16,14 +16,14 @@
 // #define __file__ "core/tables/sys_tables.cpp"
 
 namespace mantis {
-    DatabaseMgr::DatabaseMgr() : m_connPool(nullptr) {
+    Database::Database() : m_connPool(nullptr) {
     }
 
-    DatabaseMgr::~DatabaseMgr() {
+    Database::~Database() {
         disconnect();
     }
 
-    bool DatabaseMgr::connect(const std::string &conn_str) {
+    bool Database::connect(const std::string &conn_str) {
         // If pool size is invalid, just return
         if (MantisBase::instance().poolSize() <= 0)
             throw std::runtime_error("Session pool size must be greater than 0");
@@ -103,7 +103,7 @@ namespace mantis {
         return true;
     }
 
-    void DatabaseMgr::disconnect() const {
+    void Database::disconnect() const {
         // Write checkpoint out
         writeCheckpoint();
 
@@ -122,7 +122,7 @@ namespace mantis {
         }
     }
 
-    bool DatabaseMgr::createSysTables() const {
+    bool Database::createSysTables() const {
         const auto sql = session();
         soci::transaction tr{*sql};
 
@@ -166,22 +166,22 @@ namespace mantis {
         }
     }
 
-    std::shared_ptr<soci::session> DatabaseMgr::session() const {
+    std::shared_ptr<soci::session> Database::session() const {
         return std::make_shared<soci::session>(*m_connPool);
     }
 
-    soci::connection_pool &DatabaseMgr::connectionPool() const {
+    soci::connection_pool &Database::connectionPool() const {
         return *m_connPool;
     }
 
-    bool DatabaseMgr::isConnected() const {
+    bool Database::isConnected() const {
         if (m_connPool == nullptr) return false;
 
         const auto sql = session();
         return sql->is_connected();
     }
 
-    void DatabaseMgr::writeCheckpoint() const {
+    void Database::writeCheckpoint() const {
         // Enable this write checkpoint for SQLite databases ONLY
         if (MantisBase::instance().dbType() == "sqlite3") {
             try {

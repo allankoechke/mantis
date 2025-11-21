@@ -18,7 +18,7 @@
 #include <soci/row.h>
 #include <nlohmann/json.hpp>
 
-#include "../core/logs_mgr.h"
+#include "../core/logger.h"
 
 #ifdef MANTIS_ENABLE_SCRIPTING
 #include "dukglue/dukvalue.h"

@@ -43,7 +43,7 @@ namespace mantis {
                 const auto token = auth.at("token").get<std::string>();
 
                 // If token validation worked, lets get data from database
-                const auto resp = JwtUnit::verifyJwtToken(token);
+                const auto resp = Auth::verifyToken(token);
                 // const auto verified = resp.at("verified").get<bool>();
 
                 const auto user_id = resp.at("id").get<std::string>();
@@ -111,7 +111,7 @@ namespace mantis {
                 const auto token = auth.at("token").get<std::string>();
 
                 // If token validation worked, lets get data from database
-                if (const auto resp = JwtUnit::verifyJwtToken(token); resp.at("verified").get<bool>()) {
+                if (const auto resp = Auth::verifyToken(token); resp.at("verified").get<bool>()) {
                     logger::trace("Token Verified: `{}`", token);
                     const auto user_id = resp.at("id").get<std::string>();
                     const auto user_table = resp.at("table").get<std::string>();

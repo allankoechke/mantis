@@ -1,7 +1,7 @@
 #include "../include/mantisbase/mantis.h"
 #include "../include/mantisbase/config.hpp"
 // #include "../include/mantis/core/settings_mgr.h"
-#include "../include/mantisbase/core/files_mgr.h"
+#include "../include/mantisbase/core/files.h"
 #include "../include/mantisbase/core/route_registry.h"
 #include "../include/mantisbase/core/models/entity.h"
 
@@ -224,11 +224,10 @@ namespace mantis
         // Create instance objects
         m_logger = std::make_unique<LogsMgr>();
         m_exprEval = std::make_unique<ExprMgr>(); // depends on log()
-        m_database = std::make_unique<DatabaseMgr>(); // depends on log()
+        m_database = std::make_unique<Database>(); // depends on log()
         m_router = std::make_unique<Router>(); // depends on db() & http()
-        // m_settings = std::make_unique<SettingsMgr>(); // depends on db(), router() & http()
+        m_kvStore = std::make_unique<KVStore>(); // depends on db(), router() & http()
         m_opts = std::make_unique<argparse::ArgumentParser>();
-        m_files = std::make_unique<FilesMgr>(); // depends on log()
     }
 
     int MantisBase::quit(const int& exitCode, [[maybe_unused]] const std::string& reason)
@@ -245,9 +244,8 @@ namespace mantis
     void MantisBase::close()
     {
         // Destroy instance objects
-        if (m_files) m_files.reset();
         if (m_opts) m_opts.reset();
-        // if (m_settings) m_settings.reset();
+        if (m_kvStore) m_kvStore.reset();
         if (m_router) m_router.reset();
         if (m_database) m_database.reset();
         if (m_exprEval) m_exprEval.reset();
@@ -275,7 +273,7 @@ namespace mantis
         return 0;
     }
 
-    DatabaseMgr& MantisBase::db() const
+    Database& MantisBase::db() const
     {
         return *m_database;
     }
@@ -300,14 +298,9 @@ namespace mantis
         return *m_exprEval;
     }
 
-    // SettingsMgr& MantisBase::settings() const
-    // {
-    //     return *m_settings;
-    // }
-
-    FilesMgr& MantisBase::files() const
+    KVStore& MantisBase::settings() const
     {
-        return *m_files;
+        return *m_kvStore;
     }
 
     Entity MantisBase::entity(const std::string &table_name) const {

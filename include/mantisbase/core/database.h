@@ -17,7 +17,7 @@
 
 #include "../mantisbase.h"
 #include "../utils/utils.h"
-#include "logs_mgr.h"
+#include "logger.h"
 
 // #define __file__ "core/tables/database.h"
 
@@ -29,11 +29,11 @@ namespace mantis {
      *
      * The class handles database connections, pooling and sessions.
      */
-    class DatabaseMgr {
+    class Database {
     public:
-        DatabaseMgr();
+        Database();
 
-        ~DatabaseMgr();
+        ~Database();
 
         /**
          * @brief Initializes the connection pool & connects to specific database.

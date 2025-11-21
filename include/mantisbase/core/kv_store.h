@@ -1,9 +1,5 @@
-//
-// Created by allan on 30/06/2025.
-//
-
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef KV_STORE_H
+#define KV_STORE_H
 
 #include <mantisbase/core/route_registry.h>
 #include <nlohmann/json.hpp>
@@ -12,17 +8,13 @@
 
 namespace mantis
 {
-    using json = nlohmann::json;
-
-    class MantisBase;
-
     /**
      * @brief Manages application settings
      */
-    class SettingsMgr
+    class KVStore
     {
     public:
-        SettingsMgr() = default;
+        KVStore() = default;
 
         /**
          * @brief Initialize and set up routes for fetching settings data
@@ -45,7 +37,7 @@ namespace mantis
          * @param ctx HTTP context
          * @return `true` if access is granted, else, `false`
          */
-        bool hasAccess([[maybe_unused]] MantisRequest& req, MantisResponse& res) const;
+        HandlerResponse hasAccess([[maybe_unused]] MantisRequest& req, MantisResponse& res) const;
 
         // Getter sections
         /**
@@ -71,9 +63,7 @@ namespace mantis
         // Cache settings config on create/read/update cycles to reduce database reads
         // may not be that significant though...!
         json m_configs;
-
-        const std::string __class_name__ = "mantis::SettingsUnit";
     };
 } // mantis
 
-#endif //SETTINGS_H
+#endif // KV_STORE_H

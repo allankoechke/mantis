@@ -16,7 +16,7 @@ namespace mantis
     /**
      * This class manages creation and verification of JWTs.
      */
-    class JwtUnit
+    class Auth
     {
     public:
         /**
@@ -28,7 +28,8 @@ namespace mantis
          * @param timeout Duration in seconds to keep the tokens valid.
          * @return String `token` value if all went well.
          */
-        static std::string createJWTToken(const json& claims_params = json::object(), int timeout = 86400);
+        static std::string createToken(const json& claims_params, int timeout = -1);
+
         /**
          * @brief Verify if given token is valid and was created by us.
          *
@@ -38,7 +39,7 @@ namespace mantis
          * @param token JWT Token
          * @return JSON Object having a `id`, `table`, `verified` and `error` values.
          */
-        static json verifyJwtToken(const std::string& token);
+        static json verifyToken(const std::string& token);
     };
 } // mantis
 

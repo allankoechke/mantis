@@ -1,7 +1,7 @@
 #include "../../include/mantisbase/core/expr_evaluator.h"
 
 #include "httplib.h"
-#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/core/logger.h"
 
 #define __file__ "core/evaluator.cpp"
 

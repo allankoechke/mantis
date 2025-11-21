@@ -389,7 +389,7 @@ namespace mantis {
 
             // Delete files, if any were removed ...
             for (const auto &file: files_to_delete) {
-                if (!MantisBase::instance().files().removeFile(name(), file)) {
+                if (!Files::removeFile(name(), file)) {
                     logger::warn("Could not delete file `{}` maybe it's missing?", file);
                 }
             }
@@ -455,7 +455,7 @@ namespace mantis {
         // For each file field, remove it in the filesystem
         for (const auto &file_name: files_in_fields) {
             [[maybe_unused]]
-                    auto _ = MantisBase::instance().files().removeFile(name(), file_name);
+                    auto _ = Files::removeFile(name(), file_name);
         }
     }
 

@@ -1,10 +1,10 @@
 #include "../../include/mantisbase/core/router.h"
 #include "../../include/mantisbase/utils/utils.h"
 #include "../../include/mantisbase/mantisbase.h"
-#include "../../include/mantisbase/core/database_mgr.h"
-#include "../../include/mantisbase/core/files_mgr.h"
+#include "../../include/mantisbase/core/database.h"
+#include "../../include/mantisbase/core/files.h"
 #include "../../include/mantisbase/core/http.h"
-#include "../../include/mantisbase/core/settings_mgr.h"
+#include "../../include/mantisbase/core/kv_store.h"
 
 #include <cmrc/cmrc.hpp>
 #include <chrono>
@@ -519,8 +519,7 @@ namespace mantis {
                 return;
             }
 
-            const auto &fileMgr = MantisBase::instance().files();
-            if (const auto path_opt = fileMgr.getFilePath(table_name, file_name);
+            if (const auto path_opt = Files::getFilePath(table_name, file_name);
                 path_opt.has_value()) {
                 // Return requested file
                 res.setStatus(200);

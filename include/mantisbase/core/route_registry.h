@@ -18,7 +18,7 @@
 
 #include "../utils/utils.h"
 #include  "types.h"
-#include "logs_mgr.h"
+#include "logger.h"
 
 namespace mantis
 {

@@ -1,4 +1,4 @@
-#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/core/logger.h"
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include "spdlog/sinks/ansicolor_sink.h"
 

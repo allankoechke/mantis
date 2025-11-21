@@ -1,10 +1,10 @@
 /**
- * @file files_mgr.cpp
- * @brief Implementation for @see files_mgr.h
+ * @file files.cpp
+ * @brief Implementation for @see files.h
  */
 
-#include "../../include/mantisbase/core/files_mgr.h"
-#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/core/files.h"
+#include "../../include/mantisbase/core/logger.h"
 #include "../../include/mantisbase/mantisbase.h"
 
 #include <fstream>
@@ -14,7 +14,7 @@ namespace mantis
 {
     namespace fs = std::filesystem;
 
-    void FilesMgr::createDir(const std::string& table) const
+    void Files::createDir(const std::string& table)
     {
         logger::trace("Creating directory: {}", dirPath(table));
 
@@ -24,7 +24,7 @@ namespace mantis
             fs::create_directories(path);
     }
 
-    void FilesMgr::renameDir(const std::string& old_name, const std::string& new_name) const
+    void Files::renameDir(const std::string& old_name, const std::string& new_name)
     {
         logger::trace("Renaming folder name from '{}' to '{}'", old_name, new_name);
 
@@ -36,13 +36,13 @@ namespace mantis
             createDir(new_name);
     }
 
-    void FilesMgr::deleteDir(const std::string& table) const
+    void Files::deleteDir(const std::string& table)
     {
         logger::trace("Removing {}", dirPath(table));
         fs::remove_all(dirPath(table));
     }
 
-    std::optional<std::string> FilesMgr::getFilePath(const std::string& table, const std::string& filename) const
+    std::optional<std::string> Files::getFilePath(const std::string& table, const std::string& filename)
     {
         // Check if file exists, if so, return the path, else, return std::nullopt
         if (auto path = filePath(table, filename); fs::exists(path))
@@ -53,16 +53,7 @@ namespace mantis
         return std::nullopt;
     }
 
-    // bool FileUnit::saveFile(const std::string& table, const std::string& filename,
-    //                         const std::vector<uint8_t>& content) const
-    // {
-    //     std::ofstream file(filePath(table, filename), std::ios::binary);
-    //     if (!file) return false;
-    //     file.write(reinterpret_cast<const char*>(content.data()), content.size());
-    //     return true;
-    // }
-
-    std::string FilesMgr::dirPath(const std::string& table, bool create_if_missing) const
+    std::string Files::dirPath(const std::string& table, const bool create_if_missing)
     {
         auto path = (fs::path(MantisBase::instance().dataDir()) / "files" / table).string();
         if (!fs::exists(path) && create_if_missing)
@@ -72,12 +63,12 @@ namespace mantis
         return path;
     }
 
-    std::string FilesMgr::filePath(const std::string& table, const std::string& filename) const
+    std::string Files::filePath(const std::string& table, const std::string& filename)
     {
         return (fs::path(MantisBase::instance().dataDir()) / "files" / table / filename).string();
     }
 
-    bool FilesMgr::removeFile(const std::string& table, const std::string& filename) const
+    bool Files::removeFile(const std::string& table, const std::string& filename)
     {
         try
         {

@@ -3,7 +3,7 @@
 //
 
 #include "../include/mantisbase/mantisbase.h"
-#include "../include/mantisbase/core/logs_mgr.h"
+#include "../include/mantisbase/core/logger.h"
 #include "../include/mantisbase/mantis.h"
 
 #include <argparse/argparse.hpp>

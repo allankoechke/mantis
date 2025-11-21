@@ -1,5 +1,5 @@
 /**
- * @file app.h
+ * @file mantisbase.h
  *
  * @brief The main application for mantis.
  *
@@ -15,6 +15,8 @@
 #include <filesystem>
 #include <chrono>
 #include <argparse/argparse.hpp>
+
+#include "core/kv_store.h"
 
 #ifdef MANTIS_ENABLE_SCRIPTING
 #include <dukglue/dukglue.h>
@@ -37,11 +39,11 @@ namespace mantis
     class MantisRequest;
     namespace fs = std::filesystem;
 
-    class DatabaseMgr;
+    class Database;
     class LogsMgr;
     // class SettingsMgr;
     class Router;
-    class FilesMgr;
+    class Files;
     class Entity;
 
     /**
@@ -242,7 +244,7 @@ namespace mantis
         static int appPatchVersion();
 
         /// Get the database unit object
-        [[nodiscard]] DatabaseMgr& db() const;
+        [[nodiscard]] Database& db() const;
         /// Get the logging unit object
         [[nodiscard]] LogsMgr& log() const;
         /// Get the commandline parser object
@@ -251,10 +253,8 @@ namespace mantis
         [[nodiscard]] Router& router() const;
         /// Get the `cparse` expression evaluator unit object instance.
         [[nodiscard]] ExprMgr& evaluator() const;
-        // /// Get the settings unit object
-        // [[nodiscard]] SettingsMgr& settings() const;
-        /// Get the file unit object
-        [[nodiscard]] FilesMgr& files() const;
+        /// Get the settings unit object
+        [[nodiscard]] KVStore& settings() const;
 
         /**
          * @brief Fetch a table schema encapsulated by an `Entity` object from given the table name.
@@ -284,9 +284,9 @@ namespace mantis
          *
          * @return Server start time
          */
-        std::chrono::time_point<std::chrono::steady_clock> startTime() const;
+        [[nodiscard]] std::chrono::time_point<std::chrono::steady_clock> startTime() const;
 
-        bool isDevMode() const;
+        [[nodiscard]] bool isDevMode() const;
 
     private:
         const std::string __class_name__ = "mantis::MantisBase";
@@ -365,7 +365,7 @@ namespace mantis
          *
          * @return DatabaseUnit instance pointer
          */
-        [[nodiscard]] DatabaseMgr* duk_db() const;
+        [[nodiscard]] Database* duk_db() const;
         [[nodiscard]] Router* duk_router() const;
 #endif
 
@@ -392,13 +392,12 @@ namespace mantis
         bool m_launchAdminPanel = false;
         bool m_isDevMode = false;
 
-        std::unique_ptr<DatabaseMgr> m_database;
+        std::unique_ptr<Database> m_database;
         std::unique_ptr<LogsMgr> m_logger;
         std::unique_ptr<argparse::ArgumentParser> m_opts;
         std::unique_ptr<Router> m_router;
         std::unique_ptr<ExprMgr> m_exprEval;
-        // std::unique_ptr<SettingsMgr> m_settings;
-        std::unique_ptr<FilesMgr> m_files;
+        std::unique_ptr<KVStore> m_kvStore;
 
 #ifdef MANTIS_ENABLE_SCRIPTING
         duk_context* m_dukCtx; // For duktape context

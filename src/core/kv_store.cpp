@@ -1,24 +1,20 @@
-#include "../../include/mantis/core/settings_mgr.h"
-#include "../../include/mantis/core/route_registry.h"
-#include "../../include/mantis/mantisbase.h"
-#include "../../include/mantis/core/database_mgr.h"
-#include "../../include/mantis/core/jwt_mgr.h"
-#include "../../include/mantis/core/tables/tables.h"
-#include "../../include/mantis/utils/utils.h"
+#include "../../include/mantisbase/core/kv_store.h"
+#include "../../include/mantisbase/core/route_registry.h"
+#include "../../include/mantisbase/mantisbase.h"
+#include "../../include/mantisbase/core/database.h"
+#include "../../include/mantisbase/core/auth.h"
+#include "../../include/mantisbase/utils/utils.h"
+#include "../../include/mantisbase/core/types.h"
+#include "../../include/mantisbase/core/middlewares.h"
+#include "../../include/mantisbase/core/router.h"
 
 #include <soci/soci.h>
 
-#include "mantis/core/middlewares.h"
-#include "mantis/core/router.h"
-
-#define __file__ "core/settings.cpp"
 
 namespace mantis
 {
-    bool SettingsMgr::setupRoutes()
+    bool KVStore::setupRoutes()
     {
-        // TRACE_CLASS_METHOD()
-
         try
         {
             setupConfigRoutes();
@@ -33,7 +29,7 @@ namespace mantis
         return true;
     }
 
-    void SettingsMgr::migrate()
+    void KVStore::migrate()
     {
         const auto sql = MantisBase::instance().db().session();
 
@@ -73,10 +69,8 @@ namespace mantis
         }
     }
 
-    bool SettingsMgr::hasAccess(MantisRequest& req, MantisResponse& res) const
+    HandlerResponse KVStore::hasAccess(MantisRequest& req, MantisResponse& res) const
     {
-        // TRACE_CLASS_METHOD()
-
         // Get the auth var from the context, resort to empty object if it's not set.
         auto& auth = req.getOr<json>("auth", json::object());
 
@@ -108,7 +102,7 @@ namespace mantis
         const auto& token = auth.at("token").get<std::string>();
 
         // Expand logged user if token is present
-        const auto resp = JwtUnit::verifyJwtToken(token);
+        const auto resp = Auth::verifyToken(token);
         if (!resp.value("verified", false) || !resp.value("error", "").empty())
         {
             json response;
@@ -159,7 +153,7 @@ namespace mantis
         }
 
         // Check if user is logged in as Admin
-        if (_table == "__admins")
+        if (_table == "_admins")
         {
             // If logged in as admin, grant access
             // Admins get unconditional data access
@@ -176,12 +170,12 @@ namespace mantis
         return REQUEST_HANDLED;
     }
 
-    json& SettingsMgr::configs()
+    json& KVStore::configs()
     {
         return m_configs;
     }
 
-    json SettingsMgr::initSettingsConfig()
+    json KVStore::initSettingsConfig()
     {
         // Get app session
         const auto sql = MantisBase::instance().db().session();
@@ -189,7 +183,7 @@ namespace mantis
         // Fetch settings
         json settings;
         auto id = std::to_string(std::hash<std::string>{}("configs"));
-        *sql << "SELECT value FROM __settings WHERE id = :id LIMIT 1", soci::use(id), soci::into(settings);
+        *sql << "SELECT value FROM _settings WHERE id = :id LIMIT 1", soci::use(id), soci::into(settings);
         if (sql->got_data())
         {
             m_configs = settings;
@@ -199,7 +193,7 @@ namespace mantis
         return json::object();
     }
 
-    void SettingsMgr::setupConfigRoutes()
+    void KVStore::setupConfigRoutes()
     {
         // TRACE_CLASS_METHOD()
 
@@ -252,7 +246,7 @@ namespace mantis
                 response["data"] = json::object();
 
                 res.sendJson(404, response);
-            }, { getAuthToken, hasAccess });
+            }, { });
                 // [](MantisRequest& req, MantisResponse& res)-> bool
                 // {
                 //     return TableUnit::getAuthToken(req, res);
@@ -348,14 +342,6 @@ namespace mantis
 
                 res.sendJson(200, response);
             }, {
-                [](MantisRequest& req, MantisResponse& res)-> bool
-                {
-                    return TableUnit::getAuthToken(req, res);
-                },
-                [this](MantisRequest& req, MantisResponse& res)-> bool
-                {
-                    return hasAccess(req, res);
-                }
             });
     }
 } // mantis

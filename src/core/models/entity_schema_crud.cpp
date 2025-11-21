@@ -93,7 +93,7 @@ namespace mantis {
             obj["updated"] = tmToStr(created_tm);
 
             // Create files directory
-            MantisBase::instance().files().createDir(new_table.name());
+            Files::createDir(new_table.name());
 
             // Add created table to the routes
             if (const auto res = MantisBase::instance().router().addRoute(new_table.name());
@@ -364,7 +364,7 @@ namespace mantis {
             // Only trigger routes to be reloaded if table name changes.
             if (old_entity.name() != new_entity.name()) {
                 // Update file table folder name
-                MantisBase::instance().files().renameDir(old_entity.name(), new_entity.name());
+                Files::renameDir(old_entity.name(), new_entity.name());
 
                 // Update route for this table
                 const json obj{
@@ -413,7 +413,7 @@ namespace mantis {
             tr.commit();
 
             // Delete files directory
-            MantisBase::instance().files().deleteDir(schema.at("name").get<std::string>());
+            Files::deleteDir(schema.at("name").get<std::string>());
 
             // Update route for this table
             const json obj{

@@ -14,18 +14,18 @@
 #include "mantisbase.h"
 
 // Core components
-#include "core/context_store_mgr.h"
-#include "core/database_mgr.h"
+#include "core/context_store.h"
+#include "core/database.h"
 #include "core/exceptions.h"
 #include "core/expr_evaluator.h"
-#include "core/files_mgr.h"
+#include "core/files.h"
 #include "core/http.h"
-#include "core/jwt_mgr.h"
-#include "core/logs_mgr.h"
+#include "core/auth.h"
+#include "core/logger.h"
 #include "core/middlewares.h"
 #include "core/route_registry.h"
 #include "core/router.h"
-#include "core/settings_mgr.h"
+#include "core/kv_store.h"
 #include "core/types.h"
 
 // Models and data structures

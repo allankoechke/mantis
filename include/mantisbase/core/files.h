@@ -1,10 +1,10 @@
 /**
- * @file fileunit.h fileunit.cpp
+ * @file files.h files.cpp
  * @brief File management for record level file records.
  */
 
-#ifndef FILEUNIT_H
-#define FILEUNIT_H
+#ifndef MANTIS_FILES_H
+#define MANTIS_FILES_H
 
 #include <optional>
 #include <string>
@@ -24,30 +24,28 @@ namespace mantis
      * - Updating folder names when tables are renamed
      * - Deleting folder contents for dropped
      */
-    class FilesMgr
+    class Files
     {
     public:
-        FilesMgr() = default;
-
         /**
          * @brief Create a directory matching passed in `table` name.
          *
          * @param table Table name to created directory for
          */
-        void createDir(const std::string& table) const;
+        static void createDir(const std::string& table);
         /**
          * @brief Rename existing directory if found or create it if not found.
          *
          * @param old_name Old table name
          * @param new_name New table name
          */
-        void renameDir(const std::string& old_name, const std::string& new_name) const;
+        static void renameDir(const std::string& old_name, const std::string& new_name);
         /**
          * @brief Delete table directory and its contents
          *
          * @param table Table name
          */
-        void deleteDir(const std::string& table) const;
+        static void deleteDir(const std::string& table);
 
         /**
          * @brief Fetch directory path string for a given table
@@ -56,7 +54,7 @@ namespace mantis
          * @param create_if_missing Bool status to know whether to create directory if missing
          * @return Absolute path to a directory for the passed in table
          */
-        std::string dirPath(const std::string& table, bool create_if_missing = false) const;
+        static std::string dirPath(const std::string& table, bool create_if_missing = false);
         /**
          * @brief Fetch absolute path to where file is or would be for a given table and filename.
          *
@@ -64,7 +62,7 @@ namespace mantis
          * @param filename File name
          * @return Absolute path to the given filename and table name.
          */
-        std::string filePath(const std::string& table, const std::string& filename) const;
+        static std::string filePath(const std::string& table, const std::string& filename);
         /**
          * @brief Fetch filename absolute path only if the file exists, else, return empty response.
          *
@@ -74,7 +72,7 @@ namespace mantis
          *
          * @see filePath() above.
          */
-        std::optional<std::string> getFilePath(const std::string& table, const std::string& filename) const;
+        static std::optional<std::string> getFilePath(const std::string& table, const std::string& filename);
         /**
          * @brief Remove existing file given the table and filename.
          *
@@ -82,8 +80,8 @@ namespace mantis
          * @param filename File name
          * @return Status whether file deletion succeeded.
          */
-        bool removeFile(const std::string& table, const std::string& filename) const;
+        static bool removeFile(const std::string& table, const std::string& filename);
     };
 } // mantis
 
-#endif //FILEUNIT_H
+#endif // MANTIS_FILES_H

@@ -1,5 +1,5 @@
 #include "../../include/mantisbase/core/route_registry.h"
-#include "../../include/mantisbase/core/logs_mgr.h"
+#include "../../include/mantisbase/core/logger.h"
 #include "../../include/mantisbase/mantisbase.h"
 #include "../../include/mantisbase/core/http.h"
 #include "../../include/mantisbase/core/http.h"

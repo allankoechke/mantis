@@ -36,11 +36,11 @@ endif()
 
 set( MANTIS_SOURCES
         src/mantisbase.cpp
-        src/core/database_mgr.cpp
-        src/core/logs_mgr.cpp
+        src/core/database.cpp
+        src/core/logger.cpp
         src/core/router.cpp
         src/core/route_registry.cpp
-        src/core/jwt_mgr.cpp
+        src/core/auth.cpp
 
         # Expression evaluator
         src/core/expr_evaluator.cpp
@@ -54,9 +54,9 @@ set( MANTIS_SOURCES
         include/mantisbase/core/private-impl/soci_custom_types.hpp
         include/mantisbase/config.hpp.in
 
-        # src/core/settings_mgr.cpp
-        src/core/files_mgr.cpp
-        src/core/context_store_mgr.cpp
+        src/core/kv_store.cpp
+        src/core/files.cpp
+        src/core/context_store.cpp
 
         src/core/http_request.cpp
         src/core/http_response.cpp

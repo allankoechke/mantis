@@ -1,4 +1,4 @@
-#include "../../../include/mantisbase/core/jwt_mgr.h"
+#include "../../../include/mantisbase/core/auth.h"
 #include "../../include/mantisbase/mantisbase.h"
 // #include "../../../include/mantis/core/settings_mgr.h"
 
@@ -7,7 +7,7 @@
 
 namespace mantis
 {
-    std::string JwtUnit::createJWTToken(const json& claims_params, const int timeout)
+    std::string Auth::createToken(const json& claims_params, const int timeout)
     {
         // Get signing key for JWT ...
         const auto secretKey = MantisBase::jwtSecretKey();
@@ -20,7 +20,7 @@ namespace mantis
         const auto& config = json::object(); // MantisBase::instance().settings().configs();
         const int expiry_t = timeout > 0
                                  ? timeout // Use `timeout` value if provided
-                                 : claims_params.at("table").get<std::string>() == "__admins"
+                                 : claims_params.at("table").get<std::string>() == "_admins"
                                  ? config.value("adminSessionTimeout", 1 * 60 * 60) // admins
                                  : config.value("sessionTimeout", 24 * 60 * 60); // users
 
@@ -32,12 +32,12 @@ namespace mantis
                              .set_expires_at(time + std::chrono::seconds(expiry_t));
 
         // Add JWT Issuer if enabled
-        if (!config.value("jwtEnableSetIssuer", false))
+        if (config.value("jwtEnableSetIssuer", false))
         {
             token_builder.set_issuer(config.at("appName").get<std::string>());
         }
         // Add JWT audience if enabled
-        if (!config.value("jwtEnableSetAudience", false))
+        if (config.value("jwtEnableSetAudience", false))
         {
             token_builder.set_audience(config.at("baseUrl").get<std::string>());
         }
@@ -51,7 +51,7 @@ namespace mantis
         return token;
     }
 
-    json JwtUnit::verifyJwtToken(const std::string& token)
+    json Auth::verifyToken(const std::string& token)
     {
         // Response Object
         json result;
@@ -86,9 +86,8 @@ namespace mantis
 
             if (ec)
             {
-                // Validation failed - return error information
+                logger::trace("Token verification failed: {}", ec.message());
                 result["error"] = ec.message();
-                // Log::trace("Token verification failed: {}", ec.message());
                 return result;
             }
 
