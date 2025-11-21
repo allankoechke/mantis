@@ -9,16 +9,41 @@
     import { Input } from "$lib/components/ui/input/index.js";
     import { Button } from "$lib/components/ui/button/index.js";
     import { cn } from "$lib/utils.js";
+    import { goto } from '$app/navigation';
+    import { login } from '$lib/api/auth.js';
+    import { authStore } from '$lib/stores/authStore.js';
     import type { HTMLAttributes } from "svelte/elements";
+    
     let { class: className, ...restProps }: HTMLAttributes<HTMLDivElement> =
         $props();
     const id = $props.id();
+
+    let email = $state('');
+    let password = $state('');
+    let loading = $state(false);
+    let error = $state<string | null>(null);
+
+    async function handleSubmit(e: SubmitEvent) {
+        e.preventDefault();
+        loading = true;
+        error = null;
+
+        try {
+            const response = await login(email, password);
+            authStore.setAuth(response.token, response.user);
+            goto('/entities');
+        } catch (err: unknown) {
+            error = err instanceof Error ? err.message : 'Invalid email or password. Please try again.';
+        } finally {
+            loading = false;
+        }
+    }
 </script>
 
 <div class={cn("flex flex-col gap-6", className)} {...restProps}>
     <Card.Root class="overflow-hidden p-0">
         <Card.Content class="grid p-0 md:grid-cols-2">
-            <form class="p-6 md:p-8">
+            <form class="p-6 md:p-8" onsubmit={handleSubmit}>
                 <FieldGroup>
                     <div class="flex flex-col items-center gap-2 text-center">
                         <h1 class="text-2xl font-bold">Welcome back</h1>
@@ -26,13 +51,20 @@
                             Login to your Mantis Admin account
                         </p>
                     </div>
+                    {#if error}
+                        <div class="bg-destructive/10 text-destructive p-3 rounded-md text-sm">
+                            {error}
+                        </div>
+                    {/if}
                     <Field>
                         <FieldLabel for="email-{id}">Email</FieldLabel>
                         <Input
                             id="email-{id}"
                             type="email"
                             placeholder="m@example.com"
+                            bind:value={email}
                             required
+                            disabled={loading}
                         />
                     </Field>
                     <Field>
@@ -46,10 +78,18 @@
                                 Forgot your password?
                             </a>
                         </div>
-                        <Input id="password-{id}" type="password" required />
+                        <Input 
+                            id="password-{id}" 
+                            type="password" 
+                            bind:value={password}
+                            required 
+                            disabled={loading}
+                        />
                     </Field>
                     <Field>
-                        <Button type="submit">Login</Button>
+                        <Button type="submit" disabled={loading}>
+                            {loading ? 'Logging in...' : 'Login'}
+                        </Button>
                     </Field>
                 </FieldGroup>
             </form>
