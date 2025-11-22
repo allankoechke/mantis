@@ -137,9 +137,6 @@ namespace mantis {
             EntitySchema tables_schema{"_tables", "base"};
             tables_schema.setSystem(true);
             tables_schema.addField(EntitySchemaField({
-                {"name", "name"}, {"type", "string"}, {"required", true}, {"system", true}
-            }));
-            tables_schema.addField(EntitySchemaField({
                 {"name", "schema"}, {"type", "json"}, {"required", true}, {"system", true}
             }));
             *sql << tables_schema.toDDL();

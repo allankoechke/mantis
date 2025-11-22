@@ -17,10 +17,10 @@ namespace mantis {
 
         auto response = json::array();
         for (const auto &row: rs) {
-            const auto id = row.get<std::string>(1);
-            const auto schema = row.get<json>(2);
-            const auto created = dbDateToString(row, 3);
-            const auto updated = dbDateToString(row, 4);
+            const auto id = row.get<std::string>(0);
+            const auto schema = row.get<json>(1);
+            const auto created = dbDateToString(row, 2);
+            const auto updated = dbDateToString(row, 3);
 
             response.push_back({
                 {"id", id},
@@ -40,7 +40,7 @@ namespace mantis {
         const auto sql = MantisBase::instance().db().session();
 
         soci::row row;
-        *sql << "SELECT schema, created, updated FROM _tables WHERE id = :id", soci::use(table_id), soci::into(row);
+        *sql << "SELECT id, schema, created, updated FROM _tables WHERE id = :id", soci::use(table_id), soci::into(row);
 
         if (!sql->got_data())
             throw MantisException(404, "No table for given id/name `" + table_id + "`");
@@ -63,6 +63,9 @@ namespace mantis {
         soci::transaction tr(*sql);
 
         try {
+            if (const auto err = new_table.validate(); err.has_value())
+                throw MantisException(400, err.value());
+
             const auto id = new_table.id();
             const auto schema = new_table.toJson();
 
@@ -70,7 +73,7 @@ namespace mantis {
 
             // Check if item exits already in db
             if (tableExists(schema.at("name").get<std::string>())) {
-                throw std::runtime_error("Table with similar name exists.");
+                throw MantisException(500, "Table with similar name exists.");
             }
 
             // Create default time values
@@ -442,10 +445,10 @@ namespace mantis {
                 throw std::runtime_error("The database `" + db_type + "` is not supported yet!");
             }
             const std::string query = db_type == "sqlite3"
-                                          ? "SELECT name FROM sqlite_master WHERE type = 'table' AND name = '{}';"
+                                          ? "SELECT name FROM sqlite_master WHERE type = 'table' AND name = ':name';"
                                           : db_type == "postgresql"
-                                                ? "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = '{}');"
-                                                : "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = '{}');";
+                                                ? "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = 'public' AND table_name = ':name');"
+                                                : "SELECT EXISTS (SELECT 1 FROM information_schema.tables WHERE table_schema = DATABASE() AND table_name = ':name');";
 
             soci::row db_data;
             *sql << query, soci::use(table_name), soci::into(db_data);

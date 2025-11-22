@@ -7,19 +7,24 @@ namespace mantis {
         HandlerFn handler = [](const MantisRequest &req, const MantisResponse &res) {
             try {
                 // Extract path `id` value [REQUIRED]
-                const auto schema_id = trim(req.getPathParamValue("schema_name_or_id"));
-                if (schema_id.empty())
+                const auto schema_id_or_name = trim(req.getPathParamValue("schema_name_or_id"));
+                if (schema_id_or_name.empty())
                     throw MantisException(400, "Entity `id` or `schema_name` is required!");
+
+                // If table name is passed in, get the `id` equivalent
+                const auto schema_id = schema_id_or_name.starts_with("mbt_")
+                                     ? schema_id_or_name
+                                     : EntitySchema::genEntityId(schema_id_or_name);
 
                 // Read for entity matching given `id` if it exists, return it, else error `404`
                 const auto record = EntitySchema::getTable(schema_id);
-                    res.sendJson(200,
-                                 {
-                                     {"data", record},
-                                     {"error", ""},
-                                     {"status", 200}
-                                 }
-                    );
+                res.sendJson(200,
+                             {
+                                 {"data", record},
+                                 {"error", ""},
+                                 {"status", 200}
+                             }
+                );
             } catch (const MantisException &e) {
                 res.sendJson(e.code(), {
                                  {"data", json::object()},
@@ -43,10 +48,9 @@ namespace mantis {
     HandlerFn EntitySchema::getManyRouteHandler() const {
         HandlerFn handler = [](MantisRequest &req, MantisResponse &res) {
             try {
-
                 const auto tables = EntitySchema::listTables();
                 res.sendJson(200, {
-                                 {"data", tables },
+                                 {"data", tables},
                                  {"error", ""},
                                  {"status", 200}
                              }
@@ -72,12 +76,44 @@ namespace mantis {
     }
 
     HandlerFn EntitySchema::postRouteHandler() const {
-        // Capture entity name, currently we get an error if we capture `this` directly.
-        const std::string entity_name = name();
+        HandlerFn handler = [](MantisRequest &req, MantisResponse &res) {
+            try {
+                const auto &[body, err] = req.getBodyAsJson();
+                if (!err.empty()) {
+                    res.sendJson(400, {
+                                     {"data", json::object()},
+                                     {"error", err},
+                                     {"status", 400}
+                                 }
+                    );
+                }
 
-        HandlerFn handler = [entity_name](MantisRequest &req, MantisResponse &res) {
-            // Get entity object for given name
-            const auto entity = MantisBase::instance().entity(entity_name);
+                const auto eSchema = EntitySchema::fromSchema(body);
+                if (const auto val_err = eSchema.validate(); val_err.has_value())
+                    throw MantisException(400, val_err.value());
+
+                auto _schema = EntitySchema::createTable(eSchema);
+                res.sendJson(200, {
+                                 {"data", _schema},
+                                 {"error", ""},
+                                 {"status", 200}
+                             }
+                );
+            } catch (const MantisException &e) {
+                res.sendJson(e.code(), {
+                                 {"data", json::object()},
+                                 {"error", e.what()},
+                                 {"status", e.code()}
+                             }
+                );
+            } catch (const std::exception &e) {
+                res.sendJson(500, {
+                                 {"data", json::object()},
+                                 {"error", e.what()},
+                                 {"status", 500}
+                             }
+                );
+            }
         };
 
         return handler;

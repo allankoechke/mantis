@@ -36,7 +36,7 @@ namespace mantis {
         EntitySchema eSchema;
 
         if (!entity_schema.contains("name") || !entity_schema.contains("type"))
-            throw std::invalid_argument("Missing required fields `name` and `type` in schema!");
+            throw MantisException(400, "Missing required fields `name` and `type` in schema!");
 
         const auto _name = entity_schema.at("name").get<std::string>();
         const auto _type = entity_schema.at("type").get<std::string>();
