@@ -34,14 +34,16 @@ namespace mantis {
     }
 
     nlohmann::json EntitySchema::getTable(const std::string &table_id) {
-        if (!table_id.empty()) throw std::runtime_error("Required table id is empty!");
+        if (table_id.empty())
+            throw MantisException(400, "Required table id/name is empty!");
 
         const auto sql = MantisBase::instance().db().session();
 
         soci::row row;
         *sql << "SELECT schema, created, updated FROM _tables WHERE id = :id", soci::use(table_id), soci::into(row);
 
-        if (!sql->got_data()) throw std::runtime_error("No table for given id `" + table_id + "`");
+        if (!sql->got_data())
+            throw MantisException(404, "No table for given id/name `" + table_id + "`");
 
         const auto schema = row.get<json>(1);
         const auto created = dbDateToString(row, 2);
@@ -431,7 +433,7 @@ namespace mantis {
         }
     }
 
-    bool tableExists(const std::string &table_name) {
+    bool EntitySchema::tableExists(const std::string &table_name) {
         try {
             const auto db_type = MantisBase::instance().dbType();
             const auto sql = MantisBase::instance().db().session();
@@ -454,7 +456,7 @@ namespace mantis {
         }
     }
 
-    bool tableExists(const EntitySchema &table) {
+    bool EntitySchema::tableExists(const EntitySchema &table) {
         return tableExists(table.name());
     }
 } // mantis

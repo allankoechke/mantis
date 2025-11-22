@@ -14,15 +14,17 @@
 #include <spdlog/sinks/stdout_color_sinks-inl.h>
 #include <spdlog/sinks/ansicolor_sink.h>
 
-#include "mantisbase/core/exceptions.h"
-#include "mantisbase/core/middlewares.h"
+#include "../include/mantisbase/core/exceptions.h"
+#include "../include/mantisbase/core/middlewares.h"
+#include "../include/mantisbase/core/models/entity_schema.h"
 
 // Declare a mantis namespace for the embedded FS
 CMRC_DECLARE(mantis);
 
 namespace mantis {
     Router::Router()
-        : mApp(MantisBase::instance()) {
+        : mApp(MantisBase::instance()),
+    m_entitySchema(std::make_unique<EntitySchema>()){
         // Let's fix timing initialization, set the start time to current time
         svr.set_pre_routing_handler(preRoutingHandler());
 
@@ -454,6 +456,10 @@ namespace mantis {
         router.Get("/api/healthcheck", healthCheckHandler());
         router.Get("/api/files/:entity/:file", fileServingHandler());
         router.Get(R"(/admin(.*))", handleAdminDashboardRoute());
+
+        // Add entity schema routes
+        // GET|POST|PATCH|DELETE `/api/v1/schemas*`
+        m_entitySchema->createEntityRoutes();
 
         // Add /public static file serving directory
         if (const auto mount_ok = svr.set_mount_point("/", mApp.publicDir()); !mount_ok) {

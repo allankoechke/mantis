@@ -120,6 +120,19 @@ namespace mantis {
         static std::optional<std::string> validate(const EntitySchema& table_schema);
         [[nodiscard]] std::optional<std::string> validate() const;
 
+        // --------------- SCHEMA ROUTING ------------------ //
+        [[nodiscard]] HandlerFn getOneRouteHandler() const;
+
+        [[nodiscard]] HandlerFn getManyRouteHandler() const;
+
+        [[nodiscard]] HandlerFn postRouteHandler() const;
+
+        [[nodiscard]] HandlerFn patchRouteHandler() const;
+
+        [[nodiscard]] HandlerFn deleteRouteHandler() const;
+
+        void createEntityRoutes() const;
+
     private:
         static std::string getFieldType(const std::string &type, std::shared_ptr<soci::session> sql);
         void addFieldsIfNotExist(const std::string& type);

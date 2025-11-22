@@ -12,6 +12,9 @@ namespace mantis {
     class MantisBase;
     class MantisRequest;
     class MantisResponse;
+    class Entity;
+    class EntitySchema;
+    class EntitySchemaField;
 
     using json = nlohmann::json;
     using HandlerResponse = httplib::Server::HandlerResponse;

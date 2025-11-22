@@ -109,6 +109,7 @@ namespace mantis {
 
         MantisBase& mApp;
         httplib::Server svr;
+        std::unique_ptr<EntitySchema> m_entitySchema;
         RouteRegistry m_routeRegistry;
         std::vector<MiddlewareFn> m_globalMiddlewares;
         std::vector<nlohmann::json> m_schemas;
